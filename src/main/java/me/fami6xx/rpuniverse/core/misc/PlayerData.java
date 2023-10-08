@@ -20,9 +20,9 @@ public class PlayerData {
     private transient String testTransientString = "This string is transient and will not be saved.";
     private int hunger = 20;
     private int health = 20;
-    private String uuid = UUID.randomUUID().toString();
+    private UUID uuid = UUID.randomUUID();
 
-    public String getUuid() {
+    public UUID getUuid() {
         return uuid;
     }
 }
