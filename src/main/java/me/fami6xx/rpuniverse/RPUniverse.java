@@ -14,4 +14,12 @@ public final class RPUniverse extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
     }
+
+    public static RPUniverse getInstance() {
+        return (RPUniverse) getJavaPlugin();
+    }
+
+    public static JavaPlugin getJavaPlugin(){
+        return getProvidingPlugin(RPUniverse.class);
+    }
 }
