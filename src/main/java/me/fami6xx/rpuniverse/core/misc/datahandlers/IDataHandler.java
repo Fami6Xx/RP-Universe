@@ -1,4 +1,6 @@
-package me.fami6xx.rpuniverse.core.misc;
+package me.fami6xx.rpuniverse.core.misc.datahandlers;
+
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
 
 public interface IDataHandler {
 
