@@ -35,4 +35,10 @@ public interface IDataHandler {
      * @return true if the data was saved successfully, false otherwise.
      */
     boolean savePlayerData(PlayerData data);
+
+    /**
+     * Called at the start of the plugin, this is used to determine how often the save task should run.
+     * @return The time in ticks between each save task run.
+     */
+    int getQueueSaveTime();
 }
