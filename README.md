@@ -22,6 +22,9 @@ Kvalitní API je samozřejmostí, aby vývojáři mohli přizpůsobit a rozšiř
 - Systém na kontrolu hráčských interakcí s pluginem
   - Systém bude kontrolovat platby a všechny proběhlé interakce a pokud najde nějaké nesrovnalosti nebo možný dupe (Ať už peněžní, nebo věcný) bude se ho snažit nahlásit.
   - Tento systém se dá vypnout v configu, je možné že by špatně detekoval nesrovnalosti ve spojení s určitými pluginy.
+- Potřeby
+- Fakturační systém
+  - Hráči mohou posílat faktury ostatním hráčům či firmám.
 - Platby mezi hráči
 - Nákup nemovitostí
 - Komplexní bankovní systém
