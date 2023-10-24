@@ -58,4 +58,9 @@ public class JSONDataHandler implements IDataHandler {
             return false;
         }
     }
+
+    @Override
+    public int getQueueSaveTime() {
+        return 20 * 60 * 5; // 5 minutes
+    }
 }
