@@ -54,12 +54,13 @@ public class DataSystem {
      * @return The player data for the specified UUID. Null if not found.
      */
     public PlayerData getPlayerData(UUID uuid) {
+        // Firstly, check the playerDataMap if the user has already been loaded.
         PlayerData data = playerDataMap.get(uuid);
         if (data != null) {
             return data;
         }
 
-        // Next, check the saveQueue if the player hasn't been saved yet.
+        // Next, check the saveQueue if the player hasn't been saved yet. (This acts as a cache)
         for (PlayerData queuedData : saveQueue) {
             if (queuedData.getUuid().equals(uuid)) {
                 saveQueue.remove(queuedData);
@@ -94,7 +95,7 @@ public class DataSystem {
                 RPUniverse.getInstance(),
                 this::processSaveQueue,
                 0L,
-                20L * 60L * 5L // 5 minutes
+                dataHandler.getQueueSaveTime()
         );
     }
 
