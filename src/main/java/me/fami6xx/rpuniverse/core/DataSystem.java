@@ -63,10 +63,14 @@ public class DataSystem {
         // Next, check the saveQueue if the player hasn't been saved yet. (This acts as a cache)
         for (PlayerData queuedData : saveQueue) {
             if (queuedData.getUuid().equals(uuid)) {
-                saveQueue.remove(queuedData);
-                playerDataMap.put(uuid, queuedData);
-                return queuedData;
+                data = queuedData;
             }
+        }
+
+        if(data != null){
+            saveQueue.remove(data);
+            playerDataMap.put(uuid, data);
+            return data;
         }
 
         // Lastly, ask the dataHandler
