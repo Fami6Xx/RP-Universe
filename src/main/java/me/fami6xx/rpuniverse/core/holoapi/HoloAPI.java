@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import java.util.Random;
 
 public final class HoloAPI implements Listener {
+    // ToDo: Remake from holographic displays to decent holograms
     Random random = new Random();
     FollowHoloHandler followHandler;
     VisibilityHoloHandler VisibilityHandler;
