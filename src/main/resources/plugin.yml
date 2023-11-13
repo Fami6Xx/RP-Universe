@@ -1,3 +1,6 @@
 name: RPUniverse
 version: '${project.version}'
 main: me.fami6xx.rpuniverse.RPUniverse
+softdepend: [ ProtocolLib, HolographicDisplays ]
+authors: [ Fami6Xx ]
+description: A unique plugin that allows you to create your own Role play world
