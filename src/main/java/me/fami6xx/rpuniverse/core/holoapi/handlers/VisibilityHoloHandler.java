@@ -1,6 +1,6 @@
 package me.fami6xx.rpuniverse.core.holoapi.handlers;
 
-import com.gmail.filoghost.holographicdisplays.api.VisibilityManager;
+import eu.decentsoftware.holograms.api.holograms.Hologram;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.misc.raycast.RayCast;
@@ -65,7 +65,7 @@ public class VisibilityHoloHandler extends famiHoloHandler {
                     famiHologram[] arr = famiHolograms.toArray(new famiHologram[0]);
 
                     for(famiHologram holo : arr) {
-                        if (holo.getHologram().isDeleted()) {
+                        if (holo.getHologram().isDisabled()) {
                             // Has to be handled outside for loop otherwise it would throw ConcurrentModificationExc
                             queue.add(
                                     () -> {
@@ -79,12 +79,12 @@ public class VisibilityHoloHandler extends famiHoloHandler {
                             continue;
                         }
 
-                        if (!holo.getHologram().getVisibilityManager().isVisibleByDefault()) {
-                            VisibilityManager manager = holo.getHologram().getVisibilityManager();
+                        if (!holo.getHologram().isDefaultVisibleState()) {
+                            Hologram hologram = holo.getHologram();
 
                             List<Player> prevVisible = getList(holo.getUUID());
                             Collection<Player> nowVisible =
-                                    !manager.isVisibleByDefault() ?
+                                    !(holo.getIntDistance() == -1) ?
                                             holo.getHologram().getLocation().getNearbyPlayers(holo.getDistance())
                                             :
                                             holo.getHologram().getLocation().getNearbyPlayers(Bukkit.getViewDistance() * 16);
@@ -92,20 +92,20 @@ public class VisibilityHoloHandler extends famiHoloHandler {
                             // Hide to everyone who left visible distance or doesn't pass conditions
                             prevVisible.forEach(player -> {
                                 if (!nowVisible.contains(player)) {
-                                    manager.hideTo(player);
+                                    hologram.hide(player);
                                 }
                             });
 
                             // Show hologram to players who don't see it but passed conditions
                             nowVisible.stream()
                                     .filter(player -> checkConditions(player, holo))
-                                    .filter(player -> !manager.isVisibleTo(player))
-                                    .forEach(manager::showTo);
+                                    .filter(player -> !hologram.isVisible(player))
+                                    .forEach(player -> hologram.show(player, 0));
 
                             // Filter everyone who doesn't see the hologram and collect them
                             List<Player> finalList =
                                     nowVisible.stream()
-                                            .filter(manager::isVisibleTo)
+                                            .filter(hologram::isVisible)
                                             .collect(Collectors.toList());
 
                             updateList(holo.getUUID(), finalList);
