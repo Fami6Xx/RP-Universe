@@ -75,8 +75,6 @@ public class FollowHoloHandler extends famiHoloHandler {
                         // Move Hologram
 
                         Location toTeleport = entity.getLocation();
-                        System.out.println(holo.getHologram());
-                        System.out.println(holo.getHologram().size());
                         height += holo.getHologram().size() * 0.25;
                         toTeleport.setY(toTeleport.getY() + height);
 
