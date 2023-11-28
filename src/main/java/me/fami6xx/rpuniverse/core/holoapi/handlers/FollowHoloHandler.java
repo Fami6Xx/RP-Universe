@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.holoapi.handlers;
 
+import eu.decentsoftware.holograms.api.DHAPI;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import org.bukkit.Bukkit;
@@ -38,20 +39,20 @@ public class FollowHoloHandler extends famiHoloHandler {
                     if(entity == null){
                         // Has to be handled outside for loop otherwise it would throw ConcurrentModificationExc
                         queue.add(
-
                                 () -> clearList(uuid)
                         );
                         return;
                     }
+
                     if(!entity.isValid()){
-                        if(entity instanceof Player) {
-                            if(!((Player) entity).isOnline()){
-                                queue.add(
-                                        () -> clearList(uuid)
-                                );
-                                return;
-                            }
-                        }else{
+                        if(!(entity instanceof Player)) {
+                            queue.add(
+                                    () -> clearList(uuid)
+                            );
+                            return;
+                        }
+
+                        if(!((Player) entity).isOnline()){
                             queue.add(
                                     () -> clearList(uuid)
                             );
@@ -64,7 +65,7 @@ public class FollowHoloHandler extends famiHoloHandler {
                     famiHologram[] arr = famiHolograms.toArray(new famiHologram[0]);
 
                     for(famiHologram holo : arr) {
-                        if(holo.getHologram().isDeleted()){
+                        if(holo.getHologram().isDisabled()){
                             queue.add(
                                     () -> removeFromList(uuid, holo)
                             );
@@ -74,15 +75,17 @@ public class FollowHoloHandler extends famiHoloHandler {
                         // Move Hologram
 
                         Location toTeleport = entity.getLocation();
+                        System.out.println(holo.getHologram());
+                        System.out.println(holo.getHologram().size());
                         height += holo.getHologram().size() * 0.25;
                         toTeleport.setY(toTeleport.getY() + height);
 
                         if(
-                                toTeleport.getX() != holo.getHologram().getX() ||
-                                toTeleport.getY() != holo.getHologram().getY() ||
-                                toTeleport.getZ() != holo.getHologram().getZ()
+                                toTeleport.getX() != holo.getHologram().getLocation().getX() ||
+                                toTeleport.getY() != holo.getHologram().getLocation().getY() ||
+                                toTeleport.getZ() != holo.getHologram().getLocation().getZ()
                         ) {
-                            holo.getHologram().teleport(toTeleport);
+                            DHAPI.moveHologram(holo.getHologram(), toTeleport);
                         }
                     }
                 }));
