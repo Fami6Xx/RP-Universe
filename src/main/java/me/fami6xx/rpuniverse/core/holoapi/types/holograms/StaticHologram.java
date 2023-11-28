@@ -46,5 +46,6 @@ public class StaticHologram extends famiHologram {
         api.getVisibilityHandler().queue.add(
                 () -> api.getVisibilityHandler().removeFromList(getUUID(), this)
         );
+        getHologram().delete();
     }
 }
