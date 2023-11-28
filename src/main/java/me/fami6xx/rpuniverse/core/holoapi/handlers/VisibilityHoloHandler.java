@@ -91,8 +91,8 @@ public class VisibilityHoloHandler extends famiHoloHandler {
 
                             // Hide to everyone who left visible distance or doesn't pass conditions
                             prevVisible.forEach(player -> {
-                                if (!nowVisible.contains(player)) {
-                                    hologram.hide(player);
+                                if (!nowVisible.contains(player) || !checkConditions(player, holo)) {
+                                    hologram.removeShowPlayer(player);
                                 }
                             });
 
@@ -100,7 +100,7 @@ public class VisibilityHoloHandler extends famiHoloHandler {
                             nowVisible.stream()
                                     .filter(player -> checkConditions(player, holo))
                                     .filter(player -> !hologram.isVisible(player))
-                                    .forEach(player -> hologram.show(player, 0));
+                                    .forEach(hologram::setShowPlayer);
 
                             // Filter everyone who doesn't see the hologram and collect them
                             List<Player> finalList =
