@@ -1,6 +1,8 @@
 package me.fami6xx.rpuniverse.core.holoapi.types.holograms;
 
+import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
+import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import org.bukkit.Location;
 
 import java.util.UUID;
@@ -14,6 +16,10 @@ public abstract class famiHologram {
 
     public famiHologram(Hologram holo){
         hologram = holo;
+    }
+
+    public HologramLine addLine(String line){
+        return DHAPI.addHologramLine(hologram, line);
     }
 
     public void updateVisibility(double distance, boolean seeThroughBlocks){
