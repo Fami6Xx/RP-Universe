@@ -1,6 +1,5 @@
 package me.fami6xx.rpuniverse.core.holoapi.types.lines;
 
-import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import me.fami6xx.rpuniverse.RPUniverse;
 import org.bukkit.scheduler.BukkitRunnable;
