@@ -1,6 +1,6 @@
 package me.fami6xx.rpuniverse.core.holoapi.types.holograms;
 
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import eu.decentsoftware.holograms.api.DHAPI;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import org.bukkit.Location;
@@ -12,22 +12,26 @@ public class FollowingHologram extends famiHologram {
 
     FollowingHologram followingHologram = this;
 
-    HoloAPI api = (HoloAPI) RPUniverse.getInstance().getHoloAPI();
+    HoloAPI api = RPUniverse.getInstance().getHoloAPI();
 
     Entity following;
     UUID followingUUID;
 
+    public FollowingHologram(Entity toFollow){
+        super(
+                DHAPI.createHologram(UUID.randomUUID().toString(), toFollow.getLocation().clone().add(0, toFollow.getHeight(), 0))
+        );
+        following = toFollow;
+        updateVisibility(-1, false);
+        getHologram().setDefaultVisibleState(true);
+
+        api.getFollowHandler().queue.add(() -> api.getFollowHandler().addToList(toFollow.getUniqueId(), followingHologram));
+        followingUUID = toFollow.getUniqueId();
+    }
 
     public FollowingHologram(Entity toFollow, double visibleDistance, boolean isVisibleByDefault, boolean seeThroughBlocks){
         super(
-                HologramsAPI.createHologram(
-                        RPUniverse.getInstance(),
-                        toFollow.getLocation().add(
-                                0,
-                                (RPUniverse.getInstance().getHoloAPI().getFollowHandler().calculateHeight(toFollow.getUniqueId())),
-                                0
-                        )
-                )
+                DHAPI.createHologram(UUID.randomUUID().toString(), toFollow.getLocation().clone().add(0, toFollow.getHeight(), 0))
         );
         following = toFollow;
         updateVisibility(visibleDistance, seeThroughBlocks);
@@ -36,7 +40,7 @@ public class FollowingHologram extends famiHologram {
         else
             updateVisibility(-1, seeThroughBlocks);
 
-        getHologram().getVisibilityManager().setVisibleByDefault(isVisibleByDefault);
+        getHologram().setDefaultVisibleState(isVisibleByDefault);
 
         api.getFollowHandler().queue.add(() -> api.getFollowHandler().addToList(toFollow.getUniqueId(), followingHologram));
         if(!isVisibleByDefault) {

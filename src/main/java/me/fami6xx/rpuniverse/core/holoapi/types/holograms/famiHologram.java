@@ -1,6 +1,6 @@
 package me.fami6xx.rpuniverse.core.holoapi.types.holograms;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import eu.decentsoftware.holograms.api.holograms.Hologram;
 import org.bukkit.Location;
 
 import java.util.UUID;
