@@ -15,7 +15,7 @@ public final class RPUniverse extends JavaPlugin {
         holoAPI = new HoloAPI();
 
         if(!holoAPI.enable()){
-            getLogger().severe("HolographicDisplays or ProtocolLib is not installed! Disabling plugin...");
+            getLogger().severe("DecentHolograms is not installed! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
         }
     }

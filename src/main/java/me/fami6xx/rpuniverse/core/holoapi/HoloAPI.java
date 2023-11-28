@@ -24,10 +24,9 @@ public final class HoloAPI implements Listener {
     }
 
     public boolean enable() {
-        if(!getPlugin().getServer().getPluginManager().isPluginEnabled("HolographicDisplays"))
+        if(!getPlugin().getServer().getPluginManager().isPluginEnabled("DecentHolograms"))
             return false;
-        if(!getPlugin().getServer().getPluginManager().isPluginEnabled("ProtocolLib"))
-            return false;
+
         this.followHandler = new FollowHoloHandler();
         this.VisibilityHandler = new VisibilityHoloHandler();
 
