@@ -60,7 +60,7 @@ public final class HoloAPI implements Listener {
         FollowingHologram holo = new FollowingHologram(event.getPlayer(), 5, false, false);
         for(int i = 0; i < random.nextInt(10); i++){
             if(random.nextBoolean()) {
-                new UpdatingLine(holo.getHologram().appendTextLine("")) {
+                new UpdatingLine(holo.addLine("")) {
                     @Override
                     public String update() {
                         return event.getPlayer().getHealth() + "";
@@ -68,7 +68,7 @@ public final class HoloAPI implements Listener {
                 };
             }else{
                 FollowingHologram boomRandom = new FollowingHologram(event.getPlayer(), 5, false, false);
-                boomRandom.getHologram().appendTextLine("Randomly created line");
+                boomRandom.addLine("Randomly created line");
             }
         }
     }
@@ -77,7 +77,7 @@ public final class HoloAPI implements Listener {
         FollowingHologram holo = new FollowingHologram(event.getEntity(), 5, false, false);
         for (int i = 0; i < random.nextInt(4); i++){
             if(random.nextBoolean()) {
-                new UpdatingLine(holo.getHologram().appendTextLine(""), 5) {
+                new UpdatingLine(holo.addLine(""), 5) {
                     @Override
                     public String update() {
                         try {
@@ -89,7 +89,7 @@ public final class HoloAPI implements Listener {
                 };
             }else {
                 FollowingHologram boomRandom = new FollowingHologram(event.getEntity(), 5, false, false);
-                boomRandom.getHologram().appendTextLine("Randomly created line");
+                boomRandom.addLine("Randomly created line");
             }
         }
     }
