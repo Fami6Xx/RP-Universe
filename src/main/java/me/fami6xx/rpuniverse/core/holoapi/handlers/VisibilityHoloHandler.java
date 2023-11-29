@@ -67,20 +67,20 @@ public class VisibilityHoloHandler extends famiHoloHandler {
                     for(famiHologram holo : arr) {
                         if (holo.getHologram().isDisabled()) {
                             // Has to be handled outside for loop otherwise it would throw ConcurrentModificationExc
-                            queue.add(() -> removeList(holo.getUUID()));
+                            holo.destroy();
                             continue;
                         }
                         if(holo.getHologram().getLocation() == null){
+                            holo.destroy();
                             continue;
                         }
 
                         if (!holo.getHologram().isDefaultVisibleState()) {
                             List<Player> prevVisible = getList(holo.getUUID());
-                            Collection<Player> nowVisible =
-                                    !(holo.getIntDistance() == -1) ?
-                                            holo.getHologram().getLocation().getNearbyPlayers(holo.getDistance())
-                                            :
-                                            holo.getHologram().getLocation().getNearbyPlayers(Bukkit.getViewDistance() * 16);
+                            Collection<Player> nowVisible = Bukkit.getOnlinePlayers().stream()
+                                    .filter(player -> player.getWorld().equals(holo.getHologram().getLocation().getWorld()))
+                                    .filter(player -> player.getLocation().distance(holo.getHologram().getLocation()) <= holo.getDistance())
+                                    .collect(Collectors.toList());
 
                             // Hide to everyone who left visible distance
                             prevVisible.forEach(player -> {
