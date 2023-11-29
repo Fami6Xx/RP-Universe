@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.UUID;
 
 public class FollowHoloHandler extends famiHoloHandler {
+    // ToDo: Adjust hologram height, seems kinda funky
     public double calculateHeight(UUID uuid){
         Entity entity = Bukkit.getEntity(uuid);
         if(entity == null)
@@ -48,20 +49,17 @@ public class FollowHoloHandler extends famiHoloHandler {
                     if(entity == null){
                         // Has to be handled outside for loop otherwise it would throw ConcurrentModificationExc
                         famiHolograms.forEach(famiHologram::destroy);
-                        queue.add(() -> clearList(uuid));
                         return;
                     }
 
                     if(!entity.isValid()){
                         if(!(entity instanceof Player)) {
                             famiHolograms.forEach(famiHologram::destroy);
-                            queue.add(() -> clearList(uuid));
                             return;
                         }
 
                         if(!((Player) entity).isOnline()){
                             famiHolograms.forEach(famiHologram::destroy);
-                            queue.add(() -> clearList(uuid));
                             return;
                         }
                     }
