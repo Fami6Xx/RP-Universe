@@ -11,6 +11,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class famiHoloHandler {
+    // ToDo: Maybe create a thread that would handle checking if holograms are deleted and then remove them from the list
+
     // This queue handles modification requests for anything from other threads
     public BlockingQueue<IExecuteQueue> queue = new LinkedBlockingQueue<>();
 
