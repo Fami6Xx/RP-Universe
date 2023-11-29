@@ -1,7 +1,6 @@
 package me.fami6xx.rpuniverse.core.holoapi.handlers;
 
 import me.fami6xx.rpuniverse.RPUniverse;
-import me.fami6xx.rpuniverse.core.holoapi.types.holograms.FollowingHologram;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.misc.raycast.RayCast;
 import me.fami6xx.rpuniverse.core.misc.raycast.RayCastResult;
