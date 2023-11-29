@@ -40,12 +40,4 @@ public class StaticHologram extends famiHologram {
     public Location getBaseLocation(){
         return getHologram().getLocation().clone();
     }
-
-    @Override
-    public void destroy() {
-        api.getVisibilityHandler().queue.add(
-                () -> api.getVisibilityHandler().removeFromList(getUUID(), this)
-        );
-        getHologram().delete();
-    }
 }

@@ -62,13 +62,6 @@ public class FollowingHologram extends famiHologram {
     }
 
     @Override
-    public void destroy(){
-        api.getFollowHandler().queue.add(() -> api.getFollowHandler().removeFromList(followingUUID, followingHologram));
-        api.getVisibilityHandler().queue.add(() -> api.getVisibilityHandler().removeFromList(followingUUID, followingHologram));
-        getHologram().delete();
-    }
-
-    @Override
     public String toString(){
         return "FollowingHologram [uuid: " + getUUID() + ", canSeeThrough:" + canSeeThroughBlocks() + ", maxVisibleDistance:" + getDistance() + ", " + getHologram().toString() + "]";
     }

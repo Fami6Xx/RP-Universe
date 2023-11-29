@@ -43,9 +43,9 @@ public abstract class famiHoloHandler {
 
     public void removeFromList(UUID uuid, famiHologram holo){
         ArrayList<famiHologram> l = getList(uuid);
-        if(l.contains(holo) || l.size() > 0)
+        if(l.contains(holo) || !l.isEmpty())
             l.remove(holo);
-        if(l.size() != 0)
+        if(!l.isEmpty())
             map.replace(uuid, l);
         else
             map.remove(uuid);

@@ -38,29 +38,26 @@ public class FollowHoloHandler extends famiHoloHandler {
                     // Check entity
                     if(entity == null){
                         // Has to be handled outside for loop otherwise it would throw ConcurrentModificationExc
-                        queue.add(
-                                () -> clearList(uuid)
-                        );
+                        famiHolograms.forEach(famiHologram::destroy);
+                        queue.add(() -> clearList(uuid));
                         return;
                     }
 
                     if(!entity.isValid()){
                         if(!(entity instanceof Player)) {
-                            queue.add(
-                                    () -> clearList(uuid)
-                            );
+                            famiHolograms.forEach(famiHologram::destroy);
+                            queue.add(() -> clearList(uuid));
                             return;
                         }
 
                         if(!((Player) entity).isOnline()){
-                            queue.add(
-                                    () -> clearList(uuid)
-                            );
+                            famiHolograms.forEach(famiHologram::destroy);
+                            queue.add(() -> clearList(uuid));
                             return;
                         }
                     }
 
-                    double height = entity.getHeight() + 0.5;
+                    double height = calculateHeight(uuid);
 
                     famiHologram[] arr = famiHolograms.toArray(new famiHologram[0]);
 
