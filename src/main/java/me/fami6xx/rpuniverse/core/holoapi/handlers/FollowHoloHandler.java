@@ -6,6 +6,7 @@ import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -14,13 +15,21 @@ import java.util.UUID;
 
 public class FollowHoloHandler extends famiHoloHandler {
     public double calculateHeight(UUID uuid){
-        if(Bukkit.getEntity(uuid) == null)
+        Entity entity = Bukkit.getEntity(uuid);
+        if(entity == null)
             return 0;
-        double[] height = {Bukkit.getEntity(uuid).getHeight() + 0.5};
 
-        getMap().get(uuid).forEach(holo -> height[0] += holo.getHologram().size() * 0.25);
+        double height = 0;
 
-        return height[0];
+        if(entity instanceof Player){
+            height = entity.getHeight() + 0.5;
+        } else if(entity instanceof LivingEntity){
+            height = entity.getHeight() + 0.25;
+        }else{
+            height = entity.getHeight() + 0.35;
+        }
+
+        return height;
     }
 
     @Override
