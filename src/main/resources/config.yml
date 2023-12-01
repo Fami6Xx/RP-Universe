@@ -1,0 +1,11 @@
+# RPUniverse config file
+# This file contains all the settings for RPUniverse
+# If you don't know what you are doing, don't touch anything!
+# If you have any questions, please contact me on discord: /* discord link */
+
+# For any text, color codes are supported (use & instead of §) and RichText is not currently supported
+
+# The prefix for all messages (color codes are supported, RichText is not currently supported)
+prefix: '&8[&6RPUniverse&8] &7'
+
+
