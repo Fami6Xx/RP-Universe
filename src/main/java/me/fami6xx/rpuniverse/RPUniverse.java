@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse;
 
 import me.fami6xx.rpuniverse.core.DataSystem;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
+import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 public final class RPUniverse extends JavaPlugin {
     private DataSystem dataSystem;
     private HoloAPI holoAPI;
+    private LanguageHandler languageHandler;
 
     private FileConfiguration config;
 
@@ -36,11 +38,11 @@ public final class RPUniverse extends JavaPlugin {
 
             if(configYml.length == 0){
                 this.saveDefaultConfig();
-                config = this.getConfig();
-            }else{
-                config = this.getConfig();
             }
+            config = this.getConfig();
         }
+
+        languageHandler = new LanguageHandler(this);
     }
 
     @Override
@@ -51,12 +53,20 @@ public final class RPUniverse extends JavaPlugin {
 
     }
 
+    public static LanguageHandler getLanguageHandler(){
+        return getInstance().languageHandler;
+    }
+
     public FileConfiguration getConfiguration(){
         return config;
     }
 
+    public static String format(String message){
+        return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
     public static String getPrefix() {
-        return ChatColor.translateAlternateColorCodes('&', getInstance().getConfiguration().getString("prefix"));
+        return format(getInstance().getConfiguration().getString("prefix"));
     }
 
     public DataSystem getDataSystem() {
