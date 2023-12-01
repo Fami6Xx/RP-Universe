@@ -68,7 +68,7 @@ public final class HoloAPI implements Listener {
                 };
             }else{
                 FollowingHologram boomRandom = new FollowingHologram(event.getPlayer(), 5, false, false);
-                boomRandom.addLine("Randomly created line");
+                boomRandom.addLine(RPUniverse.format(RPUniverse.getLanguageHandler().exampleMessageInHolograms));
             }
         }
     }
@@ -89,7 +89,7 @@ public final class HoloAPI implements Listener {
                 };
             }else {
                 FollowingHologram boomRandom = new FollowingHologram(event.getEntity(), 5, false, false);
-                boomRandom.addLine("Randomly created line");
+                boomRandom.addLine(RPUniverse.format(RPUniverse.getLanguageHandler().exampleMessageInHolograms));
             }
         }
     }
