@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse;
 
 import me.fami6xx.rpuniverse.core.DataSystem;
+import me.fami6xx.rpuniverse.core.commands.DoCommand;
 import me.fami6xx.rpuniverse.core.commands.MeCommand;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
@@ -46,6 +47,7 @@ public final class RPUniverse extends JavaPlugin {
         languageHandler = new LanguageHandler(this);
 
         this.getCommand("me").setExecutor(new MeCommand());
+        this.getCommand("do").setExecutor(new DoCommand());
     }
 
     @Override

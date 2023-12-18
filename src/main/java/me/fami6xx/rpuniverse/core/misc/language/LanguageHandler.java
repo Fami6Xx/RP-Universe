@@ -17,6 +17,11 @@ public class LanguageHandler {
     public String meCommandMessage = "&7* &e{player} &c{message}";
     public String meCommandHologram = "&7* &c{message} &7*";
 
+    // DO COMMAND MESSAGES
+    public String errorDoCommandUsage = "&cUsage: /do <message>";
+    public String doCommandMessage = "&7* &e{player} &e{message}";
+    public String doCommandHologram = "&7* &e{message} &7*";
+
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";
 

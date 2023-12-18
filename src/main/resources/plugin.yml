@@ -9,3 +9,7 @@ commands:
     description: Sends a message acting as a animation
     usage: /<command> <message>
     permission: rpu.me
+  do:
+    description: Sends a message acting as some kind of player status
+    usage: /<command> <message>
+    permission: rpu.do
