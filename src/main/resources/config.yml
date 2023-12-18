@@ -9,7 +9,11 @@
 # The prefix for all messages (color codes are supported, RichText is not currently supported)
 prefix: '&8[&6RPUniverse&8] &7'
 
-# The range in which players can see each others holograms and messages
-range: 50
+# The settings for the holograms
+# range: The range in which the holograms are visible (in blocks)
+# timeAlive: The time in seconds the holograms are visible after they are created (For /me, /do etc..)
+holograms:
+    range: 50
+    timeAlive: 10
 
 
