@@ -107,6 +107,18 @@ public abstract class famiHologram {
     }
 
     /**
+     * Hides hologram from player
+     * @param player Player to hide hologram from
+     */
+    public void hide(Player player, boolean force){
+        if(hologram.isDisabled())
+            return;
+
+        hologram.getPages().forEach(page -> page.getLines().forEach(line -> line.hide(player)));
+        currentlyVisiblePlayers.remove(player);
+    }
+
+    /**
      * Checks if hologram is visible to player
      * @param player Player to check visibility for
      * @return true if hologram is visible to player, false otherwise
