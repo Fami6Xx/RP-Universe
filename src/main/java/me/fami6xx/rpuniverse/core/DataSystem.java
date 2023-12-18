@@ -77,6 +77,9 @@ public class DataSystem {
         data = dataHandler.loadPlayerData(uuid.toString());
         if (data != null) {
             playerDataMap.put(uuid, data);
+        }else {
+            data = new PlayerData();
+            playerDataMap.put(uuid, data);
         }
         return data;
     }
