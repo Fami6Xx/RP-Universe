@@ -8,8 +8,17 @@ import java.io.File;
 import java.lang.reflect.Field;
 
 public class LanguageHandler {
-    public String exampleMessageInHolograms = "&cThis is an example message in holograms";
-    public String exampleMessageOnJoin = "&cThis is an example message on join";
+    // GENERAL MESSAGES
+    public String errorOnlyPlayersCanUseThisCommandMessage = "&cOnly players can use this command!";
+    public String errorYouDontHavePermissionToUseThisCommandMessage = "&cYou don't have permission to use this command!";
+
+    // ME COMMAND MESSAGES
+    public String errorMeCommandUsage = "&cUsage: /me <message>";
+    public String meCommandMessage = "&7* &e{player} &c{message}";
+    public String meCommandHologram = "&7* &c{message} &7*";
+
+    // CONFIG MESSAGES
+    public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";
 
     private final JavaPlugin plugin;
     private FileConfiguration languageConfig;
