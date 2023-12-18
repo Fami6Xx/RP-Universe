@@ -9,4 +9,7 @@
 # The prefix for all messages (color codes are supported, RichText is not currently supported)
 prefix: '&8[&6RPUniverse&8] &7'
 
+# The range in which players can see each others holograms and messages
+range: 50
+
 
