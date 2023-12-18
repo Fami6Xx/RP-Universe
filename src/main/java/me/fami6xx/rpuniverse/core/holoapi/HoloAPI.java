@@ -3,18 +3,10 @@ package me.fami6xx.rpuniverse.core.holoapi;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.handlers.FollowHoloHandler;
 import me.fami6xx.rpuniverse.core.holoapi.handlers.VisibilityHoloHandler;
-import me.fami6xx.rpuniverse.core.holoapi.types.holograms.FollowingHologram;
-import me.fami6xx.rpuniverse.core.holoapi.types.lines.UpdatingLine;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.util.Random;
 
-public final class HoloAPI implements Listener {
-    // ToDo: Remake from holographic displays to decent holograms
+public final class HoloAPI {
     Random random = new Random();
     FollowHoloHandler followHandler;
     VisibilityHoloHandler VisibilityHandler;
@@ -33,8 +25,6 @@ public final class HoloAPI implements Listener {
         this.followHandler.start();
         this.VisibilityHandler.start();
 
-        getPlugin().getServer().getPluginManager().registerEvents(this, getPlugin());
-
         return true;
 
     }
@@ -43,9 +33,6 @@ public final class HoloAPI implements Listener {
         this.followHandler.stop();
         this.VisibilityHandler.stop();
 
-        PlayerLoginEvent.getHandlerList().unregister(this);
-        EntitySpawnEvent.getHandlerList().unregister(this);
-
         return true;
     }
 
@@ -53,44 +40,4 @@ public final class HoloAPI implements Listener {
         return this.followHandler;
     }
     public VisibilityHoloHandler getVisibilityHandler(){return this.VisibilityHandler;}
-
-    // Methods below are there only for testing purposes
-    @EventHandler
-    public void onConnect(PlayerLoginEvent event){
-        FollowingHologram holo = new FollowingHologram(event.getPlayer(), 5, false, false);
-        for(int i = 0; i < random.nextInt(10); i++){
-            if(random.nextBoolean()) {
-                new UpdatingLine(holo.addLine("")) {
-                    @Override
-                    public String update() {
-                        return event.getPlayer().getHealth() + "";
-                    }
-                };
-            }else{
-                FollowingHologram boomRandom = new FollowingHologram(event.getPlayer(), 5, false, false);
-                boomRandom.addLine(RPUniverse.format(RPUniverse.getLanguageHandler().exampleMessageInHolograms));
-            }
-        }
-    }
-    @EventHandler
-    public void onBob(EntitySpawnEvent event){
-        FollowingHologram holo = new FollowingHologram(event.getEntity(), 5, false, false);
-        for (int i = 0; i < random.nextInt(4); i++){
-            if(random.nextBoolean()) {
-                new UpdatingLine(holo.addLine(""), 5) {
-                    @Override
-                    public String update() {
-                        try {
-                            return ((LivingEntity) event.getEntity()).getHealth() + "";
-                        } catch (Exception exc) {
-                            return "Not Living Entity";
-                        }
-                    }
-                };
-            }else {
-                FollowingHologram boomRandom = new FollowingHologram(event.getEntity(), 5, false, false);
-                boomRandom.addLine(RPUniverse.format(RPUniverse.getLanguageHandler().exampleMessageInHolograms));
-            }
-        }
-    }
 }
