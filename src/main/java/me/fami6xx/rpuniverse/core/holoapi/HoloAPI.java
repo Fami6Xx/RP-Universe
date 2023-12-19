@@ -4,10 +4,7 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.handlers.FollowHoloHandler;
 import me.fami6xx.rpuniverse.core.holoapi.handlers.VisibilityHoloHandler;
 
-import java.util.Random;
-
 public final class HoloAPI {
-    Random random = new Random();
     FollowHoloHandler followHandler;
     VisibilityHoloHandler VisibilityHandler;
 
