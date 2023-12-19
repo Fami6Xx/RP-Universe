@@ -29,3 +29,10 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Prepare for upload
+      run: mkdir staging && cp target/*.jar staging
+    - name: Upload as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Package
+        path: staging
