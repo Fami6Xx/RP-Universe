@@ -36,3 +36,10 @@ jobs:
       with:
         name: Package
         path: staging
+    - name: Upload as release
+      uses: Shopify/upload-to-release@v1
+      with:
+        name: RPUniverse
+        path: staging
+        repo-token: ${{secrets.TOKEN}}
+        content-type: text/plain
