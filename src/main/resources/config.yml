@@ -7,7 +7,7 @@
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 
 # The prefix for all messages (color codes are supported, RichText is not currently supported)
-prefix: '&8[&6RPUniverse&8] &7'
+prefix: '&8[&6RPUniverse&8]'
 
 # The settings for the holograms
 # range: The range in which the holograms are visible (in blocks)
