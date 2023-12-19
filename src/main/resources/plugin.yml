@@ -10,6 +10,14 @@ commands:
     usage: /<command> <message>
     permission: rpu.me
   do:
-    description: Sends a message acting as some kind of player status
+    description: Sends a message acting as some kind of temporary player status
     usage: /<command> <message>
     permission: rpu.do
+  status:
+    description: Sends a message acting as some kind of player status
+    usage: /<command> <message>
+    permission: rpu.status
+  stopstatus:
+    description: Stops the status
+    usage: /<command>
+    permission: rpu.stopstatus

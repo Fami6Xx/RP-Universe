@@ -22,6 +22,14 @@ public class LanguageHandler {
     public String doCommandMessage = "&7* &e{player} &e{message}";
     public String doCommandHologram = "&7* &e{message} &7*";
 
+    // STATUS AND STOP STATUS MESSAGES
+    public String errorStatusCommandUsage = "&cUsage: /status <message>";
+    public String errorStatusAlreadySet = "&cYou already have an active status";
+    public String errorNoStatusSet = "&cYou don't have any active status";
+    public String statusCommandHologram = "&7* &b{message} &7*";
+    public String statusCommandMessage = "&cYou have started an status.";
+    public String stopStatusCommandMessage = "&cYou stopped your status!";
+
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";
 
