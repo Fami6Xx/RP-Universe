@@ -31,15 +31,15 @@ jobs:
       run: mvn -B package --file pom.xml
     - name: Prepare for upload
       run: mkdir staging && cp target/*.jar staging
+    - name: Tar the file
+      run: tar -czvf release.tar.gz staging
     - name: Upload as artifact
       uses: actions/upload-artifact@v3
       with:
         name: Package
         path: staging
     - name: Upload as release
-      uses: Shopify/upload-to-release@v2.0.0
+      uses: diamondburned/action-upload-release@main
       with:
-        name: RPUniverse
-        path: staging
-        repo-token: ${{secrets.TOKEN}}
-        content-type: text/plain
+        files: release.tar.gz
+    
