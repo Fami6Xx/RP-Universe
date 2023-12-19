@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse;
 import me.fami6xx.rpuniverse.core.DataSystem;
 import me.fami6xx.rpuniverse.core.commands.DoCommand;
 import me.fami6xx.rpuniverse.core.commands.MeCommand;
+import me.fami6xx.rpuniverse.core.commands.StatusCommand;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import org.bukkit.ChatColor;
@@ -48,6 +49,8 @@ public final class RPUniverse extends JavaPlugin {
 
         this.getCommand("me").setExecutor(new MeCommand());
         this.getCommand("do").setExecutor(new DoCommand());
+        this.getCommand("status").setExecutor(new StatusCommand());
+        this.getCommand("stopstatus").setExecutor(new StatusCommand());
     }
 
     @Override

@@ -74,6 +74,7 @@ public class StatusCommand implements CommandExecutor {
             return true;
         }
 
+        System.out.println("Unknown command: " + command.getName());
         return true;
     }
 }
