@@ -1,11 +1,11 @@
-package me.fami6xx.rpuniverse.core.commands.misc;
+package me.fami6xx.rpuniverse.core.commands;
 
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public class StatusDataHandler {
+class StatusDataHandler {
     private static HashMap<UUID, famiHologram> statusData = new HashMap<>();
 
     public static void addStatusData(UUID uuid, famiHologram hologram){

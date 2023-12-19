@@ -1,7 +1,6 @@
 package me.fami6xx.rpuniverse.core.commands;
 
 import me.fami6xx.rpuniverse.RPUniverse;
-import me.fami6xx.rpuniverse.core.commands.misc.StatusDataHandler;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.FollowingHologram;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.command.Command;
