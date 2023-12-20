@@ -21,6 +21,7 @@ public class DataSystem {
         this.dataHandler = selectDataHandler();
         this.playerDataMap = new ConcurrentHashMap<>();
         this.saveQueue = new ConcurrentLinkedQueue<>();
+        this.dataHandler.startUp();
         scheduleSaveTask();
     }
 
