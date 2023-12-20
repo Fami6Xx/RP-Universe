@@ -5,23 +5,28 @@ import com.google.gson.GsonBuilder;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 
+import java.util.logging.Logger;
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class JSONDataHandler implements IDataHandler {
     private Gson gson;
-    private final Path dataDirectory = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/playerdata");
+    private final Path dataDirectory = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/playerdata/");
+    private final Logger logger =  Logger.getLogger(JSONDataHandler.class.getName());
 
     @Override
     public boolean startUp() {
         try {
             this.gson = new GsonBuilder().setPrettyPrinting().create();
-            Files.createDirectories(dataDirectory);
+            File dataDir = new File(dataDirectory.toUri());
+            if(!dataDir.exists()){
+                return dataDir.mkdirs();
+            }
+
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.severe(e.getMessage());
             return false;
         }
     }
@@ -42,7 +47,7 @@ public class JSONDataHandler implements IDataHandler {
         try (Reader reader = new FileReader(playerFilePath.toFile())) {
             return gson.fromJson(reader, PlayerData.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe(e.getMessage());
             return null;
         }
     }
@@ -54,7 +59,7 @@ public class JSONDataHandler implements IDataHandler {
             gson.toJson(data, writer);
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe(e.getMessage());
             return false;
         }
     }
