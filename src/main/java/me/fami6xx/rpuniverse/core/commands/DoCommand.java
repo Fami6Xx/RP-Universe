@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 
 public class DoCommand implements CommandExecutor {
+    // ToDo: Add cap for how long the message can be
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
