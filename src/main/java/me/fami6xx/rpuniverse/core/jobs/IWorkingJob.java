@@ -15,7 +15,7 @@ public interface IWorkingJob extends IMoneyJob {
      *
      * @param step the working step to add
      */
-    void adminAddWorkingStep(String step);
+    void addWorkingStep(String step);
 
     /**
      * Removes a working step from the job.
@@ -23,7 +23,7 @@ public interface IWorkingJob extends IMoneyJob {
      * @param step the working step to remove
      * @return true if the step was successfully removed, false otherwise
      */
-    boolean adminRemoveWorkingStep(String step);
+    boolean removeWorkingStep(String step);
 
     /**
      * Retrieves a list of all the working steps for a job.
