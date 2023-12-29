@@ -12,6 +12,16 @@ public class LanguageHandler {
     public String errorOnlyPlayersCanUseThisCommandMessage = "&cOnly players can use this command!";
     public String errorYouDontHavePermissionToUseThisCommandMessage = "&cYou don't have permission to use this command!";
 
+    // MENU THINGS
+    public String closeItemDisplayName = "&cClose";
+    public String closeItemLore = "&7Click to close the menu";
+    public String nextPageItemDisplayName = "&aNext Page";
+    public String nextPageItemLore = "&7Click to go to the next page";
+    public String previousPageItemDisplayName = "&aPrevious Page";
+    public String previousPageItemLore = "&7Click to go to the previous page";
+    public String errorMenuAlreadyOnLastPage = "&cYou are already on the last page!";
+    public String errorMenuAlreadyOnFirstPage = "&cYou are already on the first page!";
+
     // ME COMMAND MESSAGES
     public String errorMeCommandUsage = "&cUsage: /me <message>";
     public String meCommandMessage = "&7* &e{player} &c{message}";

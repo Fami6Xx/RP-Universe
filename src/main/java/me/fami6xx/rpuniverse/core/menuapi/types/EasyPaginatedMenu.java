@@ -28,18 +28,6 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
     public abstract int getCollectionSize();
 
     /**
-     * Gets error message
-     * @return Error message that the player is already on first page
-     */
-    public abstract String getFirstPageErrorMessage();
-
-    /**
-     * Gets error message
-     * @return Error message that the player is already on last page and can't go any further
-     */
-    public abstract String getLastPageErrorMessage();
-
-    /**
      * Handles click on your item
      * @param e Previously handled InventoryClickEvent
      */
@@ -49,24 +37,28 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
     public void handleMenu(InventoryClickEvent e){
         Player p = (Player) e.getWhoClicked();
         String name = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-        String closeName = ChatColor.stripColor(FamiUtils.format(RPUniverse.getLanguageHandler().));
+
+        String closeName = ChatColor.stripColor(FamiUtils.format(RPUniverse.getLanguageHandler().closeItemDisplayName));
+        String nextName = ChatColor.stripColor(FamiUtils.format(RPUniverse.getLanguageHandler().nextPageItemDisplayName));
+        String previousName = ChatColor.stripColor(FamiUtils.format(RPUniverse.getLanguageHandler().previousPageItemDisplayName));
+
         if(e.getCurrentItem().getType().equals(Material.BARRIER)
-                && name.equalsIgnoreCase("Close")){
+                && name.equalsIgnoreCase(closeName)){
             p.closeInventory();
         }else if(e.getCurrentItem().getType().equals(Material.STONE_BUTTON)){
-            if(name.equalsIgnoreCase("Left")){
+            if(name.equalsIgnoreCase(previousName)){
                 if(page == 0){
-                    p.sendMessage(getFirstPageErrorMessage());
+                    p.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorMenuAlreadyOnFirstPage));
                 }else{
                     page--;
                     super.open();
                 }
-            }else if(name.equalsIgnoreCase("Right")){
+            }else if(name.equalsIgnoreCase(nextName)){
                 if(index + 1 < getCollectionSize()){
                     page++;
                     super.open();
                 }else{
-                    p.sendMessage(getLastPageErrorMessage());
+                    p.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorMenuAlreadyOnLastPage));
                 }
             }
         }
