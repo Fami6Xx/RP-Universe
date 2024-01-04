@@ -22,6 +22,10 @@ public class LanguageHandler {
     public String errorMenuAlreadyOnLastPage = "&cYou are already on the last page!";
     public String errorMenuAlreadyOnFirstPage = "&cYou are already on the first page!";
 
+    // CREATE JOB COMMAND MESSAGES
+    public String errorYouAreAlreadyCreatingAJobMessage = "&cYou are already creating a job!";
+public String createJobCommandTypeNameMessage = "&aType the name of the job in chat. Type &ccancel &ato cancel.";
+
     // ME COMMAND MESSAGES
     public String errorMeCommandUsage = "&cUsage: /me <message>";
     public String meCommandMessage = "&7* &e{player} &c{message}";

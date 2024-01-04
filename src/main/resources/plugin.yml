@@ -21,3 +21,7 @@ commands:
     description: Stops the status
     usage: /<command>
     permission: rpu.stopstatus
+  createjob:
+    description: Starts the process of creating a job
+    usage: /<command>
+    permission: rpu.createjob

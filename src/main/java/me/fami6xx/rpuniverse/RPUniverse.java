@@ -5,9 +5,11 @@ import me.fami6xx.rpuniverse.core.commands.DoCommand;
 import me.fami6xx.rpuniverse.core.commands.MeCommand;
 import me.fami6xx.rpuniverse.core.commands.StatusCommand;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
+import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -16,6 +18,7 @@ public final class RPUniverse extends JavaPlugin {
     private DataSystem dataSystem;
     private HoloAPI holoAPI;
     private LanguageHandler languageHandler;
+    private CreateJobStarter createJobStarter;
 
     private FileConfiguration config;
 
@@ -51,14 +54,18 @@ public final class RPUniverse extends JavaPlugin {
         this.getCommand("do").setExecutor(new DoCommand());
         this.getCommand("status").setExecutor(new StatusCommand());
         this.getCommand("stopstatus").setExecutor(new StatusCommand());
+
+        this.createJobStarter = new CreateJobStarter(this);
+        this.createJobStarter.start();
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        dataSystem.shutdown();
-        holoAPI.disable();
-
+        HandlerList.unregisterAll(this);
+        this.dataSystem.shutdown();
+        this.holoAPI.disable();
+        this.createJobStarter.stop();
     }
 
     public static LanguageHandler getLanguageHandler(){
