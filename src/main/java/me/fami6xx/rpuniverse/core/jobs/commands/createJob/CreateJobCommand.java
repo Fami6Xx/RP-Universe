@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -66,10 +67,8 @@ public class CreateJobCommand implements CommandExecutor, Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void onPlayerLogout(PlayerQuitEvent event){
+    public void onPlayerLogin(PlayerJoinEvent event){
         Player player = event.getPlayer();
-
-        // ToDo: When disconnecting with a title shown it will stay there forever, maybe skip titles all together?
 
         if(currentlyCreating.contains(player)){
             removeFromCurrentlyCreating(player);
