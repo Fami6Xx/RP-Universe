@@ -24,7 +24,11 @@ public class LanguageHandler {
 
     // CREATE JOB COMMAND MESSAGES
     public String errorYouAreAlreadyCreatingAJobMessage = "&cYou are already creating a job!";
-public String createJobCommandTypeNameMessage = "&aType the name of the job in chat. Type &ccancel &ato cancel.";
+    public String createJobCommandCancelMessage = "&cYou cancelled the job creation!";
+    public String createJobCommandTypeNameMessage = "&7Type the name of the job in chat. Type &ccancel &7to cancel.";
+    public String createJobCommandBossMenuLocationMessage = "&7Go to the location you want the boss menu to be and type &chere&7. Type &ccancel &7to cancel.";
+    public String createJobCommandJobCreatedMessage = "&7Job created! You can now edit it in the /jobs menu.";
+
 
     // ME COMMAND MESSAGES
     public String errorMeCommandUsage = "&cUsage: /me <message>";
