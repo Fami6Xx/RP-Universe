@@ -1,11 +1,11 @@
 package me.fami6xx.rpuniverse.core.jobs.classes;
 
-import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -31,7 +31,7 @@ public class WorkingStep {
      * @param amountOfItemGiven The amount of the item that the player will receive when he does the step.
      * @param neededPermissionLevel The permission level that the player must have to do the step.
      */
-    public WorkingStep(Location workingLocation, int timeForStep, ItemStack itemNeeded, int amountOfItemNeeded, ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel){
+    public WorkingStep(@Nonnull Location workingLocation, int timeForStep, ItemStack itemNeeded, int amountOfItemNeeded, @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel){
         this.workingLocation = workingLocation;
         this.timeForStep = timeForStep;
         this.itemNeeded = itemNeeded;
@@ -49,7 +49,7 @@ public class WorkingStep {
      * @param amountOfItemGiven The amount of the item that the player will receive when he does the step.
      * @param neededPermissionLevel The permission level that the player must have to do the step.
      */
-    public WorkingStep(Location workingLocation, int timeForStep, ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel){
+    public WorkingStep(@Nonnull Location workingLocation, int timeForStep,@Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel){
         this.workingLocation = workingLocation;
         this.timeForStep = timeForStep;
         this.itemNeeded = null;
@@ -91,7 +91,7 @@ public class WorkingStep {
      *
      * @param workingLocation The location where the player must be to perform the step.
      */
-    public void setWorkingLocation(Location workingLocation) {
+    public void setWorkingLocation(@Nonnull Location workingLocation) {
         this.workingLocation = workingLocation;
     }
 
@@ -163,7 +163,7 @@ public class WorkingStep {
      *
      * @param itemGiven The item that the player will receive. (Cannot be null)
      */
-    public void setItemGiven(@NotNull ItemStack itemGiven) {
+    public void setItemGiven(@Nonnull ItemStack itemGiven) {
         this.itemGiven = itemGiven;
     }
 
