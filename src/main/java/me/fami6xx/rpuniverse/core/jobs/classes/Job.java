@@ -1,15 +1,17 @@
 package me.fami6xx.rpuniverse.core.jobs.classes;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * AJob is an abstract class that represents a job in a game.
  * It contains methods for managing positions, working steps, job bank,
  * and player assignments.
  */
-public abstract class AJob {
+public class Job {
     private Map<UUID, Position> playerPositions;
     private List<WorkingStep> workingSteps;
     private List<Position> jobPositions;
@@ -21,7 +23,7 @@ public abstract class AJob {
     /**
      * Creates a new AJob instance that is empty.
      */
-    public AJob() {
+    public Job() {
         playerPositions = new HashMap<>();
         workingSteps = new ArrayList<>();
         jobPositions = new ArrayList<>();
@@ -34,7 +36,7 @@ public abstract class AJob {
      * @param jobBank          The initial amount of money in the job bank. Must be a positive integer.
      * @param bossMenuLocation The location of the boss menu.
      */
-    public AJob(String jobName, int jobBank, Location bossMenuLocation) {
+    public Job(String jobName, int jobBank, Location bossMenuLocation) {
         this();
         this.jobName = jobName;
         this.jobBank = jobBank;
@@ -50,7 +52,7 @@ public abstract class AJob {
      * @param jobPositions     The list of positions associated with the job.
      * @param workingSteps     The list of working steps associated with the job.
      */
-    public AJob(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions, List<WorkingStep> workingSteps) {
+    public Job(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions, List<WorkingStep> workingSteps) {
         this(jobName, jobBank, bossMenuLocation);
         this.jobPositions = jobPositions;
         this.workingSteps = workingSteps;
@@ -66,7 +68,7 @@ public abstract class AJob {
      * @param workingSteps     The list of working steps associated with the job.
      * @param playerPositions  The map of player UUID to their assigned position.
      */
-    public AJob(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions, List<WorkingStep> workingSteps, Map<UUID, Position> playerPositions) {
+    public Job(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions, List<WorkingStep> workingSteps, Map<UUID, Position> playerPositions) {
         this(jobName, jobBank, bossMenuLocation, jobPositions, workingSteps);
         this.playerPositions = playerPositions;
     }
@@ -265,12 +267,74 @@ public abstract class AJob {
      *
      * @param player The player for whom to open the boss menu.
      */
-    public abstract void openBossMenu(Player player);
+    public void openBossMenu(Player player){
+        // ToDo: Boss menu code
+    }
+
+    public static Job fromString(String s) {
+        try {
+            Job job = new Job();
+
+            // Remove the outer Job{ and the closing brace
+            s = s.substring(4, s.length() - 1);
+
+            // Split the string by '}, ' to separate the fields
+            String[] fields = s.split("}, ", -1);
+
+            // Parsing playerPositions
+            String playerPositionsString = fields[0].substring(fields[0].indexOf('{') + 1);
+            Arrays.stream(playerPositionsString.split(","))
+                    .filter(pair -> !pair.isEmpty())
+                    .forEach(pair -> {
+                        String[] keyValue = pair.split(":");
+                        UUID uuid = UUID.fromString(keyValue[0]);
+                        Position position = Position.fromString(keyValue[1]);
+                        job.playerPositions.put(uuid, position);
+                    });
+
+            // Parsing workingSteps
+            String workingStepsString = fields[1].substring(fields[1].indexOf('[') + 1, fields[1].indexOf(']'));
+            job.workingSteps = Arrays.stream(workingStepsString.split(","))
+                    .filter(str -> !str.isEmpty())
+                    .map(WorkingStep::fromString)
+                    .collect(Collectors.toList());
+
+            // Parsing jobPositions
+            String jobPositionsString = fields[2].substring(fields[2].indexOf('[') + 1, fields[2].indexOf(']'));
+            job.jobPositions = Arrays.stream(jobPositionsString.split(","))
+                    .filter(str -> !str.isEmpty())
+                    .map(Position::fromString)
+                    .collect(Collectors.toList());
+
+            // Parsing jobName, jobBank, and bossMenuLocation
+            String[] remainingFields = fields[3].split(", ");
+            job.jobName = remainingFields[0].split("'")[1];
+            job.jobBank = Integer.parseInt(remainingFields[1].split("=")[1]);
+
+            // Parsing bossMenuLocation
+            String locationString = remainingFields[2].substring(remainingFields[2].indexOf('=') + 1);
+            String[] locParts = locationString.split(",");
+            job.bossMenuLocation = new Location(
+                    Bukkit.getWorld(locParts[0]),
+                    Double.parseDouble(locParts[1]),
+                    Double.parseDouble(locParts[2]),
+                    Double.parseDouble(locParts[3]),
+                    Float.parseFloat(locParts[4]),
+                    Float.parseFloat(locParts[5])
+            );
+
+            return job;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("AJob{");
+        StringBuilder sb = new StringBuilder("Job{");
 
+        // Serialize playerPositions
         sb.append("playerPositions={");
         for (Map.Entry<UUID, Position> entry : playerPositions.entrySet()) {
             sb.append(entry.getKey()).append(":").append(entry.getValue().toString()).append(",");
@@ -278,6 +342,7 @@ public abstract class AJob {
         if (!playerPositions.isEmpty()) sb.deleteCharAt(sb.length() - 1); // Remove the last comma
         sb.append("}, ");
 
+        // Serialize workingSteps
         sb.append("workingSteps=[");
         for (WorkingStep step : workingSteps) {
             sb.append(step.toString()).append(",");
@@ -285,6 +350,7 @@ public abstract class AJob {
         if (!workingSteps.isEmpty()) sb.deleteCharAt(sb.length() - 1); // Remove the last comma
         sb.append("], ");
 
+        // Serialize jobPositions
         sb.append("jobPositions=[");
         for (Position position : jobPositions) {
             sb.append(position.toString()).append(",");
@@ -292,13 +358,24 @@ public abstract class AJob {
         if (!jobPositions.isEmpty()) sb.deleteCharAt(sb.length() - 1); // Remove the last comma
         sb.append("], ");
 
+        // Serialize jobName and jobBank
         sb.append("jobName='").append(jobName).append("', ");
-        sb.append("jobBank=").append(jobBank);
+        sb.append("jobBank=").append(jobBank).append(", ");
+
+        // Serialize bossMenuLocation
+        if (bossMenuLocation != null) {
+            sb.append("bossMenuLocation=").append(bossMenuLocation.getWorld().getName()).append(",")
+                    .append(bossMenuLocation.getX()).append(",")
+                    .append(bossMenuLocation.getY()).append(",")
+                    .append(bossMenuLocation.getZ()).append(",")
+                    .append(bossMenuLocation.getYaw()).append(",")
+                    .append(bossMenuLocation.getPitch());
+        } else {
+            sb.append("bossMenuLocation=null");
+        }
 
         sb.append("}");
 
         return sb.toString();
     }
-
-    // ToDo: Implement fromString method
 }
