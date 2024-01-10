@@ -1,8 +1,14 @@
 package me.fami6xx.rpuniverse.core.jobs.classes;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import java.util.*;
 
+/**
+ * AJob is an abstract class that represents a job in a game.
+ * It contains methods for managing positions, working steps, job bank,
+ * and player assignments.
+ */
 public abstract class AJob {
     private Map<UUID, Position> playerPositions;
     private List<WorkingStep> workingSteps;
@@ -10,11 +16,59 @@ public abstract class AJob {
 
     private String jobName;
     private int jobBank = 0;
+    private Location bossMenuLocation;
 
+    /**
+     * Creates a new AJob instance that is empty.
+     */
     public AJob() {
         playerPositions = new HashMap<>();
         workingSteps = new ArrayList<>();
         jobPositions = new ArrayList<>();
+    }
+
+    /**
+     * Creates a new AJob instance with the given parameters.
+     *
+     * @param jobName          The name of the job.
+     * @param jobBank          The initial amount of money in the job bank. Must be a positive integer.
+     * @param bossMenuLocation The location of the boss menu.
+     */
+    public AJob(String jobName, int jobBank, Location bossMenuLocation) {
+        this();
+        this.jobName = jobName;
+        this.jobBank = jobBank;
+        this.bossMenuLocation = bossMenuLocation;
+    }
+
+    /**
+     * Creates a new AJob instance with the given parameters.
+     *
+     * @param jobName          The name of the job.
+     * @param jobBank          The initial amount of money in the job bank. Must be a positive integer.
+     * @param bossMenuLocation The location of the boss menu.
+     * @param jobPositions     The list of positions associated with the job.
+     * @param workingSteps     The list of working steps associated with the job.
+     */
+    public AJob(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions, List<WorkingStep> workingSteps) {
+        this(jobName, jobBank, bossMenuLocation);
+        this.jobPositions = jobPositions;
+        this.workingSteps = workingSteps;
+    }
+
+    /**
+     * Creates a new AJob instance with the given parameters.
+     *
+     * @param jobName          The name of the job.
+     * @param jobBank          The initial amount of money in the job bank. Must be a positive integer.
+     * @param bossMenuLocation The location of the boss menu.
+     * @param jobPositions     The list of positions associated with the job.
+     * @param workingSteps     The list of working steps associated with the job.
+     * @param playerPositions  The map of player UUID to their assigned position.
+     */
+    public AJob(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions, List<WorkingStep> workingSteps, Map<UUID, Position> playerPositions) {
+        this(jobName, jobBank, bossMenuLocation, jobPositions, workingSteps);
+        this.playerPositions = playerPositions;
     }
 
     /**
