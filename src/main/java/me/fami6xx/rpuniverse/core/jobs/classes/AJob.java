@@ -2,7 +2,6 @@ package me.fami6xx.rpuniverse.core.jobs.classes;
 
 import org.bukkit.entity.Player;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class AJob {
     private Map<UUID, Position> playerPositions;
