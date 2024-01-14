@@ -1,4 +1,4 @@
-package me.fami6xx.rpuniverse.core.jobs.classes;
+package me.fami6xx.rpuniverse.core.jobs;
 
 import java.util.HashMap;
 import java.util.Map;
