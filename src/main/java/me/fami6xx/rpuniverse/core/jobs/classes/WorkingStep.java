@@ -260,9 +260,8 @@ public class WorkingStep {
             int neededPermissionLevel = Integer.parseInt(parts[6]);
 
             return new WorkingStep(workingLocations, timeForStep, itemNeeded, amountOfItemNeeded, itemGiven, amountOfItemGiven, neededPermissionLevel);
-
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An error occurred while parsing WorkingStep object from string '{\n" + s + "\n}");
+            LOGGER.log(Level.SEVERE, "An error occurred while parsing WorkingStep object from string {\n" + s + "\n}, with error: " + e.getMessage());
             return null;
         }
     }
