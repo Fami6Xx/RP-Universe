@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.jobs.classes;
 
+import me.fami6xx.rpuniverse.RPUniverse;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -7,13 +8,20 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * A working step is a step that the player must do to receive an item.
  * It can be set that the player must have a specific item in his inventory to do the step.
  */
 public class WorkingStep {
-    private Location workingLocation;
+    private static final Logger LOGGER = RPUniverse.getInstance().getLogger();
+
+    private List<Location> workingLocations;
     private int timeForStep; // In ticks
     private ItemStack itemNeeded; // Can be null
     private int amountOfItemNeeded; // Can be 0
@@ -23,7 +31,7 @@ public class WorkingStep {
 
     /**
      * A working step is a step that the player must do to receive an item. The player must have a specific item in his inventory to do the step.
-     * @param workingLocation The location where the player must be to do the step.
+     * @param workingLocations The location where the player must be to do the step.
      * @param timeForStep The time in ticks that the player must be at the location to do the step.
      * @param itemNeeded The item that the player must have in his inventory to do the step.
      * @param amountOfItemNeeded The amount of the item that the player must have in his inventory to do the step.
@@ -31,8 +39,8 @@ public class WorkingStep {
      * @param amountOfItemGiven The amount of the item that the player will receive when he does the step.
      * @param neededPermissionLevel The permission level that the player must have to do the step.
      */
-    public WorkingStep(@Nonnull Location workingLocation, int timeForStep, ItemStack itemNeeded, int amountOfItemNeeded, @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel){
-        this.workingLocation = workingLocation;
+    public WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, ItemStack itemNeeded, int amountOfItemNeeded, @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel){
+        this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
         this.itemNeeded = itemNeeded;
         this.amountOfItemNeeded = amountOfItemNeeded;
@@ -43,14 +51,14 @@ public class WorkingStep {
 
     /**
      * A working step is a step that the player must do to receive an item. This constructor is used when the player doesn't need an item to do the step.
-     * @param workingLocation The location where the player must be to do the step.
+     * @param workingLocations The location where the player must be to do the step.
      * @param timeForStep The time in ticks that the player must be at the location to do the step.
      * @param itemGiven The item that the player will receive when he does the step.
      * @param amountOfItemGiven The amount of the item that the player will receive when he does the step.
      * @param neededPermissionLevel The permission level that the player must have to do the step.
      */
-    public WorkingStep(@Nonnull Location workingLocation, int timeForStep,@Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel){
-        this.workingLocation = workingLocation;
+    public WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep,@Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel){
+        this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
         this.itemNeeded = null;
         this.amountOfItemNeeded = 0;
@@ -82,17 +90,35 @@ public class WorkingStep {
      *
      * @return The working location.
      */
-    public Location getWorkingLocation() {
-        return workingLocation;
+    public List<Location> getWorkingLocations() {
+        return workingLocations;
     }
 
     /**
      * Sets the working location for the given working step.
      *
-     * @param workingLocation The location where the player must be to perform the step.
+     * @param workingLocations The location where the player must be to perform the step.
      */
-    public void setWorkingLocation(@Nonnull Location workingLocation) {
-        this.workingLocation = workingLocation;
+    public void setWorkingLocations(@Nonnull List<Location> workingLocations) {
+        this.workingLocations = workingLocations;
+    }
+
+    /**
+     * Adds a working location to the list of working locations for this working step.
+     *
+     * @param location The location to add. (Cannot be null)
+     */
+    public void addWorkingLocation(@Nonnull Location location){
+        this.workingLocations.add(location);
+    }
+
+    /**
+     * Removes a working location from the list of working locations for this working step.
+     *
+     * @param location The location to remove. (Cannot be null)
+     */
+    public void removeWorkingLocation(@Nonnull Location location){
+        this.workingLocations.remove(location);
     }
 
     /**
@@ -195,18 +221,22 @@ public class WorkingStep {
         try {
             String[] parts = s.substring(s.indexOf('{') + 1, s.lastIndexOf('}')).split(", ");
 
-            // Parsing Location
-            Location workingLocation = null;
-            if (!parts[0].equals("null")) {
-                String[] locParts = parts[0].split(",");
-                workingLocation = new Location(
-                        Bukkit.getWorld(locParts[0]),
-                        Double.parseDouble(locParts[1]),
-                        Double.parseDouble(locParts[2]),
-                        Double.parseDouble(locParts[3]),
-                        Float.parseFloat(locParts[4]),
-                        Float.parseFloat(locParts[5])
-                );
+            // Parsing workingLocations
+            List<Location> workingLocations = new ArrayList<>();
+            if (!parts[0].split("=")[1].equals("null")) {
+                String[] locStrings = parts[0].split("=")[1].split(";");
+                for (String locString : locStrings) {
+                    String[] locParts = locString.split(",");
+                    Location loc = new Location(
+                            Bukkit.getWorld(locParts[0]),
+                            Double.parseDouble(locParts[1]),
+                            Double.parseDouble(locParts[2]),
+                            Double.parseDouble(locParts[3]),
+                            Float.parseFloat(locParts[4]),
+                            Float.parseFloat(locParts[5])
+                    );
+                    workingLocations.add(loc);
+                }
             }
 
             int timeForStep = Integer.parseInt(parts[1]);
@@ -229,10 +259,10 @@ public class WorkingStep {
             int amountOfItemGiven = Integer.parseInt(parts[5]);
             int neededPermissionLevel = Integer.parseInt(parts[6]);
 
-            return new WorkingStep(workingLocation, timeForStep, itemNeeded, amountOfItemNeeded, itemGiven, amountOfItemGiven, neededPermissionLevel);
+            return new WorkingStep(workingLocations, timeForStep, itemNeeded, amountOfItemNeeded, itemGiven, amountOfItemGiven, neededPermissionLevel);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "An error occurred while parsing WorkingStep object from string '{\n" + s + "\n}");
             return null;
         }
     }
@@ -244,16 +274,11 @@ public class WorkingStep {
         StringBuilder sb = new StringBuilder("WorkingStep{");
 
         // Serialize Location
-        if (workingLocation != null) {
-            sb.append(workingLocation.getWorld().getName()).append(",")
-                    .append(workingLocation.getX()).append(",")
-                    .append(workingLocation.getY()).append(",")
-                    .append(workingLocation.getZ()).append(",")
-                    .append(workingLocation.getYaw()).append(",")
-                    .append(workingLocation.getPitch()).append(", ");
-        } else {
-            sb.append("null, ");
-        }
+        String locationsString = workingLocations.stream()
+                .map(loc -> loc.getWorld().getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ() + "," + loc.getYaw() + "," + loc.getPitch())
+                .collect(Collectors.joining(";")); // Separating locations with a semicolon
+        sb.append("workingLocations=").append(locationsString).append(", ");
+
 
         // Serialize timeForStep
         sb.append(timeForStep).append(", ");
