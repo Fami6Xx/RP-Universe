@@ -91,6 +91,24 @@ public class JSONDataHandler implements IDataHandler {
     }
 
     @Override
+    public Job[] getAllJobData() {
+        File[] files = jobDataDirectory.toFile().listFiles();
+        if(files == null) {
+            return new Job[0];
+        }
+        Job[] jobs = new Job[files.length];
+        for(int i = 0; i < files.length; i++) {
+            try (Reader reader = new FileReader(files[i])) {
+                jobs[i] = gson.fromJson(reader, Job.class);
+            } catch (IOException e) {
+                logger.severe(e.getMessage());
+                return null;
+            }
+        }
+        return jobs;
+    }
+
+    @Override
     public int getQueueSaveTime() {
         return 20 * 60 * 5; // 5 minutes
     }

@@ -56,6 +56,13 @@ public interface IDataHandler {
     boolean saveJobData(String name, String data);
 
     /**
+     * Retrieves all job data stored by the selected Data Handler.
+     *
+     * @return An array containing all job data.
+     */
+    Job[] getAllJobData();
+
+    /**
      * Called at the start of the plugin, this is used to determine how often the save task should run.
      * @return The time in ticks between each save task run.
      */
