@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.jobs.commands.createJob;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.jobs.commands.createJob.utils.CreateJobStorage;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.command.Command;
@@ -111,7 +112,7 @@ public class CreateJobCommand implements CommandExecutor, Listener {
                 player.resetTitle();
 
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandJobCreatedMessage);
-                // ToDo: Create job
+                RPUniverse.getInstance().getJobsHandler().addJob(new Job(createJobStorage.getJobName(), 0, createJobStorage.getBossMenuLocation()));
             }
         }
     }
