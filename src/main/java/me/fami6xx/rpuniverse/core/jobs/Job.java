@@ -1,21 +1,30 @@
 package me.fami6xx.rpuniverse.core.jobs;
 
-import org.bukkit.Bukkit;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.jobs.types.JobType;
+import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * AJob is an abstract class that represents a job in a game.
- * It contains methods for managing positions, working steps, job bank,
- * and player assignments.
+ * Represents a job in the system.
  */
 public class Job {
-    private Map<UUID, Position> playerPositions;
-    private List<WorkingStep> workingSteps;
-    private List<Position> jobPositions;
+    private static final Logger LOGGER = RPUniverse.getInstance().getLogger();
+    private static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(Location.class, new LocationAdapter())
+            .create();
+    private transient JobType jobType;
+    private String jobTypeName = null;
 
+    private Map<UUID, Position> playerPositions;
+    private List<Position> jobPositions;
     private String jobName;
     private int jobBank = 0;
     private Location bossMenuLocation;
@@ -25,7 +34,6 @@ public class Job {
      */
     public Job() {
         playerPositions = new HashMap<>();
-        workingSteps = new ArrayList<>();
         jobPositions = new ArrayList<>();
     }
 
@@ -50,12 +58,10 @@ public class Job {
      * @param jobBank          The initial amount of money in the job bank. Must be a positive integer.
      * @param bossMenuLocation The location of the boss menu.
      * @param jobPositions     The list of positions associated with the job.
-     * @param workingSteps     The list of working steps associated with the job.
      */
-    public Job(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions, List<WorkingStep> workingSteps) {
+    public Job(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions) {
         this(jobName, jobBank, bossMenuLocation);
         this.jobPositions = jobPositions;
-        this.workingSteps = workingSteps;
     }
 
     /**
@@ -65,12 +71,57 @@ public class Job {
      * @param jobBank          The initial amount of money in the job bank. Must be a positive integer.
      * @param bossMenuLocation The location of the boss menu.
      * @param jobPositions     The list of positions associated with the job.
-     * @param workingSteps     The list of working steps associated with the job.
      * @param playerPositions  The map of player UUID to their assigned position.
      */
-    public Job(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions, List<WorkingStep> workingSteps, Map<UUID, Position> playerPositions) {
-        this(jobName, jobBank, bossMenuLocation, jobPositions, workingSteps);
+    public Job(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions, Map<UUID, Position> playerPositions) {
+        this(jobName, jobBank, bossMenuLocation, jobPositions);
         this.playerPositions = playerPositions;
+    }
+
+    /**
+     * Retrieves the name of the job.
+     *
+     * @return The name of the job as a String.
+     */
+    public String getName() {
+        return jobName;
+    }
+
+    /**
+     * Retrieves the location of the boss menu associated with the job.
+     *
+     * @return The location of the boss menu as a Location object.
+     */
+    public Location getBossMenuLocation() {
+        return bossMenuLocation;
+    }
+
+    /**
+     * Retrieves the job type of the job.
+     *
+     * @return The job type of the job as a JobType object.
+     */
+    public JobType getJobType() {
+        return jobType;
+    }
+
+    /**
+     * Retrieves the name of the job type.
+     *
+     * @return The name of the job type as a String.
+     */
+    public String getJobTypeName() {
+        return jobTypeName;
+    }
+
+    /**
+     * Sets the job type of the job.
+     *
+     * @param jobType The job type to be set. Must not be null.
+     */
+    public void setJobType(JobType jobType) {
+        this.jobType = jobType;
+        this.jobTypeName = jobType.getName();
     }
 
     /**
@@ -78,7 +129,6 @@ public class Job {
      *
      * @param position The position to be added.
      */
-    // Position Management
     public void addPosition(Position position) {
         jobPositions.add(position);
     }
@@ -135,6 +185,22 @@ public class Job {
     }
 
     /**
+     * Checks if the job is ready to be executed by validating various conditions.
+     *
+     * @return A list of error messages indicating the reasons why the job is not ready. An empty list signifies that the job is ready.
+     */
+    public List<String> isJobReady(){
+        List<String> errors = new ArrayList<>();
+        if(jobPositions.isEmpty()) errors.add("No positions have been added to the job.");
+        if(!checkPositions(jobPositions)) errors.add("The job must have at least one default position and at least one boss position.");
+
+        if(jobTypeName == null) errors.add("The job type has not been set.");
+        else if(jobType == null) errors.add("The job type '" + jobTypeName + "' does not exist or has not been set.");
+
+        return errors;
+    }
+
+    /**
      * Changes the position of a player by updating the player's UUID and the new position in the playerPositions map.
      *
      * @param playerUUID    The UUID of the player to change the position for.
@@ -174,50 +240,6 @@ public class Job {
      */
     public int getCurrentMoneyInJobBank() {
         return jobBank;
-    }
-
-    /**
-     * Adds a working step to the job.
-     *
-     * @param step The working step to be added.
-     */
-    public void addWorkingStep(WorkingStep step) {
-        workingSteps.add(step);
-    }
-
-    /**
-     * Removes a working step from the job.
-     *
-     * @param step The working step to be removed.
-     * @return {@code true} if the working step was successfully removed, {@code false} otherwise.
-     */
-    public boolean removeWorkingStep(WorkingStep step) {
-        return workingSteps.remove(step);
-    }
-
-    /**
-     * Retrieves all the working steps associated with the job.
-     *
-     * @return A list of WorkingStep objects containing all the working steps.
-     */
-    public List<WorkingStep> getAllWorkingSteps() {
-        return new ArrayList<>(workingSteps);
-    }
-
-    /**
-     * Determines if a player has permission to perform a specific working step.
-     *
-     * @param player The player for which to check permission.
-     * @param step   The working step to check permission for.
-     * @return {@code true} if the player has permission for the working step, {@code false} otherwise.
-     */
-    public boolean hasPermissionForWorkingStep(Player player, WorkingStep step) {
-        UUID playerUUID = player.getUniqueId();
-        if(playerPositions.containsKey(playerUUID)) {
-            Position position = playerPositions.get(playerUUID);
-            return position.getWorkingStepPermissionLevel() >= step.getNeededPermissionLevel();
-        }
-        return false;
     }
 
     /**
@@ -262,120 +284,17 @@ public class Job {
         return playerPositions.containsKey(playerUUID);
     }
 
-    /**
-     * Opens the boss menu for the specified player.
-     *
-     * @param player The player for whom to open the boss menu.
-     */
-    public void openBossMenu(Player player){
-        // ToDo: Boss menu code
-    }
-
     public static Job fromString(String s) {
         try {
-            Job job = new Job();
-
-            // Remove the outer Job{ and the closing brace
-            s = s.substring(4, s.length() - 1);
-
-            // Split the string by '}, ' to separate the fields
-            String[] fields = s.split("}, ", -1);
-
-            // Parsing playerPositions
-            String playerPositionsString = fields[0].substring(fields[0].indexOf('{') + 1);
-            Arrays.stream(playerPositionsString.split(","))
-                    .filter(pair -> !pair.isEmpty())
-                    .forEach(pair -> {
-                        String[] keyValue = pair.split(":");
-                        UUID uuid = UUID.fromString(keyValue[0]);
-                        Position position = Position.fromString(keyValue[1]);
-                        job.playerPositions.put(uuid, position);
-                    });
-
-            // Parsing workingSteps
-            String workingStepsString = fields[1].substring(fields[1].indexOf('[') + 1, fields[1].indexOf(']'));
-            job.workingSteps = Arrays.stream(workingStepsString.split(","))
-                    .filter(str -> !str.isEmpty())
-                    .map(WorkingStep::fromString)
-                    .collect(Collectors.toList());
-
-            // Parsing jobPositions
-            String jobPositionsString = fields[2].substring(fields[2].indexOf('[') + 1, fields[2].indexOf(']'));
-            job.jobPositions = Arrays.stream(jobPositionsString.split(","))
-                    .filter(str -> !str.isEmpty())
-                    .map(Position::fromString)
-                    .collect(Collectors.toList());
-
-            // Parsing jobName, jobBank, and bossMenuLocation
-            String[] remainingFields = fields[3].split(", ");
-            job.jobName = remainingFields[0].split("'")[1];
-            job.jobBank = Integer.parseInt(remainingFields[1].split("=")[1]);
-
-            // Parsing bossMenuLocation
-            String locationString = remainingFields[2].substring(remainingFields[2].indexOf('=') + 1);
-            String[] locParts = locationString.split(",");
-            job.bossMenuLocation = new Location(
-                    Bukkit.getWorld(locParts[0]),
-                    Double.parseDouble(locParts[1]),
-                    Double.parseDouble(locParts[2]),
-                    Double.parseDouble(locParts[3]),
-                    Float.parseFloat(locParts[4]),
-                    Float.parseFloat(locParts[5])
-            );
-
-            return job;
+            return GSON.fromJson(s, Job.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error converting string to Job instance: " + e.getMessage());
             return null;
         }
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Job{");
-
-        // Serialize playerPositions
-        sb.append("playerPositions={");
-        for (Map.Entry<UUID, Position> entry : playerPositions.entrySet()) {
-            sb.append(entry.getKey()).append(":").append(entry.getValue().toString()).append(",");
-        }
-        if (!playerPositions.isEmpty()) sb.deleteCharAt(sb.length() - 1); // Remove the last comma
-        sb.append("}, ");
-
-        // Serialize workingSteps
-        sb.append("workingSteps=[");
-        for (WorkingStep step : workingSteps) {
-            sb.append(step.toString()).append(",");
-        }
-        if (!workingSteps.isEmpty()) sb.deleteCharAt(sb.length() - 1); // Remove the last comma
-        sb.append("], ");
-
-        // Serialize jobPositions
-        sb.append("jobPositions=[");
-        for (Position position : jobPositions) {
-            sb.append(position.toString()).append(",");
-        }
-        if (!jobPositions.isEmpty()) sb.deleteCharAt(sb.length() - 1); // Remove the last comma
-        sb.append("], ");
-
-        // Serialize jobName and jobBank
-        sb.append("jobName='").append(jobName).append("', ");
-        sb.append("jobBank=").append(jobBank).append(", ");
-
-        // Serialize bossMenuLocation
-        if (bossMenuLocation != null) {
-            sb.append("bossMenuLocation=").append(bossMenuLocation.getWorld().getName()).append(",")
-                    .append(bossMenuLocation.getX()).append(",")
-                    .append(bossMenuLocation.getY()).append(",")
-                    .append(bossMenuLocation.getZ()).append(",")
-                    .append(bossMenuLocation.getYaw()).append(",")
-                    .append(bossMenuLocation.getPitch());
-        } else {
-            sb.append("bossMenuLocation=null");
-        }
-
-        sb.append("}");
-
-        return sb.toString();
+        return GSON.toJson(this);
     }
 }
