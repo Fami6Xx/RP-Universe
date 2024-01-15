@@ -22,6 +22,7 @@ public class Job {
             .create();
     private transient JobType jobType;
     private String jobTypeName = null;
+    private String JSONJobTypeData = null;
 
     private Map<UUID, Position> playerPositions;
     private List<Position> jobPositions;
@@ -122,6 +123,15 @@ public class Job {
     public void setJobType(JobType jobType) {
         this.jobType = jobType;
         this.jobTypeName = jobType.getName();
+    }
+
+    /**
+     * Retrieves the job type data of the job.
+     *
+     * @return The job type data of the job as a String.
+     */
+    public String getJobTypeData() {
+        return JSONJobTypeData;
     }
 
     /**
@@ -295,6 +305,9 @@ public class Job {
 
     @Override
     public String toString() {
+        if(jobType != null)
+            JSONJobTypeData = jobType.toString();
+
         return GSON.toJson(this);
     }
 }

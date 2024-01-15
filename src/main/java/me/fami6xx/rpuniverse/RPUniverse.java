@@ -5,6 +5,7 @@ import me.fami6xx.rpuniverse.core.commands.DoCommand;
 import me.fami6xx.rpuniverse.core.commands.MeCommand;
 import me.fami6xx.rpuniverse.core.commands.StatusCommand;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
+import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
 import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import org.bukkit.ChatColor;
@@ -18,15 +19,16 @@ public final class RPUniverse extends JavaPlugin {
     private DataSystem dataSystem;
     private HoloAPI holoAPI;
     private LanguageHandler languageHandler;
+    private JobsHandler jobsHandler;
     private CreateJobStarter createJobStarter;
 
     private FileConfiguration config;
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
         dataSystem = new DataSystem();
         holoAPI = new HoloAPI();
+        jobsHandler = new JobsHandler();
 
         if(!holoAPI.enable()){
             getLogger().severe("DecentHolograms is not installed! Disabling plugin...");
@@ -61,8 +63,8 @@ public final class RPUniverse extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
         HandlerList.unregisterAll(this);
+        this.jobsHandler.shutdown();
         this.dataSystem.shutdown();
         this.holoAPI.disable();
         this.createJobStarter.stop();
@@ -90,6 +92,10 @@ public final class RPUniverse extends JavaPlugin {
 
     public HoloAPI getHoloAPI() {
         return holoAPI;
+    }
+
+    public JobsHandler getJobsHandler() {
+        return jobsHandler;
     }
 
     public static RPUniverse getInstance() {
