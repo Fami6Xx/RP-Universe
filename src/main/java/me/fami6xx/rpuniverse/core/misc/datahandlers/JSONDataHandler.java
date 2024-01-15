@@ -5,6 +5,10 @@ import com.google.gson.GsonBuilder;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
+import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
+import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.logging.Logger;
 import java.io.*;
@@ -20,10 +24,20 @@ public class JSONDataHandler implements IDataHandler {
     @Override
     public boolean startUp() {
         try {
-            this.gson = new GsonBuilder().setPrettyPrinting().create();
+            this.gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .registerTypeAdapter(Location.class, new LocationAdapter())
+                    .registerTypeAdapter(ItemStack.class, new ItemStackAdapter())
+                    .create();
+
             File dataDir = new File(playerDataDirectory.toUri());
             if(!dataDir.exists()){
-                return dataDir.mkdirs();
+                if(!dataDir.mkdirs()) return false;
+            }
+
+            File jobsDir = new File(jobDataDirectory.toUri());
+            if(!jobsDir.exists()){
+                if(!jobsDir.mkdirs()) return false;
             }
 
             return true;
@@ -79,8 +93,19 @@ public class JSONDataHandler implements IDataHandler {
     }
 
     @Override
-    public boolean saveJobData(String name, String data) {
+    public boolean saveJobData(String name, Job data) {
         Path jobFilePath = jobDataDirectory.resolve(name + ".json");
+        File jobFile = jobFilePath.toFile();
+        if(!jobFile.exists()) {
+            try {
+                if(!jobFile.createNewFile()) {
+                    return false;
+                }
+            } catch (IOException e) {
+                logger.severe(e.getMessage());
+                return false;
+            }
+        }
         try (Writer writer = new FileWriter(jobFilePath.toFile())) {
             gson.toJson(data, writer);
             return true;

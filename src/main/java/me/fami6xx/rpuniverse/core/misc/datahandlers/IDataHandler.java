@@ -53,7 +53,7 @@ public interface IDataHandler {
      * @param data The job data to save.
      * @return true if the data was saved successfully, false otherwise.
      */
-    boolean saveJobData(String name, String data);
+    boolean saveJobData(String name, Job data);
 
     /**
      * Retrieves all job data stored by the selected Data Handler.

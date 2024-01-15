@@ -20,7 +20,7 @@ public class JobsHandler implements Listener {
     }
 
     public void shutdown() {
-        jobs.forEach(job -> RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getName(), job.toString()));
+        jobs.forEach(job -> RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getName(), job));
     }
 
     public void loadAllJobs(){
@@ -56,7 +56,7 @@ public class JobsHandler implements Listener {
 
     public void addJob(Job job){
         jobs.add(job);
-        RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getName(), job.toString());
+        RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getName(), job);
     }
 
     /**
