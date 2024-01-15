@@ -56,6 +56,7 @@ public class JobsHandler implements Listener {
 
     public void addJob(Job job){
         jobs.add(job);
+        RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getName(), job.toString());
     }
 
     /**
