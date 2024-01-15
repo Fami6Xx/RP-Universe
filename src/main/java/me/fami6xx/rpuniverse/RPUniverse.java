@@ -7,6 +7,7 @@ import me.fami6xx.rpuniverse.core.commands.StatusCommand;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
 import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
+import me.fami6xx.rpuniverse.core.jobs.commands.jobs.JobsCommand;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -56,6 +57,7 @@ public final class RPUniverse extends JavaPlugin {
         this.getCommand("do").setExecutor(new DoCommand());
         this.getCommand("status").setExecutor(new StatusCommand());
         this.getCommand("stopstatus").setExecutor(new StatusCommand());
+        this.getCommand("jobs").setExecutor(new JobsCommand());
 
         this.createJobStarter = new CreateJobStarter(this);
         this.createJobStarter.start();

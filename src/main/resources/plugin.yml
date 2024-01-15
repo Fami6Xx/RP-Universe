@@ -25,3 +25,7 @@ commands:
     description: Starts the process of creating a job
     usage: /<command>
     permission: rpu.createjob
+  jobs:
+    description: Lists all jobs
+    usage: /<command>
+    permission: rpu.jobs
