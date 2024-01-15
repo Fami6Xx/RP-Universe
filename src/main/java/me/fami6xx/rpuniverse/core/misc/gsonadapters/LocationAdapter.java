@@ -1,4 +1,4 @@
-package me.fami6xx.rpuniverse.core.misc.adapters;
+package me.fami6xx.rpuniverse.core.misc.gsonadapters;
 
 import com.google.gson.*;
 import org.bukkit.Bukkit;
