@@ -21,6 +21,8 @@ public class LanguageHandler {
     public String previousPageItemLore = "&7Click to go to the previous page";
     public String errorMenuAlreadyOnLastPage = "&cYou are already on the last page!";
     public String errorMenuAlreadyOnFirstPage = "&cYou are already on the first page!";
+    public String allJobsMenuName = "&6RPUniverse &7| &cAll Jobs";
+    public String allJobsMenuJobName = "&e{jobName}";
 
     // CREATE JOB COMMAND MESSAGES
     public String errorYouAreAlreadyCreatingAJobMessage = "&cYou are already creating a job!";

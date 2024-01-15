@@ -29,6 +29,8 @@ public abstract class PaginatedMenu extends Menu{
             }
         }
 
+        // 17, 18, 26, 27, 35, 36
+
         inventory.setItem(17, BORDER_GLASS);
         inventory.setItem(18, BORDER_GLASS);
         inventory.setItem(26, BORDER_GLASS);

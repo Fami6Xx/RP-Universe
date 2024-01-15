@@ -8,6 +8,8 @@ import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
 import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.JobsCommand;
+import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
+import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,6 +24,7 @@ public final class RPUniverse extends JavaPlugin {
     private LanguageHandler languageHandler;
     private JobsHandler jobsHandler;
     private CreateJobStarter createJobStarter;
+    private MenuManager menuManager;
 
     private FileConfiguration config;
 
@@ -30,6 +33,7 @@ public final class RPUniverse extends JavaPlugin {
         dataSystem = new DataSystem();
         holoAPI = new HoloAPI();
         jobsHandler = new JobsHandler();
+        menuManager = new MenuManager();
 
         if(!holoAPI.enable()){
             getLogger().severe("DecentHolograms is not installed! Disabling plugin...");
@@ -53,6 +57,11 @@ public final class RPUniverse extends JavaPlugin {
 
         languageHandler = new LanguageHandler(this);
 
+        if(!menuManager.enable()){
+            getLogger().severe("Failed to enable MenuManager! Disabling plugin...");
+            getServer().getPluginManager().disablePlugin(this);
+        }
+
         this.getCommand("me").setExecutor(new MeCommand());
         this.getCommand("do").setExecutor(new DoCommand());
         this.getCommand("status").setExecutor(new StatusCommand());
@@ -65,11 +74,16 @@ public final class RPUniverse extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        this.menuManager.disable();
         HandlerList.unregisterAll(this);
         this.jobsHandler.shutdown();
         this.dataSystem.shutdown();
         this.holoAPI.disable();
         this.createJobStarter.stop();
+    }
+
+    public MenuManager getMenuManager() {
+        return menuManager;
     }
 
     public static LanguageHandler getLanguageHandler(){

@@ -17,11 +17,9 @@ public class JobsCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        AllJobsMenu allJobsMenu = new AllJobsMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player));
+        allJobsMenu.open();
 
         return true;
-    }
-
-    public void showAllJobs(Player player){
-
     }
 }

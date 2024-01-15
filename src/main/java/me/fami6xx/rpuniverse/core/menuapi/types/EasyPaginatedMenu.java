@@ -9,6 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class EasyPaginatedMenu extends PaginatedMenu {
     public EasyPaginatedMenu(PlayerMenu menu){
         super(menu);
@@ -70,15 +74,24 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
     public void setMenuItems(){
         addMenuBorder();
 
+        Integer[] borderSlots = new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53};
+        List<Integer> borderSlotsList = new ArrayList<>(Arrays.asList(borderSlots));
+        int slot = 10;
         for(int i = 0; i < getMaxItemsPerPage(); i++){
             index = getMaxItemsPerPage() * page + i;
-            if(index >= getCollectionSize()) break;
 
-            ItemStack item = getItemFromIndex(index);
+            while(borderSlotsList.contains(slot)){
+                slot++;
+            }
 
-            if(item == null) break;
+            if(index >= getCollectionSize()) {
+                super.inventory.setItem(slot, new ItemStack(Material.AIR));
+                slot++;
+                continue;
+            }
 
-            super.inventory.setItem(i + 10, item);
+            super.inventory.setItem(slot, getItemFromIndex(index));
+            slot++;
         }
     }
 
