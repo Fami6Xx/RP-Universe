@@ -106,6 +106,7 @@ public class JSONDataHandler implements IDataHandler {
                 return false;
             }
         }
+        data.prepareForSave();
         try (Writer writer = new FileWriter(jobFilePath.toFile())) {
             gson.toJson(data, writer);
             return true;
