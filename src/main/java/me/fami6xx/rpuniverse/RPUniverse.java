@@ -10,6 +10,7 @@ import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.JobsCommand;
 import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
+import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,6 +26,7 @@ public final class RPUniverse extends JavaPlugin {
     private JobsHandler jobsHandler;
     private CreateJobStarter createJobStarter;
     private MenuManager menuManager;
+    private UniversalChatHandler universalChatHandler;
 
     private FileConfiguration config;
 
@@ -70,6 +72,9 @@ public final class RPUniverse extends JavaPlugin {
 
         this.createJobStarter = new CreateJobStarter(this);
         this.createJobStarter.start();
+
+        this.universalChatHandler = new UniversalChatHandler();
+        getServer().getPluginManager().registerEvents(universalChatHandler, this);
     }
 
     @Override
@@ -80,6 +85,10 @@ public final class RPUniverse extends JavaPlugin {
         this.dataSystem.shutdown();
         this.holoAPI.disable();
         this.createJobStarter.stop();
+    }
+
+    public UniversalChatHandler getUniversalChatHandler() {
+        return universalChatHandler;
     }
 
     public MenuManager getMenuManager() {
