@@ -1,5 +1,9 @@
 package me.fami6xx.rpuniverse.core.jobs.types;
 
+import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nullable;
+
 public interface JobType {
     /**
      * Retrieves the name of the job type.
@@ -38,6 +42,7 @@ public interface JobType {
      * @return true if the job type has a boss menu, false otherwise.
      */
     boolean hasBossMenu();
+
     /**
      * Opens the boss menu for the JobType.
      * <p>
@@ -49,6 +54,17 @@ public interface JobType {
      * </p>
      */
     void openBossMenu();
+
+    /**
+     * Retrieves the icon of the job type that will be displayed for admins in the /jobs menu
+     * and when an admin is selecting what job type to assign to a job.
+     * <p>
+     * Do not use colored glass as an icon, as clicking on it will not work in the /jobs menu.
+     *
+     * @return the icon of the job type as an ItemStack, or null if there is no icon.
+     */
+    @Nullable
+    ItemStack getIcon();
 
     /**
      * Returns a string representation of the object.
