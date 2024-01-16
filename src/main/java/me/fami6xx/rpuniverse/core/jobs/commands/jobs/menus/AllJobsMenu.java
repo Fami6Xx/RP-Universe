@@ -1,4 +1,4 @@
-package me.fami6xx.rpuniverse.core.jobs.commands.jobs;
+package me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
