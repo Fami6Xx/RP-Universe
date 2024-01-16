@@ -8,7 +8,6 @@ import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,13 +23,9 @@ public class AllJobsMenu extends EasyPaginatedMenu {
 
     @Override
     public ItemStack getItemFromIndex(int index) {
-        ItemStack item = new ItemStack(Material.BEACON);
-        ItemMeta meta = item.getItemMeta();
         HashMap<String, String> placeholders = new HashMap<>();
         placeholders.put("{jobName}", jobs.get(index).getName());
-        meta.setDisplayName(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().allJobsMenuJobName, placeholders));
-        item.setItemMeta(meta);
-        return item;
+        return makeItem(Material.BEACON, FamiUtils.replace(RPUniverse.getLanguageHandler().allJobsMenuJobName, placeholders));
     }
 
     @Override
