@@ -5,7 +5,10 @@ import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
+
+import java.util.HashMap;
 
 public class JobAdminMenu extends Menu {
     private Job job;
@@ -17,7 +20,9 @@ public class JobAdminMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuName);
+        HashMap<String, String> placeholders = new HashMap<>();
+        placeholders.put("{jobName}", job.getName());
+        return FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAdminMenuName, placeholders);
     }
 
     @Override
@@ -39,5 +44,13 @@ public class JobAdminMenu extends Menu {
         // Select job type : Change job type :: 5
         // Open admin job type menu :: 6
         // Remove job :: 7
+        this.inventory.setItem(1, makeItem(Material.NAME_TAG, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRenameItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRenameItemLore)));
+        this.inventory.setItem(2, makeItem(Material.GOLD_INGOT, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobBankItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobBankItemLore)));
+        this.inventory.setItem(3, makeItem(Material.BEACON, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuPositionItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuPositionItemLore)));
+        this.inventory.setItem(4, makeItem(Material.ENDER_PEARL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemLore)));
+        this.inventory.setItem(5, makeItem(Material.BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemLore)));
+        this.inventory.setItem(6, makeItem(Material.BOOK_AND_QUILL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemLore)));
+        this.inventory.setItem(7, makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemLore)));
+        setFillerGlass();
     }
 }

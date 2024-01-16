@@ -21,9 +21,25 @@ public class LanguageHandler {
     public String previousPageItemLore = "&7Click to go to the previous page";
     public String errorMenuAlreadyOnLastPage = "&cYou are already on the last page!";
     public String errorMenuAlreadyOnFirstPage = "&cYou are already on the first page!";
+
+    // JOBS MENUS
     public String allJobsMenuName = "&6RPUniverse &7| &cAll Jobs";
     public String allJobsMenuJobName = "&e{jobName}";
-    public String jobAdminMenuName = "&6RPUniverse &7| &cJob Admin";
+    public String jobAdminMenuName = "&6RPUniverse &7| &c{jobName}";
+    public String jobAdminMenuRenameItemDisplayName = "&cRename";
+    public String jobAdminMenuRenameItemLore = "&7Click to rename the job";
+    public String jobAdminMenuJobBankItemDisplayName = "&cJob Bank";
+    public String jobAdminMenuJobBankItemLore = "&7Click to add / remove money from the job bank";
+    public String jobAdminMenuPositionItemDisplayName = "&cPositions";
+    public String jobAdminMenuPositionItemLore = "&7Click to add / modify / remove positions";
+    public String jobAdminMenuBossItemDisplayName = "&cBoss Menu";
+    public String jobAdminMenuBossItemLore = "&7Click to port to boss menu or change location";
+    public String jobAdminMenuJobTypeItemDisplayName = "&cJob Type";
+    public String jobAdminMenuJobTypeItemLore = "&7Click to change job type";
+    public String jobAdminMenuJobTypeAdminItemDisplayName = "&cJob Type Admin";
+    public String jobAdminMenuJobTypeAdminItemLore = "&7Click to open admin job type menu";
+    public String jobAdminMenuRemoveItemDisplayName = "&cRemove";
+    public String jobAdminMenuRemoveItemLore = "&7Click to remove the job";
 
     // CREATE JOB COMMAND MESSAGES
     public String errorYouAreAlreadyCreatingAJobMessage = "&cYou are already creating a job!";
