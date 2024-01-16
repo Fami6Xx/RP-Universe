@@ -16,6 +16,10 @@ public class MenuInvClickHandler implements Listener {
                 return;
             }
 
+            if(e.getClickedInventory() == null || e.getView().getTopInventory() != e.getClickedInventory()){
+                return;
+            }
+
             Menu menu = (Menu) holder;
             menu.handleMenu(e);
         }

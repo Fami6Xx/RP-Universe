@@ -5,6 +5,7 @@ import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +36,18 @@ public class AllJobsMenu extends EasyPaginatedMenu {
 
     @Override
     public void handlePaginatedMenu(InventoryClickEvent e) {
+        Job job = jobs.stream()
+                .filter(job1 -> {
+                    HashMap<String, String> placeholders = new HashMap<>();
+                    placeholders.put("{jobName}", job1.getName());
+                    return e.getCurrentItem().getItemMeta().getDisplayName().equals(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().allJobsMenuJobName, placeholders));
+                })
+                .findFirst()
+                .orElse(null);
 
+        if(job != null){
+            new JobAdminMenu(playerMenu, job).open();
+        }
     }
 
     @Override
