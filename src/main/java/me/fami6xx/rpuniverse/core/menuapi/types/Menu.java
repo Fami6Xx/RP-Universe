@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.menuapi.types;
 
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -10,7 +11,9 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public abstract class Menu implements InventoryHolder {
     protected PlayerMenu playerMenu;
@@ -84,8 +87,10 @@ public abstract class Menu implements InventoryHolder {
         ItemStack item = new ItemStack(material);
 
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(displayName);
-        itemMeta.setLore(Arrays.asList(lore));
+        itemMeta.setDisplayName(FamiUtils.format(displayName));
+        List<String> loreList = Arrays.asList(lore);
+        loreList.forEach(s -> s = FamiUtils.format(s));
+        itemMeta.setLore(loreList);
         item.setItemMeta(itemMeta);
 
         return item;
