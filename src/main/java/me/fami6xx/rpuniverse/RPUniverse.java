@@ -109,6 +109,10 @@ public final class RPUniverse extends JavaPlugin {
         return econ != null;
     }
 
+    public Economy getEconomy() {
+        return econ;
+    }
+
     public UniversalChatHandler getUniversalChatHandler() {
         return universalChatHandler;
     }
