@@ -21,6 +21,10 @@ public class LanguageHandler {
     public String previousPageItemLore = "&7Click to go to the previous page";
     public String errorMenuAlreadyOnLastPage = "&cYou are already on the last page!";
     public String errorMenuAlreadyOnFirstPage = "&cYou are already on the first page!";
+    public String errorMenuDoesntHaveAnyPages = "&cThis menu doesn't have any pages!";
+    public String generalMenuBackItemDisplayName = "&cBack";
+    public String generalMenuBackItemLore = "&7Click to go back";
+
 
     // JOBS MENUS
     public String allJobsMenuName = "&6RPUniverse &7| &cAll Jobs";
@@ -40,6 +44,17 @@ public class LanguageHandler {
     public String jobAdminMenuJobTypeAdminItemLore = "&7Click to open admin job type menu";
     public String jobAdminMenuRemoveItemDisplayName = "&cRemove";
     public String jobAdminMenuRemoveItemLore = "&7Click to remove the job";
+    public String jobBankActionsMenuName = "&6RPUniverse &7| &cJob Bank Actions";
+    public String jobBankActionsMenuAddMoneyItemDisplayName = "&cAdd Money";
+    public String jobBankActionsMenuAddMoneyItemLore = "&7Click to add money to the job bank";
+    public String jobBankActionsMenuRemoveMoneyItemDisplayName = "&cRemove Money";
+    public String jobBankActionsMenuRemoveMoneyItemLore = "&7Click to remove money from the job bank";
+    public String jobBankActionsMenuCurrentMoneyItemDisplayName = "&cCurrent Money";
+    public String jobBankActionsMenuCurrentMoneyItemLore = "&7Current money in the job bank: &c{jobMoney}&7$";
+    public String jobBankActionsMenuAddMoneySuccessMessage = "&cYou added money to the job bank!";
+    public String jobBankActionsMenuAddMoneyErrorMessage = "&cYou can't add this amount of money to the job bank!";
+    public String jobBankActionsMenuRemoveMoneySuccessMessage = "&cYou removed money from the job bank!";
+    public String jobBankActionsMenuRemoveMoneyErrorMessage = "&cYou can't remove this amount of money from the job bank!";
 
     // CREATE JOB COMMAND MESSAGES
     public String errorYouAreAlreadyCreatingAJobMessage = "&cYou are already creating a job!";

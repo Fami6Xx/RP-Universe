@@ -33,6 +33,29 @@ public class JobAdminMenu extends Menu {
     @Override
     public void handleMenu(InventoryClickEvent e) {
         // 1-7
+        if(e.getSlot() == 1){
+
+        }
+        if(e.getSlot() == 2){
+            new JobBankActionsMenu(playerMenu, this, job).open();
+        }
+        if(e.getSlot() == 3){
+
+        }
+        if(e.getSlot() == 4){
+
+        }
+        if(e.getSlot() == 5){
+
+        }
+        if(e.getSlot() == 6){
+
+        }
+        if(e.getSlot() == 7){
+            RPUniverse.getInstance().getJobsHandler().getJobs().remove(job);
+            RPUniverse.getInstance().getDataSystem().getDataHandler().removeJobData(job.getName());
+            new AllJobsMenu(playerMenu).open();
+        }
     }
 
     @Override
