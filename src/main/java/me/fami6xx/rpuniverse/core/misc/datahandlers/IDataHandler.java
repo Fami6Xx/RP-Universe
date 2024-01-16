@@ -63,6 +63,14 @@ public interface IDataHandler {
     Job[] getAllJobData();
 
     /**
+     * Removes the job data with the specified name.
+     *
+     * @param name The name of the job to remove data for.
+     * @return true if the data was removed successfully, false otherwise.
+     */
+    boolean removeJobData(String name);
+
+    /**
      * Called at the start of the plugin, this is used to determine how often the save task should run.
      * @return The time in ticks between each save task run.
      */

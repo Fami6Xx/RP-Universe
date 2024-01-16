@@ -151,6 +151,16 @@ public class JSONDataHandler implements IDataHandler {
     }
 
     @Override
+    public boolean removeJobData(String name) {
+        Path jobFilePath = jobDataDirectory.resolve(name + ".json");
+        File jobFile = jobFilePath.toFile();
+        if(!jobFile.exists()) {
+            return false;
+        }
+        return jobFile.delete();
+    }
+
+    @Override
     public int getQueueSaveTime() {
         return 20 * 60 * 5; // 5 minutes
     }
