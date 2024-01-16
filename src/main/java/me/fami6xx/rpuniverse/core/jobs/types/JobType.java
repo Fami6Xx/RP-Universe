@@ -16,19 +16,39 @@ public interface JobType {
     String getDescription();
 
     /**
-     * Opens the main menu.
-     * <p>
-     * This method is responsible for opening the main menu. It provides access to various
-     * functionality and options available to the user.
-     * <p>
-     * Usage:
-     * In order to use this method, simply call it without any parameters. The main menu will then be displayed
-     * to the user.
-     * <p>
-     * Example:
-     * openMainMenu();
+     * Checks if the job type has an admin menu.
+     *
+     * @return true if the job type has an admin menu, false otherwise
      */
-    void openMainMenu();
+    boolean hasAdminMenu();
+
+    /**
+     * Opens the admin menu for the JobType.
+     * <p>
+     * This method is used to open the admin menu for a specific JobType. The admin menu allows users with the appropriate
+     * privileges to perform administrative tasks related to the JobType, such as configuring settings, managing
+     * permissions, or performing other administrative actions.
+     * </p>
+     */
+    void openAdminMenu();
+
+    /**
+     * Checks if the job type has a boss menu.
+     *
+     * @return true if the job type has a boss menu, false otherwise.
+     */
+    boolean hasBossMenu();
+    /**
+     * Opens the boss menu for the JobType.
+     * <p>
+     * This method is used to open the boss menu for a specific JobType. The boss menu allows users with the appropriate
+     * privileges to perform boss-level tasks related to the JobType.
+     * </p>
+     * <p>
+     * Note: The boss menu is only available if the JobType has a boss menu.
+     * </p>
+     */
+    void openBossMenu();
 
     /**
      * Returns a string representation of the object.
