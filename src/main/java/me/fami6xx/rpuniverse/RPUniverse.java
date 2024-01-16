@@ -12,9 +12,11 @@ import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -29,9 +31,16 @@ public final class RPUniverse extends JavaPlugin {
     private UniversalChatHandler universalChatHandler;
 
     private FileConfiguration config;
+    private Economy econ;
 
     @Override
     public void onEnable() {
+        if (!setupEconomy() ) {
+            getLogger().severe("Vault is not installed! Disabling plugin...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         dataSystem = new DataSystem();
         holoAPI = new HoloAPI();
         jobsHandler = new JobsHandler();
@@ -40,6 +49,7 @@ public final class RPUniverse extends JavaPlugin {
         if(!holoAPI.enable()){
             getLogger().severe("DecentHolograms is not installed! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         if(!getDataFolder().exists()){
@@ -85,6 +95,18 @@ public final class RPUniverse extends JavaPlugin {
         this.dataSystem.shutdown();
         this.holoAPI.disable();
         this.createJobStarter.stop();
+    }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
     }
 
     public UniversalChatHandler getUniversalChatHandler() {

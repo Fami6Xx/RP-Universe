@@ -1,7 +1,7 @@
 name: RPUniverse
 version: '${project.version}'
 main: me.fami6xx.rpuniverse.RPUniverse
-softdepend: [ DecentHolograms ]
+softdepend: [ DecentHolograms, Vault ]
 authors: [ Fami6Xx ]
 description: A unique plugin that allows you to create your own Role play world
 commands:
