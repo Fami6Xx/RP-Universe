@@ -71,6 +71,19 @@ public class JSONDataHandler implements IDataHandler {
     @Override
     public boolean savePlayerData(PlayerData data) {
         Path playerFilePath = playerDataDirectory.resolve(data.getUuid() + ".json");
+
+        File playerFilePathFile = playerFilePath.toFile();
+        if(!playerFilePathFile.exists()) {
+            try {
+                if(!playerFilePathFile.createNewFile()) {
+                    return false;
+                }
+            } catch (IOException e) {
+                logger.severe(e.getMessage());
+                return false;
+            }
+        }
+
         try (Writer writer = new FileWriter(playerFilePath.toFile())) {
             gson.toJson(data, writer);
             return true;
@@ -95,6 +108,7 @@ public class JSONDataHandler implements IDataHandler {
     @Override
     public boolean saveJobData(String name, Job data) {
         Path jobFilePath = jobDataDirectory.resolve(name + ".json");
+
         File jobFile = jobFilePath.toFile();
         if(!jobFile.exists()) {
             try {
@@ -106,7 +120,9 @@ public class JSONDataHandler implements IDataHandler {
                 return false;
             }
         }
+
         data.prepareForSave();
+
         try (Writer writer = new FileWriter(jobFilePath.toFile())) {
             gson.toJson(data, writer);
             return true;
