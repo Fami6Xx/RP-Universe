@@ -23,6 +23,7 @@ public class LanguageHandler {
     public String errorMenuAlreadyOnFirstPage = "&cYou are already on the first page!";
     public String allJobsMenuName = "&6RPUniverse &7| &cAll Jobs";
     public String allJobsMenuJobName = "&e{jobName}";
+    public String jobAdminMenuName = "&6RPUniverse &7| &cJob Admin";
 
     // CREATE JOB COMMAND MESSAGES
     public String errorYouAreAlreadyCreatingAJobMessage = "&cYou are already creating a job!";
