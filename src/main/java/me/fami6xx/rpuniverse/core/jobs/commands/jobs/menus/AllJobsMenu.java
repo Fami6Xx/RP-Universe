@@ -36,18 +36,15 @@ public class AllJobsMenu extends EasyPaginatedMenu {
 
     @Override
     public void handlePaginatedMenu(InventoryClickEvent e) {
-        Job job = jobs.stream()
+        jobs.stream()
                 .filter(job1 -> {
                     HashMap<String, String> placeholders = new HashMap<>();
                     placeholders.put("{jobName}", job1.getName());
                     return e.getCurrentItem().getItemMeta().getDisplayName().equals(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().allJobsMenuJobName, placeholders));
                 })
                 .findFirst()
-                .orElse(null);
+                .ifPresent(job -> new JobAdminMenu(playerMenu, job).open());
 
-        if(job != null){
-            new JobAdminMenu(playerMenu, job).open();
-        }
     }
 
     @Override

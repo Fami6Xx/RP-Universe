@@ -46,6 +46,10 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
         String nextName = ChatColor.stripColor(FamiUtils.format(RPUniverse.getLanguageHandler().nextPageItemDisplayName));
         String previousName = ChatColor.stripColor(FamiUtils.format(RPUniverse.getLanguageHandler().previousPageItemDisplayName));
 
+        if(e.getCurrentItem().getType().equals(BORDER_GLASS.getType())){
+            return;
+        }
+
         if(e.getCurrentItem().getType().equals(Material.BARRIER)
                 && name.equalsIgnoreCase(closeName)){
             p.closeInventory();
