@@ -89,6 +89,15 @@ public class Job {
     }
 
     /**
+     * Renames the job with the given new name.
+     *
+     * @param newName The new name for the job. Must not be null.
+     */
+    public void renameJob(String newName) {
+        this.jobName = newName;
+    }
+
+    /**
      * Retrieves the location of the boss menu associated with the job.
      *
      * @return The location of the boss menu as a Location object.

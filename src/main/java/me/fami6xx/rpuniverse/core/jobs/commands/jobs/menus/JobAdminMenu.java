@@ -4,8 +4,11 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.misc.chatapi.IChatExecuteQueue;
+import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.HashMap;
@@ -34,7 +37,26 @@ public class JobAdminMenu extends Menu {
     public void handleMenu(InventoryClickEvent e) {
         // 1-7
         if(e.getSlot() == 1){
+            JobAdminMenu menu = this;
 
+            if(!RPUniverse.getInstance().getUniversalChatHandler().canAddToQueue(playerMenu.getPlayer())){
+                FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().errorYouAlreadyHaveSomethingToType);
+                return;
+            }
+
+            RPUniverse.getInstance().getUniversalChatHandler().addToQueue(playerMenu.getPlayer(), (player, message) -> {
+                if(message.length() > 16){
+                    playerMenu.getPlayer().sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorJobNameTooLongMessage));
+                    return false;
+                }
+                if(RPUniverse.getInstance().getJobsHandler().getJobByName(message) != null){
+                    playerMenu.getPlayer().sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorJobNameAlreadyExistsMessage));
+                    return false;
+                }
+                job.renameJob(message);
+                menu.open();
+                return true;
+            });
         }
         if(e.getSlot() == 2){
             new JobBankActionsMenu(playerMenu, this, job).open();
@@ -49,7 +71,7 @@ public class JobAdminMenu extends Menu {
 
         }
         if(e.getSlot() == 6){
-
+            System.out.println("Open admin job type menu");
         }
         if(e.getSlot() == 7){
             RPUniverse.getInstance().getJobsHandler().getJobs().remove(job);
@@ -72,7 +94,8 @@ public class JobAdminMenu extends Menu {
         this.inventory.setItem(3, makeItem(Material.BEACON, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuPositionItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuPositionItemLore)));
         this.inventory.setItem(4, makeItem(Material.ENDER_PEARL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemLore)));
         this.inventory.setItem(5, makeItem(Material.BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemLore)));
-        this.inventory.setItem(6, makeItem(Material.BOOK_AND_QUILL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemLore)));
+        if(job.getJobType() != null && !job.getJobType().hasAdminMenu())
+            this.inventory.setItem(6, makeItem(Material.BOOK_AND_QUILL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemLore)));
         this.inventory.setItem(7, makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemLore)));
         setFillerGlass();
     }

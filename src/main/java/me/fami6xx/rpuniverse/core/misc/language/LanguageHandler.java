@@ -11,6 +11,7 @@ public class LanguageHandler {
     // GENERAL MESSAGES
     public String errorOnlyPlayersCanUseThisCommandMessage = "&cOnly players can use this command!";
     public String errorYouDontHavePermissionToUseThisCommandMessage = "&cYou don't have permission to use this command!";
+    public String errorYouAlreadyHaveSomethingToType = "&cYou already have something to type, type that thing first.";
 
     // MENU THINGS
     public String closeItemDisplayName = "&cClose";
@@ -58,6 +59,8 @@ public class LanguageHandler {
 
     // CREATE JOB COMMAND MESSAGES
     public String errorYouAreAlreadyCreatingAJobMessage = "&cYou are already creating a job!";
+    public String errorJobNameTooLongMessage = "&cThe job name is too long!";
+    public String errorJobNameAlreadyExistsMessage = "&cA job with this name already exists!";
     public String createJobCommandCancelMessage = "&cYou cancelled the job creation!";
     public String createJobCommandTypeNameMessage = "&7Type the name of the job in chat. Type &ccancel &7to cancel.";
     public String createJobCommandBossMenuLocationMessage = "&7Go to the location you want the boss menu to be and type &chere&7. Type &ccancel &7to cancel.";
