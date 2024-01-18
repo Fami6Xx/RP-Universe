@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.jobs.commands.createJob;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.jobs.commands.createJob.utils.CreateJobStorage;
+import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -43,9 +44,65 @@ public class CreateJobCommand implements CommandExecutor, Listener {
             return true;
         }
 
+        UniversalChatHandler universalChatHandler = RPUniverse.getInstance().getUniversalChatHandler();
+        if(!universalChatHandler.canAddToQueue(player)){
+            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorYouAlreadyHaveSomethingToType);
+            return true;
+        }
+
         currentlyCreating.add(player);
         showTypeNameTitle.add(player);
         createJobStarter.addToCreateJobStorage(player.getUniqueId(), new CreateJobStorage(player.getUniqueId()));
+
+        universalChatHandler.addToQueue(player, (player1, message) -> {
+            if(message.equalsIgnoreCase("cancel")){
+                removeFromCurrentlyCreating(player);
+                removeFromShowTitle(player);
+                createJobStarter.removeFromCreateJobStorage(player.getUniqueId());
+                FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandCancelMessage);
+                return true;
+            }
+
+            if(message.length() > 16){
+                FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorJobNameTooLongMessage);
+                return false;
+            }
+
+            if(RPUniverse.getInstance().getJobsHandler().getJobByName(message) != null){
+                FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorJobNameAlreadyExistsMessage);
+                return false;
+            }
+
+            createJobStarter.getCreateJobStorage(player.getUniqueId()).setJobName(message);
+            player.resetTitle();
+            showSetLocationTitle.add(player);
+
+            universalChatHandler.addToQueue(player1, (player2, message1) -> {
+                if(message.equalsIgnoreCase("cancel")){
+                    removeFromCurrentlyCreating(player);
+                    removeFromShowTitle(player);
+                    createJobStarter.removeFromCreateJobStorage(player.getUniqueId());
+                    FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandCancelMessage);
+                    return true;
+                }
+
+                if(message.equalsIgnoreCase("here")){
+                    createJobStarter.getCreateJobStorage(player.getUniqueId()).setBossMenuLocation(player.getLocation().toCenterLocation());
+
+                    currentlyCreating.remove(player);
+                    showSetLocationTitle.remove(player);
+                    player.resetTitle();
+
+                    FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandJobCreatedMessage);
+                    RPUniverse.getInstance().getJobsHandler().addJob(new Job(createJobStarter.getCreateJobStorage(player.getUniqueId()).getJobName(), 0, createJobStarter.getCreateJobStorage(player.getUniqueId()).getBossMenuLocation()));
+                    createJobStarter.removeFromCreateJobStorage(player.getUniqueId());
+                    return true;
+                }
+
+                return false;
+            });
+            return true;
+        });
 
         FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandTypeNameMessage);
 
