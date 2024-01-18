@@ -25,4 +25,8 @@ public class UniversalChatHandler implements Listener {
     public void addToQueue(Player player, IChatExecuteQueue queue){
         chatExecuteQueueHashMap.put(player, queue);
     }
+
+    public boolean canAddToQueue(Player player){
+        return !chatExecuteQueueHashMap.containsKey(player);
+    }
 }
