@@ -99,4 +99,5 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
         }
     }
 
+    public abstract void addAdditionalItems();
 }

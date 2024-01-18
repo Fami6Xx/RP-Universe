@@ -47,6 +47,11 @@ public class AllJobsMenu extends EasyPaginatedMenu {
     }
 
     @Override
+    public void addAdditionalItems() {
+
+    }
+
+    @Override
     public String getMenuName() {
         return FamiUtils.format(RPUniverse.getLanguageHandler().allJobsMenuName);
     }
