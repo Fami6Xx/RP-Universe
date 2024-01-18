@@ -99,5 +99,8 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
         }
     }
 
+    /**
+     * A method where you can add your own items to the inventory border for example.
+     */
     public abstract void addAdditionalItems();
 }
