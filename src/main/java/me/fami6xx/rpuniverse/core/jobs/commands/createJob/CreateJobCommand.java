@@ -134,46 +134,6 @@ public class CreateJobCommand implements CommandExecutor, Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onPlayerChat(AsyncPlayerChatEvent event){
-        Player player = event.getPlayer();
-
-        if(currentlyCreating.contains(player)){
-            event.setCancelled(true);
-            CreateJobStorage createJobStorage = createJobStarter.getCreateJobStorage(player.getUniqueId());
-
-            if(event.getMessage().equalsIgnoreCase("cancel")){
-                removeFromCurrentlyCreating(player);
-                removeFromShowTitle(player);
-                createJobStarter.removeFromCreateJobStorage(player.getUniqueId());
-                FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandCancelMessage);
-                return;
-            }
-
-            if(createJobStorage.getJobName() == null){
-                createJobStorage.setJobName(event.getMessage());
-                FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandBossMenuLocationMessage);
-
-                showTypeNameTitle.remove(player);
-                player.resetTitle();
-
-                showSetLocationTitle.add(player);
-                return;
-            }
-
-            if(event.getMessage().equalsIgnoreCase("here")){
-                createJobStorage.setBossMenuLocation(player.getLocation().toCenterLocation());
-
-                currentlyCreating.remove(player);
-                showSetLocationTitle.remove(player);
-                player.resetTitle();
-
-                FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandJobCreatedMessage);
-                RPUniverse.getInstance().getJobsHandler().addJob(new Job(createJobStorage.getJobName(), 0, createJobStorage.getBossMenuLocation()));
-            }
-        }
-    }
-
     public BukkitTask showTitleRunnable(){
         return (new BukkitRunnable() {
             @Override
