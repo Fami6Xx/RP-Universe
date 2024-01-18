@@ -180,6 +180,15 @@ public class Job {
     }
 
     /**
+     * Retrieves the list of positions associated with the job.
+     *
+     * @return A List of Position objects representing the job positions.
+     */
+    public List<Position> getPositions(){
+        return jobPositions;
+    }
+
+    /**
      * Checks if a list of positions contains at least one default position and at least one boss position.
      *
      * @param positions The list of positions to check.

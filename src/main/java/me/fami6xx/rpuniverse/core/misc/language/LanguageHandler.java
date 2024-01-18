@@ -22,7 +22,6 @@ public class LanguageHandler {
     public String previousPageItemLore = "&7Click to go to the previous page";
     public String errorMenuAlreadyOnLastPage = "&cYou are already on the last page!";
     public String errorMenuAlreadyOnFirstPage = "&cYou are already on the first page!";
-    public String errorMenuDoesntHaveAnyPages = "&cThis menu doesn't have any pages!";
     public String generalMenuBackItemDisplayName = "&cBack";
     public String generalMenuBackItemLore = "&7Click to go back";
 
@@ -56,6 +55,12 @@ public class LanguageHandler {
     public String jobBankActionsMenuAddMoneyErrorMessage = "&cYou can't add this amount of money to the job bank!";
     public String jobBankActionsMenuRemoveMoneySuccessMessage = "&cYou removed money from the job bank!";
     public String jobBankActionsMenuRemoveMoneyErrorMessage = "&cYou can't remove this amount of money from the job bank!";
+    public String jobAllPositionsMenuName = "&6RPUniverse &7| &c All positions";
+    public String jobAllPositionsMenuAddPositionItemDisplayName = "&cCreate Position";
+    public String jobAllPositionsMenuAddPositionItemLore = "&7Click to start the process of creating a position";
+    public String jobAllPositionsMenuPositionItemDisplayName = "&e{positionName}";
+    public String jobAllPositionsMenuPositionItemLore = "&7Click to view details";
+
 
     // CREATE JOB COMMAND MESSAGES
     public String errorYouAreAlreadyCreatingAJobMessage = "&cYou are already creating a job!";

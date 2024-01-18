@@ -62,7 +62,7 @@ public class JobAdminMenu extends Menu {
             new JobBankActionsMenu(playerMenu, this, job).open();
         }
         if(e.getSlot() == 3){
-
+            new JobAllPositionsMenu(playerMenu, job, true).open();
         }
         if(e.getSlot() == 4){
 
