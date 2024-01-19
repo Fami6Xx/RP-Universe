@@ -188,6 +188,16 @@ public class Job {
         return jobPositions;
     }
 
+    public Position getPositionByName(String name){
+        for(Position position : jobPositions){
+            if(position.getName().equalsIgnoreCase(name)){
+                return position;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Checks if a list of positions contains at least one default position and at least one boss position.
      *
