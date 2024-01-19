@@ -144,7 +144,7 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
             return;
         }
 
-        new JobPositionMenu(playerMenu, job, position, adminMenu).open();
+        new JobPositionMenu(playerMenu, job, position, adminMenu, this).open();
     }
 
     @Override
