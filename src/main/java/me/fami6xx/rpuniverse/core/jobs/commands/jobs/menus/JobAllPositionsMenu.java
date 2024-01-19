@@ -31,6 +31,8 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
 
         HashMap<String, String> placeholders = new HashMap<>();
         placeholders.put("{positionName}", position.getName());
+        placeholders.put("{positionSalary}", String.valueOf(position.getSalary()));
+        placeholders.put("{positionWorkingPermissionLevel}", String.valueOf(position.getWorkingStepPermissionLevel()));
         String displayName = FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAllPositionsMenuPositionItemDisplayName, placeholders);
         String lore = FamiUtils.format(RPUniverse.getLanguageHandler().jobAllPositionsMenuPositionItemLore);
 
