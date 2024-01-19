@@ -12,6 +12,7 @@ public class LanguageHandler {
     public String errorOnlyPlayersCanUseThisCommandMessage = "&cOnly players can use this command!";
     public String errorYouDontHavePermissionToUseThisCommandMessage = "&cYou don't have permission to use this command!";
     public String errorYouAlreadyHaveSomethingToType = "&cYou already have something to type, type that thing first.";
+    public String cancelActivityMessage = "Type &ccancel &7to cancel.";
 
     // MENU THINGS
     public String closeItemDisplayName = "&cClose";
@@ -67,8 +68,8 @@ public class LanguageHandler {
     public String errorJobNameTooLongMessage = "&cThe job name is too long!";
     public String errorJobNameAlreadyExistsMessage = "&cA job with this name already exists!";
     public String createJobCommandCancelMessage = "&cYou cancelled the job creation!";
-    public String createJobCommandTypeNameMessage = "&7Type the name of the job in chat. Type &ccancel &7to cancel.";
-    public String createJobCommandBossMenuLocationMessage = "&7Go to the location you want the boss menu to be and type &chere&7. Type &ccancel &7to cancel.";
+    public String createJobCommandTypeNameMessage = "&7Type the name of the job in chat.";
+    public String createJobCommandBossMenuLocationMessage = "&7Go to the location you want the boss menu to be and type &chere&7.";
     public String createJobCommandJobCreatedMessage = "&7Job created! You can now edit it in the /jobs menu.";
 
 
@@ -89,6 +90,19 @@ public class LanguageHandler {
     public String statusCommandHologram = "&7* &b{message} &7*";
     public String statusCommandMessage = "&cYou have started an status.";
     public String stopStatusCommandMessage = "&cYou stopped your status!";
+
+    // Add position messages
+    public String addPositionTypePositionNameMessage = "&7Type the name of the position in chat.";
+    public String addPositionTypePositionSalaryMessage = "&7Type the salary of the position in chat.";
+    public String addPositionTypePositionWorkingPermissionLevelMessage = "&7Type the working permission level of the position in chat.";
+    public String addPositionSuccessMessage = "&cPosition added!";
+    public String errorPositionNameTooLongMessage = "&cThe position name is too long!";
+    public String errorPositionNameAlreadyExistsMessage = "&cA position with this name already exists!";
+    public String errorPositionSalaryNotANumberMessage = "&cThe salary must be a number!";
+    public String errorPositionSalaryTooLowMessage = "&cThe salary must be higher than 0!";
+    public String errorPositionWorkingPermissionLevelNotANumberMessage = "&cThe working permission level must be a number!";
+    public String errorPositionWorkingPermissionLevelTooLowMessage = "&cThe working permission level must be higher than 0!";
+    public String cancelPositionCreationMessage = "&cYou cancelled the position creation!";
 
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";
