@@ -44,7 +44,14 @@ public class JobAdminMenu extends Menu {
                 return;
             }
 
+            FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().createJobCommandTypeNameMessage);
+            FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().cancelActivityMessage);
+
             RPUniverse.getInstance().getUniversalChatHandler().addToQueue(playerMenu.getPlayer(), (player, message) -> {
+                if(message.equalsIgnoreCase("cancel")){
+                    return true;
+                }
+
                 if(message.length() > 16){
                     playerMenu.getPlayer().sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorJobNameTooLongMessage));
                     return false;
