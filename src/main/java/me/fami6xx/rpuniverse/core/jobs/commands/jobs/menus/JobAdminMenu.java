@@ -10,6 +10,7 @@ import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import java.util.HashMap;
 
@@ -46,6 +47,8 @@ public class JobAdminMenu extends Menu {
 
             FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().createJobCommandTypeNameMessage);
             FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().cancelActivityMessage);
+
+            playerMenu.getPlayer().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
 
             RPUniverse.getInstance().getUniversalChatHandler().addToQueue(playerMenu.getPlayer(), (player, message) -> {
                 if(message.equalsIgnoreCase("cancel")){

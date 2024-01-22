@@ -40,18 +40,24 @@ public class JobBankActionsMenu extends Menu {
     @Override
     public void handleMenu(InventoryClickEvent e) {
         if(e.getSlot() == 3){
+            FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), languageHandler.jobBankActionsMenuAddMoneyMessage);
+            FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), languageHandler.cancelActivityMessage);
+            playerMenu.getPlayer().closeInventory();
+
             universalChatHandler.addToQueue(playerMenu.getPlayer(), (player, message) -> {
                 try{
                     int amount = Integer.parseInt(message);
                     Economy econ = RPUniverse.getInstance().getEconomy();
-                    if(amount > 0 || econ.has(player, amount)){
+                    if(amount > 0 || econ.getBalance(player) >= amount){
                         job.addMoneyToJobBank(amount);
                         econ.withdrawPlayer(player, amount);
                         player.sendMessage(FamiUtils.formatWithPrefix(languageHandler.jobBankActionsMenuAddMoneySuccessMessage));
+                        this.open();
                         return true;
                     }else{
                         player.sendMessage(FamiUtils.formatWithPrefix(languageHandler.jobBankActionsMenuAddMoneyErrorMessage));
-                        return false;
+                        this.open();
+                        return true;
                     }
                 }catch (NumberFormatException exception){
                     player.sendMessage(FamiUtils.formatWithPrefix(languageHandler.jobBankActionsMenuAddMoneyErrorMessage));
@@ -60,6 +66,10 @@ public class JobBankActionsMenu extends Menu {
             });
         }
         if(e.getSlot() == 5){
+            FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), languageHandler.jobBankActionsMenuRemoveMoneyMessage);
+            FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), languageHandler.cancelActivityMessage);
+            playerMenu.getPlayer().closeInventory();
+
             universalChatHandler.addToQueue(playerMenu.getPlayer(), (player, message) -> {
                 try{
                     int amount = Integer.parseInt(message);
@@ -68,10 +78,12 @@ public class JobBankActionsMenu extends Menu {
                         job.removeMoneyFromJobBank(amount);
                         econ.depositPlayer(player, amount);
                         player.sendMessage(FamiUtils.formatWithPrefix(languageHandler.jobBankActionsMenuRemoveMoneySuccessMessage));
+                        this.open();
                         return true;
                     }else{
                         player.sendMessage(FamiUtils.formatWithPrefix(languageHandler.jobBankActionsMenuRemoveMoneyErrorMessage));
-                        return false;
+                        this.open();
+                        return true;
                     }
                 }catch (NumberFormatException exception){
                     player.sendMessage(FamiUtils.formatWithPrefix(languageHandler.jobBankActionsMenuRemoveMoneyErrorMessage));

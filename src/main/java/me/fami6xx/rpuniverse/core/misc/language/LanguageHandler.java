@@ -52,8 +52,10 @@ public class LanguageHandler {
     public String jobBankActionsMenuRemoveMoneyItemLore = "&7Click to remove money from the job bank";
     public String jobBankActionsMenuCurrentMoneyItemDisplayName = "&cCurrent Money";
     public String jobBankActionsMenuCurrentMoneyItemLore = "&7Current money in the job bank: &c{jobMoney}&7$";
+    public String jobBankActionsMenuAddMoneyMessage = "&7Type the amount of money you want to add to the job bank in chat.";
     public String jobBankActionsMenuAddMoneySuccessMessage = "&cYou added money to the job bank!";
     public String jobBankActionsMenuAddMoneyErrorMessage = "&cYou can't add this amount of money to the job bank!";
+    public String jobBankActionsMenuRemoveMoneyMessage = "&7Type the amount of money you want to remove from the job bank in chat.";
     public String jobBankActionsMenuRemoveMoneySuccessMessage = "&cYou removed money from the job bank!";
     public String jobBankActionsMenuRemoveMoneyErrorMessage = "&cYou can't remove this amount of money from the job bank!";
     public String jobAllPositionsMenuName = "&6RPUniverse &7| &c All positions";
