@@ -53,7 +53,7 @@ public class StatusCommand implements CommandExecutor {
             }
 
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().statusCommandMessage, replace);
-            FollowingHologram holo = new FollowingHologram(player, range, false, true);
+            FollowingHologram holo = new FollowingHologram(player, range, false, false);
             holo.addLine(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().statusCommandHologram, replace));
             StatusDataHandler.addStatusData(player.getUniqueId(), holo);
 

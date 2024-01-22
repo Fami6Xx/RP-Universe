@@ -76,7 +76,7 @@ public class DoCommand implements CommandExecutor {
         if(!createHologram)
             return true;
 
-        new FollowingHologram(player, range, false, true, timeAlive * 20)
+        new FollowingHologram(player, range, false, false, timeAlive * 20)
                 .addLine(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().doCommandHologram, replace));
         return true;
     }
