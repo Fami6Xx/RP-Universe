@@ -25,7 +25,15 @@ public class JobsHandler implements Listener {
 
     public void loadAllJobs(){
         Job[] jobs = RPUniverse.getInstance().getDataSystem().getDataHandler().getAllJobData();
-        this.jobs.addAll(Arrays.asList(jobs));
+
+        for(Job job : jobs){
+            if(job == null) continue;
+            JobType jobType = getJobTypeByName(job.getJobTypeName());
+            if(jobType != null){
+                job.setJobType(jobType.fromString(job.getJobTypeData()));
+            }
+            this.jobs.add(job);
+        }
     }
 
     public Job getJobByName(String name){
