@@ -52,6 +52,7 @@ public class JobAdminMenu extends Menu {
 
             RPUniverse.getInstance().getUniversalChatHandler().addToQueue(playerMenu.getPlayer(), (player, message) -> {
                 if(message.equalsIgnoreCase("cancel")){
+                    menu.open();
                     return true;
                 }
 

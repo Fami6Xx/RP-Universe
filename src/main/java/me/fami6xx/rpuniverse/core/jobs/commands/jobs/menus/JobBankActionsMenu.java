@@ -45,10 +45,15 @@ public class JobBankActionsMenu extends Menu {
             playerMenu.getPlayer().closeInventory();
 
             universalChatHandler.addToQueue(playerMenu.getPlayer(), (player, message) -> {
+                if(message.equalsIgnoreCase("cancel")){
+                    this.open();
+                    return true;
+                }
+
                 try{
                     int amount = Integer.parseInt(message);
                     Economy econ = RPUniverse.getInstance().getEconomy();
-                    if(amount > 0 || econ.getBalance(player) >= amount){
+                    if(amount > 0 && econ.has(player, amount)){
                         job.addMoneyToJobBank(amount);
                         econ.withdrawPlayer(player, amount);
                         player.sendMessage(FamiUtils.formatWithPrefix(languageHandler.jobBankActionsMenuAddMoneySuccessMessage));
@@ -71,10 +76,15 @@ public class JobBankActionsMenu extends Menu {
             playerMenu.getPlayer().closeInventory();
 
             universalChatHandler.addToQueue(playerMenu.getPlayer(), (player, message) -> {
+                if(message.equalsIgnoreCase("cancel")){
+                    this.open();
+                    return true;
+                }
+
                 try{
                     int amount = Integer.parseInt(message);
                     Economy econ = RPUniverse.getInstance().getEconomy();
-                    if(amount > 0 || job.getCurrentMoneyInJobBank() >= amount){
+                    if(amount > 0 && job.getCurrentMoneyInJobBank() >= amount){
                         job.removeMoneyFromJobBank(amount);
                         econ.depositPlayer(player, amount);
                         player.sendMessage(FamiUtils.formatWithPrefix(languageHandler.jobBankActionsMenuRemoveMoneySuccessMessage));
