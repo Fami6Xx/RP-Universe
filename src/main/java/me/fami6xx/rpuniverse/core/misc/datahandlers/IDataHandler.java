@@ -56,6 +56,15 @@ public interface IDataHandler {
     boolean saveJobData(String name, Job data);
 
     /**
+     * Renames the job data from the old name to the new name. The data is serialized and deserialized by the selected Data Handler.
+     *
+     * @param oldName The old name of the job.
+     * @param newName The new name of the job.
+     * @return true if the data was renamed successfully, false otherwise.
+     */
+    boolean renameJobData(String oldName, String newName);
+
+    /**
      * Retrieves all job data stored by the selected Data Handler.
      *
      * @return An array containing all job data.

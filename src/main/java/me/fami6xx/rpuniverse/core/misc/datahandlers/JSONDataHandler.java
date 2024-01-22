@@ -113,6 +113,25 @@ public class JSONDataHandler implements IDataHandler {
     }
 
     @Override
+    public boolean renameJobData(String oldName, String newName) {
+        Path oldJobFilePath = jobDataDirectory.resolve(oldName + ".json");
+        Path newJobFilePath = jobDataDirectory.resolve(newName + ".json");
+
+        File oldJobFile = oldJobFilePath.toFile();
+        File newJobFile = newJobFilePath.toFile();
+
+        if(!oldJobFile.exists()) {
+            return false;
+        }
+
+        if(newJobFile.exists()) {
+            return false;
+        }
+
+        return oldJobFile.renameTo(newJobFile);
+    }
+
+    @Override
     public boolean saveJobData(String name, Job data) {
         Path jobFilePath = jobDataDirectory.resolve(name + ".json");
 
