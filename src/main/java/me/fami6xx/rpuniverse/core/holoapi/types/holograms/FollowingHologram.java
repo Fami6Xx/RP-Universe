@@ -5,6 +5,7 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -28,8 +29,6 @@ public class FollowingHologram extends famiHologram {
         super(
                 DHAPI.createHologram(UUID.randomUUID().toString(), toFollow.getLocation().clone().add(0, toFollow.getHeight(), 0))
         );
-        List<famiHologram> playerHolograms = api.getPlayerHolograms().get(toFollow.getUniqueId());
-
         following = toFollow;
         updateVisibility(-1, false);
         getHologram().setDefaultVisibleState(true);
@@ -37,11 +36,10 @@ public class FollowingHologram extends famiHologram {
         api.getFollowHandler().queue.add(() -> api.getFollowHandler().addToList(toFollow.getUniqueId(), followingHologram));
         followingUUID = toFollow.getUniqueId();
 
-        if (playerHolograms == null) {
-            playerHolograms = new ArrayList<>();
-            api.getPlayerHolograms().put(toFollow.getUniqueId(), playerHolograms);
+        if(toFollow instanceof Player){
+            List<famiHologram> playerHolograms = api.getPlayerHolograms().computeIfAbsent(toFollow.getUniqueId(), k -> new ArrayList<>());
+            playerHolograms.add(this);
         }
-        playerHolograms.add(this);
     }
 
     /**
@@ -72,6 +70,11 @@ public class FollowingHologram extends famiHologram {
         }
 
         followingUUID = toFollow.getUniqueId();
+
+        if(toFollow instanceof Player){
+            List<famiHologram> playerHolograms = api.getPlayerHolograms().computeIfAbsent(toFollow.getUniqueId(), k -> new ArrayList<>());
+            playerHolograms.add(this);
+        }
     }
 
     /**
@@ -103,6 +106,11 @@ public class FollowingHologram extends famiHologram {
         }
 
         followingUUID = toFollow.getUniqueId();
+
+        if(toFollow instanceof Player){
+            List<famiHologram> playerHolograms = api.getPlayerHolograms().computeIfAbsent(toFollow.getUniqueId(), k -> new ArrayList<>());
+            playerHolograms.add(this);
+        }
 
         new BukkitRunnable(){
             @Override

@@ -66,7 +66,15 @@ public class MeCommand implements CommandExecutor {
 
         FamiUtils.sendMessageInRange(player, RPUniverse.getLanguageHandler().meCommandMessage, range, replace);
 
-        if (DoCommand.shouldCreateHologram(player, maxHolograms)) return true;
+        boolean createHologram = true;
+        if(RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().get(player.getUniqueId()) != null){
+            if(RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().get(player.getUniqueId()).size() >= maxHolograms){
+                createHologram = false;
+            }
+        }
+
+        if(!createHologram)
+            return true;
 
         new FollowingHologram(player, range, false, true, timeAlive * 20)
                 .addLine(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().meCommandHologram, replace));

@@ -66,14 +66,6 @@ public class DoCommand implements CommandExecutor {
 
         FamiUtils.sendMessageInRange(player, RPUniverse.getLanguageHandler().doCommandMessage, range, replace);
 
-        if (shouldCreateHologram(player, maxHolograms)) return true;
-
-        new FollowingHologram(player, range, false, true, timeAlive * 20)
-                .addLine(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().doCommandHologram, replace));
-        return true;
-    }
-
-    static boolean shouldCreateHologram(Player player, int maxHolograms) {
         boolean createHologram = true;
         if(RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().get(player.getUniqueId()) != null){
             if(RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().get(player.getUniqueId()).size() >= maxHolograms){
@@ -83,6 +75,10 @@ public class DoCommand implements CommandExecutor {
 
         if(!createHologram)
             return true;
-        return false;
+
+        new FollowingHologram(player, range, false, true, timeAlive * 20)
+                .addLine(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().doCommandHologram, replace));
+        return true;
     }
+
 }
