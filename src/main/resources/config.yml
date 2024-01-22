@@ -14,7 +14,7 @@ prefix: '&8[&6RPUniverse&8]'
 # timeAlive: The time in seconds the holograms are visible after they are created (For /me, /do etc..)
 # maximumAbovePlayer: The maximum amount of holograms the player can have above himself
 holograms:
-    range: 50
+    range: 15
     timeAlive: 10
     maximumAbovePlayer: 5
 
