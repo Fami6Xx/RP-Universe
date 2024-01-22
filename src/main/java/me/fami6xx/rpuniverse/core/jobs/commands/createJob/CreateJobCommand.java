@@ -77,21 +77,23 @@ public class CreateJobCommand implements CommandExecutor, Listener {
 
             createJobStarter.getCreateJobStorage(player.getUniqueId()).setJobName(message);
             player.resetTitle();
+            showTypeNameTitle.remove(player);
             showSetLocationTitle.add(player);
 
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandBossMenuLocationMessage);
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().cancelActivityMessage);
 
             universalChatHandler.addToQueue(player1, (player2, message1) -> {
-                if(message.equalsIgnoreCase("cancel")){
+                if(message1.equalsIgnoreCase("cancel")){
                     removeFromCurrentlyCreating(player);
                     removeFromShowTitle(player);
                     createJobStarter.removeFromCreateJobStorage(player.getUniqueId());
+                    player.resetTitle();
                     FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandCancelMessage);
                     return true;
                 }
 
-                if(message.equalsIgnoreCase("here")){
+                if(message1.equalsIgnoreCase("here")){
                     createJobStarter.getCreateJobStorage(player.getUniqueId()).setBossMenuLocation(player.getLocation().toCenterLocation());
 
                     currentlyCreating.remove(player);
@@ -106,11 +108,8 @@ public class CreateJobCommand implements CommandExecutor, Listener {
 
                 return false;
             });
-            return true;
+            return false;
         });
-
-        FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandTypeNameMessage);
-
         return true;
     }
 
