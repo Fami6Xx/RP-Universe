@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.misc.datahandlers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
@@ -65,6 +66,9 @@ public class JSONDataHandler implements IDataHandler {
         } catch (IOException e) {
             logger.severe(e.getMessage());
             return null;
+        } catch (JsonParseException e) {
+            logger.severe("Failed to parse player data for player: " + uuid);
+            return null;
         }
     }
 
@@ -101,6 +105,9 @@ public class JSONDataHandler implements IDataHandler {
             return gson.fromJson(reader, Job.class);
         } catch (IOException e) {
             logger.severe(e.getMessage());
+            return null;
+        } catch (JsonParseException e) {
+            logger.severe("Failed to parse job data for job: " + name);
             return null;
         }
     }
@@ -140,12 +147,7 @@ public class JSONDataHandler implements IDataHandler {
         }
         Job[] jobs = new Job[files.length];
         for(int i = 0; i < files.length; i++) {
-            try (Reader reader = new FileReader(files[i])) {
-                jobs[i] = gson.fromJson(reader, Job.class);
-            } catch (IOException e) {
-                logger.severe(e.getMessage());
-                return null;
-            }
+            jobs[i] = getJobData(files[i].getName().replace(".json", ""));
         }
         return jobs;
     }
