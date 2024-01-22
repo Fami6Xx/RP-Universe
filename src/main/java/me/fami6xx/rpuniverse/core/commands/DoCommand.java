@@ -39,6 +39,7 @@ public class DoCommand implements CommandExecutor {
 
         int range = 0;
         int timeAlive = 0;
+        int maxHolograms = 0;
         try {
             range = RPUniverse.getInstance().getConfiguration().getInt("holograms.range");
         } catch (Exception exc) {
@@ -55,9 +56,33 @@ public class DoCommand implements CommandExecutor {
             return true;
         }
 
+        try {
+            maxHolograms = RPUniverse.getInstance().getConfiguration().getInt("holograms.maximumAbovePlayer");
+        }catch (Exception exc){
+            replace.put("{value}", "holograms.maximumAbovePlayer");
+            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace);
+            return true;
+        }
+
         FamiUtils.sendMessageInRange(player, RPUniverse.getLanguageHandler().doCommandMessage, range, replace);
+
+        if (shouldCreateHologram(player, maxHolograms)) return true;
+
         new FollowingHologram(player, range, false, true, timeAlive * 20)
                 .addLine(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().doCommandHologram, replace));
         return true;
+    }
+
+    static boolean shouldCreateHologram(Player player, int maxHolograms) {
+        boolean createHologram = true;
+        if(RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().get(player.getUniqueId()) != null){
+            if(RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().get(player.getUniqueId()).size() >= maxHolograms){
+                createHologram = false;
+            }
+        }
+
+        if(!createHologram)
+            return true;
+        return false;
     }
 }

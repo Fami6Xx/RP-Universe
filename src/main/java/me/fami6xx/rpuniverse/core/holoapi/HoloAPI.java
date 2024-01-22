@@ -3,8 +3,16 @@ package me.fami6xx.rpuniverse.core.holoapi;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.handlers.FollowHoloHandler;
 import me.fami6xx.rpuniverse.core.holoapi.handlers.VisibilityHoloHandler;
+import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public final class HoloAPI {
+    private final Map<UUID, List<famiHologram>> playerHolograms = new HashMap<>();
+
     FollowHoloHandler followHandler;
     VisibilityHoloHandler VisibilityHandler;
 
@@ -31,6 +39,10 @@ public final class HoloAPI {
         this.VisibilityHandler.stop();
 
         return true;
+    }
+
+    public Map<UUID, List<famiHologram>> getPlayerHolograms() {
+        return playerHolograms;
     }
 
     public FollowHoloHandler getFollowHandler(){

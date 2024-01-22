@@ -39,6 +39,7 @@ public class MeCommand implements CommandExecutor {
 
         int range = 0;
         int timeAlive = 0;
+        int maxHolograms = 0;
         try {
             range = RPUniverse.getInstance().getConfiguration().getInt("holograms.range");
         }catch (Exception exc){
@@ -55,7 +56,18 @@ public class MeCommand implements CommandExecutor {
             return true;
         }
 
+        try {
+            maxHolograms = RPUniverse.getInstance().getConfiguration().getInt("holograms.maximumAbovePlayer");
+        }catch (Exception exc){
+            replace.put("{value}", "holograms.maximumAbovePlayer");
+            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace);
+            return true;
+        }
+
         FamiUtils.sendMessageInRange(player, RPUniverse.getLanguageHandler().meCommandMessage, range, replace);
+
+        if (DoCommand.shouldCreateHologram(player, maxHolograms)) return true;
+
         new FollowingHologram(player, range, false, true, timeAlive * 20)
                 .addLine(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().meCommandHologram, replace));
         return true;

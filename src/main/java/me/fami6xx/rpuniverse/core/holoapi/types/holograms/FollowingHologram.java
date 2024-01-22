@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class FollowingHologram extends famiHologram {
@@ -26,12 +28,20 @@ public class FollowingHologram extends famiHologram {
         super(
                 DHAPI.createHologram(UUID.randomUUID().toString(), toFollow.getLocation().clone().add(0, toFollow.getHeight(), 0))
         );
+        List<famiHologram> playerHolograms = api.getPlayerHolograms().get(toFollow.getUniqueId());
+
         following = toFollow;
         updateVisibility(-1, false);
         getHologram().setDefaultVisibleState(true);
 
         api.getFollowHandler().queue.add(() -> api.getFollowHandler().addToList(toFollow.getUniqueId(), followingHologram));
         followingUUID = toFollow.getUniqueId();
+
+        if (playerHolograms == null) {
+            playerHolograms = new ArrayList<>();
+            api.getPlayerHolograms().put(toFollow.getUniqueId(), playerHolograms);
+        }
+        playerHolograms.add(this);
     }
 
     /**

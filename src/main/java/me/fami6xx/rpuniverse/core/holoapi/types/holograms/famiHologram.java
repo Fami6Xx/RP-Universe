@@ -6,6 +6,7 @@ import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -74,6 +75,14 @@ public abstract class famiHologram {
         api.getVisibilityHandler().queue.add(() -> api.getVisibilityHandler().removeFromList(getUUID(), this));
 
         getHologram().delete();
+
+        Entity owner = this instanceof FollowingHologram ? ((FollowingHologram) this).getFollowing() : null;
+        if (owner != null) {
+            List<famiHologram> playerHolograms = RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().get(owner.getUniqueId());
+            if (playerHolograms != null) {
+                playerHolograms.remove(this);
+            }
+        }
     };
 
     /**
