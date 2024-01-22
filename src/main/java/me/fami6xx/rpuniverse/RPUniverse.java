@@ -35,8 +35,8 @@ public final class RPUniverse extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!setupEconomy() ) {
-            getLogger().severe("Vault is not installed! Disabling plugin...");
+        if (!setupEconomy()) {
+            getLogger().severe("Vault is not installed or doesn't have any Economy plugin! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -89,12 +89,14 @@ public final class RPUniverse extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.menuManager.disable();
-        HandlerList.unregisterAll(this);
-        this.jobsHandler.shutdown();
-        this.dataSystem.shutdown();
-        this.holoAPI.disable();
-        this.createJobStarter.stop();
+        try {
+            this.menuManager.disable();
+            HandlerList.unregisterAll(this);
+            this.jobsHandler.shutdown();
+            this.dataSystem.shutdown();
+            this.holoAPI.disable();
+            this.createJobStarter.stop();
+        }catch (NullPointerException ignored){}
     }
 
     private boolean setupEconomy() {
