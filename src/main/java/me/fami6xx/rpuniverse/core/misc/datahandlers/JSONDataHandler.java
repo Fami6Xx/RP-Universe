@@ -20,7 +20,7 @@ public class JSONDataHandler implements IDataHandler {
     private Gson gson;
     private final Path playerDataDirectory = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/playerdata/");
     private final Path jobDataDirectory = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/jobs/");
-    private final Logger logger =  Logger.getLogger(JSONDataHandler.class.getName());
+    private final Logger logger =  RPUniverse.getInstance().getLogger();
 
     @Override
     public boolean startUp() {
@@ -67,7 +67,7 @@ public class JSONDataHandler implements IDataHandler {
             logger.severe(e.getMessage());
             return null;
         } catch (JsonParseException e) {
-            logger.severe("Failed to parse player data for player: " + uuid);
+            logger.severe("Failed to load data for player: " + uuid);
             return null;
         }
     }
@@ -107,7 +107,7 @@ public class JSONDataHandler implements IDataHandler {
             logger.severe(e.getMessage());
             return null;
         } catch (JsonParseException e) {
-            logger.severe("Failed to parse job data for job: " + name);
+            logger.severe("Failed to load data for job: " + name);
             return null;
         }
     }
