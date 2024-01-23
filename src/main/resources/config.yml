@@ -18,4 +18,11 @@ holograms:
     timeAlive: 10
     maximumAbovePlayer: 5
 
+# The settings for saving data
+# saveInterval: The interval in seconds in which the data is saved
+# selectedSaveMethod: The method used to save the data (currently only json is supported)
+data:
+    saveInterval: 60
+    selectedSaveMethod: json
+
 
