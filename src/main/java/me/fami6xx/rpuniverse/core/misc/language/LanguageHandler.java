@@ -14,6 +14,9 @@ public class LanguageHandler {
     public String errorYouAlreadyHaveSomethingToType = "&cYou already have something to type, type that thing first.";
     public String cancelActivityMessage = "&7Type &ccancel &7to cancel.";
 
+    // JOB HOLOGRAM
+    public String jobBossMenuHologram = "&cJob Boss Menu~&6{jobName}~&7Click to open the menu";
+
     // MENU THINGS
     public String closeItemDisplayName = "&cClose";
     public String closeItemLore = "&7Click to close the menu";

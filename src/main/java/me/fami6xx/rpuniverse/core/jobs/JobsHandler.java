@@ -32,6 +32,7 @@ public class JobsHandler implements Listener {
             if(jobType != null){
                 job.setJobType(jobType.fromString(job.getJobTypeData()));
             }
+            job.initialize();
             this.jobs.add(job);
         }
     }

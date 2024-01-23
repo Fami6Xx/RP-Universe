@@ -2,14 +2,26 @@ package me.fami6xx.rpuniverse.core.jobs;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.actions.Action;
+import eu.decentsoftware.holograms.api.actions.ActionType;
+import eu.decentsoftware.holograms.api.actions.ClickType;
+import eu.decentsoftware.holograms.api.holograms.Hologram;
+import eu.decentsoftware.holograms.api.holograms.HologramLine;
+import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static sun.audio.AudioPlayer.player;
 
 /**
  * Represents a job in the system.
@@ -21,6 +33,7 @@ public class Job {
             .registerTypeAdapter(Location.class, new LocationAdapter())
             .create();
     private transient JobType jobType;
+    private transient Hologram bossMenuHologram;
     private String jobTypeName = null;
     private String JSONJobTypeData = null;
 
@@ -50,6 +63,7 @@ public class Job {
         this.jobName = jobName;
         this.jobBank = jobBank;
         this.bossMenuLocation = bossMenuLocation;
+        createBossMenuHologram();
     }
 
     /**
@@ -63,6 +77,7 @@ public class Job {
     public Job(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions) {
         this(jobName, jobBank, bossMenuLocation);
         this.jobPositions = jobPositions;
+        createBossMenuHologram();
     }
 
     /**
@@ -77,6 +92,48 @@ public class Job {
     public Job(String jobName, int jobBank, Location bossMenuLocation, List<Position> jobPositions, Map<UUID, Position> playerPositions) {
         this(jobName, jobBank, bossMenuLocation, jobPositions);
         this.playerPositions = playerPositions;
+        createBossMenuHologram();
+    }
+
+    public void initialize(){
+        createBossMenuHologram();
+    }
+
+    public void createBossMenuHologram(){
+        if(bossMenuLocation != null){
+            if(bossMenuHologram != null){
+                bossMenuHologram.delete();
+            }
+            Hologram holo = DHAPI.createHologram(UUID.randomUUID().toString(), bossMenuLocation.clone().add(0, 1.5, 0));
+            this.bossMenuHologram = holo;
+            if(holo.getPage(0) == null){
+                holo.addPage();
+            }
+            holo.setDefaultVisibleState(true);
+
+            HashMap<String, String> replace = new HashMap<>();
+            replace.put("{jobName}", jobName);
+            replace.put("{jobBank}", String.valueOf(jobBank));
+            if(jobTypeName != null)
+                replace.put("{jobType}", jobTypeName);
+            else
+                replace.put("{jobType}", "None");
+
+            String[] hologramLines = RPUniverse.getLanguageHandler().jobBossMenuHologram.split("~");
+            HologramPage page = holo.getPage(0);
+            for(String line : hologramLines){
+                line = FamiUtils.replaceAndFormat(line, replace);
+                page.addLine(new HologramLine(page, page.getNextLineLocation(), line));
+            }
+            Job job = this;
+            page.addAction(ClickType.RIGHT, new Action(new ActionType("jobAdminMenu-" + jobName) {
+                @Override
+                public boolean execute(Player player, String... strings) {
+                    new JobAdminMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), job).open();
+                    return true;
+                }
+            }, "jobAdminMenu-" + jobName));
+        }
     }
 
     /**
