@@ -41,6 +41,7 @@ public final class RPUniverse extends JavaPlugin {
             return;
         }
 
+        languageHandler = new LanguageHandler(this);
         dataSystem = new DataSystem();
         holoAPI = new HoloAPI();
         jobsHandler = new JobsHandler();
@@ -66,8 +67,6 @@ public final class RPUniverse extends JavaPlugin {
             }
             config = this.getConfig();
         }
-
-        languageHandler = new LanguageHandler(this);
 
         if(!menuManager.enable()){
             getLogger().severe("Failed to enable MenuManager! Disabling plugin...");
