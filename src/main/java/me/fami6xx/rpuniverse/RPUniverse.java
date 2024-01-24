@@ -10,6 +10,7 @@ import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.JobsCommand;
 import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import net.milkbowl.vault.economy.Economy;
@@ -156,5 +157,9 @@ public final class RPUniverse extends JavaPlugin {
 
     public static JavaPlugin getJavaPlugin(){
         return getProvidingPlugin(RPUniverse.class);
+    }
+
+    public static PlayerData getPlayerData(String UUID){
+        return getInstance().getDataSystem().getPlayerData(UUID);
     }
 }

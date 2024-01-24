@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static me.fami6xx.rpuniverse.RPUniverse.getPlayerData;
 import static sun.audio.AudioPlayer.player;
 
 /**
@@ -347,7 +348,7 @@ public class Job {
      */
     public void addPlayerToJob(UUID playerUUID, Position position) {
         playerPositions.put(playerUUID, position);
-        RPUniverse.getInstance().getDataSystem().getPlayerData(playerUUID).addJob(this);
+        RPUniverse.getPlayerData(playerUUID.toString()).addJob(this);
     }
 
     /**
@@ -358,7 +359,7 @@ public class Job {
         for(Position position : jobPositions) {
             if(position.isDefault()) {
                 playerPositions.put(playerUUID, position);
-                RPUniverse.getInstance().getDataSystem().getPlayerData(playerUUID).addJob(this);
+                RPUniverse.getPlayerData(playerUUID.toString()).addJob(this);
                 return;
             }
         }
@@ -371,7 +372,7 @@ public class Job {
      */
     public void removePlayerFromJob(UUID playerUUID) {
         playerPositions.remove(playerUUID);
-        RPUniverse.getInstance().getDataSystem().getPlayerData(playerUUID).removeJob(this);
+        RPUniverse.getPlayerData(playerUUID.toString()).removeJob(this);
     }
 
     /**
