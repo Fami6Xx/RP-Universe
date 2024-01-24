@@ -106,7 +106,7 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
 
                                 job.addPosition(new Position(message, salary, workingPermissionLevel, false, false));
                                 player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().addPositionSuccessMessage));
-                                new JobAllPositionsMenu(playerMenu, job, adminMenu).open();
+                                this.open();
 
                                 return true;
                             }catch (NumberFormatException exception){
@@ -115,14 +115,14 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
                             }
                         });
 
-                        return true;
+                        return false;
                     }catch (NumberFormatException exception){
                         player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorPositionSalaryNotANumberMessage));
                         return false;
                     }
                 });
 
-                return true;
+                return false;
             });
 
             return;
