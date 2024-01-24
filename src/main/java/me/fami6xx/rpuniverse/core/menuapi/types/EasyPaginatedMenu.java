@@ -97,6 +97,8 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
             super.inventory.setItem(slot, getItemFromIndex(index));
             slot++;
         }
+
+        addAdditionalItems();
     }
 
     /**
