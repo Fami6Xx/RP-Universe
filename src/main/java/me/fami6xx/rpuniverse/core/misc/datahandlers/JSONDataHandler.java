@@ -74,7 +74,7 @@ public class JSONDataHandler implements IDataHandler {
 
     @Override
     public boolean savePlayerData(PlayerData data) {
-        Path playerFilePath = playerDataDirectory.resolve(data.getUuid() + ".json");
+        Path playerFilePath = playerDataDirectory.resolve(data.getPlayerUUID().toString() + ".json");
 
         File playerFilePathFile = playerFilePath.toFile();
         if(!playerFilePathFile.exists()) {
