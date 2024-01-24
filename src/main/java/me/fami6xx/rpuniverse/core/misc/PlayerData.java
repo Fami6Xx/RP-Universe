@@ -41,6 +41,29 @@ public class PlayerData {
     }
 
     /**
+     * Adds a job to the player's list of jobs.
+     *
+     * @param job The job to be added.
+     */
+    public void addJob(Job job){
+        playerJobs.add(job);
+        if(selectedPlayerJob == null) selectedPlayerJob = job;
+    }
+
+    /**
+     * Removes a job from the player's list of jobs.
+     *
+     * @param job The job to be removed.
+     */
+    public void removeJob(Job job){
+        playerJobs.remove(job);
+        if(selectedPlayerJob == job){
+            if(!playerJobs.isEmpty()) selectedPlayerJob = playerJobs.get(0);
+            else selectedPlayerJob = null;
+        }
+    }
+
+    /**
      * Prepares the player data for saving.
      * <p>
      * If the bindedPlayer field is not null, it retrieves the name of the player and assigns it to playerName.

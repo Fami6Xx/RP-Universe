@@ -17,6 +17,7 @@ import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -125,14 +126,15 @@ public class Job {
                 line = FamiUtils.replaceAndFormat(line, replace);
                 page.addLine(new HologramLine(page, page.getNextLineLocation(), line));
             }
+
             Job job = this;
-            page.addAction(ClickType.RIGHT, new Action(new ActionType("jobAdminMenu-" + jobName) {
+            page.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
                 @Override
                 public boolean execute(Player player, String... strings) {
                     new JobAdminMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), job).open();
                     return true;
                 }
-            }, "jobAdminMenu-" + jobName));
+            }, ""));
         }
     }
 
@@ -345,6 +347,7 @@ public class Job {
      */
     public void addPlayerToJob(UUID playerUUID, Position position) {
         playerPositions.put(playerUUID, position);
+        RPUniverse.getInstance().getDataSystem().getPlayerData(playerUUID).addJob(this);
     }
 
     /**
@@ -355,6 +358,7 @@ public class Job {
         for(Position position : jobPositions) {
             if(position.isDefault()) {
                 playerPositions.put(playerUUID, position);
+                RPUniverse.getInstance().getDataSystem().getPlayerData(playerUUID).addJob(this);
                 return;
             }
         }
@@ -367,6 +371,7 @@ public class Job {
      */
     public void removePlayerFromJob(UUID playerUUID) {
         playerPositions.remove(playerUUID);
+        RPUniverse.getInstance().getDataSystem().getPlayerData(playerUUID).removeJob(this);
     }
 
     /**
@@ -393,6 +398,23 @@ public class Job {
     public void prepareForSave(){
         if(jobType != null)
             JSONJobTypeData = jobType.toString();
+    }
+
+    /**
+     * Retrieves a Job object with the specified job name.
+     *
+     * @param jobName The name of the job to retrieve. Must not be null.
+     * @return The Job object with the specified job name, or null if no job with that name exists.
+     */
+    @Nullable
+    public static Job getJob(String jobName){
+        for(Job job : RPUniverse.getInstance().getJobsHandler().getJobs()){
+            if(job.getName().equalsIgnoreCase(jobName)){
+                return job;
+            }
+        }
+
+        return null;
     }
 
     public static Job fromString(String s) {
