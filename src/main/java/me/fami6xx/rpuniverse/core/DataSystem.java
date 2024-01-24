@@ -5,6 +5,8 @@ import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.datahandlers.IDataHandler;
 import me.fami6xx.rpuniverse.core.misc.datahandlers.JSONDataHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.UUID;
@@ -63,9 +65,12 @@ public class DataSystem {
 
         // Next, check the saveQueue if the player hasn't been saved yet. (This acts as a cache)
         for (PlayerData queuedData : saveQueue) {
-            if (queuedData.getUuid().equals(uuid)) {
-                data = queuedData;
-            }
+            if(queuedData.getBindedPlayer() != null)
+                if (queuedData.getBindedPlayer().getUniqueId().equals(uuid))
+                    data = queuedData;
+            else if(queuedData.getBindedOfflinePlayer() != null)
+                if (queuedData.getBindedOfflinePlayer().getUniqueId().equals(uuid))
+                    data = queuedData;
         }
 
         if(data != null){
@@ -77,12 +82,29 @@ public class DataSystem {
         // Lastly, ask the dataHandler
         data = dataHandler.loadPlayerData(uuid.toString());
         if (data != null) {
+            data.loadAfterSave();
             playerDataMap.put(uuid, data);
         }else {
-            data = new PlayerData();
+            if(RPUniverse.getInstance().getServer().getPlayer(uuid) == null){
+                OfflinePlayer player = RPUniverse.getInstance().getServer().getOfflinePlayer(uuid);
+                data = new PlayerData(player);
+                playerDataMap.put(uuid, data);
+            }
+
+            data = new PlayerData(RPUniverse.getInstance().getServer().getPlayer(uuid));
             playerDataMap.put(uuid, data);
         }
         return data;
+    }
+
+    /**
+     * Retrieves the player data for the specified UUID.
+     *
+     * @param UUID The UUID of the player to get the data for.
+     * @return The player data for the specified UUID. Null if not found.
+     */
+    public PlayerData getPlayerData(String UUID){
+        return getPlayerData(java.util.UUID.fromString(UUID));
     }
 
     /**
@@ -90,6 +112,7 @@ public class DataSystem {
      * @param data The player data to save.
      */
     public void queuePlayerDataForSaving(PlayerData data) {
+        playerDataMap.remove(data.getPlayerUUID());
         saveQueue.offer(data);
     }
 
@@ -114,6 +137,7 @@ public class DataSystem {
         while (!saveQueue.isEmpty()) {
             PlayerData data = saveQueue.poll();
             if (data != null) {
+                data.prepareForSave();
                 dataHandler.savePlayerData(data);
             }
         }
