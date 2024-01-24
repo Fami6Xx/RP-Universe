@@ -81,7 +81,6 @@ public class CreateJobCommand implements CommandExecutor, Listener {
             showSetLocationTitle.add(player);
 
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().createJobCommandBossMenuLocationMessage);
-            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().cancelActivityMessage);
 
             universalChatHandler.addToQueue(player1, (player2, message1) -> {
                 if(message1.equalsIgnoreCase("cancel")){
