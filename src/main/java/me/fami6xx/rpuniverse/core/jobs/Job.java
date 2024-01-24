@@ -248,6 +248,12 @@ public class Job {
         return jobPositions;
     }
 
+    /**
+     * Retrieves a Position object from the jobPositions list based on the provided position name.
+     *
+     * @param name The name of the position to retrieve. Must not be null.
+     * @return The Position object with the specified name, or null if no position with that name exists.
+     */
     public Position getPositionByName(String name){
         for(Position position : jobPositions){
             if(position.getName().equalsIgnoreCase(name)){
