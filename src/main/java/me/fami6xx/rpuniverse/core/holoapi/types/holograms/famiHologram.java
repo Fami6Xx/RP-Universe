@@ -69,7 +69,16 @@ public abstract class famiHologram {
         }
 
         if(!hologram.isDisabled() && !hologram.isDefaultVisibleState()){
-            hologram.getPages().forEach(page -> page.getLines().forEach(line -> line.hide(currentlyVisiblePlayers.toArray(new Player[0]))));
+            hologram.getPages().forEach(page -> {
+                page.getLines().forEach(line -> line.hide(currentlyVisiblePlayers.toArray(new Player[0])));
+                if(page.hasActions()){
+                    page.getActions().forEach((clickType, actions) -> {
+                        for (int i = 0; i < actions.size(); i++) {
+                            page.removeAction(clickType, i);
+                        }
+                    });
+                }
+            });
         }
 
         api.getVisibilityHandler().queue.add(() -> api.getVisibilityHandler().removeFromList(getUUID(), this));
