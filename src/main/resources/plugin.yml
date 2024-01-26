@@ -1,7 +1,7 @@
 name: RPUniverse
 version: '${project.version}'
 main: me.fami6xx.rpuniverse.RPUniverse
-softdepend: [ DecentHolograms, Vault ]
+softdepend: [ DecentHolograms, Vault, PlaceholderAPI ]
 authors: [ Fami6Xx ]
 description: A unique plugin that allows you to create your own Role play world
 commands:
@@ -29,3 +29,18 @@ commands:
     description: Lists all jobs
     usage: /<command>
     permission: rpu.jobs
+
+permissions:
+  rpu.user:
+    description: Gives access to all user commands
+    default: true
+    children:
+        rpu.me: true
+        rpu.do: true
+        rpu.status: true
+        rpu.stopstatus: true
+  rpu.admin:
+    description: Gives access to all admin commands
+    children:
+        rpu.createjob: true
+        rpu.jobs: true
