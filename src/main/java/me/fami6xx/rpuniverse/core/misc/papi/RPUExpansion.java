@@ -34,6 +34,6 @@ public class RPUExpansion extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
-
+        return null;
     }
 }
