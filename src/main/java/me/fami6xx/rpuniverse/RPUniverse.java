@@ -39,18 +39,6 @@ public final class RPUniverse extends JavaPlugin {
             return;
         }
 
-        languageHandler = new LanguageHandler(this);
-        dataSystem = new DataSystem();
-        holoAPI = new HoloAPI();
-        jobsHandler = new JobsHandler();
-        menuManager = new MenuManager();
-
-        if(!holoAPI.enable()){
-            getLogger().severe("DecentHolograms is not installed! Disabling plugin...");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
         if(!getDataFolder().exists()){
             getDataFolder().mkdir();
             this.saveDefaultConfig();
@@ -65,6 +53,19 @@ public final class RPUniverse extends JavaPlugin {
             }
             config = this.getConfig();
         }
+
+        languageHandler = new LanguageHandler(this);
+        dataSystem = new DataSystem();
+        holoAPI = new HoloAPI();
+
+        if(!holoAPI.enable()){
+            getLogger().severe("DecentHolograms is not installed! Disabling plugin...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        jobsHandler = new JobsHandler();
+        menuManager = new MenuManager();
 
         if(!menuManager.enable()){
             getLogger().severe("Failed to enable MenuManager! Disabling plugin...");

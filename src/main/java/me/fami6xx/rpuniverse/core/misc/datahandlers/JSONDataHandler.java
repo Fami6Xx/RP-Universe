@@ -61,6 +61,12 @@ public class JSONDataHandler implements IDataHandler {
     @Override
     public PlayerData loadPlayerData(String uuid) {
         Path playerFilePath = playerDataDirectory.resolve(uuid + ".json");
+
+        File playerFile = playerFilePath.toFile();
+        if(!playerFile.exists()) {
+            return new PlayerData(uuid);
+        }
+
         try (Reader reader = new FileReader(playerFilePath.toFile())) {
             return gson.fromJson(reader, PlayerData.class);
         } catch (IOException e) {

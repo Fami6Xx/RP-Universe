@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.misc;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -38,6 +39,12 @@ public class PlayerData {
     public PlayerData(OfflinePlayer bindedOfflinePlayer) {
         this.bindedOfflinePlayer = bindedOfflinePlayer;
         this.bindedPlayer = null;
+        this.dataUUID = UUID.randomUUID();
+    }
+
+    public PlayerData(String playerUUID){
+        if(playerUUID == null) throw new IllegalArgumentException("Player UUID cannot be null!");
+        this.playerUUID = playerUUID;
         this.dataUUID = UUID.randomUUID();
     }
 
@@ -125,17 +132,18 @@ public class PlayerData {
      * For each jobName in playerJobNames, it retrieves the job object using the jobName and adds it to playerJobs.
      */
     public void loadAfterSave(){
-        if(bindedPlayer != null)
-            bindedPlayer = RPUniverse.getInstance().getServer().getPlayer(playerUUID);
-        else if(bindedOfflinePlayer != null)
-            bindedOfflinePlayer = RPUniverse.getInstance().getServer().getOfflinePlayer(UUID.fromString(playerUUID));
+        if(Bukkit.getPlayer(playerUUID) != null) this.bindedPlayer = Bukkit.getPlayer(playerUUID);
+        else this.bindedOfflinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID));
 
         if(selectedJobName != null)
             selectedPlayerJob = Job.getJob(selectedJobName);
 
         playerJobs = new ArrayList<>();
-        for(String jobName : playerJobNames)
-            playerJobs.add(Job.getJob(jobName));
+        if(playerJobNames != null) {
+            for (String jobName : playerJobNames) {
+                playerJobs.add(Job.getJob(jobName));
+            }
+        }
     }
 
     /**

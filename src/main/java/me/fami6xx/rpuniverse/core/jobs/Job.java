@@ -103,6 +103,11 @@ public class Job {
     public void initialize(){
         createBossMenuHologram();
     }
+    public void remove(){
+        if(bossMenuHologram != null){
+            bossMenuHologram.delete();
+        }
+    }
 
     public void createBossMenuHologram(){
         if(bossMenuLocation != null){
