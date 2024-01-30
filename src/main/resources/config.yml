@@ -29,8 +29,6 @@ jobs:
     needsPermissionToHaveMultipleJobs: true
     menuRange: 5
 
-
-
 # The settings for the holograms
 # range: The range in which the holograms are visible
 # timeAlive: The time in seconds the holograms are visible after they are created (For /me, /do etc..)
