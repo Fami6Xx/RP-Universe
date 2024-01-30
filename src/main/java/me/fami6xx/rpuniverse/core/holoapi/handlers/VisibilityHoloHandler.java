@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.holoapi.handlers;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.raycast.RayCast;
 import me.fami6xx.rpuniverse.core.misc.raycast.RayCastResult;
 import org.bukkit.Bukkit;
@@ -15,6 +16,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class VisibilityHoloHandler extends famiHoloHandler {
+    public void updateHologramsPlayerMode(Player player, PlayerData data){
+        getMap().forEach(((uuid, famiHolograms) -> {
+            famiHologram[] arr = famiHolograms.toArray(new famiHologram[0]);
+
+            for(famiHologram holo : arr){
+                if(holo.isVisible(player)){
+                    holo.updatedPlayerMode(data);
+                }
+            }
+        }));
+    }
+
     @Override
     public BukkitTask startTask() {
         return new BukkitRunnable(){

@@ -33,7 +33,8 @@ public class DataSystem implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
-        this.getPlayerData(event.getPlayer().getUniqueId());
+        this.getPlayerData(event.getPlayer().getUniqueId()).updatePlayer(event.getPlayer());
+
     }
 
     @EventHandler

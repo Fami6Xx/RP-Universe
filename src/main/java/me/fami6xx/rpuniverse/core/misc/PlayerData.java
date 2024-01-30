@@ -79,9 +79,7 @@ public class PlayerData {
     public void setPlayerMode(PlayerMode playerMode){
         this.playerMode = playerMode;
 
-        RPUniverse.getInstance().getHoloAPI().getVisibilityHandler().getList(UUID.fromString(playerUUID)).forEach(hologram -> {
-            hologram.updatedPlayerMode(this);
-        });
+        RPUniverse.getInstance().getHoloAPI().getVisibilityHandler().queue.add(() -> RPUniverse.getInstance().getHoloAPI().getVisibilityHandler().updateHologramsPlayerMode(bindedPlayer, this));
     }
 
     /**
@@ -144,6 +142,8 @@ public class PlayerData {
                 playerJobs.add(Job.getJob(jobName));
             }
         }
+
+        this.playerMode = PlayerMode.USER;
     }
 
     /**
@@ -213,6 +213,11 @@ public class PlayerData {
         PlayerMode neededPlayerMode = PlayerMode.getModeFromString(RPUniverse.getInstance().getConfiguration().getString("jobs.neededModeToCreateJobs"));
 
         return neededPlayerMode == playerMode;
+    }
+
+    public void updatePlayer(Player player){
+        this.bindedPlayer = player;
+        this.bindedOfflinePlayer = null;
     }
 
     /**

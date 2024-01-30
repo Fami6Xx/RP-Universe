@@ -109,17 +109,23 @@ public abstract class famiHologram {
      * @param player Player to show hologram to
      */
     public void show(Player player){
+        System.out.println(" ");
+        System.out.println("Showing hologram to player " + player.getName());
         if(hologram.isDisabled())
             return;
 
+        System.out.println("Hologram is not disabled");
         if(hologram.isShowState(player))
             return;
 
+        System.out.println("Hologram is not in show state for player");
         if(hologram.isVisible(player)){
             hologram.removeShowPlayer(player);
+            System.out.println("Hologram is visible for player");
             return;
         }
 
+        System.out.println("Hologram is not visible for player.. showing holo");
         hologram.setShowPlayer(player);
         hologram.show(player, getPageToDisplay(player));
     }
@@ -137,15 +143,20 @@ public abstract class famiHologram {
      * @param player Player to hide hologram from
      */
     public void hide(Player player){
+        System.out.println(" ");
+        System.out.println("Hiding hologram from player " + player.getName());
         if(hologram.isDisabled())
             return;
 
+        System.out.println("Hologram is not disabled");
         if(!hologram.isShowState(player))
             return;
 
+        System.out.println("Hologram is in show state for player");
         if(!hologram.isVisible(player))
             return;
 
+        System.out.println("Hologram is visible for player.. hiding holo");
         hologram.removeShowPlayer(player);
     }
 
@@ -155,6 +166,6 @@ public abstract class famiHologram {
      * @return true if hologram is visible to player, false otherwise
      */
     public boolean isVisible(Player player){
-        return currentlyVisiblePlayers.contains(player);
+        return hologram.isVisible(player) && hologram.isShowState(player);
     }
 }
