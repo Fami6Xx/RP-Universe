@@ -16,6 +16,7 @@ public class LanguageHandler {
 
     // JOB HOLOGRAM
     public String jobBossMenuHologram = "&cJob Boss Menu~&6{jobName}~&7Click to open the menu";
+    public String jobBossMenuAdminHologram = "&c&lEDIT MODE&r~&cJob Boss Menu~&6{jobName}~&7Click to open the menu";
 
     // MENU THINGS
     public String closeItemDisplayName = "&cClose";

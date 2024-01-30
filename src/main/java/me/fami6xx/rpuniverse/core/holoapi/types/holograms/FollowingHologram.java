@@ -130,6 +130,11 @@ public class FollowingHologram extends famiHologram {
     }
 
     @Override
+    public int getPageToDisplay(Player player) {
+        return 0;
+    }
+
+    @Override
     public String toString(){
         return "FollowingHologram [uuid: " + getUUID() + ", canSeeThrough:" + canSeeThroughBlocks() + ", maxVisibleDistance:" + getDistance() + ", " + getHologram().toString() + "]";
     }

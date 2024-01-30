@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.jobs.commands.createJob;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.jobs.commands.createJob.utils.CreateJobStorage;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.command.Command;
@@ -37,6 +38,12 @@ public class CreateJobCommand implements CommandExecutor, Listener {
         }
 
         Player player = (Player) sender;
+        PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
+
+        if(!data.hasPermissionForCreatingJobs()){
+            player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorYouDontHavePermissionToUseThisCommandMessage));
+            return true;
+        }
 
         if(currentlyCreating.contains(player)){
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorYouAreAlreadyCreatingAJobMessage);

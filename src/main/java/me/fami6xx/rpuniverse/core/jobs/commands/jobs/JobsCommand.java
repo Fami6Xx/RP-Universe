@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.jobs.commands.jobs;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.AllJobsMenu;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,6 +18,12 @@ public class JobsCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
+        PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
+
+        if(data.hasPermissionForEditingJobs()){
+            player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorYouDontHavePermissionToUseThisCommandMessage));
+            return true;
+        }
 
         AllJobsMenu allJobsMenu = new AllJobsMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player));
         allJobsMenu.open();

@@ -5,11 +5,13 @@ import eu.decentsoftware.holograms.api.holograms.Hologram;
 import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,6 +56,14 @@ public abstract class famiHologram {
         return uuid;
     }
 
+    public void updatedPlayerMode(PlayerData data){
+        if(data.getBindedPlayer() == null) return;
+
+        if(hologram.getPlayerPage(data.getBindedPlayer()) != getPageToDisplay(data.getBindedPlayer())){
+            hologram.show(data.getBindedPlayer(), getPageToDisplay(data.getBindedPlayer()));
+        }
+    }
+
     /**
      * This function is only for Visibility calculations as it needs to get from where to send RayTrace
      */
@@ -68,6 +78,8 @@ public abstract class famiHologram {
             api.getFollowHandler().queue.add(() -> api.getFollowHandler().removeFromList(((FollowingHologram) this).getFollowing().getUniqueId(), this));
         }
 
+        api.getVisibilityHandler().queue.add(() -> api.getVisibilityHandler().removeFromList(getUUID(), this));
+
         if(!hologram.isDisabled() && !hologram.isDefaultVisibleState()){
             hologram.getPages().forEach(page -> {
                 page.getLines().forEach(line -> line.hide(currentlyVisiblePlayers.toArray(new Player[0])));
@@ -80,8 +92,6 @@ public abstract class famiHologram {
                 }
             });
         }
-
-        api.getVisibilityHandler().queue.add(() -> api.getVisibilityHandler().removeFromList(getUUID(), this));
 
         getHologram().delete();
 
@@ -102,12 +112,25 @@ public abstract class famiHologram {
         if(hologram.isDisabled())
             return;
 
-        if(currentlyVisiblePlayers.contains(player))
+        if(hologram.isShowState(player))
             return;
 
-        hologram.getPages().forEach(page -> page.getLines().forEach(line -> line.show(player)));
-        currentlyVisiblePlayers.add(player);
+        if(hologram.isVisible(player)){
+            hologram.removeShowPlayer(player);
+            return;
+        }
+
+        hologram.setShowPlayer(player);
+        hologram.show(player, getPageToDisplay(player));
     }
+
+    /**
+     * This method is used to retrieve the page number to display for a given player.
+     *
+     * @param player The player for whom to retrieve the page number.
+     * @return The page number to display for the given player.
+     */
+    public abstract int getPageToDisplay(Player player);
 
     /**
      * Hides hologram from player
@@ -117,23 +140,13 @@ public abstract class famiHologram {
         if(hologram.isDisabled())
             return;
 
-        if(!currentlyVisiblePlayers.contains(player))
+        if(!hologram.isShowState(player))
             return;
 
-        hologram.getPages().forEach(page -> page.getLines().forEach(line -> line.hide(player)));
-        currentlyVisiblePlayers.remove(player);
-    }
-
-    /**
-     * Hides hologram from player
-     * @param player Player to hide hologram from
-     */
-    public void hide(Player player, boolean force){
-        if(hologram.isDisabled())
+        if(!hologram.isVisible(player))
             return;
 
-        hologram.getPages().forEach(page -> page.getLines().forEach(line -> line.hide(player)));
-        currentlyVisiblePlayers.remove(player);
+        hologram.removeShowPlayer(player);
     }
 
     /**

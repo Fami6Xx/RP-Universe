@@ -9,8 +9,30 @@
 # The prefix for all messages (color codes are supported, RichText is not currently supported)
 prefix: '&8[&6RPUniverse&8]'
 
+# General settings
+# preferPermissionsOverMode: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR)
+# neededModeToEditJobs: The mode needed to edit jobs (ADMIN or MODERATOR)
+# needsPermissionToHaveMultipleJobs: If true, the player needs the permission rpu.multiplejobs to have multiple jobs
+general:
+    preferPermissionsOverMode: false
+    neededModeToEditJobs: ADMIN
+    needsPermissionToHaveMultipleJobs: true
+
+# Job settings
+# preferPermissionsOverModeForEdit: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR) for editing jobs
+# neededModeToEditJobs: The mode needed to edit jobs (ADMIN or MODERATOR)
+# needsPermissionToHaveMultipleJobs: If true, the player needs the permission rpu.multiplejobs to have multiple jobs
+# menuRange: The range in which the holograms are visible for the menus (For example boss menus)
+jobs:
+    preferPermissionsOverModeForEdit: false
+    neededModeToEditJobs: ADMIN
+    needsPermissionToHaveMultipleJobs: true
+    menuRange: 5
+
+
+
 # The settings for the holograms
-# range: The range in which the holograms are visible (in blocks)
+# range: The range in which the holograms are visible
 # timeAlive: The time in seconds the holograms are visible after they are created (For /me, /do etc..)
 # maximumAbovePlayer: The maximum amount of holograms the player can have above himself
 holograms:

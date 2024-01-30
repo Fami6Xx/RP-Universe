@@ -10,8 +10,11 @@ import eu.decentsoftware.holograms.api.holograms.Hologram;
 import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Location;
@@ -106,14 +109,30 @@ public class Job {
             if(bossMenuHologram != null){
                 bossMenuHologram.delete();
             }
-            Hologram holo = DHAPI.createHologram(UUID.randomUUID().toString(), bossMenuLocation.clone().add(0, 1.5, 0));
-            this.bossMenuHologram = holo;
-            if(holo.getPage(0) == null){
-                holo.addPage();
-            }
-            holo.setDefaultVisibleState(true);
+
+            Job job = this;
+
+            int range;
 
             HashMap<String, String> replace = new HashMap<>();
+            try {
+                range = RPUniverse.getInstance().getConfiguration().getInt("jobs.menuRange");
+            }catch (Exception exc){
+                replace.put("{value}", "jobs.menuRange");
+                RPUniverse.getInstance().getLogger().severe(FamiUtils.formatWithPrefix(FamiUtils.replace(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace)));
+                return;
+            }
+
+            StaticHologram staticHologram = new StaticHologram(bossMenuLocation, false, range, false) {
+                @Override
+                public int getPageToDisplay(Player player) {
+                    return job.getPageToDisplay(player);
+                }
+            };
+
+            Hologram holo = staticHologram.getHologram();
+            this.bossMenuHologram = holo;
+
             replace.put("{jobName}", jobName);
             replace.put("{jobBank}", String.valueOf(jobBank));
             if(jobTypeName != null)
@@ -121,15 +140,36 @@ public class Job {
             else
                 replace.put("{jobType}", "None");
 
-            String[] hologramLines = RPUniverse.getLanguageHandler().jobBossMenuHologram.split("~");
-            HologramPage page = holo.getPage(0);
-            for(String line : hologramLines){
-                line = FamiUtils.replaceAndFormat(line, replace);
-                page.addLine(new HologramLine(page, page.getNextLineLocation(), line));
+            if(holo.size() == 0){
+                holo.addPage();
+                holo.addPage();
+            } else if(holo.size() == 1){
+                holo.addPage();
             }
 
-            Job job = this;
-            page.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
+            String[] hologramLines = RPUniverse.getLanguageHandler().jobBossMenuHologram.split("~");
+            HologramPage bossPage = holo.getPage(0);
+            for(String line : hologramLines){
+                line = FamiUtils.replaceAndFormat(line, replace);
+                bossPage.addLine(new HologramLine(bossPage, bossPage.getNextLineLocation(), line));
+            }
+
+            bossPage.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
+                @Override
+                public boolean execute(Player player, String... strings) {
+                    new JobAdminMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), job).open();
+                    return true;
+                }
+            }, ""));
+
+            String[] adminHologramLines = RPUniverse.getLanguageHandler().jobBossMenuAdminHologram.split("~");
+            HologramPage adminPage = holo.getPage(1);
+            for(String line : adminHologramLines){
+                line = FamiUtils.replaceAndFormat(line, replace);
+                adminPage.addLine(new HologramLine(adminPage, adminPage.getNextLineLocation(), line));
+            }
+
+            adminPage.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
                 @Override
                 public boolean execute(Player player, String... strings) {
                     new JobAdminMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), job).open();
@@ -137,6 +177,12 @@ public class Job {
                 }
             }, ""));
         }
+    }
+
+    private int getPageToDisplay(Player player){
+        PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
+
+        return data.hasPermissionForEditingJobs() ? 1 : 0;
     }
 
     /**

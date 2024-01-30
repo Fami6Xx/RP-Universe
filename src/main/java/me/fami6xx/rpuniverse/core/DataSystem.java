@@ -6,13 +6,16 @@ import me.fami6xx.rpuniverse.core.misc.datahandlers.IDataHandler;
 import me.fami6xx.rpuniverse.core.misc.datahandlers.JSONDataHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.UUID;
 import java.util.concurrent.*;
 
-public class DataSystem {
+public class DataSystem implements Listener {
     private static final String HANDLER_TYPE = "JSONDataHandler";
     private final IDataHandler dataHandler;
     private final ConcurrentMap<UUID, PlayerData> playerDataMap;
@@ -25,6 +28,17 @@ public class DataSystem {
         this.saveQueue = new ConcurrentLinkedQueue<>();
         this.dataHandler.startUp();
         scheduleSaveTask();
+        Bukkit.getPluginManager().registerEvents(this, RPUniverse.getInstance());
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event){
+        this.getPlayerData(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event){
+        this.queuePlayerDataForSaving(getPlayerData(event.getPlayer().getUniqueId()));
     }
 
     public void shutdown(){

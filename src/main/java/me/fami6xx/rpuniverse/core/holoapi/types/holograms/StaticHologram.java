@@ -4,6 +4,7 @@ import eu.decentsoftware.holograms.api.DHAPI;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -34,6 +35,11 @@ public class StaticHologram extends famiHologram {
         api.getVisibilityHandler().queue.add(
                 () -> api.getVisibilityHandler().addToList(getUUID(), this)
         );
+    }
+
+    @Override
+    public int getPageToDisplay(Player player){
+        return 0;
     }
 
     @Override

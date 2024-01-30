@@ -24,16 +24,13 @@ commands:
   createjob:
     description: Starts the process of creating a job
     usage: /<command>
-    permission: rpu.createjob
   jobs:
     description: Lists all jobs
     usage: /<command>
-    permission: rpu.jobs
 
 permissions:
   rpu.user:
     description: Gives access to all user commands
-    default: true
     children:
         rpu.me: true
         rpu.do: true
@@ -44,3 +41,17 @@ permissions:
     children:
         rpu.createjob: true
         rpu.jobs: true
+  rpu.multiplejobs:
+    description: Allows the player to have multiple jobs (if enabled in the config)
+  rpu.me:
+    description: Allows the player to use the /me command
+  rpu.do:
+    description: Allows the player to use the /do command
+  rpu.status:
+    description: Allows the player to use the /status command
+  rpu.stopstatus:
+    description: Allows the player to use the /stopstatus command
+  rpu.createjob:
+    description: Allows the player to use the /createjob command
+  rpu.jobs:
+    description: Allows the player to use the /jobs command

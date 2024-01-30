@@ -22,6 +22,7 @@ public class PlayerData {
     private transient OfflinePlayer bindedOfflinePlayer;
     private transient List<Job> playerJobs = new ArrayList<>();
     private transient Job selectedPlayerJob = null;
+    private transient PlayerMode playerMode = PlayerMode.USER;
 
     private final UUID dataUUID;
     private String playerUUID;
@@ -61,6 +62,28 @@ public class PlayerData {
             if(!playerJobs.isEmpty()) selectedPlayerJob = playerJobs.get(0);
             else selectedPlayerJob = null;
         }
+    }
+
+    /**
+     * Sets the player mode.
+     *
+     * @param playerMode The player mode to be set.
+     */
+    public void setPlayerMode(PlayerMode playerMode){
+        this.playerMode = playerMode;
+
+        RPUniverse.getInstance().getHoloAPI().getVisibilityHandler().getList(UUID.fromString(playerUUID)).forEach(hologram -> {
+            hologram.updatedPlayerMode(this);
+        });
+    }
+
+    /**
+     * Retrieves the player mode for the player data.
+     *
+     * @return the player mode of the player data
+     */
+    public PlayerMode getPlayerMode(){
+        return playerMode;
     }
 
     /**
@@ -136,6 +159,52 @@ public class PlayerData {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Checks if the player has permission to edit jobs.
+     *
+     * @return true if the player has permission to edit jobs, false otherwise.
+     */
+    public boolean hasPermissionForEditingJobs(){
+        if(RPUniverse.getInstance().getConfiguration().getBoolean("jobs.preferPermissionsOverModeForEdit")) {
+            if (bindedPlayer != null) {
+                if (bindedPlayer.hasPermission("rpu.jobs"))
+                    return true;
+            } else if (bindedOfflinePlayer != null) {
+                if (bindedOfflinePlayer.getPlayer().hasPermission("rpu.jobs"))
+                    return true;
+            }
+        }
+
+        if(playerMode == PlayerMode.ADMIN) return true;
+
+        PlayerMode neededPlayerMode = PlayerMode.getModeFromString(RPUniverse.getInstance().getConfiguration().getString("jobs.neededModeToEditJobs"));
+
+        return neededPlayerMode == playerMode;
+    }
+
+    /**
+     * Checks if the player has permission to create jobs.
+     *
+     * @return true if the player has permission to create jobs, false otherwise.
+     */
+    public boolean hasPermissionForCreatingJobs(){
+        if(RPUniverse.getInstance().getConfiguration().getBoolean("jobs.preferPermissionsOverModeForCreate")) {
+            if (bindedPlayer != null) {
+                if (bindedPlayer.hasPermission("rpu.createjob"))
+                    return true;
+            } else if (bindedOfflinePlayer != null) {
+                if (bindedOfflinePlayer.getPlayer().hasPermission("rpu.createjob"))
+                    return true;
+            }
+        }
+
+        if(playerMode == PlayerMode.ADMIN) return true;
+
+        PlayerMode neededPlayerMode = PlayerMode.getModeFromString(RPUniverse.getInstance().getConfiguration().getString("jobs.neededModeToCreateJobs"));
+
+        return neededPlayerMode == playerMode;
     }
 
     /**
