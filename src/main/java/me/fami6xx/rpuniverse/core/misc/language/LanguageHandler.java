@@ -110,6 +110,19 @@ public class LanguageHandler {
     public String errorPositionWorkingPermissionLevelTooLowMessage = "&cThe working permission level must be higher than 0!";
     public String cancelPositionCreationMessage = "&cYou cancelled the position creation!";
 
+    // MOD MODE MESSAGES
+    public String modModeDisabledMessage = "&cDisabled mod mode!";
+    public String modModeEnabledMessage = "&cEnabled mod mode!";
+    public String modModeErrorPlayerNotFoundMessage = "&cPlayer not found!";
+    public String modesErrorCannotChangeModeMessage = "&cYou cannot change the mode of this player!";
+
+
+    // ADMIN MODE MESSAGES
+    public String adminModeDisabledMessage = "&cDisabled admin mode!";
+    public String adminModeEnabledMessage = "&cEnabled admin mode!";
+    public String adminModeErrorPlayerNotFoundMessage = "&cPlayer not found!";
+
+
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";
 

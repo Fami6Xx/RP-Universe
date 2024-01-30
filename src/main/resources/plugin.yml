@@ -27,7 +27,12 @@ commands:
   jobs:
     description: Lists all jobs
     usage: /<command>
-
+  modmode:
+    description: Toggles the modmode
+    usage: /<command> (player)
+  adminmode:
+    description: Toggles the adminmode
+    usage: /<command> (player)
 permissions:
   rpu.user:
     description: Gives access to all user commands
@@ -41,6 +46,8 @@ permissions:
     children:
         rpu.createjob: true
         rpu.jobs: true
+        rpu.modmode: true
+        rpu.adminmode: true
   rpu.multiplejobs:
     description: Allows the player to have multiple jobs (if enabled in the config)
   rpu.me:
@@ -55,3 +62,7 @@ permissions:
     description: Allows the player to use the /createjob command
   rpu.jobs:
     description: Allows the player to use the /jobs command
+  rpu.modmode:
+    description: Allows the player to use the /modmode command
+  rpu.adminmode:
+    description: Allows the player to use the /adminmode command

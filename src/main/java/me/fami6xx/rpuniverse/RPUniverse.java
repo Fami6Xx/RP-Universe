@@ -1,15 +1,12 @@
 package me.fami6xx.rpuniverse;
 
 import me.fami6xx.rpuniverse.core.DataSystem;
-import me.fami6xx.rpuniverse.core.commands.DoCommand;
-import me.fami6xx.rpuniverse.core.commands.MeCommand;
-import me.fami6xx.rpuniverse.core.commands.StatusCommand;
+import me.fami6xx.rpuniverse.core.commands.*;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
 import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.JobsCommand;
 import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
-import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
@@ -79,6 +76,8 @@ public final class RPUniverse extends JavaPlugin {
         this.getCommand("status").setExecutor(new StatusCommand());
         this.getCommand("stopstatus").setExecutor(new StatusCommand());
         this.getCommand("jobs").setExecutor(new JobsCommand());
+        this.getCommand("modmode").setExecutor(new ModModeCommand());
+        this.getCommand("adminmode").setExecutor(new AdminModeCommand());
 
         this.createJobStarter = new CreateJobStarter(this);
         this.createJobStarter.start();
