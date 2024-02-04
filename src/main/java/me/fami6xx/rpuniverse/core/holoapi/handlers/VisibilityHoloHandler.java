@@ -55,6 +55,8 @@ public class VisibilityHoloHandler extends famiHoloHandler {
                 if(isFollowingOwner(player, holo))
                     return true;
 
+                if(!holo.shouldShow(player))
+                    return false;
 
                 if(!holo.canSeeThroughBlocks()){
                     Vector playerVector = player.getEyeLocation().toVector();
