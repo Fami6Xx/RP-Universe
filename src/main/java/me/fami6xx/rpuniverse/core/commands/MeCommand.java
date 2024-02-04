@@ -73,6 +73,10 @@ public class MeCommand implements CommandExecutor {
             }
         }
 
+        if(createHologram && message.length() > 20){
+            createHologram = false;
+        }
+
         if(!createHologram)
             return true;
 

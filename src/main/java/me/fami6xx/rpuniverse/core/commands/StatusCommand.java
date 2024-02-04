@@ -39,6 +39,11 @@ public class StatusCommand implements CommandExecutor {
             String message = builder.toString();
             message = message.substring(0, message.length() - 1);
 
+            if(message.length() > 25){
+                FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorStatusCommandUsage);
+                return true;
+            }
+
             HashMap<String, String> replace = new HashMap<>();
             replace.put("{player}", player.getName());
             replace.put("{message}", message);
