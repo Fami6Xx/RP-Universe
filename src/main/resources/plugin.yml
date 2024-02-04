@@ -30,9 +30,11 @@ commands:
   modmode:
     description: Toggles the modmode
     usage: /<command> (player)
+    aliases: [mmode, mm]
   adminmode:
     description: Toggles the adminmode
     usage: /<command> (player)
+    aliases: [amode, am]
 permissions:
   rpu.user:
     description: Gives access to all user commands
