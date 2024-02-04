@@ -120,6 +120,14 @@ public abstract class famiHologram {
     public abstract int getPageToDisplay(Player player);
 
     /**
+     * Determines whether the hologram should be shown to the given player.
+     *
+     * @param player The player to check.
+     * @return true if the hologram should be shown to the player, false otherwise.
+     */
+    public abstract boolean shouldShow(Player player);
+
+    /**
      * Hides hologram from player
      * @param player Player to hide hologram from
      */

@@ -134,6 +134,11 @@ public class FollowingHologram extends famiHologram {
     }
 
     @Override
+    public boolean shouldShow(Player player){
+        return true;
+    }
+
+    @Override
     public Location getBaseLocation() {
         return following.getLocation().clone().add(0, following.getHeight(), 0);
     }

@@ -43,6 +43,11 @@ public class StaticHologram extends famiHologram {
     }
 
     @Override
+    public boolean shouldShow(Player player){
+        return true;
+    }
+
+    @Override
     public Location getBaseLocation(){
         return getHologram().getLocation().clone();
     }
