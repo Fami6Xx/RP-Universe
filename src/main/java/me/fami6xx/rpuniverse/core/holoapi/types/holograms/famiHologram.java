@@ -103,9 +103,8 @@ public abstract class famiHologram {
         if(hologram.isDisabled())
             return;
 
-        if(hologram.isVisible(player)){
+        if(hologram.isVisible(player))
             return;
-        }
 
         hologram.setShowPlayer(player);
         hologram.show(player, getPageToDisplay(player));
