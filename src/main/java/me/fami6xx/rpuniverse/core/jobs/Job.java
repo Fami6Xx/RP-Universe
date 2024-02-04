@@ -2,7 +2,6 @@ package me.fami6xx.rpuniverse.core.jobs;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.actions.Action;
 import eu.decentsoftware.holograms.api.actions.ActionType;
 import eu.decentsoftware.holograms.api.actions.ClickType;
@@ -14,7 +13,6 @@ import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
-import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Location;
@@ -24,9 +22,6 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static me.fami6xx.rpuniverse.RPUniverse.getPlayerData;
-import static sun.audio.AudioPlayer.player;
 
 /**
  * Represents a job in the system.
