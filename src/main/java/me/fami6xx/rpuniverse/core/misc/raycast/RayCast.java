@@ -124,6 +124,9 @@ public class RayCast {
         Block blockHit = null;
 
         while(count <= finalDistance){
+            if(!loc.isChunkLoaded())
+                break;
+
             Block block = loc.getBlock();
             Location blockLoc = block.getLocation();
 
