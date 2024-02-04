@@ -125,6 +125,8 @@ public class LanguageHandler {
     public String adminModeErrorPlayerNotFoundMessage = "&cPlayer not found!";
 
     // TAG MESSAGES
+    public String tagEnabledMessage = "&cEnabled tag!";
+    public String tagDisabledMessage = "&cDisabled tag!";
     public String successTagSetMessage = "&cTag set!";
     public String errorSetTagCommandUsage = "&cUsage: /settag <player> <tag>";
     public String errorSetTagCommandPlayerNotFound = "&cPlayer not found!";

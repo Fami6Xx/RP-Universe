@@ -39,7 +39,9 @@ public class DataSystem implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
-        this.queuePlayerDataForSaving(getPlayerData(event.getPlayer().getUniqueId()));
+        PlayerData data = getPlayerData(event.getPlayer().getUniqueId());
+        data.setCurrentTagHologram(null);
+        this.queuePlayerDataForSaving(data);
     }
 
     public void shutdown(){

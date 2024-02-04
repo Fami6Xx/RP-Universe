@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.misc;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -24,7 +25,7 @@ public class PlayerData {
     private transient List<Job> playerJobs = new ArrayList<>();
     private transient Job selectedPlayerJob = null;
     private transient PlayerMode playerMode = PlayerMode.USER;
-    private transient boolean isTagVisible = true;
+    private transient famiHologram currentTagHologram;
 
     private final UUID dataUUID;
     private String playerUUID;
@@ -117,16 +118,26 @@ public class PlayerData {
      * @return the visibility of the tag of the player data
      */
     public boolean isTagVisible() {
-        return isTagVisible;
+        return currentTagHologram != null;
     }
 
     /**
-     * Sets the visibility of the tag for the player data.
+     * Retrieves the hologram for the tag of the player data.
      *
-     * @param tagVisible The visibility of the tag to be set.
+     * @return the hologram of the tag of the player data
      */
-    public void setTagVisible(boolean tagVisible) {
-        isTagVisible = tagVisible;
+    @Nullable
+    public famiHologram getCurrentTagHologram() {
+        return currentTagHologram;
+    }
+
+    /**
+     * Sets the hologram for the tag of the player data.
+     *
+     * @param currentTagHologram The hologram to be set.
+     */
+    public void setCurrentTagHologram(famiHologram currentTagHologram) {
+        this.currentTagHologram = currentTagHologram;
     }
 
     /**
@@ -256,6 +267,11 @@ public class PlayerData {
     public void updatePlayer(Player player){
         this.bindedPlayer = player;
         this.bindedOfflinePlayer = null;
+    }
+
+    public void updatePlayer(OfflinePlayer player){
+        this.bindedOfflinePlayer = player;
+        this.bindedPlayer = null;
     }
 
     /**

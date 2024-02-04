@@ -28,6 +28,13 @@ public class TagCommand implements CommandExecutor {
             return true;
         }
 
+        if(data.isTagVisible()){
+            data.getCurrentTagHologram().destroy();
+            data.setCurrentTagHologram(null);
+            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().tagDisabledMessage);
+            return true;
+        }
+
         HashMap<String, String> replace = new HashMap<>();
         int range = 0;
         try {
@@ -59,7 +66,10 @@ public class TagCommand implements CommandExecutor {
             }
         }else tag = data.getTag();
 
-        new FollowingHologram(player, range, false, false).addLine(FamiUtils.format(tag));
+        FollowingHologram hologram = new FollowingHologram(player, range, false, false);
+        hologram.addLine(FamiUtils.format(tag));
+        data.setCurrentTagHologram(hologram);
+        FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().tagEnabledMessage);
 
         return true;
     }
