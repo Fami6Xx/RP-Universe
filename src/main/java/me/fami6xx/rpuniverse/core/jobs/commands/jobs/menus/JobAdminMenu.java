@@ -85,8 +85,7 @@ public class JobAdminMenu extends Menu {
             System.out.println("Open admin job type menu");
         }
         if(e.getSlot() == 7){
-            RPUniverse.getInstance().getJobsHandler().getJobs().remove(job);
-            RPUniverse.getInstance().getDataSystem().getDataHandler().removeJobData(job.getName());
+            RPUniverse.getInstance().getJobsHandler().removeJob(job);
             new AllJobsMenu(playerMenu).open();
         }
     }

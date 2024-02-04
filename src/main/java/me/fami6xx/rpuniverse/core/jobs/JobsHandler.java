@@ -55,6 +55,12 @@ public class JobsHandler implements Listener {
         return null;
     }
 
+    public void removeJob(Job job){
+        job.remove();
+        jobs.remove(job);
+        RPUniverse.getInstance().getDataSystem().getDataHandler().removeJobData(job.getName());
+    }
+
     public List<Job> getJobs() {
         return jobs;
     }

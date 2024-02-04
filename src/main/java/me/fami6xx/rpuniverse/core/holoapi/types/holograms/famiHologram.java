@@ -18,7 +18,6 @@ import java.util.UUID;
 public abstract class famiHologram {
     private final Hologram hologram;
     private final UUID uuid = UUID.randomUUID();
-    private final List<Player> currentlyVisiblePlayers = new ArrayList<>();
 
     private double distance;
     private boolean seeThroughBlocks;
@@ -81,17 +80,9 @@ public abstract class famiHologram {
         api.getVisibilityHandler().queue.add(() -> api.getVisibilityHandler().removeFromList(getUUID(), this));
 
         if(!hologram.isDisabled() && !hologram.isDefaultVisibleState()){
-            hologram.getPages().forEach(page -> {
-                page.getLines().forEach(line -> line.hide(currentlyVisiblePlayers.toArray(new Player[0])));
-                if(page.hasActions()){
-                    page.getActions().forEach((clickType, actions) -> {
-                        for (int i = 0; i < actions.size(); i++) {
-                            page.removeAction(clickType, i);
-                        }
-                    });
-                }
-            });
+            hologram.hideAll();
         }
+
 
         getHologram().delete();
 
