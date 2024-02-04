@@ -35,6 +35,12 @@ commands:
     description: Toggles the adminmode
     usage: /<command> (player)
     aliases: [amode, am]
+  tag:
+    description: Shows the set tag of a player
+    usage: /<command>
+  settag:
+    description: Sets the tag of a player
+    usage: /<command> <player> <tag>
 permissions:
   rpu.user:
     description: Gives access to all user commands
@@ -50,6 +56,8 @@ permissions:
         rpu.jobs: true
         rpu.modmode: true
         rpu.adminmode: true
+        rpu.tag: true
+        rpu.settag: true
   rpu.multiplejobs:
     description: Allows the player to have multiple jobs (if enabled in the config)
   rpu.me:
@@ -68,3 +76,7 @@ permissions:
     description: Allows the player to use the /modmode command
   rpu.adminmode:
     description: Allows the player to use the /adminmode command
+  rpu.tag:
+    description: Allows the player to use the /tag command
+  rpu.settag:
+    description: Allows the player to use the /settag command

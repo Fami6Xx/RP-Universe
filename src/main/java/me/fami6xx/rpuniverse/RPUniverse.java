@@ -79,6 +79,8 @@ public final class RPUniverse extends JavaPlugin {
         this.getCommand("jobs").setExecutor(new JobsCommand());
         this.getCommand("modmode").setExecutor(new ModModeCommand());
         this.getCommand("adminmode").setExecutor(new AdminModeCommand());
+        this.getCommand("settag").setExecutor(new SetTagCommand());
+        this.getCommand("tag").setExecutor(new TagCommand());
 
         this.createJobStarter = new CreateJobStarter(this);
         this.createJobStarter.start();

@@ -24,10 +24,12 @@ public class PlayerData {
     private transient List<Job> playerJobs = new ArrayList<>();
     private transient Job selectedPlayerJob = null;
     private transient PlayerMode playerMode = PlayerMode.USER;
+    private transient boolean isTagVisible = true;
 
     private final UUID dataUUID;
     private String playerUUID;
     private String selectedJobName;
+    private String tag;
     private List<String> playerJobNames;
 
     public PlayerData(Player bindedPlayer) {
@@ -89,6 +91,42 @@ public class PlayerData {
      */
     public PlayerMode getPlayerMode(){
         return playerMode;
+    }
+
+    /**
+     * Retrieves the tag for the player data.
+     *
+     * @return the tag of the player data
+     */
+    public String getTag() {
+        return tag;
+    }
+
+    /**
+     * Sets the tag for the player data.
+     *
+     * @param tag The tag to be set.
+     */
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    /**
+     * Retrieves the visibility of the tag for the player data.
+     *
+     * @return the visibility of the tag of the player data
+     */
+    public boolean isTagVisible() {
+        return isTagVisible;
+    }
+
+    /**
+     * Sets the visibility of the tag for the player data.
+     *
+     * @param tagVisible The visibility of the tag to be set.
+     */
+    public void setTagVisible(boolean tagVisible) {
+        isTagVisible = tagVisible;
     }
 
     /**

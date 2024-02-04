@@ -13,6 +13,8 @@ public class LanguageHandler {
     public String errorYouDontHavePermissionToUseThisCommandMessage = "&cYou don't have permission to use this command!";
     public String errorYouAlreadyHaveSomethingToType = "&cYou already have something to type, type that thing first.";
     public String cancelActivityMessage = "&7Type &ccancel &7to cancel.";
+    public String moderatorTag = "&b&lMODERATOR";
+    public String adminTag = "&c&lADMIN";
 
     // JOB HOLOGRAM
     public String jobBossMenuHologram = "&cJob Boss Menu~&6{jobName}~&7Click to open the menu";
@@ -121,6 +123,12 @@ public class LanguageHandler {
     public String adminModeDisabledMessage = "&cDisabled admin mode!";
     public String adminModeEnabledMessage = "&cEnabled admin mode!";
     public String adminModeErrorPlayerNotFoundMessage = "&cPlayer not found!";
+
+    // TAG MESSAGES
+    public String successTagSetMessage = "&cTag set!";
+    public String errorSetTagCommandUsage = "&cUsage: /settag <player> <tag>";
+    public String errorSetTagCommandPlayerNotFound = "&cPlayer not found!";
+    public String errorSetTagCommandTagTooLong = "&cThe tag is too long!";
 
 
     // CONFIG MESSAGES
