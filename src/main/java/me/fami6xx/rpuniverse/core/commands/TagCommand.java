@@ -39,7 +39,7 @@ public class TagCommand implements CommandExecutor {
         }
 
         String tag = "";
-        if(data.getTag() == null && data.getTag().trim().isEmpty()) {
+        if(data.getTag() == null || data.getTag().trim().isEmpty()) {
             if(data.getPlayerMode() == PlayerMode.MODERATOR){
                 tag = RPUniverse.getLanguageHandler().moderatorTag;
             }
