@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.holoapi.handlers;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.holoapi.types.holograms.FollowingHologram;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.raycast.RayCast;
@@ -51,11 +52,15 @@ public class VisibilityHoloHandler extends famiHoloHandler {
             public boolean checkConditions(Player player, famiHologram holo){
                 boolean returnValue = true;
 
-                Vector playerVector = player.getEyeLocation().toVector();
-                Vector entityVector = holo.getBaseLocation().toVector();
-                Vector vector = playerVector.clone().subtract(entityVector.clone());
+                if(isFollowingOwner(player, holo))
+                    return true;
+
 
                 if(!holo.canSeeThroughBlocks()){
+                    Vector playerVector = player.getEyeLocation().toVector();
+                    Vector entityVector = holo.getBaseLocation().toVector();
+                    Vector vector = playerVector.clone().subtract(entityVector.clone());
+
                     Location startLoc = holo.getBaseLocation();
 
                     RayCastResult result = new RayCast(vector, startLoc.getWorld(), startLoc, player.getEyeLocation(), holo.getDistance(), 0.1)
@@ -65,7 +70,17 @@ public class VisibilityHoloHandler extends famiHoloHandler {
                     if(result.hasHit())
                         returnValue = false;
                 }
+
                 return returnValue;
+            }
+
+            public boolean isFollowingOwner(Player player, famiHologram holo){
+                if(!(holo instanceof FollowingHologram))
+                    return false;
+
+                FollowingHologram followingHologram = (FollowingHologram) holo;
+
+                return followingHologram.getFollowing().equals(player);
             }
 
             @Override
