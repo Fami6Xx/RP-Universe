@@ -264,11 +264,21 @@ public class PlayerData {
         return neededPlayerMode == playerMode;
     }
 
+    /**
+     * Updates the player bound to this PlayerData instance.
+     *
+     * @param player The player to be updated.
+     */
     public void updatePlayer(Player player){
         this.bindedPlayer = player;
         this.bindedOfflinePlayer = null;
     }
 
+    /**
+     * Updates the player bound to this PlayerData instance.
+     *
+     * @param player The player to be updated.
+     */
     public void updatePlayer(OfflinePlayer player){
         this.bindedOfflinePlayer = player;
         this.bindedPlayer = null;
