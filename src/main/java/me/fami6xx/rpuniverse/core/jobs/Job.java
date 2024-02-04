@@ -123,7 +123,10 @@ public class Job {
                 return;
             }
 
-            StaticHologram staticHologram = new StaticHologram(bossMenuLocation, false, range, false) {
+            Location toCreate = bossMenuLocation.clone();
+            toCreate.add(0, 1.5, 0);
+
+            StaticHologram staticHologram = new StaticHologram(toCreate, false, range, false) {
                 @Override
                 public int getPageToDisplay(Player player) {
                     return job.getPageToDisplay(player);
