@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.holoapi.types.holograms;
 import eu.decentsoftware.holograms.api.DHAPI;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
+import me.fami6xx.rpuniverse.core.holoapi.handlers.FollowHoloHandler;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ public class FollowingHologram extends famiHologram {
      */
     public FollowingHologram(Entity toFollow){
         super(
-                DHAPI.createHologram(UUID.randomUUID().toString(), toFollow.getLocation().clone().add(0, toFollow.getHeight(), 0))
+                DHAPI.createHologram(UUID.randomUUID().toString(), getStartingLocation(toFollow.getLocation(), toFollow))
         );
         following = toFollow;
         updateVisibility(-1, false);
@@ -51,7 +52,7 @@ public class FollowingHologram extends famiHologram {
      */
     public FollowingHologram(Entity toFollow, double visibleDistance, boolean isVisibleByDefault, boolean seeThroughBlocks){
         super(
-                DHAPI.createHologram(UUID.randomUUID().toString(), toFollow.getLocation().clone().add(0, toFollow.getHeight(), 0))
+                DHAPI.createHologram(UUID.randomUUID().toString(), getStartingLocation(toFollow.getLocation(), toFollow))
         );
         following = toFollow;
         updateVisibility(visibleDistance, seeThroughBlocks);
@@ -87,7 +88,7 @@ public class FollowingHologram extends famiHologram {
      */
     public FollowingHologram(Entity toFollow, double visibleDistance, boolean isVisibleByDefault, boolean seeThroughBlocks, int timeAlive){
         super(
-                DHAPI.createHologram(UUID.randomUUID().toString(), toFollow.getLocation().clone().add(0, toFollow.getHeight(), 0))
+                DHAPI.createHologram(UUID.randomUUID().toString(), getStartingLocation(toFollow.getLocation(), toFollow))
         );
         following = toFollow;
         updateVisibility(visibleDistance, seeThroughBlocks);
@@ -118,6 +119,14 @@ public class FollowingHologram extends famiHologram {
                 destroy();
             }
         }.runTaskLater(RPUniverse.getInstance(), timeAlive);
+    }
+
+    private static Location getStartingLocation(Location loc, Entity entity){
+        FollowHoloHandler followHoloHandler = RPUniverse.getInstance().getHoloAPI().getFollowHandler();
+
+        double height = followHoloHandler.calculateHeight(entity.getUniqueId());
+        height += followHoloHandler.getList(entity.getUniqueId()).size() * 0.25;;
+        return loc.clone().add(0, height, 0);
     }
 
     public Entity getFollowing(){
