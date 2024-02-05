@@ -297,6 +297,28 @@ public class Job {
     }
 
     /**
+     * Moves the position up or down in the job positions list.
+     *
+     * @param positionName the name of the position to move
+     * @param moveUp       true if the position should be moved up, false otherwise
+     */
+    public void movePositionUpAndDown(String positionName, boolean moveUp){
+        for(int i = 0; i < jobPositions.size(); i++){
+            if(jobPositions.get(i).getName().equals(positionName)){
+                if(moveUp){
+                    if(i == 0) return;
+                    Collections.swap(jobPositions, i, i - 1);
+                }else{
+                    if(i == jobPositions.size() - 1) return;
+                    Collections.swap(jobPositions, i, i + 1);
+                }
+                RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this, MenuTag.JOB_ALL_POSITIONS);
+                return;
+            }
+        }
+    }
+
+    /**
      * Adds a position to the jobPositions list.
      *
      * @param position The position to be added.
