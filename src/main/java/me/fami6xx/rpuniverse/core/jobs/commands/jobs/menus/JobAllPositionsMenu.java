@@ -4,6 +4,7 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.jobs.Position;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
+import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
@@ -12,6 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -169,6 +171,16 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
     @Override
     public void addAdditionalItems() {
         super.inventory.setItem(45, makeItem(Material.EMERALD_BLOCK, RPUniverse.getLanguageHandler().jobAllPositionsMenuAddPositionItemDisplayName, RPUniverse.getLanguageHandler().jobAllPositionsMenuAddPositionItemLore));
+    }
+
+    @Override
+    public List<MenuTag> getMenuTags() {
+        List<MenuTag> tags = new ArrayList<>();
+        tags.add(MenuTag.JOB);
+        if(adminMenu)
+            tags.add(MenuTag.ADMIN);
+        tags.add(MenuTag.JOB_POSITION);
+        return tags;
     }
 
     @Override

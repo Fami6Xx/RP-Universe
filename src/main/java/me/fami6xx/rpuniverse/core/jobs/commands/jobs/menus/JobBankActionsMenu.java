@@ -2,7 +2,9 @@ package me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
+import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
@@ -11,7 +13,9 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class JobBankActionsMenu extends Menu {
     private final LanguageHandler languageHandler;
@@ -104,6 +108,19 @@ public class JobBankActionsMenu extends Menu {
         if(e.getSlot() == 8){
             previousMenu.open();
         }
+    }
+
+    @Override
+    public List<MenuTag> getMenuTags() {
+        List<MenuTag> tags = new ArrayList<>();
+        tags.add(MenuTag.JOB);
+        if(previousMenu instanceof JobAdminMenu){
+            tags.add(MenuTag.ADMIN);
+        }else{
+            tags.add(MenuTag.PLAYER);
+            tags.add(MenuTag.BOSS);
+        }
+        return tags;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package me.fami6xx.rpuniverse.core.menuapi.types;
 
-import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
@@ -28,6 +28,7 @@ public abstract class Menu implements InventoryHolder {
     public abstract int getSlots();
     public abstract void handleMenu(InventoryClickEvent e);
     public abstract void setMenuItems();
+    public abstract List<MenuTag> getMenuTags();
 
     private void closeAndCreateInv(){
         playerMenu.getPlayer().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
@@ -40,34 +41,21 @@ public abstract class Menu implements InventoryHolder {
 
     public void open() {
         if(inventory != null){
-            if(playerMenu.getPlayer().getOpenInventory() != null
-                    && playerMenu.getPlayer().getOpenInventory().getTopInventory() != null
-                    && !playerMenu.getPlayer().getOpenInventory().getTopInventory().getTitle().equals(getMenuName())
-            ){
-                RPUniverse.getInstance().getLogger().info("Menu - Closing & Creating for " + playerMenu.getPlayer().getName());
+            if(playerMenu.getPlayer().getOpenInventory() == null){
                 closeAndCreateInv();
                 return;
             }
 
-            if(inventory.getSize() != getSlots()){
-                RPUniverse.getInstance().getLogger().info("Menu - Closing & Creating for " + playerMenu.getPlayer().getName());
+            if(playerMenu.getPlayer().getOpenInventory().getTopInventory() == null){
                 closeAndCreateInv();
                 return;
             }
 
-            if(inventory.getHolder() != this){
-                RPUniverse.getInstance().getLogger().info("Menu - Closing & Creating for " + playerMenu.getPlayer().getName());
+            if(!playerMenu.getPlayer().getOpenInventory().getTopInventory().getTitle().equals(getMenuName())){
                 closeAndCreateInv();
                 return;
             }
 
-            if(!inventory.getName().equals(getMenuName())){
-                RPUniverse.getInstance().getLogger().info("Menu - Closing & Creating for " + playerMenu.getPlayer().getName());
-                closeAndCreateInv();
-                return;
-            }
-
-            RPUniverse.getInstance().getLogger().info("Menu - Setting items for " + playerMenu.getPlayer().getName());
             this.setMenuItems();
         }else{
             closeAndCreateInv();

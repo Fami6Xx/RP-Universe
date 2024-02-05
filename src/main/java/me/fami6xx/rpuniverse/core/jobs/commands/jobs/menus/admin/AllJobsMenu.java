@@ -4,6 +4,7 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
+import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Material;
@@ -45,6 +46,13 @@ public class AllJobsMenu extends EasyPaginatedMenu {
                 .findFirst()
                 .ifPresent(job -> new JobAdminMenu(playerMenu, job).open());
 
+    }
+
+    @Override
+    public List<MenuTag> getMenuTags() {
+        List<MenuTag> tags = new ArrayList<>();
+        tags.add(MenuTag.ADMIN);
+        return tags;
     }
 
     @Override

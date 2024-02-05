@@ -5,6 +5,7 @@ import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobAllPositionsMenu;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobBankActionsMenu;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
+import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Material;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,6 +23,8 @@ public class JobAdminMenu extends Menu {
     public JobAdminMenu(PlayerMenu menu, Job job) {
         super(menu);
         this.job = job;
+        if(menu.getEditingJob() != job)
+            menu.setEditingJob(job);
     }
 
     @Override
@@ -139,14 +143,22 @@ public class JobAdminMenu extends Menu {
 
         this.inventory.setItem(13, makeItem(Material.BOOK, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAdminMenuInformationItemDisplayName, placeholders), FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAdminMenuInformationItemLore, placeholders)));
         this.inventory.setItem(19, makeItem(Material.NAME_TAG, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRenameItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRenameItemLore)));
-        this.inventory.setItem(20, makeItem(Material.GOLD_INGOT, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobBankItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobBankItemLore)));
-        this.inventory.setItem(21, makeItem(Material.BEACON, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuPositionItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuPositionItemLore)));
+        this.inventory.setItem(20, makeItem(Material.GOLD_INGOT, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuJobBankItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuJobBankItemLore)));
+        this.inventory.setItem(21, makeItem(Material.BEACON, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuPositionItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuPositionItemLore)));
         this.inventory.setItem(22, makeItem(Material.ENDER_PEARL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemLore)));
         this.inventory.setItem(23, makeItem(Material.BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemLore)));
-        this.inventory.setItem(24, makeItem(Material.LEATHER, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuAllPlayersItemLore)));
+        this.inventory.setItem(24, makeItem(Material.LEATHER, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemLore)));
         if(job.getJobType() != null && !job.getJobType().hasAdminMenu())
             this.inventory.setItem(31, makeItem(Material.BOOK_AND_QUILL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemLore)));
         this.inventory.setItem(44, makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemLore)));
         setFillerGlass();
+    }
+
+    @Override
+    public List<MenuTag> getMenuTags() {
+        List<MenuTag> tags = new ArrayList<>();
+        tags.add(MenuTag.JOB);
+        tags.add(MenuTag.ADMIN);
+        return tags;
     }
 }
