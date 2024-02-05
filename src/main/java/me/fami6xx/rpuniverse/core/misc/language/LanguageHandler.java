@@ -12,6 +12,7 @@ public class LanguageHandler {
     public String errorOnlyPlayersCanUseThisCommandMessage = "&cOnly players can use this command!";
     public String errorYouDontHavePermissionToUseThisCommandMessage = "&cYou don't have permission to use this command!";
     public String errorYouAlreadyHaveSomethingToType = "&cYou already have something to type, type that thing first.";
+    public String errorYesOrNoMessage = "&cYou can only type yes or no!";
     public String cancelActivityMessage = "&7Type &ccancel &7to cancel.";
     public String moderatorTag = "&b&lMODERATOR";
     public String adminTag = "&c&lADMIN";
@@ -106,7 +107,8 @@ public class LanguageHandler {
     // Add position messages
     public String addPositionTypePositionNameMessage = "&7Type the name of the position in chat.";
     public String addPositionTypePositionSalaryMessage = "&7Type the salary of the position in chat.";
-    public String addPositionTypePositionWorkingPermissionLevelMessage = "&7Type the working permission level of the position in chat.";
+    public String addPositionShouldBeWorkingPermissionLevelMessage = "&7Type the working permission level of the position in chat.";
+    public String addPositionShouldBeBossMessage = "&7Should this position be a boss position? &c(yes/no)";
     public String addPositionSuccessMessage = "&cPosition added!";
     public String errorPositionNameTooLongMessage = "&cThe position name is too long!";
     public String errorPositionNameAlreadyExistsMessage = "&cA position with this name already exists!";

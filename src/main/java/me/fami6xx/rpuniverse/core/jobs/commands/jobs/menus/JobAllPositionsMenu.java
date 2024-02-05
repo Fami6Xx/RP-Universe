@@ -89,29 +89,49 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
                             return false;
                         }
 
-                        FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().addPositionTypePositionWorkingPermissionLevelMessage);
+                        FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().addPositionShouldBeBossMessage);
                         universalChatHandler.addToQueue(playerMenu.getPlayer(), (player2, message2) -> {
                             if(message2.equalsIgnoreCase("cancel")){
                                 player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().cancelPositionCreationMessage));
                                 return true;
                             }
 
-                            try{
-                                int workingPermissionLevel = Integer.parseInt(message2);
-                                if(workingPermissionLevel < 0){
-                                    player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorPositionWorkingPermissionLevelTooLowMessage));
-                                    return false;
-                                }
-
-                                job.addPosition(new Position(message, salary, workingPermissionLevel, false, false));
+                            if(message2.equalsIgnoreCase("yes") || message2.equalsIgnoreCase("true")){
+                                job.addPosition(new Position(message, salary, 0, true, false));
                                 player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().addPositionSuccessMessage));
                                 this.open();
-
                                 return true;
-                            }catch (NumberFormatException exception){
-                                player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorPositionWorkingPermissionLevelNotANumberMessage));
+                            }else if(message2.equalsIgnoreCase("no") || message2.equalsIgnoreCase("false")){
+                                FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().addPositionShouldBeWorkingPermissionLevelMessage);
+                                universalChatHandler.addToQueue(playerMenu.getPlayer(), (player3, message3) -> {
+                                    if(message3.equalsIgnoreCase("cancel")){
+                                        player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().cancelPositionCreationMessage));
+                                        return true;
+                                    }
+
+                                    try{
+                                        int workingPermissionLevel = Integer.parseInt(message3);
+                                        if(workingPermissionLevel < 0){
+                                            player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorPositionWorkingPermissionLevelTooLowMessage));
+                                            return false;
+                                        }
+
+                                        job.addPosition(new Position(message, salary, workingPermissionLevel, false, false));
+                                        player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().addPositionSuccessMessage));
+                                        this.open();
+
+                                        return true;
+                                    }catch (NumberFormatException exception){
+                                        player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorPositionWorkingPermissionLevelNotANumberMessage));
+                                        return false;
+                                    }
+                                });
+
                                 return false;
                             }
+
+                            FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().errorYesOrNoMessage);
+                            return false;
                         });
 
                         return false;

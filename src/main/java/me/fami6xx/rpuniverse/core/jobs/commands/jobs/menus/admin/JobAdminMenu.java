@@ -43,7 +43,7 @@ public class JobAdminMenu extends Menu {
             player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
             List<String> ready = job.isJobReady();
             FamiUtils.sendMessageWithPrefix(player, "&7Showing all information for job &6" + job.getName());
-            FamiUtils.sendMessage(player, "&7Job type: &6" + job.getJobType() == null ? "None" : job.getJobType().getName());
+            FamiUtils.sendMessage(player, "&7Job type: &6" +(job.getJobType() == null ? "None" : job.getJobType().getName()));
             FamiUtils.sendMessage(player, "&7Job bank: &6" + job.getCurrentMoneyInJobBank());
             FamiUtils.sendMessage(player, "&7Current positions: &6" + job.getPositions().size());
             FamiUtils.sendMessage(player, "&7All players with this job: &6" + job.getAllPlayersInJob().size());
@@ -124,6 +124,8 @@ public class JobAdminMenu extends Menu {
         // Select job type : Change job type :: 23
         // All players with this job :: 24
         // Working permission levels admin menu ??? :: 25
+        // Job Settings :: 29
+        // Something :: 30
 
         // Open admin job type menu :: 31 - Because it doesn't have to be there
         // Remove job :: 44
@@ -141,7 +143,7 @@ public class JobAdminMenu extends Menu {
         this.inventory.setItem(21, makeItem(Material.BEACON, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuPositionItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuPositionItemLore)));
         this.inventory.setItem(22, makeItem(Material.ENDER_PEARL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemLore)));
         this.inventory.setItem(23, makeItem(Material.BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemLore)));
-        this.inventory.setItem(24, makeItem(Material.LEATHER_HELMET, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuAllPlayersItemLore)));
+        this.inventory.setItem(24, makeItem(Material.LEATHER, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuAllPlayersItemLore)));
         if(job.getJobType() != null && !job.getJobType().hasAdminMenu())
             this.inventory.setItem(31, makeItem(Material.BOOK_AND_QUILL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemLore)));
         this.inventory.setItem(44, makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemLore)));
