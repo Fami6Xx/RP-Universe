@@ -12,19 +12,18 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class JobAllPositionsMenu extends EasyPaginatedMenu {
     private final Job job;
     private final boolean adminMenu;
-    private final List<Position> positionList = new ArrayList<>();
+    private final List<Position> positionList;
     public JobAllPositionsMenu(PlayerMenu menu, Job job, boolean adminMenu) {
         super(menu);
         this.job = job;
         this.adminMenu = adminMenu;
-        this.positionList.addAll(job.getPositions());
+        this.positionList = job.getPositions();
     }
 
     @Override

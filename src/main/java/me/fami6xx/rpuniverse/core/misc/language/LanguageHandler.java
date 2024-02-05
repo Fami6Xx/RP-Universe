@@ -37,6 +37,8 @@ public class LanguageHandler {
     public String allJobsMenuName = "&6RPUniverse &7| &cAll Jobs";
     public String allJobsMenuJobName = "&e{jobName}";
     public String jobAdminMenuName = "&6RPUniverse &7| &c{jobName}";
+    public String jobAdminMenuInformationItemDisplayName = "&cInformation";
+    public String jobAdminMenuInformationItemLore = "&7Is job ready? {jobReady}~&7Job type: &c{jobType}~&7Job bank: &c{jobBank}~&r~&7Click to view more information in chat";
     public String jobAdminMenuRenameItemDisplayName = "&cRename";
     public String jobAdminMenuRenameItemLore = "&7Click to rename the job";
     public String jobAdminMenuJobBankItemDisplayName = "&cJob Bank";
@@ -47,6 +49,8 @@ public class LanguageHandler {
     public String jobAdminMenuBossItemLore = "&7Click to port to boss menu or change location";
     public String jobAdminMenuJobTypeItemDisplayName = "&cJob Type";
     public String jobAdminMenuJobTypeItemLore = "&7Click to change job type";
+    public String jobAdminMenuAllPlayersItemDisplayName = "&cAll Players";
+    public String jobAdminMenuAllPlayersItemLore = "&7Click to view all players with this job";
     public String jobAdminMenuJobTypeAdminItemDisplayName = "&cJob Type Admin";
     public String jobAdminMenuJobTypeAdminItemLore = "&7Click to open admin job type menu";
     public String jobAdminMenuRemoveItemDisplayName = "&cRemove";

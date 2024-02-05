@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.UUID;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 public class DataSystem implements Listener {
     private static final String HANDLER_TYPE = "JSONDataHandler";
@@ -46,6 +47,7 @@ public class DataSystem implements Listener {
 
     public void shutdown(){
         saveTask.cancel();
+        playerDataMap.forEach((uuid,data) -> queuePlayerDataForSaving(data));
         processSaveQueue();
         dataHandler.shutDown();
     }
@@ -75,8 +77,11 @@ public class DataSystem implements Listener {
      */
     public PlayerData getPlayerData(UUID uuid) {
         // Firstly, check the playerDataMap if the user has already been loaded.
+        Logger log = RPUniverse.getInstance().getLogger();
+        log.info("DataHandler - Player data accessed for " + uuid.toString());
         PlayerData data = playerDataMap.get(uuid);
         if (data != null) {
+            log.info("DataHandler - Loaded from playerDataMap");
             return data;
         }
 
@@ -91,11 +96,13 @@ public class DataSystem implements Listener {
         }
 
         if(data != null){
+            log.info("DataHandler - Removed from saveQueue");
             saveQueue.remove(data);
             playerDataMap.put(uuid, data);
             return data;
         }
 
+        log.info("DataHandler - Loading from dataHandler");
         // Lastly, ask the dataHandler
         data = dataHandler.loadPlayerData(uuid.toString());
         if (data != null) {
@@ -131,6 +138,7 @@ public class DataSystem implements Listener {
     public void queuePlayerDataForSaving(PlayerData data) {
         playerDataMap.remove(data.getPlayerUUID());
         saveQueue.offer(data);
+        RPUniverse.getInstance().getLogger().info("DataHandler - Queued player data for saving - " + data.getPlayerUUID().toString());
     }
 
     /**
@@ -156,6 +164,7 @@ public class DataSystem implements Listener {
             if (data != null) {
                 data.prepareForSave();
                 dataHandler.savePlayerData(data);
+                RPUniverse.getInstance().getLogger().info("DataHandler - Saved player data - " + data.getPlayerUUID().toString());
             }
         }
     }

@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.menuapi.types;
 
+import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class Menu implements InventoryHolder {
     protected PlayerMenu playerMenu;
@@ -42,25 +44,30 @@ public abstract class Menu implements InventoryHolder {
                     && playerMenu.getPlayer().getOpenInventory().getTopInventory() != null
                     && !playerMenu.getPlayer().getOpenInventory().getTopInventory().getTitle().equals(getMenuName())
             ){
+                RPUniverse.getInstance().getLogger().info("Menu - Closing & Creating for " + playerMenu.getPlayer().getName());
                 closeAndCreateInv();
                 return;
             }
 
             if(inventory.getSize() != getSlots()){
+                RPUniverse.getInstance().getLogger().info("Menu - Closing & Creating for " + playerMenu.getPlayer().getName());
                 closeAndCreateInv();
                 return;
             }
 
             if(inventory.getHolder() != this){
+                RPUniverse.getInstance().getLogger().info("Menu - Closing & Creating for " + playerMenu.getPlayer().getName());
                 closeAndCreateInv();
                 return;
             }
 
             if(!inventory.getName().equals(getMenuName())){
+                RPUniverse.getInstance().getLogger().info("Menu - Closing & Creating for " + playerMenu.getPlayer().getName());
                 closeAndCreateInv();
                 return;
             }
 
+            RPUniverse.getInstance().getLogger().info("Menu - Setting items for " + playerMenu.getPlayer().getName());
             this.setMenuItems();
         }else{
             closeAndCreateInv();
@@ -96,7 +103,11 @@ public abstract class Menu implements InventoryHolder {
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(FamiUtils.format(displayName));
         List<String> loreList = Arrays.asList(lore);
-        loreList.forEach(s -> s = FamiUtils.format(s));
+        if(lore.length == 1){
+            if(lore[0] != null || !lore[0].isEmpty())
+                loreList = Arrays.asList(lore[0].split("~"));
+        }
+        loreList = loreList.stream().map(FamiUtils::format).collect(Collectors.toList());
         itemMeta.setLore(loreList);
         item.setItemMeta(itemMeta);
 

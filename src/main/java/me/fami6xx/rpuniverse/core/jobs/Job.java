@@ -10,7 +10,7 @@ import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
-import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobAdminMenu;
+import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
@@ -18,6 +18,7 @@ import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.logging.Level;
@@ -95,15 +96,30 @@ public class Job {
         createBossMenuHologram();
     }
 
+    /**
+     * Initializes the object by creating the boss menu hologram.
+     */
     protected void initialize(){
         createBossMenuHologram();
     }
+
+    /**
+     * Removes the job by deleting the boss menu hologram if it exists.
+     */
     protected void remove(){
         if(bossMenuHologram != null){
             bossMenuHologram.delete();
         }
     }
 
+    /**
+     * Creates a hologram for the boss menu.
+     * If bossMenuLocation is not null, creates a static hologram with the specified range.
+     * The hologram displays information about the job, such as job name, job bank, and job type.
+     * The hologram has two pages - one for regular players and one for admins.
+     * The regular player page allows opening the JobAdminMenu.
+     * The admin page allows opening the JobAdminMenu as well.
+     */
     protected void createBossMenuHologram(){
         if(bossMenuLocation != null){
             if(bossMenuHologram != null){
@@ -130,6 +146,11 @@ public class Job {
                 @Override
                 public int getPageToDisplay(Player player) {
                     return job.getPageToDisplay(player);
+                }
+
+                @Override
+                public boolean shouldShow(Player player) {
+                    return RPUniverse.getPlayerData(player.getUniqueId().toString()).shouldDisplayJob(job);
                 }
             };
 
@@ -182,6 +203,12 @@ public class Job {
         }
     }
 
+    /**
+     * Retrieves the page to display for a given player.
+     *
+     * @param player the player whose page to retrieve
+     * @return the page number to display, either 1 if the player has permission for editing jobs, or 0 otherwise
+     */
     private int getPageToDisplay(Player player){
         PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
 
@@ -204,6 +231,7 @@ public class Job {
      */
     public void renameJob(String newName) {
         this.jobName = newName;
+        createBossMenuHologram();
     }
 
     /**
@@ -216,10 +244,21 @@ public class Job {
     }
 
     /**
+     * Sets the location of the boss menu associated with the job.
+     *
+     * @param location The location of the boss menu. Must not be null.
+     */
+    public void setBossMenuLocation(@Nonnull Location location){
+        this.bossMenuLocation = location;
+        createBossMenuHologram();
+    }
+
+    /**
      * Retrieves the job type of the job.
      *
      * @return The job type of the job as a JobType object.
      */
+    @Nullable
     public JobType getJobType() {
         return jobType;
     }
@@ -285,6 +324,32 @@ public class Job {
      * @param positionName The name of the position to be removed.
      */
     public void removePosition(String positionName) {
+        int index = -1;
+        for(int i = 0; i < jobPositions.size(); i++) {
+            if(jobPositions.get(i).getName().equals(positionName)) {
+                index = i;
+                break;
+            }
+        }
+
+        if(index == -1) {
+            return;
+        }
+
+        Position removedPosition = jobPositions.get(index);
+        jobPositions.remove(index);
+
+        if(playerPositions.containsValue(removedPosition)){
+            for(UUID playerUUID : playerPositions.keySet()){
+                if(playerPositions.get(playerUUID).equals(removedPosition)){
+                    playerPositions.remove(playerUUID);
+                    if(jobPositions.isEmpty()){
+                        RPUniverse.getPlayerData(playerUUID.toString()).removeJob(this);
+                    }else addPlayerToJob(playerUUID);
+                }
+            }
+        }
+
         jobPositions.removeIf(position -> position.getName().equals(positionName));
     }
 
@@ -438,6 +503,26 @@ public class Job {
      */
     public boolean isPlayerInJob(UUID playerUUID) {
         return playerPositions.containsKey(playerUUID);
+    }
+
+    /**
+     * Retrieves the position of a player identified by their UUID.
+     *
+     * @param playerUUID The UUID of the player.
+     * @return The position of the player, or null if the player's position is not found.
+     */
+    @Nullable
+    public Position getPlayerPosition(UUID playerUUID){
+        return playerPositions.getOrDefault(playerUUID, null);
+    }
+
+    /**
+     * Retrieves a list of all players in a job.
+     *
+     * @return a {@link List} of {@link UUID} representing the player IDs in the job.
+     */
+    public List<UUID> getAllPlayersInJob(){
+        return new ArrayList<>(playerPositions.keySet());
     }
 
     /**

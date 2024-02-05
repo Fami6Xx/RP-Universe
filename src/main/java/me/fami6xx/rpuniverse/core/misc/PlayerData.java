@@ -219,6 +219,39 @@ public class PlayerData {
     }
 
     /**
+     * Determines whether a job should be displayed to a player in a boss menu.
+     *
+     * @param job       The job to check for display.
+     * @return True if the job should be displayed, false otherwise.
+     */
+    public boolean shouldDisplayJob(Job job){
+        if(hasPermissionForEditingJobs()) return true;
+
+        if(!job.isPlayerInJob(UUID.fromString(playerUUID))) return false;
+        if(bindedPlayer != null) return job.getPlayerPosition(bindedPlayer.getUniqueId()).isBoss();
+        else if(bindedOfflinePlayer != null) return bindedOfflinePlayer.getUniqueId().equals(job.getPlayerPosition(bindedOfflinePlayer.getUniqueId()).isBoss());
+
+        return false;
+    }
+
+    /**
+     * Determines whether a working step should be displayed to a player.
+     *
+     * @param neededPermissionLevel The minimum permission level needed to display the working step.
+     * @return <code>true</code> if the working step should be displayed, <code>false</code> otherwise.
+     */
+    public boolean shouldDisplayWorkingStep(int neededPermissionLevel){
+        if(hasPermissionForEditingJobs()) return true;
+
+        if(bindedPlayer != null) return selectedPlayerJob.getPlayerPosition(bindedPlayer.getUniqueId()).getWorkingStepPermissionLevel() >= neededPermissionLevel;
+        else if(bindedOfflinePlayer != null) return selectedPlayerJob.getPlayerPosition(bindedOfflinePlayer.getUniqueId()).getWorkingStepPermissionLevel() >= neededPermissionLevel;
+
+        return false;
+    }
+
+
+
+    /**
      * Checks if the player has permission to edit jobs.
      *
      * @return true if the player has permission to edit jobs, false otherwise.

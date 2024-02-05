@@ -1,7 +1,7 @@
 package me.fami6xx.rpuniverse.core.jobs.commands.jobs;
 
 import me.fami6xx.rpuniverse.RPUniverse;
-import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.AllJobsMenu;
+import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.AllJobsMenu;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.command.Command;

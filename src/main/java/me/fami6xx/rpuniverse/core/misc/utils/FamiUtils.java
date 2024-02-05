@@ -52,4 +52,8 @@ public class FamiUtils {
                 .map(entity -> (Player) entity)
                 .forEach(player1 -> player1.sendMessage(finalMessage));
     }
+
+    public static void sendMessage(Player player, String message){
+        player.sendMessage(format(message));
+    }
 }
