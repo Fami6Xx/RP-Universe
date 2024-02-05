@@ -97,7 +97,7 @@ public class JobAdminMenu extends Menu {
             new JobAllPositionsMenu(playerMenu, job, true).open();
         }
         if(e.getSlot() == 22){
-
+            new JobBossLocationMenu(playerMenu, job, this).open();
         }
         if(e.getSlot() == 23){
 
@@ -106,7 +106,10 @@ public class JobAdminMenu extends Menu {
 
         }
         if(e.getSlot() == 31){
-            System.out.println("Open admin job type menu");
+            if(job.getJobType() == null || !job.getJobType().hasAdminMenu())
+                return;
+
+            // Code for opening the admin menu for the job type
         }
         if(e.getSlot() == 44){
             RPUniverse.getInstance().getJobsHandler().removeJob(job);
@@ -148,7 +151,7 @@ public class JobAdminMenu extends Menu {
         this.inventory.setItem(22, makeItem(Material.ENDER_PEARL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemLore)));
         this.inventory.setItem(23, makeItem(Material.BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemLore)));
         this.inventory.setItem(24, makeItem(Material.LEATHER, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemLore)));
-        if(job.getJobType() != null && !job.getJobType().hasAdminMenu())
+        if(job.getJobType() != null && job.getJobType().hasAdminMenu())
             this.inventory.setItem(31, makeItem(Material.BOOK_AND_QUILL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemLore)));
         this.inventory.setItem(44, makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemLore)));
         setFillerGlass();

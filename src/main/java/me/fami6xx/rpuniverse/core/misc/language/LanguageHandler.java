@@ -97,6 +97,16 @@ public class LanguageHandler {
     public String jobPositionMenuBackLore = "&7Click to go back";
     public String jobPositionMenuDeleteDisplayName = "&cDelete";
     public String jobPositionMenuDeleteLore = "&7Click to delete the position";
+    public String jobBossLocationMenuName = "&6RPUniverse &7| &cBoss Location";
+    public String jobBossLocationMenuChangeLocationItemDisplayName = "&cChange Location";
+    public String jobBossLocationMenuChangeLocationItemLore = "&7Click to change the location of the boss menu";
+    public String jobBossLocationMenuChangeLocationMessage = "&cYou changed the location of the boss menu!";
+    public String jobBossLocationMenuChangeLocationCancelMessage = "&cYou cancelled the location change!";
+    public String jobBossLocationMenuBackItemDisplayName = "&cBack";
+    public String jobBossLocationMenuBackItemLore = "&7Click to go back";
+    public String jobBossLocationMenuTeleportToBossMenuItemDisplayName = "&cTeleport to Boss Menu";
+    public String jobBossLocationMenuTeleportToBossMenuItemLore = "&7Click to teleport to the boss menu";
+    public String jobBossLocationMenuTeleportToBossMenuMessage = "&cYou teleported to the boss menu!";
 
 
 
