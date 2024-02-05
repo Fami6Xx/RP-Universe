@@ -12,6 +12,8 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
+import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
+import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
@@ -230,8 +232,10 @@ public class Job {
      * @param newName The new name for the job. Must not be null.
      */
     public void renameJob(String newName) {
+        RPUniverse.getInstance().getDataSystem().getDataHandler().renameJobData(jobName, newName);
         this.jobName = newName;
         createBossMenuHologram();
+        RPUniverse.getInstance().getMenuManager().closeAllMenus(j -> j == this);
     }
 
     /**
@@ -280,6 +284,7 @@ public class Job {
     public void setJobType(JobType jobType) {
         this.jobType = jobType;
         this.jobTypeName = jobType.getName();
+        RPUniverse.getInstance().getMenuManager().closeAllMenus(j -> j == this);
     }
 
     /**
@@ -298,6 +303,7 @@ public class Job {
      */
     public void addPosition(Position position) {
         jobPositions.add(position);
+        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
     }
 
     /**
@@ -316,6 +322,7 @@ public class Job {
                 position.setDefault(updatedPosition.isDefault());
             }
         }
+        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
     }
 
     /**
@@ -351,6 +358,9 @@ public class Job {
         }
 
         jobPositions.removeIf(position -> position.getName().equals(positionName));
+
+        RPUniverse.getInstance().getMenuManager().closeAllMenus(j -> j == this, MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
+        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
     }
 
     /**
@@ -426,6 +436,7 @@ public class Job {
      */
     public void changePlayerPosition(UUID playerUUID, Position newPosition) {
         playerPositions.put(playerUUID, newPosition);
+        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
     }
 
     /**
@@ -435,6 +446,7 @@ public class Job {
      */
     public void addMoneyToJobBank(int money) {
         jobBank += money;
+        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
     }
 
     /**
@@ -446,6 +458,7 @@ public class Job {
     public boolean removeMoneyFromJobBank(int money) {
         if(jobBank >= money) {
             jobBank -= money;
+            RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
             return true;
         }
         return false;
@@ -469,6 +482,7 @@ public class Job {
     public void addPlayerToJob(UUID playerUUID, Position position) {
         playerPositions.put(playerUUID, position);
         RPUniverse.getPlayerData(playerUUID.toString()).addJob(this);
+        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
     }
 
     /**
@@ -480,6 +494,7 @@ public class Job {
             if(position.isDefault()) {
                 playerPositions.put(playerUUID, position);
                 RPUniverse.getPlayerData(playerUUID.toString()).addJob(this);
+                RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
                 return;
             }
         }
@@ -493,6 +508,7 @@ public class Job {
     public void removePlayerFromJob(UUID playerUUID) {
         playerPositions.remove(playerUUID);
         RPUniverse.getPlayerData(playerUUID.toString()).removeJob(this);
+        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
     }
 
     /**

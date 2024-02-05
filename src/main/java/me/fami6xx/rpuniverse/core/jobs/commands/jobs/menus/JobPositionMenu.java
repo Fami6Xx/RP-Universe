@@ -32,7 +32,10 @@ public class JobPositionMenu extends Menu {
     public List<MenuTag> getMenuTags() {
         List<MenuTag> tags = new ArrayList<>();
         tags.add(MenuTag.JOB);
-
+        tags.add(MenuTag.JOB_POSITION);
+        tags.add(MenuTag.JOB_POSITION_INTERNAL);
+        if(adminMenu)
+            tags.add(MenuTag.ADMIN);
         return tags;
     }
 

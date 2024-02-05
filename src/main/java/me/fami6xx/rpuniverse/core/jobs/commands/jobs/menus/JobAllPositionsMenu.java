@@ -28,16 +28,23 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
         this.positionList = job.getPositions();
     }
 
-    @Override
-    public ItemStack getItemFromIndex(int index) {
-        Position position = positionList.get(index);
-
+    private HashMap<String, String> getPlaceHolders(Position position){
         HashMap<String, String> placeholders = new HashMap<>();
         placeholders.put("{positionName}", position.getName());
         placeholders.put("{positionSalary}", String.valueOf(position.getSalary()));
         placeholders.put("{positionWorkingPermissionLevel}", String.valueOf(position.getWorkingStepPermissionLevel()));
+        placeholders.put("{jobName}", job.getName());
+        placeholders.put("{positionIsBoss}", position.isBoss() ? "Yes" : "No");
+        return placeholders;
+    }
+
+    @Override
+    public ItemStack getItemFromIndex(int index) {
+        Position position = positionList.get(index);
+
+        HashMap<String, String> placeholders = getPlaceHolders(position);
         String displayName = FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAllPositionsMenuPositionItemDisplayName, placeholders);
-        String lore = FamiUtils.format(RPUniverse.getLanguageHandler().jobAllPositionsMenuPositionItemLore);
+        String lore = FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAllPositionsMenuPositionItemLore, placeholders);
 
         return makeItem(Material.PAPER, displayName, lore);
     }
@@ -151,10 +158,7 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
 
         Position position = positionList.stream()
                 .filter(position1 -> {
-                    HashMap<String, String> placeholders = new HashMap<>();
-                    placeholders.put("{positionName}", position1.getName());
-                    placeholders.put("{positionSalary}", String.valueOf(position1.getSalary()));
-                    placeholders.put("{positionWorkingPermissionLevel}", String.valueOf(position1.getWorkingStepPermissionLevel()));
+                    HashMap<String, String> placeholders = getPlaceHolders(position1);
                     String displayName = FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAllPositionsMenuPositionItemDisplayName, placeholders);
                     return e.getCurrentItem().getItemMeta().getDisplayName().equals(displayName);
                 })

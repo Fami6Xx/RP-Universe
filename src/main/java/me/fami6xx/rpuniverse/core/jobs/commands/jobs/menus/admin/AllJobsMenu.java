@@ -52,6 +52,7 @@ public class AllJobsMenu extends EasyPaginatedMenu {
     public List<MenuTag> getMenuTags() {
         List<MenuTag> tags = new ArrayList<>();
         tags.add(MenuTag.ADMIN);
+        tags.add(MenuTag.JOB);
         return tags;
     }
 

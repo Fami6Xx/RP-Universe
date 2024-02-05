@@ -73,7 +73,7 @@ public class LanguageHandler {
     public String jobAllPositionsMenuAddPositionItemDisplayName = "&cCreate Position";
     public String jobAllPositionsMenuAddPositionItemLore = "&7Click to start the process of creating a position";
     public String jobAllPositionsMenuPositionItemDisplayName = "&e{positionName}";
-    public String jobAllPositionsMenuPositionItemLore = "&7Click to view details";
+    public String jobAllPositionsMenuPositionItemLore = "&7Salary: &6{positionSalary}~&7Is boss? &6{positionIsBoss}~&7Click to view details";
 
 
     // CREATE JOB COMMAND MESSAGES

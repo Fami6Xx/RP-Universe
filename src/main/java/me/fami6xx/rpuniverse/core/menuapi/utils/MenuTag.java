@@ -7,4 +7,5 @@ public enum MenuTag {
     BOSS,
     JOB_ADMIN,
     JOB_POSITION,
+    JOB_POSITION_INTERNAL,
 }
