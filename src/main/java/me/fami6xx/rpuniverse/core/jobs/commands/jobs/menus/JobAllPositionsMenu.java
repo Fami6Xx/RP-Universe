@@ -171,9 +171,9 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
 
         if(e.isShiftClick()){
             if(e.isRightClick()){
-                job.movePositionUpAndDown(position.getName(), true);
-            }else if(e.isLeftClick()){
                 job.movePositionUpAndDown(position.getName(), false);
+            }else if(e.isLeftClick()){
+                job.movePositionUpAndDown(position.getName(), true);
             }
             return;
         }
