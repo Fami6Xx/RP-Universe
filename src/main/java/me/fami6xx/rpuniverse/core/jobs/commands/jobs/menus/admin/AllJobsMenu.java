@@ -21,6 +21,7 @@ public class AllJobsMenu extends EasyPaginatedMenu {
     public AllJobsMenu(PlayerMenu menu) {
         super(menu);
         jobs.addAll(RPUniverse.getInstance().getJobsHandler().getJobs());
+        menu.setEditingJob(null);
     }
 
     @Override

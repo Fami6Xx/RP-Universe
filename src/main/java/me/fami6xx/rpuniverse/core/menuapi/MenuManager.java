@@ -65,7 +65,24 @@ public class MenuManager {
         }
     }
 
-
+    public void reopenMenus(Predicate<Job> predicate, MenuTag... tags) {
+        for (PlayerMenu playerMenu : playerMenuMap.values()) {
+            if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
+                boolean hasTag = false;
+                for (MenuTag tag : playerMenu.getCurrentMenu().getMenuTags()) {
+                    for (MenuTag tag2 : tags) {
+                        if (tag == tag2) {
+                            hasTag = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasTag) {
+                    playerMenu.getCurrentMenu().open();
+                }
+            }
+        }
+    }
 
     public void closeAllMenus(Predicate<Job> predicate, MenuTag... tags) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {

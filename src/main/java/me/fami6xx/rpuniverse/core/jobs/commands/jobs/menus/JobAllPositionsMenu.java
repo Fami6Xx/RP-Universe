@@ -184,6 +184,7 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
         if(adminMenu)
             tags.add(MenuTag.ADMIN);
         tags.add(MenuTag.JOB_POSITION);
+        tags.add(MenuTag.JOB_ALL_POSITIONS);
         return tags;
     }
 

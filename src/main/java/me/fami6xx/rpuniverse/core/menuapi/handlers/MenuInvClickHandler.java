@@ -35,7 +35,6 @@ public class MenuInvClickHandler implements Listener {
         InventoryHolder holder = e.getInventory().getHolder();
         if (holder instanceof Menu) {
             RPUniverse.getInstance().getMenuManager().getPlayerMenu((Player) e.getPlayer()).setCurrentMenu(null);
-            RPUniverse.getInstance().getMenuManager().getPlayerMenu((Player) e.getPlayer()).setEditingJob(null);
         }
     }
 

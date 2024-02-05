@@ -74,6 +74,28 @@ public class LanguageHandler {
     public String jobAllPositionsMenuAddPositionItemLore = "&7Click to start the process of creating a position";
     public String jobAllPositionsMenuPositionItemDisplayName = "&e{positionName}";
     public String jobAllPositionsMenuPositionItemLore = "&7Salary: &6{positionSalary}~&7Is boss? &6{positionIsBoss}~&7Click to view details";
+    public String jobPositionMenuName = "&6RPUniverse &7| &c{positionName}";
+    public String jobPositionMenuRenameDisplayName = "&cRename";
+    public String jobPositionMenuRenameLore = "&7Click to rename the position";
+    public String jobPositionMenuRenameMessage = "&7Type the new name of the position in chat.";
+    public String jobPositionMenuRenameCancelMessage = "&cYou cancelled the position renaming!";
+    public String jobPositionMenuSalaryDisplayName = "&cSalary";
+    public String jobPositionMenuSalaryLore = "&7Current: &6{salary}~&7Click to change the salary";
+    public String jobPositionMenuSalaryMessage = "&7Type the new salary of the position in chat.";
+    public String jobPositionMenuSalaryCancelMessage = "&cYou cancelled the salary change!";
+    public String jobPositionMenuWorkingPermissionLevelDisplayName = "&cWorking Permission Level";
+    public String jobPositionMenuWorkingPermissionLevelLore = "&7Current: &6{workingPermissionLevel}~&7Click to change the working permission level";
+    public String jobPositionMenuWorkingPermissionLevelMessage = "&7Type the new working permission level of the position in chat.";
+    public String jobPositionMenuWorkingPermissionLevelCancelMessage = "&cYou cancelled the working permission level change!";
+    public String jobPositionMenuIsBossDisplayName = "&cIs Boss";
+    public String jobPositionMenuIsBossLore = "&7Current: &6{isBoss}~&7Click to change if the position is a boss position";
+    public String jobPositionMenuIsDefaultDisplayName = "&cIs Default";
+    public String jobPositionMenuIsDefaultLore = "&7Current: &6{isDefault}~&7Click to change if the position is a default position";
+    public String jobPositionMenuBackDisplayName = "&cBack";
+    public String jobPositionMenuBackLore = "&7Click to go back";
+    public String jobPositionMenuDeleteDisplayName = "&cDelete";
+    public String jobPositionMenuDeleteLore = "&7Click to delete the position";
+
 
 
     // CREATE JOB COMMAND MESSAGES
