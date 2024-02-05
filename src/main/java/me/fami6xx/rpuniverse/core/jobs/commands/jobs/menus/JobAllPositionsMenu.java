@@ -169,12 +169,22 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
             return;
         }
 
+        if(e.isShiftClick()){
+            if(e.isRightClick()){
+                job.movePositionUpAndDown(position.getName(), true);
+            }else if(e.isLeftClick()){
+                job.movePositionUpAndDown(position.getName(), false);
+            }
+            return;
+        }
+
         new JobPositionMenu(playerMenu, job, position, adminMenu, this).open();
     }
 
     @Override
     public void addAdditionalItems() {
         super.inventory.setItem(45, makeItem(Material.EMERALD_BLOCK, RPUniverse.getLanguageHandler().jobAllPositionsMenuAddPositionItemDisplayName, RPUniverse.getLanguageHandler().jobAllPositionsMenuAddPositionItemLore));
+        super.inventory.setItem(53, makeItem(Material.BOOKSHELF, RPUniverse.getLanguageHandler().jobAllPositionsMenuMovePositionsItemDisplayName, RPUniverse.getLanguageHandler().jobAllPositionsMenuMovePositionsItemLore));
     }
 
     @Override
