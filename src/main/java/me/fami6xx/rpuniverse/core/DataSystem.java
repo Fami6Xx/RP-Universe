@@ -77,7 +77,6 @@ public class DataSystem implements Listener {
      */
     public PlayerData getPlayerData(UUID uuid) {
         // Firstly, check the playerDataMap if the user has already been loaded.
-        Logger log = RPUniverse.getInstance().getLogger();
         PlayerData data = playerDataMap.get(uuid);
         if (data != null) {
             return data;
