@@ -20,7 +20,7 @@ public class JobsCommand implements CommandExecutor {
         Player player = (Player) sender;
         PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
 
-        if(data.hasPermissionForEditingJobs()){
+        if(!data.hasPermissionForEditingJobs()){
             player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorYouDontHavePermissionToUseThisCommandMessage));
             return true;
         }
