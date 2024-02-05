@@ -3,9 +3,12 @@ package me.fami6xx.rpuniverse.core.misc;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
+import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -83,6 +86,14 @@ public class PlayerData {
         this.playerMode = playerMode;
 
         RPUniverse.getInstance().getHoloAPI().getVisibilityHandler().queue.add(() -> RPUniverse.getInstance().getHoloAPI().getVisibilityHandler().updateHologramsPlayerMode(bindedPlayer, this));
+        PlayerMenu menu = RPUniverse.getInstance().getMenuManager().getPlayerMenu(bindedPlayer);
+        if(menu.getCurrentMenu() != null) {
+            if(menu.getCurrentMenu().getMenuTags().contains(MenuTag.JOB)){
+                if(menu.getCurrentMenu().getMenuTags().contains(MenuTag.ADMIN)){
+                    if(!hasPermissionForEditingJobs()) menu.getPlayer().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+                }
+            }
+        };
     }
 
     /**
