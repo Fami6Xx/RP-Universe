@@ -94,25 +94,8 @@ public class JobsHandler implements Listener {
         });
     }
 
-    public void updateBossBar(Player player){
-        String message = "";
-        PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
-
-        if(playerData.getPlayerMode() != PlayerMode.USER){
-            if(playerData.getPlayerMode() == PlayerMode.MODERATOR){
-                message = "MODMODE";
-            }else{
-                message = "ADMINMODE";
-            }
-        }else if(playerData.getSelectedPlayerJob() != null){
-            message = playerData.getSelectedPlayerJob().getName();
-        }
-
-        RPUniverse.getInstance().getBossBarHandler().setMessage(player, message);
-    }
-
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        updateBossBar(event.getPlayer());
+        RPUniverse.getInstance().getBossBarHandler().updateBossBar(event.getPlayer());
     }
 }

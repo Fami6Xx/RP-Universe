@@ -61,7 +61,10 @@ public class PlayerData {
      */
     public void addJob(Job job){
         playerJobs.add(job);
-        if(selectedPlayerJob == null) selectedPlayerJob = job;
+        if(selectedPlayerJob == null) {
+            selectedPlayerJob = job;
+            RPUniverse.getInstance().getBossBarHandler().updateBossBar(bindedPlayer);
+        }
     }
 
     /**
@@ -74,6 +77,8 @@ public class PlayerData {
         if(selectedPlayerJob == job){
             if(!playerJobs.isEmpty()) selectedPlayerJob = playerJobs.get(0);
             else selectedPlayerJob = null;
+
+            RPUniverse.getInstance().getBossBarHandler().updateBossBar(bindedPlayer);
         }
     }
 
@@ -83,10 +88,11 @@ public class PlayerData {
      * @param job The job to be set as the selected player job.
      */
     public void setSelectedPlayerJob(Job job){
-        if(playerJobs.contains(job))
+        if(playerJobs.contains(job)) {
             this.selectedPlayerJob = job;
-        else
-            throw new IllegalArgumentException("The player does not have the job " + job.getName());
+
+            RPUniverse.getInstance().getBossBarHandler().updateBossBar(bindedPlayer);
+        }else throw new IllegalArgumentException("The player does not have the job " + job.getName());
     }
 
     /**
@@ -114,6 +120,8 @@ public class PlayerData {
      */
     public void setPlayerMode(PlayerMode playerMode){
         this.playerMode = playerMode;
+
+        RPUniverse.getInstance().getBossBarHandler().updateBossBar(bindedPlayer);
 
         RPUniverse.getInstance().getHoloAPI().getVisibilityHandler().queue.add(() -> RPUniverse.getInstance().getHoloAPI().getVisibilityHandler().updateHologramsPlayerMode(bindedPlayer, this));
         PlayerMenu menu = RPUniverse.getInstance().getMenuManager().getPlayerMenu(bindedPlayer);
