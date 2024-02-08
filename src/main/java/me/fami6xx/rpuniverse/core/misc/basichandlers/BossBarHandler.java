@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.misc.basichandlers;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -50,9 +51,11 @@ public class BossBarHandler {
             }
         }else if(playerData.getSelectedPlayerJob() != null){
             message = playerData.getSelectedPlayerJob().getName();
+        }else{
+            message = RPUniverse.getLanguageHandler().bossBarPlayerNoJob;
         }
 
-        this.setMessage(player, message);
+        this.setMessage(player, FamiUtils.format(RPUniverse.getLanguageHandler().bossBarColorBeforeJob + message));
     }
 
     private static BarColor getBarColor(){

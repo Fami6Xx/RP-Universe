@@ -14,6 +14,8 @@ public class LanguageHandler {
     public String errorYouAlreadyHaveSomethingToType = "&cYou already have something to type, type that thing first.";
     public String errorYesOrNoMessage = "&cYou can only type yes or no!";
     public String cancelActivityMessage = "&7Type &ccancel &7to cancel.";
+    public String bossBarColorBeforeJob = "&c&l";
+    public String bossBarPlayerNoJob = "Unemployed";
     public String moderatorTag = "&b&lMODERATOR";
     public String adminTag = "&c&lADMIN";
 
