@@ -78,6 +78,36 @@ public class PlayerData {
     }
 
     /**
+     * Sets the selected player job.
+     *
+     * @param job The job to be set as the selected player job.
+     */
+    public void setSelectedPlayerJob(Job job){
+        if(playerJobs.contains(job))
+            this.selectedPlayerJob = job;
+        else
+            throw new IllegalArgumentException("The player does not have the job " + job.getName());
+    }
+
+    /**
+     * Retrieves the selected player job.
+     *
+     * @return the selected player job
+     */
+    public Job getSelectedPlayerJob(){
+        return selectedPlayerJob;
+    }
+
+    /**
+     * Retrieves the list of jobs for the player data.
+     *
+     * @return the list of jobs for the player data
+     */
+    public List<Job> getPlayerJobs(){
+        return playerJobs;
+    }
+
+    /**
      * Sets the player mode.
      *
      * @param playerMode The player mode to be set.

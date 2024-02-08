@@ -2,7 +2,12 @@ package me.fami6xx.rpuniverse.core.jobs;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.PlayerMode;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,9 +16,6 @@ import java.util.List;
 public class JobsHandler implements Listener {
     private final List<Job> jobs = new ArrayList<>();
     private final List<JobType> jobTypes = new ArrayList<>();
-
-    // I think it would be best if the jobs were all loaded, but the jobs that
-    // use other than normal jobTypes would be disabled until their jobTypes are loaded.
 
     public JobsHandler() {
         loadAllJobs();
@@ -90,5 +92,27 @@ public class JobsHandler implements Listener {
                 job.setJobType(jobType.fromString(job.getJobTypeData()));
             }
         });
+    }
+
+    public void updateBossBar(Player player){
+        String message = "";
+        PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
+
+        if(playerData.getPlayerMode() != PlayerMode.USER){
+            if(playerData.getPlayerMode() == PlayerMode.MODERATOR){
+                message = "MODMODE";
+            }else{
+                message = "ADMINMODE";
+            }
+        }else if(playerData.getSelectedPlayerJob() != null){
+            message = playerData.getSelectedPlayerJob().getName();
+        }
+
+        RPUniverse.getInstance().getBossBarHandler().setMessage(player, message);
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        updateBossBar(event.getPlayer());
     }
 }

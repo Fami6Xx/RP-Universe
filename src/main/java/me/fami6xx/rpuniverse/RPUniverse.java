@@ -69,6 +69,7 @@ public final class RPUniverse extends JavaPlugin {
         }
 
         jobsHandler = new JobsHandler();
+        getServer().getPluginManager().registerEvents(jobsHandler, this);
         menuManager = new MenuManager();
 
         if(!menuManager.enable()){
