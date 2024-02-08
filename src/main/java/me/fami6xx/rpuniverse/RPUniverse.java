@@ -8,6 +8,8 @@ import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.JobsCommand;
 import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
+import me.fami6xx.rpuniverse.core.misc.basichandlers.BossBarHandler;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import net.milkbowl.vault.economy.Economy;
@@ -27,6 +29,8 @@ public final class RPUniverse extends JavaPlugin {
     private CreateJobStarter createJobStarter;
     private MenuManager menuManager;
     private UniversalChatHandler universalChatHandler;
+    private BossBarHandler bossBarHandler;
+    private ActionBarHandler actionBarHandler;
 
     private FileConfiguration config;
     private Economy econ;
@@ -87,6 +91,9 @@ public final class RPUniverse extends JavaPlugin {
 
         this.universalChatHandler = new UniversalChatHandler();
         getServer().getPluginManager().registerEvents(universalChatHandler, this);
+
+        this.bossBarHandler = new BossBarHandler();
+        this.actionBarHandler = new ActionBarHandler();
     }
 
     @Override
@@ -163,5 +170,13 @@ public final class RPUniverse extends JavaPlugin {
 
     public static PlayerData getPlayerData(String UUID){
         return getInstance().getDataSystem().getPlayerData(UUID);
+    }
+
+    public BossBarHandler getBossBarHandler() {
+        return bossBarHandler;
+    }
+
+    public ActionBarHandler getActionBarHandler() {
+        return actionBarHandler;
     }
 }
