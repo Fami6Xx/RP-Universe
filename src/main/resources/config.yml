@@ -10,13 +10,9 @@
 prefix: '&8[&6RPUniverse&8]'
 
 # General settings
-# preferPermissionsOverMode: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR)
-# neededModeToEditJobs: The mode needed to edit jobs (ADMIN or MODERATOR)
-# needsPermissionToHaveMultipleJobs: If true, the player needs the permission rpu.multiplejobs to have multiple jobs
+# bossBarColor: The color of the boss bar (BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW)
 general:
-    preferPermissionsOverMode: false
-    neededModeToEditJobs: ADMIN
-    needsPermissionToHaveMultipleJobs: true
+    bossBarColor: RED
 
 # Job settings
 # preferPermissionsOverModeForEdit: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR) for editing jobs
