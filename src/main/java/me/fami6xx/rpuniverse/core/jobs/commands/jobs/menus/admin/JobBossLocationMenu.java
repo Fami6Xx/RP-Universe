@@ -57,7 +57,7 @@ public class JobBossLocationMenu extends Menu {
                 }
 
                 if(message.equalsIgnoreCase("here")){
-                    job.setBossMenuLocation(player.getLocation());
+                    job.setBossMenuLocation(player.getLocation().toCenterLocation());
                     FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().jobBossLocationMenuChangeLocationMessage);
                     this.open();
                     return true;
