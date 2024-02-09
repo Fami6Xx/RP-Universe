@@ -42,6 +42,10 @@ public class JobPositionMenu extends Menu {
         tags.add(MenuTag.JOB_POSITION_INTERNAL);
         if(adminMenu)
             tags.add(MenuTag.ADMIN);
+        else{
+            tags.add(MenuTag.BOSS);
+            tags.add(MenuTag.PLAYER);
+        }
         return tags;
     }
 
