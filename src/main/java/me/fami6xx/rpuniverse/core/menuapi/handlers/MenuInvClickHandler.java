@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -27,6 +28,14 @@ public class MenuInvClickHandler implements Listener {
 
             Menu menu = (Menu) holder;
             menu.handleMenu(e);
+        }
+    }
+
+    @EventHandler
+    public void onMenuInteract(InventoryInteractEvent e){
+        InventoryHolder holder = e.getInventory().getHolder();
+        if (holder instanceof Menu) {
+            e.setCancelled(true);
         }
     }
 
