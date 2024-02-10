@@ -80,7 +80,7 @@ public class JobBossLocationMenu extends Menu {
 
         inventory.setItem(3, makeItem(Material.COMPASS, RPUniverse.getLanguageHandler().jobBossLocationMenuTeleportToBossMenuItemDisplayName, RPUniverse.getLanguageHandler().jobBossLocationMenuTeleportToBossMenuItemLore));
         inventory.setItem(5, makeItem(Material.BOOK, RPUniverse.getLanguageHandler().jobBossLocationMenuChangeLocationItemDisplayName, RPUniverse.getLanguageHandler().jobBossLocationMenuChangeLocationItemLore));
-        inventory.setItem(8, makeItem(Material.BARRIER, RPUniverse.getLanguageHandler().jobBossLocationMenuBackItemDisplayName, RPUniverse.getLanguageHandler().jobBossLocationMenuBackItemLore));
+        inventory.setItem(8, makeItem(Material.BARRIER, RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName, RPUniverse.getLanguageHandler().generalMenuBackItemLore));
 
         setFillerGlass();
     }
