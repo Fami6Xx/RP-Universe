@@ -18,11 +18,13 @@ general:
 # preferPermissionsOverModeForEdit: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR) for editing jobs
 # neededModeToEditJobs: The mode needed to edit jobs (ADMIN or MODERATOR)
 # needsPermissionToHaveMultipleJobs: If true, the player needs the permission rpu.multiplejobs to have multiple jobs
+# maxJobsPerPlayer: The maximum amount of jobs a player can have
 # menuRange: The range in which the holograms are visible for the menus (For example boss menus)
 jobs:
     preferPermissionsOverModeForEdit: false
     neededModeToEditJobs: ADMIN
     needsPermissionToHaveMultipleJobs: true
+    maxJobsPerPlayer: 3
     menuRange: 5
 
 # The settings for the holograms
