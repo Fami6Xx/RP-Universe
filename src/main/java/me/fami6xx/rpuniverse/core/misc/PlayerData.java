@@ -347,6 +347,26 @@ public class PlayerData {
     }
 
     /**
+     * Checks if the player can be added to a job
+     */
+    public boolean canBeAddedToJob() {
+        if(playerJobs.isEmpty()) return true;
+
+        if(playerJobs.size() >= RPUniverse.getInstance().getConfiguration().getInt("jobs.maxJobsPerPlayer")) return false;
+
+        if(RPUniverse.getInstance().getConfiguration().getBoolean("jobs.needsPermissionToHaveMultipleJobs")){
+            boolean hasPermission;
+            if(bindedPlayer != null) hasPermission =  bindedPlayer.hasPermission("rpu.multiplejobs");
+            else if(bindedOfflinePlayer != null) hasPermission =  bindedOfflinePlayer.getPlayer().hasPermission("rpu.multiplejobs");
+            else hasPermission = false;
+
+            return hasPermission;
+        }
+
+        return true;
+    }
+
+    /**
      * Updates the player bound to this PlayerData instance.
      *
      * @param player The player to be updated.
