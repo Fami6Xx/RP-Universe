@@ -5,8 +5,8 @@ public enum MenuTag {
     PLAYER,
     JOB,
     BOSS,
-    JOB_ADMIN,
     JOB_POSITION,
     JOB_POSITION_INTERNAL,
     JOB_ALL_POSITIONS,
+    JOB_ALL_PLAYERS_INTERNAL,
 }
