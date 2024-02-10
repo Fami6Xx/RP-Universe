@@ -225,7 +225,7 @@ public class JobPositionMenu extends Menu {
             inventory.setItem(++shownSlots, makeItem(Material.DIAMOND, RPUniverse.getLanguageHandler().jobPositionMenuIsBossDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuIsBossLore, placeholders)));
         }
         inventory.setItem(++shownSlots, makeItem(Material.EMERALD, RPUniverse.getLanguageHandler().jobPositionMenuIsDefaultDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuIsDefaultLore, placeholders)));
-        inventory.setItem(7, makeItem(Material.REDSTONE_BLOCK, RPUniverse.getLanguageHandler().jobPositionMenuBackDisplayName, RPUniverse.getLanguageHandler().jobPositionMenuBackLore));
+        inventory.setItem(7, makeItem(Material.REDSTONE_BLOCK, RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName, RPUniverse.getLanguageHandler().generalMenuBackItemLore));
         inventory.setItem(8, makeItem(Material.BARRIER, RPUniverse.getLanguageHandler().jobPositionMenuDeleteDisplayName, RPUniverse.getLanguageHandler().jobPositionMenuDeleteLore));
 
         setFillerGlass();
