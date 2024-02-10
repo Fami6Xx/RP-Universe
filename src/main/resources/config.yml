@@ -20,12 +20,14 @@ general:
 # needsPermissionToHaveMultipleJobs: If true, the player needs the permission rpu.multiplejobs to have multiple jobs
 # maxJobsPerPlayer: The maximum amount of jobs a player can have
 # menuRange: The range in which the holograms are visible for the menus (For example boss menus)
+# distanceToAddToJob: The distance the player has to be near the boss to be added to the job
 jobs:
     preferPermissionsOverModeForEdit: false
     neededModeToEditJobs: ADMIN
     needsPermissionToHaveMultipleJobs: true
     maxJobsPerPlayer: 3
     menuRange: 5
+    distanceToAddToJob: 5
 
 # The settings for the holograms
 # range: The range in which the holograms are visible
