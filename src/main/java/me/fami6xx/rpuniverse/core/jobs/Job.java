@@ -577,6 +577,16 @@ public class Job {
         return new ArrayList<>(playerPositions.keySet());
     }
 
+    public boolean canPlayerKickPlayer(UUID playerUUID, UUID playerToKickUUID){
+        if(playerPositions.containsKey(playerUUID) && playerPositions.containsKey(playerToKickUUID)){
+            Position playerPosition = playerPositions.get(playerUUID);
+            Position playerToKickPosition = playerPositions.get(playerToKickUUID);
+
+            return jobPositions.indexOf(playerPosition) < jobPositions.indexOf(playerToKickPosition);
+        }
+        return false;
+    }
+
     /**
      * Prepares the Job object for saving by serializing the jobType to a JSON string.
      * <p>
