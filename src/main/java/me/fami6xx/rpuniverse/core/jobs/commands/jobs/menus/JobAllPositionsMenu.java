@@ -170,6 +170,10 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
         }
 
         if(e.isShiftClick()){
+            if(positionList.indexOf(position) < positionList.indexOf(job.getPlayerPosition(playerMenu.getPlayer().getUniqueId()))){
+                FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().jobAllPositionsMenuCannotMovePositionMessage);
+                return;
+            }
             if(e.isRightClick()){
                 job.movePositionUpAndDown(position.getName(), false);
             }else if(e.isLeftClick()){
