@@ -50,7 +50,7 @@ public class BossBarHandler {
                 message = "ADMINMODE";
             }
         }else if(playerData.getSelectedPlayerJob() != null){
-            message = playerData.getSelectedPlayerJob().getName();
+            message = playerData.getSelectedPlayerJob().getName() + " - " + playerData.getSelectedPlayerJob().getPlayerPosition(player.getUniqueId()).getName();
         }else{
             message = RPUniverse.getLanguageHandler().bossBarPlayerNoJob;
         }
