@@ -76,6 +76,7 @@ public class LanguageHandler {
     public String jobAllPositionsMenuAddPositionItemLore = "&7Click to start the process of creating a position";
     public String jobAllPositionsMenuMovePositionsItemDisplayName = "&cMove Positions";
     public String jobAllPositionsMenuMovePositionsItemLore = "&7Hold shift and click left to move the position up~&7Hold shift and click right to move the position down";
+    public String jobAllPositionsMenuCannotMovePositionMessage = "&cYou cannot move this position!";
     public String jobAllPositionsMenuPositionItemDisplayName = "&e{positionName}";
     public String jobAllPositionsMenuPositionItemLore = "&7Salary: &6{positionSalary}~&7Is boss? &6{positionIsBoss}~&7Click to view details";
     public String jobPositionMenuName = "&6RPUniverse &7| &c{positionName}";
@@ -95,8 +96,6 @@ public class LanguageHandler {
     public String jobPositionMenuIsBossLore = "&7Current: &6{isBoss}~&7Click to change if the position is a boss position";
     public String jobPositionMenuIsDefaultDisplayName = "&cIs Default";
     public String jobPositionMenuIsDefaultLore = "&7Current: &6{isDefault}~&7Click to change if the position is a default position";
-    public String jobPositionMenuBackDisplayName = "&cBack";
-    public String jobPositionMenuBackLore = "&7Click to go back";
     public String jobPositionMenuDeleteDisplayName = "&cDelete";
     public String jobPositionMenuDeleteLore = "&7Click to delete the position";
     public String jobBossLocationMenuName = "&6RPUniverse &7| &cBoss Location";
@@ -104,11 +103,32 @@ public class LanguageHandler {
     public String jobBossLocationMenuChangeLocationItemLore = "&7Click to change the location of the boss menu";
     public String jobBossLocationMenuChangeLocationMessage = "&cYou changed the location of the boss menu!";
     public String jobBossLocationMenuChangeLocationCancelMessage = "&cYou cancelled the location change!";
-    public String jobBossLocationMenuBackItemDisplayName = "&cBack";
-    public String jobBossLocationMenuBackItemLore = "&7Click to go back";
     public String jobBossLocationMenuTeleportToBossMenuItemDisplayName = "&cTeleport to Boss Menu";
     public String jobBossLocationMenuTeleportToBossMenuItemLore = "&7Click to teleport to the boss menu";
     public String jobBossLocationMenuTeleportToBossMenuMessage = "&cYou teleported to the boss menu!";
+    public String jobAllPlayersMenuName = "&6RPUniverse &7| &cAll Players";
+    public String jobAllPlayersMenuPlayerItemDisplayName = "&e{playerName}";
+    public String jobAllPlayersMenuPlayerItemLore = "&7Position: &c{positionName}~&7Salary: &c{salary}~&7Online: &c{isOnline}~&7Click to view details";
+    public String jobAllPlayersMenuAddPlayerItemDisplayName = "&cAdd Player";
+    public String jobAllPlayersMenuAddPlayerItemLore = "&7Click to add a player to the job";
+    public String jobAllPlayersMenuAddPlayerNoAvailablePlayersMessage = "&cThere are no available players to add to the job!";
+    public String jobSelectPlayerToAddMenuName = "&6RPUniverse &7| &cSelect Player";
+    public String jobSelectPlayerToAddMenuPlayerItemDisplayName = "&e{playerName}";
+    public String jobSelectPlayerToAddMenuPlayerItemLore = "&7Click to add this player to the job";
+    public String jobSelectPlayerToAddMenuPlayerAddedMessage = "&cYou added the player to the job!";
+    public String jobPlayerMenuName = "&6RPUniverse &7| &c{playerName}";
+    public String jobPlayerMenuPositionDisplayName = "&cPosition";
+    public String jobPlayerMenuPositionLore = "&7Current: &6{positionName}~&7Click to change the position";
+    public String jobPlayerMenuKickDisplayName = "&cKick";
+    public String jobPlayerMenuKickLore = "&7Click to kick the player from the job";
+    public String jobPlayerMenuKickMessage = "&cYou kicked the player from the job!";
+    public String jobPlayerMenuCannotKickMessage = "&cYou cannot kick this player!";
+    public String jobPlayerMenuCannotChangePositionMessage = "&cYou cannot change the position of this player!";
+    public String jobSelectPositionMenuName = "&6RPUniverse &7| &cSelect Position";
+    public String jobSelectPositionMenuPositionItemDisplayName = "&e{positionName}";
+    public String jobSelectPositionMenuPositionItemLore = "&7Salary: &6{positionSalary}~&7Click to select this position";
+    public String jobSelectPositionMenuSelectPositionMessage = "&cYou selected the position!";
+
 
 
 

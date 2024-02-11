@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobAllPlayersMenu;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobAllPositionsMenu;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobBankActionsMenu;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
@@ -103,7 +104,7 @@ public class JobAdminMenu extends Menu {
 
         }
         if(e.getSlot() == 24){
-
+            new JobAllPlayersMenu(playerMenu, this).open();
         }
         if(e.getSlot() == 31){
             if(job.getJobType() == null || !job.getJobType().hasAdminMenu())
