@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 public class MenuManager {
@@ -44,6 +45,32 @@ public class MenuManager {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
                 closeMenu(playerMenu.getPlayer());
+            }
+        }
+    }
+
+    public void closeAllMenusUUIDPredicate(Predicate<UUID> predicate) {
+        for (PlayerMenu playerMenu : playerMenuMap.values()) {
+            if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getPlayer().getUniqueId())) {
+                closeMenu(playerMenu.getPlayer());
+            }
+        }
+    }
+
+    public void closeAllMenusUUIDPredicate(Predicate<UUID> predicate, MenuTag... tags) {
+        for (PlayerMenu playerMenu : playerMenuMap.values()) {
+            if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getPlayer().getUniqueId())) {
+                boolean hasTag = false;
+                for (MenuTag tag : playerMenu.getCurrentMenu().getMenuTags()) {
+                    for (MenuTag tag2 : tags) {
+                        if (tag == tag2) {
+                            hasTag = true;
+                            break;
+                        }
+                    }
+                }
+                if(hasTag)
+                    closeMenu(playerMenu.getPlayer());
             }
         }
     }

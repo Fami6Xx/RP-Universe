@@ -337,6 +337,13 @@ public class Job {
     public void editPosition(String positionName, Position updatedPosition) {
         for(Position position : jobPositions) {
             if(position.getName().equals(positionName)) {
+                if(position.isBoss() && !updatedPosition.isBoss()){
+                    for(UUID playerUUID : playerPositions.keySet()) {
+                        if (playerPositions.get(playerUUID).equals(position)) {
+                            RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
+                        }
+                    }
+                }
                 position.setName(updatedPosition.getName());
                 position.setSalary(updatedPosition.getSalary());
                 position.setWorkingStepPermissionLevel(updatedPosition.getWorkingStepPermissionLevel());
@@ -371,6 +378,9 @@ public class Job {
         if(playerPositions.containsValue(removedPosition)){
             for(UUID playerUUID : playerPositions.keySet()){
                 if(playerPositions.get(playerUUID).equals(removedPosition)){
+                    if(removedPosition.isBoss()){
+                        RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
+                    }
                     playerPositions.remove(playerUUID);
                     if(jobPositions.isEmpty()){
                         RPUniverse.getPlayerData(playerUUID.toString()).removeJob(this);
@@ -378,8 +388,6 @@ public class Job {
                 }
             }
         }
-
-        jobPositions.removeIf(position -> position.getName().equals(positionName));
 
         RPUniverse.getInstance().getMenuManager().closeAllMenus(j -> j == this, MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
         RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
@@ -457,6 +465,9 @@ public class Job {
      * @param newPosition   The new position to assign to the player.
      */
     public void changePlayerPosition(UUID playerUUID, Position newPosition) {
+        if(playerPositions.containsKey(playerUUID) && playerPositions.get(playerUUID).isBoss()){
+            RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
+        }
         playerPositions.put(playerUUID, newPosition);
         RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
     }
@@ -528,6 +539,9 @@ public class Job {
      * @param playerUUID The UUID of the player to remove from the job.
      */
     public void removePlayerFromJob(UUID playerUUID) {
+        if(playerPositions.containsKey(playerUUID) && playerPositions.get(playerUUID).isBoss()){
+            RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
+        }
         playerPositions.remove(playerUUID);
         RPUniverse.getPlayerData(playerUUID.toString()).removeJob(this);
         RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
