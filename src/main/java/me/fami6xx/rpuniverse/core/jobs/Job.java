@@ -577,6 +577,13 @@ public class Job {
         return new ArrayList<>(playerPositions.keySet());
     }
 
+    /**
+     * Determines if a player can kick another player based on their positions.
+     *
+     * @param playerUUID        the UUID of the player initiating the kick
+     * @param playerToKickUUID  the UUID of the player to be kicked
+     * @return true if the player can kick the other player, false otherwise
+     */
     public boolean canPlayerKickPlayer(UUID playerUUID, UUID playerToKickUUID){
         if(playerPositions.containsKey(playerUUID) && playerPositions.containsKey(playerToKickUUID)){
             Position playerPosition = playerPositions.get(playerUUID);
@@ -585,6 +592,25 @@ public class Job {
             return jobPositions.indexOf(playerPosition) < jobPositions.indexOf(playerToKickPosition);
         }
         return false;
+    }
+
+    /**
+     * Returns a list of all positions that a player can assign to.
+     *
+     * @param playerUUID the UUID of the player
+     * @return a list of Position objects that the player can assign to, empty if none found
+     */
+    public List<Position> getAllPositionsPlayerCanAssign(UUID playerUUID){
+        List<Position> positions = new ArrayList<>();
+        if(playerPositions.containsKey(playerUUID)){
+            Position playerPosition = playerPositions.get(playerUUID);
+            for(Position position : jobPositions){
+                if(jobPositions.indexOf(playerPosition) < jobPositions.indexOf(position)){
+                    positions.add(position);
+                }
+            }
+        }
+        return positions;
     }
 
     /**
