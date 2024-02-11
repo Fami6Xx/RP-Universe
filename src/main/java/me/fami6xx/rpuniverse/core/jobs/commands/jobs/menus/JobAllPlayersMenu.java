@@ -114,7 +114,7 @@ public class JobAllPlayersMenu extends EasyPaginatedMenu {
         placeholders.put("{positionName}", playerPosition);
         placeholders.put("{salary}", playerSalary);
         placeholders.put("{jobName}", playerMenu.getEditingJob().getName());
-        placeholders.put("{isOnline}", p == null ? "Yes" : "No");
+        placeholders.put("{isOnline}", p == null ? "No" : "Yes");
 
         return makeItem(
                 Material.DIAMOND_HELMET,

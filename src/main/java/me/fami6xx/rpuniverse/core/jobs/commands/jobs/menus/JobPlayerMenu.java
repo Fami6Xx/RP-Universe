@@ -50,7 +50,7 @@ public class JobPlayerMenu extends Menu {
     @Override
     public void handleMenu(InventoryClickEvent e) {
         if(e.getSlot() == 1){
-            if(!playerMenu.getEditingJob().canPlayerKickPlayer(playerMenu.getPlayer().getUniqueId(), player) && !playerMenu.getEditingJob().getAllPositionsPlayerCanAssign(playerMenu.getPlayer().getUniqueId()).isEmpty()){
+            if(!isAdmin && !playerMenu.getEditingJob().canPlayerKickPlayer(playerMenu.getPlayer().getUniqueId(), player) && !playerMenu.getEditingJob().getAllPositionsPlayerCanAssign(playerMenu.getPlayer().getUniqueId()).isEmpty()){
                 FamiUtils.sendMessageWithPrefix((Player) e.getWhoClicked(), RPUniverse.getLanguageHandler().jobPlayerMenuCannotChangePositionMessage);
                 return;
             }
@@ -59,7 +59,7 @@ public class JobPlayerMenu extends Menu {
         }
 
         if(e.getSlot() == 3){
-            if(!playerMenu.getEditingJob().canPlayerKickPlayer(playerMenu.getPlayer().getUniqueId(), player)){
+            if(!isAdmin && !playerMenu.getEditingJob().canPlayerKickPlayer(playerMenu.getPlayer().getUniqueId(), player)){
                 FamiUtils.sendMessageWithPrefix((Player) e.getWhoClicked(), RPUniverse.getLanguageHandler().jobPlayerMenuCannotKickMessage);
                 return;
             }

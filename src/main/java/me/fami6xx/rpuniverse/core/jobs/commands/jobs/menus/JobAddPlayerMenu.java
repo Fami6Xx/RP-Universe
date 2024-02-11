@@ -32,7 +32,7 @@ public class JobAddPlayerMenu extends EasyPaginatedMenu {
         HashMap<String, String> placeholders = new HashMap<>();
         placeholders.put("{playerName}", playersThatCanBeAdded.get(index).getName());
 
-        return makeItem(Material.DIAMOND_HELMET, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobSelectPlayerToAddMenuPlayerItemDisplayName, placeholders), RPUniverse.getLanguageHandler().jobSelectPlayerToAddMenuPlayerItemLore);
+        return makeItem(Material.DIAMOND, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobSelectPlayerToAddMenuPlayerItemDisplayName, placeholders), RPUniverse.getLanguageHandler().jobSelectPlayerToAddMenuPlayerItemLore);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class JobAddPlayerMenu extends EasyPaginatedMenu {
             HashMap<String, String> placeholders = new HashMap<>();
             placeholders.put("{playerName}", p.getName());
 
-            if(p.getName().equals(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobSelectPlayerToAddMenuPlayerItemDisplayName, placeholders))){
+            if(e.getCurrentItem().getItemMeta().getDisplayName().equals(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobSelectPlayerToAddMenuPlayerItemDisplayName, placeholders))){
                 player = p;
                 break;
             }
@@ -60,17 +60,18 @@ public class JobAddPlayerMenu extends EasyPaginatedMenu {
         if(player == null) return;
 
         PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
-        if(!data.canBeAddedToJob()) return;
+        if(!data.canBeAddedToJob(playerMenu.getEditingJob())) return;
 
         playerMenu.getEditingJob().addPlayerToJob(player.getUniqueId());
         FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().jobSelectPlayerToAddMenuPlayerAddedMessage);
+        previousMenu.open();
     }
 
     @Override
     public void addAdditionalItems() {
         playerMenu.getPlayer().getLocation().getNearbyPlayers(RPUniverse.getInstance().getConfiguration().getDouble("jobs.distanceToAddToJob")).forEach(player -> {
             if(playerMenu.getEditingJob().getPlayerPosition(player.getUniqueId()) == null){
-                if(RPUniverse.getPlayerData(player.getUniqueId().toString()).canBeAddedToJob()) {
+                if(RPUniverse.getPlayerData(player.getUniqueId().toString()).canBeAddedToJob(playerMenu.getEditingJob())) {
                     playersThatCanBeAdded.add(player);
                 }
             }

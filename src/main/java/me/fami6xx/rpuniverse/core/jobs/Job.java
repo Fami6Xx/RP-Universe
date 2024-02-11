@@ -12,11 +12,11 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
-import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -39,8 +39,9 @@ public class Job {
     private transient Hologram bossMenuHologram;
     private String jobTypeName = null;
     private String JSONJobTypeData = null;
+    private HashMap<UUID, String> playerPositionsSave = new HashMap<>();
 
-    private Map<UUID, Position> playerPositions;
+    private transient Map<UUID, Position> playerPositions;
     private List<Position> jobPositions;
     private String jobName;
     private int jobBank = 0;
@@ -103,6 +104,17 @@ public class Job {
      */
     protected void initialize(){
         createBossMenuHologram();
+
+        if(playerPositionsSave == null) playerPositionsSave = new HashMap<>();
+
+        if(!playerPositionsSave.isEmpty()){
+            for(UUID playerUUID : playerPositionsSave.keySet()){
+                Position position = getPositionByName(playerPositionsSave.get(playerUUID));
+                if(position != null){
+                    playerPositions.put(playerUUID, position);
+                }
+            }
+        }
     }
 
     /**
@@ -465,11 +477,14 @@ public class Job {
      * @param newPosition   The new position to assign to the player.
      */
     public void changePlayerPosition(UUID playerUUID, Position newPosition) {
-        if(playerPositions.containsKey(playerUUID) && playerPositions.get(playerUUID).isBoss()){
+        if(playerPositions.containsKey(playerUUID) && playerPositions.get(playerUUID).isBoss() && !newPosition.isBoss()){
             RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
         }
         playerPositions.put(playerUUID, newPosition);
         RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
+        Player player = Bukkit.getPlayer(playerUUID);
+        if(player != null)
+            RPUniverse.getInstance().getBossBarHandler().updateBossBar(player);
     }
 
     /**
@@ -627,6 +642,13 @@ public class Job {
     public void prepareForSave(){
         if(jobType != null)
             JSONJobTypeData = jobType.toString();
+
+        if(!playerPositions.isEmpty()){
+            playerPositionsSave.clear();
+            for(UUID playerUUID : playerPositions.keySet()){
+                playerPositionsSave.put(playerUUID, playerPositions.get(playerUUID).getName());
+            }
+        }
     }
 
     /**

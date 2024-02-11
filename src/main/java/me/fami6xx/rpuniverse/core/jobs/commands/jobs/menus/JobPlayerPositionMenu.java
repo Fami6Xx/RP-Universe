@@ -70,7 +70,10 @@ public class JobPlayerPositionMenu extends EasyPaginatedMenu {
     @Override
     public void addAdditionalItems() {
         this.positions.clear();
-        this.positions.addAll(playerMenu.getEditingJob().getAllPositionsPlayerCanAssign(player));
+        if(isAdmin)
+            this.positions.addAll(playerMenu.getEditingJob().getPositions());
+        else
+            this.positions.addAll(playerMenu.getEditingJob().getAllPositionsPlayerCanAssign(player));
 
         this.inventory.setItem(53, makeItem(Material.BARRIER, RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName, RPUniverse.getLanguageHandler().generalMenuBackItemLore));
     }
