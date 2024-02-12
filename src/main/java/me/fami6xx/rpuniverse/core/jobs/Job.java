@@ -401,7 +401,7 @@ public class Job {
             }
         }
 
-        RPUniverse.getInstance().getMenuManager().closeAllMenus(j -> j == this, MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
+        RPUniverse.getInstance().getMenuManager().closeAllMenus(j -> j == this, MenuTag.JOB_POSITION_INTERNAL);
         RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
     }
 
