@@ -2,15 +2,11 @@ package me.fami6xx.rpuniverse.core.jobs;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
-import me.fami6xx.rpuniverse.core.misc.PlayerData;
-import me.fami6xx.rpuniverse.core.misc.PlayerMode;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class JobsHandler implements Listener {
@@ -61,7 +57,7 @@ public class JobsHandler implements Listener {
         job.remove();
         jobs.remove(job);
         RPUniverse.getInstance().getDataSystem().getDataHandler().removeJobData(job.getName());
-        RPUniverse.getInstance().getMenuManager().closeAllMenus(j -> j == job);
+        RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == job);
     }
 
     public List<Job> getJobs() {

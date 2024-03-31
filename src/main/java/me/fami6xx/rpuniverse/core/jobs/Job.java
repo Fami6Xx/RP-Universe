@@ -255,7 +255,7 @@ public class Job {
         RPUniverse.getInstance().getDataSystem().getDataHandler().renameJobData(jobName, newName);
         this.jobName = newName;
         createBossMenuHologram();
-        RPUniverse.getInstance().getMenuManager().closeAllMenus(j -> j == this);
+        RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == this);
     }
 
     /**
@@ -304,7 +304,7 @@ public class Job {
     public void setJobType(JobType jobType) {
         this.jobType = jobType;
         this.jobTypeName = jobType.getName();
-        RPUniverse.getInstance().getMenuManager().closeAllMenus(j -> j == this);
+        RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == this);
     }
 
     /**
@@ -332,7 +332,7 @@ public class Job {
                     if(i == jobPositions.size() - 1) return;
                     Collections.swap(jobPositions, i, i + 1);
                 }
-                RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this, MenuTag.JOB_ALL_POSITIONS);
+                RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this, MenuTag.JOB_ALL_POSITIONS);
                 return;
             }
         }
@@ -345,7 +345,7 @@ public class Job {
      */
     public void addPosition(Position position) {
         jobPositions.add(position);
-        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
 
     /**
@@ -371,7 +371,7 @@ public class Job {
                 position.setDefault(updatedPosition.isDefault());
             }
         }
-        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
 
     /**
@@ -409,8 +409,8 @@ public class Job {
             }
         }
 
-        RPUniverse.getInstance().getMenuManager().closeAllMenus(j -> j == this, MenuTag.JOB_POSITION_INTERNAL);
-        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
+        RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == this, MenuTag.JOB_POSITION_INTERNAL);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
 
     /**
@@ -489,7 +489,7 @@ public class Job {
             RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
         }
         playerPositions.put(playerUUID, newPosition);
-        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
         Player player = Bukkit.getPlayer(playerUUID);
         if(player != null)
             RPUniverse.getInstance().getBossBarHandler().updateBossBar(player);
@@ -502,7 +502,7 @@ public class Job {
      */
     public void addMoneyToJobBank(int money) {
         jobBank += money;
-        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
 
     /**
@@ -514,7 +514,7 @@ public class Job {
     public boolean removeMoneyFromJobBank(int money) {
         if(jobBank >= money) {
             jobBank -= money;
-            RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
+            RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
             return true;
         }
         return false;
@@ -538,7 +538,7 @@ public class Job {
     public void addPlayerToJob(UUID playerUUID, Position position) {
         playerPositions.put(playerUUID, position);
         RPUniverse.getPlayerData(playerUUID.toString()).addJob(this);
-        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
 
     /**
@@ -550,7 +550,7 @@ public class Job {
             if(position.isDefault()) {
                 playerPositions.put(playerUUID, position);
                 RPUniverse.getPlayerData(playerUUID.toString()).addJob(this);
-                RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
+                RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
                 return;
             }
         }
@@ -567,7 +567,7 @@ public class Job {
         }
         playerPositions.remove(playerUUID);
         RPUniverse.getPlayerData(playerUUID.toString()).removeJob(this);
-        RPUniverse.getInstance().getMenuManager().reopenMenus(j -> j == this);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
 
     /**

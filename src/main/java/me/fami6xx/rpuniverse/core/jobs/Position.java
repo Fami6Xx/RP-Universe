@@ -44,7 +44,7 @@ public class Position {
      */
     public void setName(String name) {
         this.name = name;
-        RPUniverse.getInstance().getMenuManager().reopenMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
     }
 
     /**
@@ -61,7 +61,7 @@ public class Position {
      */
     public void setSalary(int salary) {
         this.salary = salary;
-        RPUniverse.getInstance().getMenuManager().reopenMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
     }
 
     /**
@@ -78,7 +78,7 @@ public class Position {
      */
     public void setWorkingStepPermissionLevel(int workingStepPermissionLevel) {
         this.workingStepPermissionLevel = workingStepPermissionLevel;
-        RPUniverse.getInstance().getMenuManager().reopenMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
     }
 
     /**
@@ -95,7 +95,7 @@ public class Position {
      */
     public void setBoss(boolean boss) {
         isBoss = boss;
-        RPUniverse.getInstance().getMenuManager().reopenMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
     }
 
     /**
@@ -112,7 +112,7 @@ public class Position {
      */
     public void setDefault(boolean aDefault) {
         isDefault = aDefault;
-        RPUniverse.getInstance().getMenuManager().reopenMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
+        RPUniverse.getInstance().getMenuManager().reopenJobMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
     }
 
     /**

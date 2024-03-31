@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -41,7 +40,7 @@ public class MenuManager {
         }
     }
 
-    public void closeAllMenus(Predicate<Job> predicate) {
+    public void closeAllJobMenus(Predicate<Job> predicate) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
                 closeMenu(playerMenu.getPlayer());
@@ -84,7 +83,7 @@ public class MenuManager {
         }
     }
 
-    public void reopenMenus(Predicate<Job> predicate) {
+    public void reopenJobMenus(Predicate<Job> predicate) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
                 playerMenu.getCurrentMenu().open();
@@ -92,7 +91,7 @@ public class MenuManager {
         }
     }
 
-    public void reopenMenus(Predicate<Job> predicate, MenuTag... tags) {
+    public void reopenJobMenus(Predicate<Job> predicate, MenuTag... tags) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
                 boolean hasTag = false;
@@ -111,7 +110,7 @@ public class MenuManager {
         }
     }
 
-    public void closeAllMenus(Predicate<Job> predicate, MenuTag... tags) {
+    public void closeAllJobMenus(Predicate<Job> predicate, MenuTag... tags) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
                 boolean hasTag = false;
