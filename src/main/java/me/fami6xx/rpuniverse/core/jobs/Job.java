@@ -124,6 +124,14 @@ public class Job {
         if(bossMenuHologram != null){
             bossMenuHologram.delete();
         }
+
+        for(UUID playerUUID : playerPositions.keySet()){
+            if(playerPositions.get(playerUUID).isBoss()){
+                RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
+            }
+
+            removePlayerFromJob(playerUUID);
+        }
     }
 
     /**
