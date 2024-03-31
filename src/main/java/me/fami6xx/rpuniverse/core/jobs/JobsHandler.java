@@ -28,7 +28,8 @@ public class JobsHandler implements Listener {
             if(job == null) continue;
             JobType jobType = getJobTypeByName(job.getJobTypeName());
             if(jobType != null){
-                job.setJobType(jobType.fromString(job.getJobTypeData()));
+                JobType newInstance = jobType.getNewInstance();
+                job.setJobType(newInstance);
             }
             job.initialize();
             this.jobs.add(job);
@@ -76,7 +77,9 @@ public class JobsHandler implements Listener {
     /**
      * Adds a JobType to the list of job types.
      * <p>
-     * It is crucial that the JobType is added to the list of job types in your onEnable method, because when the server loads then jobs are loaded, and they need their JobTypes to be ready.
+     * It is crucial that the JobType is added to the list of job types in your onEnable method,
+     * because when the server loads then jobs are loaded, and they need their
+     * JobTypes to be ready as soon as possible.
      *
      * @param jobType the JobType to be added to the list of job types.
      */
@@ -85,7 +88,8 @@ public class JobsHandler implements Listener {
 
         jobs.forEach(job -> {
             if(job.getJobTypeName().equals(jobType.getName())){
-                job.setJobType(jobType.fromString(job.getJobTypeData()));
+                JobType newInstance = jobType.getNewInstance();
+                job.setJobType(newInstance);
             }
         });
     }

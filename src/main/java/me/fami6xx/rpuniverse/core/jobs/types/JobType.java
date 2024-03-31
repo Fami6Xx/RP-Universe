@@ -4,6 +4,11 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 
+/**
+ * Represents a type of job that can be assigned to a job.
+ * <p>
+ *  For all data saving and loading use {@link JobTypeData} class. Any type of data that is not in this class will not be saved after a server restart.
+ */
 public interface JobType {
     /**
      * Retrieves the name of the job type.
@@ -25,6 +30,14 @@ public interface JobType {
      * @return true if the job type has an admin menu, false otherwise
      */
     boolean hasAdminMenu();
+
+    /**
+     * Initializes the job type.
+     * <p>
+     * This is called when a job using this job type is ready to be initialized. This method should be used to set up any
+     * initial state or perform any necessary setup for the job type.
+     */
+    void initialize();
 
     /**
      * Opens the admin menu for the JobType.
@@ -67,22 +80,22 @@ public interface JobType {
     ItemStack getIcon();
 
     /**
-     * Returns a string representation of the object.
+     * Should return just a new instance of the JobType.
      * <p>
-     * The toString method returns a string representation of the object. The returned string should be a concise
-     * and human-readable representation that can be used for debugging or logging purposes.
-     * <p>
-     * IT IS CRUCIAL THAT YOU USE GSON TO SERIALIZE THE OBJECT TO A STRING.
-     *
-     * @return a String representation of the object.
+     * This method is used when adding a jobType to the list of job types so that the jobType can be instantiated.
+     * @return a new instance of the JobType.
      */
-    String toString();
+    JobType getNewInstance();
 
     /**
-     * Converts a string representation of a JobType to an actual JobType object.
-     *
-     * @param string the string representation of the JobType to convert
-     * @return the JobType object
+     * Retrieves the data of the job type in JSON format.
+     * @return The data of the job type in JSON format.
      */
-    JobType fromString(String string);
+    String getJsonJobTypeData();
+
+    /**
+     * Sets the data of the job type from JSON format.
+     * @param json The data of the job type in JSON format.
+     */
+    void fromJsonJobTypeData(String json);
 }

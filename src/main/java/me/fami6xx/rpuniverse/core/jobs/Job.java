@@ -115,6 +115,11 @@ public class Job {
                 }
             }
         }
+
+        if(jobType != null){
+            jobType.fromJsonJobTypeData(JSONJobTypeData);
+            jobType.initialize();
+        }
     }
 
     /**
@@ -640,16 +645,16 @@ public class Job {
      * Prepares the Job object for saving by serializing the jobType to a JSON string.
      * <p>
      * This method checks if the jobType field is not null. If it is not null, it serializes the jobType
-     * to a JSON string using the {@link JobType#toString()} method. The JSON string is then stored
+     * to a JSON string using the {@link JobType#getJsonJobTypeData()} method. The JSON string is then stored
      * in the JSONJobTypeData field of the Job object.
      * <p>
      * Note that it is crucial to use the GSON library to serialize the jobType to a JSON string.
      *
-     * @see JobType#toString()
+     * @see JobType#getJsonJobTypeData()
      */
     public void prepareForSave(){
         if(jobType != null)
-            JSONJobTypeData = jobType.toString();
+            JSONJobTypeData = jobType.getJsonJobTypeData();
 
         if(!playerPositions.isEmpty()){
             playerPositionsSave.clear();
