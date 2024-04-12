@@ -32,7 +32,7 @@ jobs:
 # The settings for the holograms
 # range: The range in which the holograms are visible
 # timeAlive: The time in seconds the holograms are visible after they are created (For /me, /do etc..)
-# maximumAbovePlayer: The maximum amount of holograms the player can have above himself
+# maximumAbovePlayer: The maximum amount of holograms the player can have above themselves
 holograms:
     range: 15
     timeAlive: 10
