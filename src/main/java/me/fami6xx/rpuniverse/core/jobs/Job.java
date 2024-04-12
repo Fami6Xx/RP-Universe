@@ -488,8 +488,7 @@ public class Job {
         if(jobPositions.isEmpty()) errors.add("No positions have been added to the job.");
         if(!checkPositions(jobPositions)) errors.add("The job must have at least one default position and at least one boss position.");
 
-        if(jobTypeName == null) errors.add("The job type has not been set.");
-        else if(jobType == null) errors.add("The job type '" + jobTypeName + "' does not exist or has not been set.");
+        if(jobType == null) errors.add("The job type '" + jobTypeName + "' does not exist or has not been loaded.");
 
         return errors;
     }

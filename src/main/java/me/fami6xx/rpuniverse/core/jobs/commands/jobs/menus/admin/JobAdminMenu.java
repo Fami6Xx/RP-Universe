@@ -104,7 +104,10 @@ public class JobAdminMenu extends Menu {
 
         }
         if(e.getSlot() == 24){
-            new JobAllPlayersMenu(playerMenu, this).open();
+            if(job.isJobReady().isEmpty())
+                new JobAllPlayersMenu(playerMenu, this).open();
+            else
+                FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().errorJobNotReadyMessage);
         }
         if(e.getSlot() == 31){
             if(job.getJobType() == null || !job.getJobType().hasAdminMenu())

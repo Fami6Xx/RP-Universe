@@ -41,7 +41,7 @@ public class LanguageHandler {
     public String allJobsMenuJobName = "&e{jobName}";
     public String jobAdminMenuName = "&6RPUniverse &7| &c{jobName}";
     public String jobAdminMenuInformationItemDisplayName = "&cInformation";
-    public String jobAdminMenuInformationItemLore = "&7Is job ready? {jobReady}~&7Job type: &c{jobType}~&7Job bank: &c{jobBank}~&r~&7Click to view more information in chat";
+    public String jobAdminMenuInformationItemLore = "&7Is job ready? &c{jobReady}&r~&7Job type: &c{jobType}~&7Job bank: &c{jobBank}~&r~&7Click to view more information in chat";
     public String jobAdminMenuRenameItemDisplayName = "&cRename";
     public String jobAdminMenuRenameItemLore = "&7Click to rename the job";
     public String jobMenuJobBankItemDisplayName = "&cJob Bank";
@@ -111,6 +111,7 @@ public class LanguageHandler {
     public String jobAllPlayersMenuPlayerItemLore = "&7Position: &c{positionName}~&7Salary: &c{salary}~&7Online: &c{isOnline}~&7Click to view details";
     public String jobAllPlayersMenuAddPlayerItemDisplayName = "&cAdd Player";
     public String jobAllPlayersMenuAddPlayerItemLore = "&7Click to add a player to the job";
+    public String errorJobNotReadyMessage = "&cThis job is not ready!";
     public String jobAllPlayersMenuAddPlayerNoAvailablePlayersMessage = "&cThere are no available players to add to the job!";
     public String jobSelectPlayerToAddMenuName = "&6RPUniverse &7| &cSelect Player";
     public String jobSelectPlayerToAddMenuPlayerItemDisplayName = "&e{playerName}";
