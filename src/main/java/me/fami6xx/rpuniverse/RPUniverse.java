@@ -92,6 +92,7 @@ public final class RPUniverse extends JavaPlugin {
 
         this.universalChatHandler = new UniversalChatHandler();
         getServer().getPluginManager().registerEvents(universalChatHandler, this);
+        this.getCommand("globalooc").setExecutor(this.universalChatHandler);
 
         this.bossBarHandler = new BossBarHandler();
         this.actionBarHandler = new ActionBarHandler();

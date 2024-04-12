@@ -11,8 +11,16 @@ prefix: '&8[&6RPUniverse&8]'
 
 # General settings
 # bossBarColor: The color of the boss bar (BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW)
+# localOOC: If true, the OOC chat when player just types in the chat is local
+# localOOCRange: The range in which the OOC chat is visible
+# globalOOC: If true, the global ooc command is registered
 general:
     bossBarColor: RED
+    localOOC: true
+    localOOCRange: 15
+    localOOCFormat: '&8[&bLocal OOC&8] &7{player}: &r{message}'
+    globalOOC: true
+    globalOOCFormat: '&8[&aGlobal OOC&8] &7{player}: &r{message}'
 
 # Job settings
 # preferPermissionsOverModeForEdit: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR) for editing jobs

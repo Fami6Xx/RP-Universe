@@ -142,6 +142,10 @@ public class LanguageHandler {
     public String createJobCommandJobCreatedMessage = "&7Job created! You can now edit it in the /jobs menu.";
 
 
+    // GLOBAL AND LOCAL OOC
+    public String errorGlobalOOCUsage = "&cUsage: /globalooc <message>";
+
+
     // ME COMMAND MESSAGES
     public String errorMeCommandUsage = "&cUsage: /me <message>";
     public String meCommandMessage = "&7* &e{player} &c{message}";

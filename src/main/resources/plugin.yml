@@ -41,6 +41,9 @@ commands:
   settag:
     description: Sets the tag of a player
     usage: /<command> <player> <tag>
+  globalooc:
+    description: Sends a message to the global OOC chat
+    usage: /<command> <message>
 permissions:
   rpu.user:
     description: Gives access to all user commands
@@ -49,6 +52,7 @@ permissions:
         rpu.do: true
         rpu.status: true
         rpu.stopstatus: true
+        rpu.globalooc: true
   rpu.admin:
     description: Gives access to all admin commands
     children:
@@ -80,3 +84,5 @@ permissions:
     description: Allows the player to use the /tag command
   rpu.settag:
     description: Allows the player to use the /settag command
+  rpu.globalooc:
+    description: Allows the player to use the global ooc chat
