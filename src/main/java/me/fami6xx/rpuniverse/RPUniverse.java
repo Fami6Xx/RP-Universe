@@ -12,6 +12,7 @@ import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.BossBarHandler;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
+import me.fami6xx.rpuniverse.core.misc.utils.NickHider;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -31,6 +32,7 @@ public final class RPUniverse extends JavaPlugin {
     private UniversalChatHandler universalChatHandler;
     private BossBarHandler bossBarHandler;
     private ActionBarHandler actionBarHandler;
+    private NickHider nickHider;
 
     private FileConfiguration config;
     private Economy econ;
@@ -96,6 +98,11 @@ public final class RPUniverse extends JavaPlugin {
 
         this.bossBarHandler = new BossBarHandler();
         this.actionBarHandler = new ActionBarHandler();
+
+        if(getConfiguration().getBoolean("general.hideNicknames")){
+            this.nickHider = new NickHider();
+            this.nickHider.init();
+        }
     }
 
     @Override
@@ -107,6 +114,8 @@ public final class RPUniverse extends JavaPlugin {
             this.dataSystem.shutdown();
             this.holoAPI.disable();
             this.createJobStarter.stop();
+            if(nickHider != null)
+                this.nickHider.shutdown();
         }catch (NullPointerException ignored){}
     }
 
