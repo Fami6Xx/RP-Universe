@@ -19,6 +19,7 @@ import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -208,7 +209,12 @@ public class Job {
             bossPage.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
                 @Override
                 public boolean execute(Player player, String... strings) {
-                    new JobAdminMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), job).open();
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            new JobAdminMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), job).open();
+                        }
+                    }.runTask(RPUniverse.getInstance());
                     return true;
                 }
             }, ""));
@@ -223,7 +229,12 @@ public class Job {
             adminPage.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
                 @Override
                 public boolean execute(Player player, String... strings) {
-                    new JobAdminMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), job).open();
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            new JobAdminMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), job).open();
+                        }
+                    }.runTask(RPUniverse.getInstance());
                     return true;
                 }
             }, ""));
