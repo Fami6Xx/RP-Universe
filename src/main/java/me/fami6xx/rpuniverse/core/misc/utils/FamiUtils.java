@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.misc.utils;
 import me.fami6xx.rpuniverse.RPUniverse;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 
@@ -36,21 +37,26 @@ public class FamiUtils {
 
     public static void sendMessageInRange(Player player, String message, int range){
         String finalMessage = format(message);
-        player.sendMessage(finalMessage);
-        player.getNearbyEntities(range, range, range).stream()
-                .filter(entity -> entity instanceof Player)
-                .map(entity -> (Player) entity)
-                .forEach(player1 -> player1.sendMessage(finalMessage));
+        sendMessageInRangeSynchronized(player, range, finalMessage);
     }
 
     public static void sendMessageInRange(Player player, String message, int range, HashMap<String, String> replace){
         String finalMessage = format(replace(message, replace));
 
+        sendMessageInRangeSynchronized(player, range, finalMessage);
+    }
+
+    private static void sendMessageInRangeSynchronized(Player player, int range, String finalMessage) {
         player.sendMessage(finalMessage);
-        player.getNearbyEntities(range, range, range).stream()
-                .filter(entity -> entity instanceof Player)
-                .map(entity -> (Player) entity)
-                .forEach(player1 -> player1.sendMessage(finalMessage));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.getNearbyEntities(range, range, range).stream()
+                        .filter(entity -> entity instanceof Player)
+                        .map(entity -> (Player) entity)
+                        .forEach(player1 -> player1.sendMessage(finalMessage));
+            }
+        }.runTask(RPUniverse.getInstance());
     }
 
     public static void sendMessage(Player player, String message){
