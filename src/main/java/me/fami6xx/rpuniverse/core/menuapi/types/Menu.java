@@ -51,7 +51,7 @@ public abstract class Menu implements InventoryHolder {
                 return;
             }
 
-            if(!playerMenu.getPlayer().getOpenInventory().getTopInventory().getTitle().equals(getMenuName())){
+            if(playerMenu.getPlayer().getOpenInventory().getTopInventory() != this.inventory){
                 closeAndCreateInv();
                 return;
             }
