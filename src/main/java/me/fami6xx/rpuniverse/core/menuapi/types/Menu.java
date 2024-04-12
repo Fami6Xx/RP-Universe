@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.menuapi.types;
 
+import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,31 +42,37 @@ public abstract class Menu implements InventoryHolder {
     }
 
     public void open() {
-        if(inventory != null){
-            if(playerMenu.getPlayer().getOpenInventory() == null){
-                closeAndCreateInv();
-                return;
-            }
+        Menu menu = this;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(inventory != null){
+                    if(playerMenu.getPlayer().getOpenInventory() == null){
+                        closeAndCreateInv();
+                        return;
+                    }
 
-            if(playerMenu.getPlayer().getOpenInventory().getTopInventory() == null){
-                closeAndCreateInv();
-                return;
-            }
+                    if(playerMenu.getPlayer().getOpenInventory().getTopInventory() == null){
+                        closeAndCreateInv();
+                        return;
+                    }
 
-            if(playerMenu.getPlayer().getOpenInventory().getTopInventory() != this.inventory){
-                closeAndCreateInv();
-                return;
-            }
+                    if(playerMenu.getPlayer().getOpenInventory().getTopInventory() != menu.inventory){
+                        closeAndCreateInv();
+                        return;
+                    }
 
-            if(!playerMenu.getPlayer().getOpenInventory().getTitle().equals(this.inventory.getTitle())){
-                closeAndCreateInv();
-                return;
-            }
+                    if(!playerMenu.getPlayer().getOpenInventory().getTitle().equals(menu.inventory.getTitle())){
+                        closeAndCreateInv();
+                        return;
+                    }
 
-            this.setMenuItems();
-        }else{
-            closeAndCreateInv();
-        }
+                    menu.setMenuItems();
+                }else{
+                    closeAndCreateInv();
+                }
+            }
+        }.runTask(RPUniverse.getInstance());
     }
 
     @Override
