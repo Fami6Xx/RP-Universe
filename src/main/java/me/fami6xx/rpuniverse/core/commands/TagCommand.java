@@ -66,7 +66,7 @@ public class TagCommand implements CommandExecutor {
             }
         }else tag = data.getTag();
 
-        FollowingHologram hologram = new FollowingHologram(player, range, false, false);
+        FollowingHologram hologram = new FollowingHologram(player, range, false, true);
         hologram.addLine(FamiUtils.format(tag));
         data.setCurrentTagHologram(hologram);
         FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().tagEnabledMessage);
