@@ -72,7 +72,7 @@ public abstract class Menu implements InventoryHolder {
                     closeAndCreateInv();
                 }
             }
-        }.runTask(RPUniverse.getInstance());
+        }.runTaskLater(RPUniverse.getInstance(), 1L);
     }
 
     @Override

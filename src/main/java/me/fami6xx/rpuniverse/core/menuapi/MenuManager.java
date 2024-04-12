@@ -7,6 +7,7 @@ import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -43,7 +44,12 @@ public class MenuManager {
     public void closeAllJobMenus(Predicate<Job> predicate) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
-                closeMenu(playerMenu.getPlayer());
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        closeMenu(playerMenu.getPlayer());
+                    }
+                }.runTask(RPUniverse.getInstance());
             }
         }
     }
@@ -51,7 +57,12 @@ public class MenuManager {
     public void closeAllMenusUUIDPredicate(Predicate<UUID> predicate) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getPlayer().getUniqueId())) {
-                closeMenu(playerMenu.getPlayer());
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        closeMenu(playerMenu.getPlayer());
+                    }
+                }.runTask(RPUniverse.getInstance());
             }
         }
     }
@@ -69,7 +80,12 @@ public class MenuManager {
                     }
                 }
                 if(hasTag)
-                    closeMenu(playerMenu.getPlayer());
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            closeMenu(playerMenu.getPlayer());
+                        }
+                    }.runTask(RPUniverse.getInstance());
             }
         }
     }
@@ -123,7 +139,12 @@ public class MenuManager {
                     }
                 }
                 if (hasTag) {
-                    closeMenu(playerMenu.getPlayer());
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            closeMenu(playerMenu.getPlayer());
+                        }
+                    }.runTask(RPUniverse.getInstance());
                 }
             }
         }
@@ -132,14 +153,25 @@ public class MenuManager {
     public void closeAllMenus() {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null) {
-                closeMenu(playerMenu.getPlayer());
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        closeMenu(playerMenu.getPlayer());
+                    }
+                }.runTask(RPUniverse.getInstance());
             }
         }
     }
 
     public void closeMenu(Player player) {
+        Player playerInstance = player;
         if (playerMenuMap.containsKey(player)) {
-            player.closeInventory();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    playerInstance.closeInventory();
+                }
+            }.runTask(RPUniverse.getInstance());
         }
     }
 }
