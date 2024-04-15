@@ -12,6 +12,9 @@ public class LanguageHandler {
     public String errorOnlyPlayersCanUseThisCommandMessage = "&cOnly players can use this command!";
     public String errorYouDontHavePermissionToUseThisCommandMessage = "&cYou don't have permission to use this command!";
     public String errorYouAlreadyHaveSomethingToType = "&cYou already have something to type, type that thing first.";
+    public String errorYouAreNotInUserMode = "&cYou are not in user mode!";
+    public String errorYouDontHaveAnyJob = "&cYou don't have any job!";
+    public String errorYouDontHaveAnyMoreJobs = "&cYou don't have any more jobs!";
     public String errorYesOrNoMessage = "&cYou can only type yes or no!";
     public String cancelActivityMessage = "&7Type &ccancel &7to cancel.";
     public String bossBarColorBeforeJob = "&c&l";
@@ -198,6 +201,13 @@ public class LanguageHandler {
     public String errorSetTagCommandUsage = "&cUsage: /settag <player> <tag>";
     public String errorSetTagCommandPlayerNotFound = "&cPlayer not found!";
     public String errorSetTagCommandTagTooLong = "&cThe tag is too long!";
+
+    //  SWITCH JOB
+    public String switchJobCommandInfo = "&7Type the id of the job you want to switch to in the command. (&c/switchjob <id>&7)";
+    public String switchJobCommandJobList = "&7» &c{jobId} &7- &e{jobName}";
+    public String switchJobCommandSuccess = "&cYou switched to the job! (&c{jobName}&7)";
+    public String switchJobCommandError = "&cNo job found!";
+    public String switchJobCommandErrorAlreadyInJob = "&cYou are already in this job!";
 
 
     // CONFIG MESSAGES
