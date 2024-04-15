@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.jobs.types;
 
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -47,7 +48,7 @@ public interface JobType {
      * permissions, or performing other administrative actions.
      * </p>
      */
-    void openAdminMenu();
+    void openAdminMenu(Player player);
 
     /**
      * Checks if the job type has a boss menu.
@@ -66,7 +67,7 @@ public interface JobType {
      * Note: The boss menu is only available if the JobType has a boss menu.
      * </p>
      */
-    void openBossMenu();
+    void openBossMenu(Player player);
 
     /**
      * Retrieves the icon of the job type that will be displayed for admins in the /jobs menu
