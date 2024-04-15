@@ -45,6 +45,7 @@ public class SwitchJobCommand implements CommandExecutor {
                 placeholders.put("{jobName}", job.getName());
                 placeholders.put("{jobId}", id + "");
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandJobList, placeholders);
+                id++;
             }
             return true;
         }
