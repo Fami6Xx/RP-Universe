@@ -11,6 +11,7 @@ import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
+import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.user.JobBossMenu;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
@@ -212,7 +213,7 @@ public class Job {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            new JobAdminMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), job).open();
+                            new JobBossMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), job).open();
                         }
                     }.runTask(RPUniverse.getInstance());
                     return true;
