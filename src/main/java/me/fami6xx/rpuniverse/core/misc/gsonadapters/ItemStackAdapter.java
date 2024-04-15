@@ -18,6 +18,7 @@ public class ItemStackAdapter implements JsonSerializer<ItemStack>, JsonDeserial
         jsonObject.addProperty("amount", src.getAmount());
         jsonObject.addProperty("durability", src.getDurability());
 
+
         if (src.hasItemMeta()) {
             ItemMeta meta = src.getItemMeta();
             if (meta.hasDisplayName()) {
@@ -34,6 +35,9 @@ public class ItemStackAdapter implements JsonSerializer<ItemStack>, JsonDeserial
                     enchants.addProperty(entry.getKey().getName(), entry.getValue());
                 }
                 jsonObject.add("enchants", enchants);
+            }
+            if(meta.isUnbreakable()){
+                jsonObject.addProperty("unbreakable", true);
             }
         }
 
@@ -63,6 +67,9 @@ public class ItemStackAdapter implements JsonSerializer<ItemStack>, JsonDeserial
             for (Map.Entry<String, JsonElement> entry : enchants.entrySet()) {
                 meta.addEnchant(Enchantment.getByName(entry.getKey()), entry.getValue().getAsInt(), true);
             }
+        }
+        if(jsonObject.has("unbreakable")){
+            meta.setUnbreakable(true);
         }
 
         itemStack.setItemMeta(meta);
