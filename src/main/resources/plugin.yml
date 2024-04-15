@@ -44,6 +44,9 @@ commands:
   globalooc:
     description: Sends a message to the global OOC chat
     usage: /<command> <message>
+  switchjob:
+    description: Switches the job of a player
+    usage: /<command> (jobId)
 permissions:
   rpu.user:
     description: Gives access to all user commands
