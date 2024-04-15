@@ -49,6 +49,10 @@ public class DataSystem implements Listener {
         saveTask.cancel();
         playerDataMap.forEach((uuid,data) -> queuePlayerDataForSaving(data));
         processSaveQueue();
+        RPUniverse.getInstance().getJobsHandler().getJobs().forEach(job -> {
+            job.prepareForSave();
+            dataHandler.saveJobData(job.getName(), job);
+        });
         dataHandler.shutDown();
     }
 
