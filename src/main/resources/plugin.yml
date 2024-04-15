@@ -2,8 +2,10 @@ name: RPUniverse
 version: '${project.version}'
 main: me.fami6xx.rpuniverse.RPUniverse
 softdepend: [ DecentHolograms, Vault, PlaceholderAPI ]
-authors: [ Fami6Xx ]
+author: Fami6Xx
 description: A unique plugin that allows you to create your own Role play world
+api-version: '1.12'
+website: https://github.com/Fami6Xx
 commands:
   me:
     description: Sends a message acting as a animation
