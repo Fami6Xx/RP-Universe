@@ -277,6 +277,7 @@ public class PlayerData {
         if(hasPermissionForEditingJobs()) return true;
 
         if(!job.isPlayerInJob(UUID.fromString(playerUUID))) return false;
+        if(selectedPlayerJob != job) return false;
         if(bindedPlayer != null) return job.getPlayerPosition(bindedPlayer.getUniqueId()).isBoss();
         else if(bindedOfflinePlayer != null) return bindedOfflinePlayer.getUniqueId().equals(job.getPlayerPosition(bindedOfflinePlayer.getUniqueId()).isBoss());
 
@@ -289,8 +290,11 @@ public class PlayerData {
      * @param neededPermissionLevel The minimum permission level needed to display the working step.
      * @return <code>true</code> if the working step should be displayed, <code>false</code> otherwise.
      */
-    public boolean shouldDisplayWorkingStep(int neededPermissionLevel){
+    public boolean shouldDisplayWorkingStep(Job job, int neededPermissionLevel){
         if(hasPermissionForEditingJobs()) return true;
+
+        if(selectedPlayerJob == null) return false;
+        if(selectedPlayerJob != job) return false;
 
         if(bindedPlayer != null) return selectedPlayerJob.getPlayerPosition(bindedPlayer.getUniqueId()).getWorkingStepPermissionLevel() >= neededPermissionLevel;
         else if(bindedOfflinePlayer != null) return selectedPlayerJob.getPlayerPosition(bindedOfflinePlayer.getUniqueId()).getWorkingStepPermissionLevel() >= neededPermissionLevel;
