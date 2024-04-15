@@ -132,6 +132,9 @@ public class LanguageHandler {
     public String jobSelectPositionMenuPositionItemDisplayName = "&e{positionName}";
     public String jobSelectPositionMenuPositionItemLore = "&7Salary: &6{positionSalary}~&7Click to select this position";
     public String jobSelectPositionMenuSelectPositionMessage = "&cYou selected the position!";
+    public String jobBossMenuName = "&6RPUniverse &7| &cJob Boss Menu";
+    public String jobMenuJobTypeBossItemDisplayName = "&cJob Type Boss Menu";
+    public String jobMenuJobTypeBossItemLore = "&7Click to open the boss menu for your job type";
 
 
 
