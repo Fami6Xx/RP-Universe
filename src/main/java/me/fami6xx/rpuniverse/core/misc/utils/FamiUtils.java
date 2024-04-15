@@ -46,6 +46,15 @@ public class FamiUtils {
         sendMessageInRangeSynchronized(player, range, finalMessage);
     }
 
+    public static boolean isInteger(String s) {
+        try {
+            Integer.parseInt(s);
+        } catch (NumberFormatException | NullPointerException e) {
+            return false;
+        }
+        return true;
+    }
+
     private static void sendMessageInRangeSynchronized(Player player, int range, String finalMessage) {
         player.sendMessage(finalMessage);
         new BukkitRunnable() {
