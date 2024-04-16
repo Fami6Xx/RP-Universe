@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a type of job that can be assigned to a job.
  * <p>
- *  For all data saving and loading use {@link JobType} class. Any type of data that is not in this class will not be saved after a server restart.
+ *  For all data saving and loading use {@link JobTypeData} class. Any type of data that is not in this class will not be saved after a server restart.
  *  <p>
  *   If you don't want to save some data, just use the {@code transient} keyword before the variable.
  */
