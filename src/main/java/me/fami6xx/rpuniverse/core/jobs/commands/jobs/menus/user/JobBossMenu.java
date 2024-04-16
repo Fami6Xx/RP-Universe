@@ -9,6 +9,7 @@ import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -28,7 +29,7 @@ public class JobBossMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return RPUniverse.getLanguageHandler().jobBossMenuName;
+        return ChatColor.translateAlternateColorCodes('&', RPUniverse.getLanguageHandler().jobBossMenuName);
     }
 
     @Override
