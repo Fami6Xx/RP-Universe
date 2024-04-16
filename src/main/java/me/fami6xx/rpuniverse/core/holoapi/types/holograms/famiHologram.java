@@ -65,6 +65,7 @@ public abstract class famiHologram {
 
     /**
      * This function is only for Visibility calculations as it needs to get from where to send RayTrace
+     * @return Location of the base of the hologram
      */
     public abstract Location getBaseLocation();
 

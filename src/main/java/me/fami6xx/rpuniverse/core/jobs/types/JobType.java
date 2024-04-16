@@ -49,6 +49,7 @@ public interface JobType {
      * privileges to perform administrative tasks related to the JobType, such as configuring settings, managing
      * permissions, or performing other administrative actions.
      * </p>
+     * @param player the player to open the admin menu for.
      */
     void openAdminMenu(Player player);
 
@@ -68,6 +69,7 @@ public interface JobType {
      * <p>
      * Note: The boss menu is only available if the JobType has a boss menu.
      * </p>
+     * @param player the player to open the boss menu for.
      */
     void openBossMenu(Player player);
 

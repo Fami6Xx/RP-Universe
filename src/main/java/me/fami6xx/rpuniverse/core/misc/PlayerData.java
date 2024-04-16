@@ -287,6 +287,7 @@ public class PlayerData {
     /**
      * Determines whether a working step should be displayed to a player.
      *
+     * @param job The job to check for display.
      * @param neededPermissionLevel The minimum permission level needed to display the working step.
      * @return <code>true</code> if the working step should be displayed, <code>false</code> otherwise.
      */
