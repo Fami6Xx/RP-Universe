@@ -12,6 +12,7 @@ public interface  JobTypeData {
     /**
      * Sets the data of the job type from JSON format.
      * @param json The data of the job type in JSON format.
+     * @return The data of the job type in Object format that you can use.
      */
-    void setDataFromJson(String json);
+    JobTypeData setDataFromJson(String json);
 }
