@@ -74,8 +74,8 @@ public class JobAllPlayersMenu extends EasyPaginatedMenu {
     public void addAdditionalItems() {
         sorted = false;
 
-        inventory.setItem(45,makeItem(Material.EMERALD_BLOCK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAllPlayersMenuAddPlayerItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAllPlayersMenuAddPlayerItemLore)));
-        inventory.setItem(53, makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().generalMenuBackItemLore)));
+        inventory.setItem(45, FamiUtils.makeItem(Material.EMERALD_BLOCK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAllPlayersMenuAddPlayerItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAllPlayersMenuAddPlayerItemLore)));
+        inventory.setItem(53, FamiUtils.makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().generalMenuBackItemLore)));
     }
 
     @Override
@@ -116,7 +116,7 @@ public class JobAllPlayersMenu extends EasyPaginatedMenu {
         placeholders.put("{jobName}", playerMenu.getEditingJob().getName());
         placeholders.put("{isOnline}", p == null ? "No" : "Yes");
 
-        return makeItem(
+        return FamiUtils.makeItem(
                 Material.DIAMOND_HELMET,
                 FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAllPlayersMenuPlayerItemDisplayName, placeholders),
                 FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAllPlayersMenuPlayerItemLore, placeholders)

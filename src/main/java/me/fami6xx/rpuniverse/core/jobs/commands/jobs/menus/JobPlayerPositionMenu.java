@@ -40,7 +40,7 @@ public class JobPlayerPositionMenu extends EasyPaginatedMenu {
         HashMap<String, String> placeholders = new HashMap<>();
         placeholders.put("{positionName}", position.getName());
         placeholders.put("{positionSalary}", String.valueOf(position.getSalary()));
-        return makeItem(Material.PAPER, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobSelectPositionMenuPositionItemDisplayName, placeholders), FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobSelectPositionMenuPositionItemLore, placeholders));
+        return FamiUtils.makeItem(Material.PAPER, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobSelectPositionMenuPositionItemDisplayName, placeholders), FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobSelectPositionMenuPositionItemLore, placeholders));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class JobPlayerPositionMenu extends EasyPaginatedMenu {
         else
             this.positions.addAll(playerMenu.getEditingJob().getAllPositionsPlayerCanAssign(player));
 
-        this.inventory.setItem(53, makeItem(Material.BARRIER, RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName, RPUniverse.getLanguageHandler().generalMenuBackItemLore));
+        this.inventory.setItem(53, FamiUtils.makeItem(Material.BARRIER, RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName, RPUniverse.getLanguageHandler().generalMenuBackItemLore));
     }
 
     @Override

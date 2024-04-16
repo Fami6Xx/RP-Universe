@@ -216,17 +216,17 @@ public class JobPositionMenu extends Menu {
         placeholders.put("{isDefault}", position.isDefault() ? "Yes" : "No");
 
         int shownSlots = 0;
-        inventory.setItem(++shownSlots, makeItem(Material.PAPER, RPUniverse.getLanguageHandler().jobPositionMenuRenameDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuRenameLore, placeholders)));
-        inventory.setItem(++shownSlots, makeItem(Material.GOLD_INGOT, RPUniverse.getLanguageHandler().jobPositionMenuSalaryDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuSalaryLore, placeholders)));
+        inventory.setItem(++shownSlots, FamiUtils.makeItem(Material.PAPER, RPUniverse.getLanguageHandler().jobPositionMenuRenameDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuRenameLore, placeholders)));
+        inventory.setItem(++shownSlots, FamiUtils.makeItem(Material.GOLD_INGOT, RPUniverse.getLanguageHandler().jobPositionMenuSalaryDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuSalaryLore, placeholders)));
         if(!position.isBoss()){
-            inventory.setItem(++shownSlots, makeItem(Material.COMPASS, RPUniverse.getLanguageHandler().jobPositionMenuWorkingPermissionLevelDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuWorkingPermissionLevelLore, placeholders)));
+            inventory.setItem(++shownSlots, FamiUtils.makeItem(Material.COMPASS, RPUniverse.getLanguageHandler().jobPositionMenuWorkingPermissionLevelDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuWorkingPermissionLevelLore, placeholders)));
         }
         if(adminMenu){
-            inventory.setItem(++shownSlots, makeItem(Material.DIAMOND, RPUniverse.getLanguageHandler().jobPositionMenuIsBossDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuIsBossLore, placeholders)));
+            inventory.setItem(++shownSlots, FamiUtils.makeItem(Material.DIAMOND, RPUniverse.getLanguageHandler().jobPositionMenuIsBossDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuIsBossLore, placeholders)));
         }
-        inventory.setItem(++shownSlots, makeItem(Material.EMERALD, RPUniverse.getLanguageHandler().jobPositionMenuIsDefaultDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuIsDefaultLore, placeholders)));
-        inventory.setItem(7, makeItem(Material.REDSTONE_BLOCK, RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName, RPUniverse.getLanguageHandler().generalMenuBackItemLore));
-        inventory.setItem(8, makeItem(Material.BARRIER, RPUniverse.getLanguageHandler().jobPositionMenuDeleteDisplayName, RPUniverse.getLanguageHandler().jobPositionMenuDeleteLore));
+        inventory.setItem(++shownSlots, FamiUtils.makeItem(Material.EMERALD, RPUniverse.getLanguageHandler().jobPositionMenuIsDefaultDisplayName, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobPositionMenuIsDefaultLore, placeholders)));
+        inventory.setItem(7, FamiUtils.makeItem(Material.REDSTONE_BLOCK, RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName, RPUniverse.getLanguageHandler().generalMenuBackItemLore));
+        inventory.setItem(8, FamiUtils.makeItem(Material.BARRIER, RPUniverse.getLanguageHandler().jobPositionMenuDeleteDisplayName, RPUniverse.getLanguageHandler().jobPositionMenuDeleteLore));
 
         setFillerGlass();
     }

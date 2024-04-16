@@ -80,9 +80,9 @@ public class JobPlayerMenu extends Menu {
         HashMap<String, String> replace = new HashMap<>();
         replace.put("{jobName}", playerMenu.getEditingJob().getName());
         replace.put("{positionName}", playerMenu.getEditingJob().getPlayerPosition(player).getName());
-        inventory.setItem(1, makeItem(Material.ANVIL, RPUniverse.getLanguageHandler().jobPlayerMenuPositionDisplayName, FamiUtils.replace(RPUniverse.getLanguageHandler().jobPlayerMenuPositionLore, replace)));
-        inventory.setItem(3, makeItem(Material.REDSTONE, RPUniverse.getLanguageHandler().jobPlayerMenuKickDisplayName, RPUniverse.getLanguageHandler().jobPlayerMenuKickLore));
-        inventory.setItem(7, makeItem(Material.BARRIER, RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName, RPUniverse.getLanguageHandler().generalMenuBackItemLore));
+        inventory.setItem(1, FamiUtils.makeItem(Material.ANVIL, RPUniverse.getLanguageHandler().jobPlayerMenuPositionDisplayName, FamiUtils.replace(RPUniverse.getLanguageHandler().jobPlayerMenuPositionLore, replace)));
+        inventory.setItem(3, FamiUtils.makeItem(Material.REDSTONE, RPUniverse.getLanguageHandler().jobPlayerMenuKickDisplayName, RPUniverse.getLanguageHandler().jobPlayerMenuKickLore));
+        inventory.setItem(7, FamiUtils.makeItem(Material.BARRIER, RPUniverse.getLanguageHandler().generalMenuBackItemDisplayName, RPUniverse.getLanguageHandler().generalMenuBackItemLore));
     }
 
     @Override

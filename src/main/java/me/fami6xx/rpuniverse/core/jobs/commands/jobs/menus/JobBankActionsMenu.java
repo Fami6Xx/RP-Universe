@@ -129,10 +129,10 @@ public class JobBankActionsMenu extends Menu {
         placeholders.put("{jobName}", job.getName());
         placeholders.put("{jobMoney}", String.valueOf(job.getCurrentMoneyInJobBank()));
 
-        inventory.setItem(3, makeItem(Material.EMERALD_BLOCK, FamiUtils.format(languageHandler.jobBankActionsMenuAddMoneyItemDisplayName), FamiUtils.format(languageHandler.jobBankActionsMenuAddMoneyItemLore)));
-        inventory.setItem(4, makeItem(Material.GOLD_BLOCK, FamiUtils.replaceAndFormat(languageHandler.jobBankActionsMenuCurrentMoneyItemDisplayName, placeholders), FamiUtils.replaceAndFormat(languageHandler.jobBankActionsMenuCurrentMoneyItemLore, placeholders)));
-        inventory.setItem(5, makeItem(Material.REDSTONE_BLOCK, FamiUtils.format(languageHandler.jobBankActionsMenuRemoveMoneyItemDisplayName), FamiUtils.format(languageHandler.jobBankActionsMenuRemoveMoneyItemLore)));
-        inventory.setItem(8, makeItem(Material.BARRIER, FamiUtils.format(languageHandler.generalMenuBackItemDisplayName), FamiUtils.format(languageHandler.generalMenuBackItemLore)));
+        inventory.setItem(3, FamiUtils.makeItem(Material.EMERALD_BLOCK, FamiUtils.format(languageHandler.jobBankActionsMenuAddMoneyItemDisplayName), FamiUtils.format(languageHandler.jobBankActionsMenuAddMoneyItemLore)));
+        inventory.setItem(4, FamiUtils.makeItem(Material.GOLD_BLOCK, FamiUtils.replaceAndFormat(languageHandler.jobBankActionsMenuCurrentMoneyItemDisplayName, placeholders), FamiUtils.replaceAndFormat(languageHandler.jobBankActionsMenuCurrentMoneyItemLore, placeholders)));
+        inventory.setItem(5, FamiUtils.makeItem(Material.REDSTONE_BLOCK, FamiUtils.format(languageHandler.jobBankActionsMenuRemoveMoneyItemDisplayName), FamiUtils.format(languageHandler.jobBankActionsMenuRemoveMoneyItemLore)));
+        inventory.setItem(8, FamiUtils.makeItem(Material.BARRIER, FamiUtils.format(languageHandler.generalMenuBackItemDisplayName), FamiUtils.format(languageHandler.generalMenuBackItemLore)));
         setFillerGlass();
     }
 }

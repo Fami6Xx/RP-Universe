@@ -28,7 +28,7 @@ public class AllJobsMenu extends EasyPaginatedMenu {
     public ItemStack getItemFromIndex(int index) {
         HashMap<String, String> placeholders = new HashMap<>();
         placeholders.put("{jobName}", jobs.get(index).getName());
-        return makeItem(Material.BEACON, FamiUtils.replace(RPUniverse.getLanguageHandler().allJobsMenuJobName, placeholders));
+        return FamiUtils.makeItem(Material.BEACON, FamiUtils.replace(RPUniverse.getLanguageHandler().allJobsMenuJobName, placeholders));
     }
 
     @Override

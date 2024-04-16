@@ -2,10 +2,16 @@ package me.fami6xx.rpuniverse.core.misc.utils;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FamiUtils {
     public static String format(String message){
@@ -70,5 +76,22 @@ public class FamiUtils {
 
     public static void sendMessage(Player player, String message){
         player.sendMessage(format(message));
+    }
+
+    public static ItemStack makeItem(Material material, String displayName, String... lore) {
+        ItemStack item = new ItemStack(material);
+
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(FamiUtils.format(displayName));
+        List<String> loreList = Arrays.asList(lore);
+        if(lore.length == 1){
+            if(lore[0] != null || !lore[0].isEmpty())
+                loreList = Arrays.asList(lore[0].split("~"));
+        }
+        loreList = loreList.stream().map(FamiUtils::format).collect(Collectors.toList());
+        itemMeta.setLore(loreList);
+        item.setItemMeta(itemMeta);
+
+        return item;
     }
 }

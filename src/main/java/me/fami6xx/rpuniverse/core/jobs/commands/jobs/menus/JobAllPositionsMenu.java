@@ -46,7 +46,7 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
         String displayName = FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAllPositionsMenuPositionItemDisplayName, placeholders);
         String lore = FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAllPositionsMenuPositionItemLore, placeholders);
 
-        return makeItem(Material.PAPER, displayName, lore);
+        return FamiUtils.makeItem(Material.PAPER, displayName, lore);
     }
 
     @Override
@@ -187,8 +187,8 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
 
     @Override
     public void addAdditionalItems() {
-        super.inventory.setItem(45, makeItem(Material.EMERALD_BLOCK, RPUniverse.getLanguageHandler().jobAllPositionsMenuAddPositionItemDisplayName, RPUniverse.getLanguageHandler().jobAllPositionsMenuAddPositionItemLore));
-        super.inventory.setItem(53, makeItem(Material.BOOKSHELF, RPUniverse.getLanguageHandler().jobAllPositionsMenuMovePositionsItemDisplayName, RPUniverse.getLanguageHandler().jobAllPositionsMenuMovePositionsItemLore));
+        super.inventory.setItem(45, FamiUtils.makeItem(Material.EMERALD_BLOCK, RPUniverse.getLanguageHandler().jobAllPositionsMenuAddPositionItemDisplayName, RPUniverse.getLanguageHandler().jobAllPositionsMenuAddPositionItemLore));
+        super.inventory.setItem(53, FamiUtils.makeItem(Material.BOOKSHELF, RPUniverse.getLanguageHandler().jobAllPositionsMenuMovePositionsItemDisplayName, RPUniverse.getLanguageHandler().jobAllPositionsMenuMovePositionsItemLore));
     }
 
     @Override

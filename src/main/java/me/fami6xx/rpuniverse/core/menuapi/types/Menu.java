@@ -97,23 +97,5 @@ public abstract class Menu implements InventoryHolder {
 
         return glass;
     }
-
-    public ItemStack makeItem(Material material, String displayName, String... lore) {
-        ItemStack item = new ItemStack(material);
-
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(FamiUtils.format(displayName));
-        List<String> loreList = Arrays.asList(lore);
-        if(lore.length == 1){
-            if(lore[0] != null || !lore[0].isEmpty())
-                loreList = Arrays.asList(lore[0].split("~"));
-        }
-        loreList = loreList.stream().map(FamiUtils::format).collect(Collectors.toList());
-        itemMeta.setLore(loreList);
-        item.setItemMeta(itemMeta);
-
-        return item;
-    }
-
 }
 

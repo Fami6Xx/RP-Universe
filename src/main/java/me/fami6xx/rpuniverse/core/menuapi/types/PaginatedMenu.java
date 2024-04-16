@@ -17,11 +17,11 @@ public abstract class PaginatedMenu extends Menu{
         super(menu);
     }
     public void addMenuBorder(){
-        inventory.setItem(48, makeItem(Material.STONE_BUTTON, FamiUtils.format(RPUniverse.getLanguageHandler().previousPageItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().previousPageItemLore)));
+        inventory.setItem(48, FamiUtils.makeItem(Material.STONE_BUTTON, FamiUtils.format(RPUniverse.getLanguageHandler().previousPageItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().previousPageItemLore)));
 
-        inventory.setItem(49, makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().closeItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().closeItemLore)));
+        inventory.setItem(49, FamiUtils.makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().closeItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().closeItemLore)));
 
-        inventory.setItem(50, makeItem(Material.STONE_BUTTON, FamiUtils.format(RPUniverse.getLanguageHandler().nextPageItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().nextPageItemLore)));
+        inventory.setItem(50, FamiUtils.makeItem(Material.STONE_BUTTON, FamiUtils.format(RPUniverse.getLanguageHandler().nextPageItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().nextPageItemLore)));
 
         for (int i = 0; i < 10; i++) {
             if (inventory.getItem(i) == null) {
