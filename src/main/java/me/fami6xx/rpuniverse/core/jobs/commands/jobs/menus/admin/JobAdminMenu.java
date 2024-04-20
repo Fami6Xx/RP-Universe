@@ -156,7 +156,7 @@ public class JobAdminMenu extends Menu {
         this.inventory.setItem(23, FamiUtils.makeItem(Material.BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemLore)));
         this.inventory.setItem(24, FamiUtils.makeItem(Material.LEATHER, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemLore)));
         if(job.getJobType() != null && job.getJobType().hasAdminMenu())
-            this.inventory.setItem(31, FamiUtils.makeItem(Material.BOOK_AND_QUILL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemLore)));
+            this.inventory.setItem(31, FamiUtils.makeItem(Material.WRITABLE_BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemLore)));
         this.inventory.setItem(44, FamiUtils.makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemLore)));
         setFillerGlass();
     }

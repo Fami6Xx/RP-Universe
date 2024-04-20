@@ -89,7 +89,7 @@ public abstract class Menu implements InventoryHolder {
     }
 
     public ItemStack makeColoredGlass(short color){
-        ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, color);
+        ItemStack glass = new ItemStack(Material.GLASS_PANE, 1, color);
 
         ItemMeta meta = glass.getItemMeta();
         meta.setDisplayName(" ");
