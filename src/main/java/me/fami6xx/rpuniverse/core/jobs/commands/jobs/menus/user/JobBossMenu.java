@@ -58,7 +58,7 @@ public class JobBossMenu extends Menu {
     public void setMenuItems() {
         inventory.setItem(1, FamiUtils.makeItem(Material.GOLD_INGOT, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuJobBankItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuJobBankItemLore)));
         inventory.setItem(3, FamiUtils.makeItem(Material.PAPER, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuPositionItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuPositionItemLore)));
-        inventory.setItem(5, FamiUtils.makeItem(Material.LEATHER, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemLore)));
+        inventory.setItem(5, FamiUtils.makeItem(Material.PLAYER_HEAD, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemLore)));
         if (job.getJobType() != null) {
             if (job.getJobType().hasBossMenu()) {
                 inventory.setItem(7,FamiUtils. makeItem(Material.DIAMOND, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuJobTypeBossItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuJobTypeBossItemLore)));
