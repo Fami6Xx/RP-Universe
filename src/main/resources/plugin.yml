@@ -6,6 +6,8 @@ author: Fami6Xx
 description: A unique plugin that allows you to create your own Role play world
 website: https://github.com/Fami6Xx
 api-version: '1.13'
+libraries:
+  - 'com.google.code.gson:gson:2.10.1'
 commands:
   me:
     description: Sends a message acting as a animation
