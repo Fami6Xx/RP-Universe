@@ -5,6 +5,7 @@ import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 public abstract class Menu implements InventoryHolder {
     protected PlayerMenu playerMenu;
     protected Inventory inventory;
-    protected ItemStack FILLER_GLASS = makeColoredGlass((short) 7);
+    protected ItemStack FILLER_GLASS = makeColoredGlass(DyeColor.GRAY);
 
     public Menu(PlayerMenu menu) {
         this.playerMenu = menu;
@@ -88,9 +89,13 @@ public abstract class Menu implements InventoryHolder {
         }
     }
 
-    public ItemStack makeColoredGlass(short color){
-        ItemStack glass = new ItemStack(Material.GLASS_PANE, 1, color);
+    public ItemStack makeColoredGlass(DyeColor color){
+        Material coloredGlassPane = Material.matchMaterial(color.name() + "_STAINED_GLASS_PANE");
+        if (coloredGlassPane == null) {
+            throw new IllegalArgumentException("Invalid color: " + color);
+        }
 
+        ItemStack glass = new ItemStack(coloredGlassPane, 1);
         ItemMeta meta = glass.getItemMeta();
         meta.setDisplayName(" ");
         glass.setItemMeta(meta);

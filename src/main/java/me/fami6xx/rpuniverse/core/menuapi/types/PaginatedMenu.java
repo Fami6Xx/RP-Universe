@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.menuapi.types;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -11,7 +12,7 @@ public abstract class PaginatedMenu extends Menu{
     protected int maxItemsPerPage = 28;
     protected int index = 0;
 
-    protected ItemStack BORDER_GLASS = makeColoredGlass((short) 15);
+    protected ItemStack BORDER_GLASS = makeColoredGlass(DyeColor.GRAY);
 
     public PaginatedMenu(PlayerMenu menu){
         super(menu);
