@@ -4,6 +4,7 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.datahandlers.IDataHandler;
 import me.fami6xx.rpuniverse.core.misc.datahandlers.JSONDataHandler;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
@@ -12,6 +13,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
@@ -22,6 +24,7 @@ public class DataSystem implements Listener {
     private final ConcurrentMap<UUID, PlayerData> playerDataMap;
     private final ConcurrentLinkedQueue<PlayerData> saveQueue;
     private BukkitTask saveTask;
+    private BukkitTask completeSaveTask;
 
     public DataSystem() {
         this.dataHandler = selectDataHandler();
@@ -29,6 +32,7 @@ public class DataSystem implements Listener {
         this.saveQueue = new ConcurrentLinkedQueue<>();
         this.dataHandler.startUp();
         scheduleSaveTask();
+        scheduleCompleteSaveTask();
         Bukkit.getPluginManager().registerEvents(this, RPUniverse.getInstance());
     }
 
@@ -45,8 +49,13 @@ public class DataSystem implements Listener {
         this.queuePlayerDataForSaving(data);
     }
 
+    /**
+     * Shuts down the data system.
+     * Cancels the save tasks, saves all player data, and shuts down the data handler.
+     */
     public void shutdown(){
         saveTask.cancel();
+        completeSaveTask.cancel();
         playerDataMap.forEach((uuid,data) -> queuePlayerDataForSaving(data));
         processSaveQueue();
         RPUniverse.getInstance().getJobsHandler().getJobs().forEach(job -> {
@@ -140,7 +149,7 @@ public class DataSystem implements Listener {
     }
 
     /**
-     * Schedules a task to save the player data every 5 minutes.
+     * Schedules a task to save the player data every given time.
      * <p>
      * This is done to prevent the server from lagging when saving the player data and also acts as a cache.
      */
@@ -151,6 +160,47 @@ public class DataSystem implements Listener {
                 0L,
                 dataHandler.getQueueSaveTime()
         );
+    }
+
+    /**
+     * Schedules a task to save all data at a specified interval.
+     */
+    private void scheduleCompleteSaveTask() {
+        completeSaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                RPUniverse.getInstance(),
+                this::saveAllData,
+                0L,
+                this.getCompleteSaveTime()
+        );
+    }
+
+    /**
+     * Gets the complete save time from the configuration.
+     * @return The complete save time.
+     */
+    private int getCompleteSaveTime(){
+        int time = 0;
+        try{
+            time = RPUniverse.getInstance().getConfiguration().getInt("data.completeSaveInterval");
+        }catch (Exception exc){
+            HashMap<String, String> replace = new HashMap<>();
+            replace.put("{value}", "data.completeSaveInterval");
+            RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
+            return 600;
+        }
+        return time;
+    }
+
+    /**
+     * Saves all data.
+     */
+    public void saveAllData(){
+        playerDataMap.forEach((uuid,data) -> queuePlayerDataForSaving(data));
+        processSaveQueue();
+        RPUniverse.getInstance().getJobsHandler().getJobs().forEach(job -> {
+            job.prepareForSave();
+            dataHandler.saveJobData(job.getName(), job);
+        });
     }
 
     /**
