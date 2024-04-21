@@ -25,10 +25,10 @@ general:
     hideNicknames: true
     localOOC: true
     localOOCRange: 15
-    localOOCFormat: '&b&lLocalOOC &7{player}&8» &r{message}'
+    localOOCFormat: '&b&lLocalOOC &7{player} &8» &r{message}'
     logLocalToConsole: true
     globalOOC: true
-    globalOOCFormat: '&a&lGlobalOOC &7{player}&8» &r{message}'
+    globalOOCFormat: '&a&lGlobalOOC &7{player} &8» &r{message}'
 
 # Job settings
 # preferPermissionsOverModeForEdit: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR) for editing jobs
