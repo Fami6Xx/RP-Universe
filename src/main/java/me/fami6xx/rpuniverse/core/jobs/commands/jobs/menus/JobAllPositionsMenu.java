@@ -177,7 +177,7 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
             if(e.isRightClick()){
                 job.movePositionUpAndDown(position.getName(), false);
             }else if(e.isLeftClick()){
-                if(positionList.indexOf(position) - 1 < positionList.indexOf(job.getPlayerPosition(playerMenu.getPlayer().getUniqueId()))){
+                if(positionList.indexOf(position) - 1 <= positionList.indexOf(job.getPlayerPosition(playerMenu.getPlayer().getUniqueId()))){
                     FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().jobAllPositionsMenuCannotMovePositionMessage);
                     return;
                 }
