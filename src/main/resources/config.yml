@@ -17,15 +17,18 @@ prefix: '&c&lRPU &8»&r'
 # hideNicknames: If true, the plugin will hide the nicknames of the players
 # localOOC: If true, the OOC chat when player just types in the chat is local
 # localOOCRange: The range in which the OOC chat is visible
+# localOOCFormat: The format of the local OOC chat
+# logLocalToConsole: If true, the local OOC chat is logged to the console
 # globalOOC: If true, the global ooc command is registered
 general:
     bossBarColor: RED
     hideNicknames: true
     localOOC: true
     localOOCRange: 15
-    localOOCFormat: '&8[&bLocal OOC&8] &7{player}: &r{message}'
+    localOOCFormat: '&b&lLocalOOC &7{player}&8» &r{message}'
+    logLocalToConsole: true
     globalOOC: true
-    globalOOCFormat: '&8[&aGlobal OOC&8] &7{player}: &r{message}'
+    globalOOCFormat: '&a&lGlobalOOC &7{player}&8» &r{message}'
 
 # Job settings
 # preferPermissionsOverModeForEdit: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR) for editing jobs
@@ -52,10 +55,12 @@ holograms:
     maximumAbovePlayer: 5
 
 # The settings for saving data
-# saveInterval: The interval in seconds in which the data is saved
+# saveInterval: The interval in seconds in which the data is saved from save queue
+# completeSaveInterval: The interval in seconds in which the data is saved completely, ignoring the save queue
 # selectedSaveMethod: The method used to save the data (currently only json is supported)
 data:
     saveInterval: 60
+    completeSaveInterval: 600
     selectedSaveMethod: json
 
 
