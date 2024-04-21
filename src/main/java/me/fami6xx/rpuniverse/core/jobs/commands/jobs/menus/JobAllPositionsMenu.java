@@ -186,6 +186,10 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
             return;
         }
 
+        if(positionList.indexOf(position) < positionList.indexOf(job.getPlayerPosition(playerMenu.getPlayer().getUniqueId()))){
+            FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().jobAllPositionsMenuCannotEditPositionMessage);
+            return;
+        }
         new JobPositionMenu(playerMenu, job, position, adminMenu, this).open();
     }
 

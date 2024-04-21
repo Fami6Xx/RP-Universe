@@ -80,6 +80,7 @@ public class LanguageHandler {
     public String jobAllPositionsMenuMovePositionsItemDisplayName = "&cMove Positions";
     public String jobAllPositionsMenuMovePositionsItemLore = "&7Hold shift and click left to move the position up~&7Hold shift and click right to move the position down";
     public String jobAllPositionsMenuCannotMovePositionMessage = "&cYou cannot move this position!";
+    public String jobAllPositionsMenuCannotEditPositionMessage = "&cYou cannot edit this position!";
     public String jobAllPositionsMenuPositionItemDisplayName = "&e{positionName}";
     public String jobAllPositionsMenuPositionItemLore = "&7Salary: &6{positionSalary}~&7Is boss? &6{positionIsBoss}~&7Click to view details";
     public String jobPositionMenuName = "&6RPUniverse &7| &c{positionName}";
