@@ -40,14 +40,14 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
                 localOOCMessage = RPUniverse.getInstance().getConfiguration().getString("general.localOOCFormat");
             }catch (Exception exc){
                 replace.put("{value}", "general.localOOCFormat");
-                FamiUtils.sendMessageWithPrefix(e.getPlayer(), RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace);
+                RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
                 return;
             }
             try{
                 range = RPUniverse.getInstance().getConfiguration().getInt("general.localOOCRange");
             }catch (Exception exc){
                 replace.put("{value}", "general.localOOCRange");
-                FamiUtils.sendMessageWithPrefix(e.getPlayer(), RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace);
+                RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
                 return;
             }
 
@@ -59,7 +59,7 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
                 shouldSendToConsole = RPUniverse.getInstance().getConfiguration().getBoolean("general.logLocalToConsole");
             }catch (Exception exc){
                 replace.put("{value}", "general.logLocalToConsole");
-                FamiUtils.sendMessageWithPrefix(e.getPlayer(), RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace);
+                RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
                 return;
             }
 
@@ -111,7 +111,7 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
             globalOOCMessage = RPUniverse.getInstance().getConfiguration().getString("general.globalOOCFormat");
         }catch (Exception exc){
             replace.put("{value}", "general.globalOOCFormat");
-            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace);
+            RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
             return true;
         }
 
