@@ -64,7 +64,7 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
             }
 
             if(shouldSendToConsole){
-                RPUniverse.getInstance().getLogger().fine(formattedMessage);
+                RPUniverse.getInstance().getLogger().info("Local OOC " + e.getPlayer().getName() + ": " + e.getMessage());
             }
         }
     }
