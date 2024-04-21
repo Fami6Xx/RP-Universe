@@ -48,6 +48,7 @@ commands:
   globalooc:
     description: Sends a message to the global OOC chat
     usage: /<command> <message>
+    aliases: [ooc, gchat, globalchat]
   switchjob:
     description: Switches the job of a player
     usage: /<command> (jobId)
