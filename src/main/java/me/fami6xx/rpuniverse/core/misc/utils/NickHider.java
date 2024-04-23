@@ -9,10 +9,11 @@ import org.bukkit.scoreboard.Team;
 
 public class NickHider {
     Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-    Team team = scoreboard.registerNewTeam("hiddenNames");
+    Team team;
     BukkitTask task;
 
     public void init() {
+        team = scoreboard.getTeam("hiddenNames") == null ? scoreboard.registerNewTeam("hiddenNames") : scoreboard.getTeam("hiddenNames");
         team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
         task = new BukkitRunnable() {
             @Override
