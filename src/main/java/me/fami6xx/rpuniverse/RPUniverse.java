@@ -20,6 +20,10 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 
 public final class RPUniverse extends JavaPlugin {
@@ -43,18 +47,20 @@ public final class RPUniverse extends JavaPlugin {
             getLogger().severe("Vault is not installed or doesn't have any Economy plugin! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }else{
+            getLogger().info("Economy plugin hooked!");
         }
 
-        if(!getDataFolder().exists()){
+        if (!getDataFolder().exists()) {
             getDataFolder().mkdir();
             this.saveDefaultConfig();
             config = this.getConfig();
-        }else{
+        } else {
             String[] configYml = Arrays.stream(getDataFolder().list())
                     .filter(s -> s.equals("config.yml"))
                     .toArray(String[]::new);
 
-            if(configYml.length == 0){
+            if (configYml.length == 0) {
                 this.saveDefaultConfig();
             }
             config = this.getConfig();
@@ -64,19 +70,31 @@ public final class RPUniverse extends JavaPlugin {
         dataSystem = new DataSystem();
         holoAPI = new HoloAPI();
 
-        if(!holoAPI.enable()){
+        if (!holoAPI.enable()) {
             getLogger().severe("DecentHolograms is not installed! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }else{
+            getLogger().info("Hologram system enabled!");
         }
 
         jobsHandler = new JobsHandler();
         getServer().getPluginManager().registerEvents(jobsHandler, this);
         menuManager = new MenuManager();
 
-        if(!menuManager.enable()){
+        if (!menuManager.enable()) {
             getLogger().severe("Failed to enable MenuManager! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
+        }else{
+            getLogger().info("MenuManager enabled!");
+        }
+
+        try {
+            if(!compareVersions()){
+                getLogger().severe("Your version of RPUniverse is outdated! Please update to the latest version.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         this.getCommand("me").setExecutor(new MeCommand());
@@ -100,10 +118,11 @@ public final class RPUniverse extends JavaPlugin {
         this.bossBarHandler = new BossBarHandler();
         this.actionBarHandler = new ActionBarHandler();
 
-        if(getConfiguration().getBoolean("general.hideNicknames")){
+        if (getConfiguration().getBoolean("general.hideNicknames")) {
             this.nickHider = new NickHider();
             this.nickHider.init();
         }
+        getLogger().info("RPUniverse enabled!");
     }
 
     @Override
@@ -115,9 +134,10 @@ public final class RPUniverse extends JavaPlugin {
             this.dataSystem.shutdown();
             this.holoAPI.disable();
             this.createJobStarter.stop();
-            if(nickHider != null)
+            if (nickHider != null)
                 this.nickHider.shutdown();
-        }catch (NullPointerException ignored){}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     private boolean setupEconomy() {
@@ -144,15 +164,15 @@ public final class RPUniverse extends JavaPlugin {
         return menuManager;
     }
 
-    public static LanguageHandler getLanguageHandler(){
+    public static LanguageHandler getLanguageHandler() {
         return getInstance().languageHandler;
     }
 
-    public FileConfiguration getConfiguration(){
+    public FileConfiguration getConfiguration() {
         return config;
     }
 
-    public static String format(String message){
+    public static String format(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
@@ -176,11 +196,11 @@ public final class RPUniverse extends JavaPlugin {
         return (RPUniverse) getJavaPlugin();
     }
 
-    public static JavaPlugin getJavaPlugin(){
+    public static JavaPlugin getJavaPlugin() {
         return getProvidingPlugin(RPUniverse.class);
     }
 
-    public static PlayerData getPlayerData(String UUID){
+    public static PlayerData getPlayerData(String UUID) {
         return getInstance().getDataSystem().getPlayerData(UUID);
     }
 
@@ -190,5 +210,37 @@ public final class RPUniverse extends JavaPlugin {
 
     public ActionBarHandler getActionBarHandler() {
         return actionBarHandler;
+    }
+
+    private String getVersionFromAPI() throws Exception {
+        String urlString = "https://api.polymart.org/v1/getResourceInfoSimple/?resource_id=5845&key=version";
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        conn.setRequestMethod("GET");
+        int responseCode = conn.getResponseCode();
+
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            // Return the version
+            return response.toString();
+        } else {
+            throw new RuntimeException("Failed : HTTP error code : " + responseCode);
+        }
+    }
+
+    private boolean compareVersions() throws Exception {
+        String apiVersion = getVersionFromAPI();
+        String configVersion = RPUniverse.getInstance().getConfiguration().getString("version");
+
+        return apiVersion.equals(configVersion);
     }
 }
