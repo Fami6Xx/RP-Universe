@@ -21,6 +21,7 @@ prefix: '&c&lRPU &8»&r'
 # localOOCFormat: The format of the local OOC chat
 # logLocalToConsole: If true, the local OOC chat is logged to the console
 # globalOOC: If true, the global ooc command is registered
+# globalOOCFormat: The format of the global OOC chat
 general:
     bossBarColor: RED
     hideNicknames: true
