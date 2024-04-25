@@ -1,9 +1,12 @@
 package me.fami6xx.rpuniverse.core.basicneeds;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.basicneeds.events.FoodTrackerListener;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
+import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -48,6 +51,7 @@ public class BasicNeedsHandler {
             @Override
             public void run() {
                 Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+                    player.setFoodLevel(18);
                     ActionBarHandler actionBarHandler = plugin.getActionBarHandler();
                     PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
                     Queue<String> messages = actionBarHandler.getMessages(player);
@@ -59,7 +63,7 @@ public class BasicNeedsHandler {
                     placeholders.put("{water}", formatNeedForActionBar(playerData.getWaterLevel()));
                     placeholders.put("{pee}", formatNeedForActionBar(playerData.getPeeLevel()));
                     placeholders.put("{poop}", formatNeedForActionBar(playerData.getPoopLevel()));
-                    actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false, true);
+                    actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false);
                 });
             }
         }.runTaskTimer(plugin, 0, 20);
@@ -116,7 +120,12 @@ public class BasicNeedsHandler {
      * @return the consumable item
      */
     public ConsumableItem getConsumable(ItemStack item) {
-        return consumables.get(item);
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(ItemStack.class, new ItemStackAdapter())
+                .create();
+        String json = gson.toJson(item.asOne(), ItemStack.class);
+        ItemStack item1 = gson.fromJson(json, ItemStack.class);
+        return consumables.get(item1);
     }
 
     /**
@@ -125,7 +134,12 @@ public class BasicNeedsHandler {
      * @param item the item to remove
      */
     public void removeConsumable(ItemStack item) {
-        consumables.remove(item);
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(ItemStack.class, new ItemStackAdapter())
+                .create();
+        String json = gson.toJson(item.asOne(), ItemStack.class);
+        ItemStack item1 = gson.fromJson(json, ItemStack.class);
+        consumables.remove(item1);
     }
 
     /**
@@ -135,7 +149,12 @@ public class BasicNeedsHandler {
      * @return true if the item is a consumable, false otherwise
      */
     public boolean isConsumable(ItemStack item) {
-        return consumables.containsKey(item.asOne());
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(ItemStack.class, new ItemStackAdapter())
+                .create();
+        String json = gson.toJson(item.asOne(), ItemStack.class);
+        ItemStack item1 = gson.fromJson(json, ItemStack.class);
+        return consumables.containsKey(item1);
     }
 
     /**
