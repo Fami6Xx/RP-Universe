@@ -52,14 +52,14 @@ public class BasicNeedsHandler {
                     PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
                     Queue<String> messages = actionBarHandler.getMessages(player);
                     if (messages != null) {
-                        if(messages.size() >= 3) return;
-                        HashMap<String, String> placeholders = new HashMap<>();
-                        placeholders.put("{food}", formatNeedForActionBar(playerData.getFoodLevel()));
-                        placeholders.put("{water}", formatNeedForActionBar(playerData.getWaterLevel()));
-                        placeholders.put("{pee}", formatNeedForActionBar(playerData.getPeeLevel()));
-                        placeholders.put("{poop}", formatNeedForActionBar(playerData.getPoopLevel()));
-                        actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false, true);
+                        if (messages.size() >= 3) return;
                     }
+                    HashMap<String, String> placeholders = new HashMap<>();
+                    placeholders.put("{food}", formatNeedForActionBar(playerData.getFoodLevel()));
+                    placeholders.put("{water}", formatNeedForActionBar(playerData.getWaterLevel()));
+                    placeholders.put("{pee}", formatNeedForActionBar(playerData.getPeeLevel()));
+                    placeholders.put("{poop}", formatNeedForActionBar(playerData.getPoopLevel()));
+                    actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false, true);
                 });
             }
         }.runTaskTimer(plugin, 0, 20);

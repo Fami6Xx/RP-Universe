@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.misc.basichandlers;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,15 +11,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-public class ActionBarHandler implements Listener {
+public class ActionBarHandler {
     private final Map<Player, Queue<String>> playerMessages = new HashMap<>();
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event){
-        Player player = event.getPlayer();
-        if(playerMessages.containsKey(player)){
-            cycleMessages(player);
-        }
+    public ActionBarHandler() {
+        cycleMessages();
     }
 
     /**
@@ -118,20 +115,24 @@ public class ActionBarHandler implements Listener {
     }
 
     /**
-     * Cycle through the messages for the given player and display them on the action bar periodically.
-     *
-     * @param player The player for whom to cycle the messages.
+     * Cycle through the messages for online players and display them on the action bar periodically.
      */
-    private void cycleMessages(Player player) {
+    private void cycleMessages() {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Queue<String> messages = playerMessages.get(player);
-                if (messages != null && !messages.isEmpty()) {
-                    String message = messages.poll();
-                    player.sendActionBar(FamiUtils.format(message));
-                    messages.add(message);
-                }
+                Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+                    Queue<String> messages = playerMessages.get(player);
+                    if (messages != null && !messages.isEmpty()) {
+                        String message = messages.poll();
+                        player.sendActionBar(FamiUtils.format(message));
+                        messages.add(message);
+                    }
+                });
+
+                playerMessages.keySet().stream()
+                        .filter(player -> !player.isOnline())
+                        .forEach(playerMessages::remove);
             }
         }.runTaskTimer(RPUniverse.getInstance(), 0L, 20L);
     }
