@@ -5,18 +5,18 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import org.bukkit.scheduler.BukkitRunnable;
 
 
-public abstract class UpdatingLine {
+public abstract class UpdatingHologramLine {
     private final HologramLine line;
 
     private final long period;
 
-    public UpdatingLine(HologramLine textLine){
+    public UpdatingHologramLine(HologramLine textLine){
         this.line = textLine;
         this.period = 20;
         start();
     }
 
-    public UpdatingLine(HologramLine textLine, long period){
+    public UpdatingHologramLine(HologramLine textLine, long period){
         this.line = textLine;
         this.period = period;
         start();
