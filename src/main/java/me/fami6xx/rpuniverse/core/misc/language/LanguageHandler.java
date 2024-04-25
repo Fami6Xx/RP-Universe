@@ -23,6 +23,8 @@ public class LanguageHandler {
     public String moderatorTag = "&b&lMODERATOR";
     public String adminTag = "&c&lADMIN";
 
+    public String basicNeedsActionBarMessage = "&cPoop: {poop}&8 | &cPee: {pee}&8 | &cFood: {food}&8 | &cWater: {water}";
+
     // JOB HOLOGRAM
     public String jobBossMenuHologram = "&cJob Boss Menu~&6{jobName}~&7Click to open the menu";
     public String jobBossMenuAdminHologram = "&c&lEDIT MODE&r~&cJob Boss Menu~&6{jobName}~&7Click to open the menu";
