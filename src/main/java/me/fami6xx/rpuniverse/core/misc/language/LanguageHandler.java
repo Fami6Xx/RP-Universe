@@ -24,7 +24,7 @@ public class LanguageHandler {
     public String moderatorTag = "&b&lMODERATOR";
     public String adminTag = "&c&lADMIN";
 
-    public String basicNeedsActionBarMessage = "&cPoop: {poop}&8 | &cPee: {pee}&8 | &cFood: {food}&8 | &cWater: {water}";
+    public String basicNeedsActionBarMessage = "&cFood: {food} &8| &cWater: {water} &8| &cPoop: {poop} &8| &cPee: {pee}";
 
     // JOB HOLOGRAM
     public String jobBossMenuHologram = "&cJob Boss Menu~&6{jobName}~&7Click to open the menu";
