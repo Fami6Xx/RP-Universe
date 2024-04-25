@@ -1,56 +1,61 @@
 package me.fami6xx.rpuniverse.core.basicneeds.events;
 
+import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
+import me.fami6xx.rpuniverse.core.basicneeds.ConsumableItem;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class FoodTrackerListener implements Listener {
-    private final Map<UUID, Integer> lastFoodLevels = new HashMap<>();
-    private final Map<UUID, ItemStack> lastFoodItems = new HashMap<>();
-
-    // ToDo: Think about if it wouldn't be better to have the server admins have an menu where they can add items that
-    //  are eatable and how much they add to the food level, this could be even edited so that some foods add water
-
     @EventHandler
     public void onPlayerConsume(PlayerItemConsumeEvent event) {
-        Player player = event.getPlayer();
-        lastFoodLevels.put(player.getUniqueId(), player.getFoodLevel());
-        lastFoodItems.put(player.getUniqueId(), event.getItem());
+        if (RPUniverse.getInstance().getBasicNeedsHandler().getConfig().isEnabled()) {
+            Player player = event.getPlayer();
+            PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
+
+            if (data == null) {
+                return;
+            }
+
+            BasicNeedsHandler handler = RPUniverse.getInstance().getBasicNeedsHandler();
+
+            if (handler.isConsumable(event.getItem())) {
+                ConsumableItem consumable = handler.getConsumable(event.getItem());
+                data.setFoodLevel(data.getFoodLevel() + consumable.getFood());
+                data.setWaterLevel(data.getWaterLevel() + consumable.getWater());
+                data.setPeeLevel(data.getPeeLevel() + consumable.getPee());
+                data.setPoopLevel(data.getPoopLevel() + consumable.getPoop());
+
+                if (consumable.getHealth() > 0 || consumable.getHealth() < -20) {
+                    player.setHealth(player.getHealth() + consumable.getHealth());
+                }
+            }
+
+            event.setCancelled(true);
+            event.getItem().subtract();
+            event.getPlayer().setFoodLevel(19);
+        }
     }
 
     @EventHandler
     public void onFoodLevelChange(FoodLevelChangeEvent event) {
-        if (!(event.getEntity() instanceof Player)) return;
-        Player player = (Player) event.getEntity();
-        UUID playerId = player.getUniqueId();
-
-        if (lastFoodLevels.containsKey(playerId) && lastFoodItems.containsKey(playerId)) {
-            int foodValue = event.getFoodLevel() - lastFoodLevels.get(playerId);
-            ItemStack consumedItem = lastFoodItems.get(playerId);
-
-            // Check if the food level change was caused by consuming food and not saturation
-            if (foodValue <= 0) {
-                return;
-            }
-
-            // Check if the food item consumed is a food item
-            if (consumedItem == null || !consumedItem.getType().isEdible()) {
-                return;
-            }
-
-            // ToDo: Implement adding a food level to the player's food level (Into the PlayerData class
-
-            // Cleanup
-            lastFoodLevels.remove(playerId);
-            lastFoodItems.remove(playerId);
+        if (RPUniverse.getInstance().getBasicNeedsHandler().getConfig().isEnabled()) {
             event.setCancelled(true);
+            Player player = (Player) event.getEntity();
+            player.setFoodLevel(19);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        if (RPUniverse.getInstance().getBasicNeedsHandler().getConfig().isEnabled()) {
+            event.getPlayer().setFoodLevel(19);
         }
     }
 }
