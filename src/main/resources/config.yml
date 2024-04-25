@@ -6,7 +6,7 @@
 
 # If there was an update changing something in the config, you need to
 # delete the config file and restart the server to generate a new one.
-version: '0.75.2'
+version: '0.8'
 
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 
@@ -65,4 +65,21 @@ data:
     completeSaveInterval: 600
     selectedSaveMethod: json
 
-
+# The settings for the basic needs
+# enabled: If true, the basic needs are enabled
+# interval: The interval in seconds in which the basic needs are updated
+# preferPermissionsOverModeForEdit: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR) for editing the basic needs
+# neededModeToEdit: The mode needed to edit the basic needs (ADMIN or MODERATOR)
+# removedHunger: The amount of hunger removed every interval
+# removedThirst: The amount of thirst removed every interval
+# addedPoop: The amount of poop added every interval
+# addedPee: The amount of pee added every interval
+basicNeeds:
+    enabled: true
+    interval: 60
+    preferPermissionsOverModeForEdit: false
+    neededModeToEdit: ADMIN
+    removedHunger: 4
+    removedThirst: 2
+    addedPoop: 4
+    addedPee: 2
