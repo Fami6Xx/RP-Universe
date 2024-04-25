@@ -11,6 +11,7 @@ public class LanguageHandler {
     // GENERAL MESSAGES
     public String errorOnlyPlayersCanUseThisCommandMessage = "&cOnly players can use this command!";
     public String errorYouDontHavePermissionToUseThisCommandMessage = "&cYou don't have permission to use this command!";
+    public String errorYouAreNotInCorrectModeToUseThisCommandMessage = "&cYou are not in correct mode to use this command!";
     public String errorYouAlreadyHaveSomethingToType = "&cYou already have something to type, type that thing first.";
     public String errorYouAreNotInUserMode = "&cYou are not in user mode!";
     public String errorYouDontHaveAnyJob = "&cYou don't have any job!";
@@ -137,6 +138,15 @@ public class LanguageHandler {
     public String jobMenuJobTypeBossItemDisplayName = "&cJob Type Boss Menu";
     public String jobMenuJobTypeBossItemLore = "&7Click to open the boss menu for your job type";
 
+
+    // BASIC NEEDS
+    public String errorBasicNeedsDisabledMessage = "&cBasic needs are disabled!";
+    public String allConsumablesMenuName = "&6RPUniverse &7| &cAll Consumables";
+    public String allConsumableMenuAddItemDisplayName = "&cAdd Consumable";
+    public String allConsumableMenuAddItemLore = "&7Click to add a consumable";
+    public String allConsumableMenuAddItemMessage = "&7Hold the item you want to be added as consumable in your hand and type &cadd&7 or &ccancel&7 to cancel.";
+    public String allConsumableMenuAddItemMessageError = "&cYou can't add air as consumable!";
+    public String allConsumableMenuAddItemMessageSuccess = "&cYou added the item as consumable!";
 
 
 

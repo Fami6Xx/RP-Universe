@@ -1,6 +1,8 @@
 package me.fami6xx.rpuniverse;
 
 import me.fami6xx.rpuniverse.core.DataSystem;
+import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
+import me.fami6xx.rpuniverse.core.basicneeds.commands.ConsumablesCommand;
 import me.fami6xx.rpuniverse.core.commands.*;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
@@ -37,6 +39,7 @@ public final class RPUniverse extends JavaPlugin {
     private BossBarHandler bossBarHandler;
     private ActionBarHandler actionBarHandler;
     private NickHider nickHider;
+    private BasicNeedsHandler basicNeedsHandler;
 
     private FileConfiguration config;
     private Economy econ;
@@ -117,6 +120,12 @@ public final class RPUniverse extends JavaPlugin {
 
         this.bossBarHandler = new BossBarHandler();
         this.actionBarHandler = new ActionBarHandler();
+
+        try{
+            this.basicNeedsHandler = new BasicNeedsHandler();
+            this.basicNeedsHandler.initialize(this);
+        } catch (Exception ignored){}
+        this.getCommand("consumables").setExecutor(new ConsumablesCommand());
 
         if (getConfiguration().getBoolean("general.hideNicknames")) {
             this.nickHider = new NickHider();
@@ -210,6 +219,10 @@ public final class RPUniverse extends JavaPlugin {
 
     public ActionBarHandler getActionBarHandler() {
         return actionBarHandler;
+    }
+
+    public BasicNeedsHandler getBasicNeedsHandler() {
+        return basicNeedsHandler;
     }
 
     private String getVersionFromAPI() throws Exception {
