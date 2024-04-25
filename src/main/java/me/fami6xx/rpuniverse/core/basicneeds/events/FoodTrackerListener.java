@@ -35,11 +35,18 @@ public class FoodTrackerListener implements Listener {
                 if (consumable.getHealth() > 0 || consumable.getHealth() < -20) {
                     player.setHealth(player.getHealth() + consumable.getHealth());
                 }
+
+                if (event.getItem() == player.getInventory().getItemInMainHand()) {
+                    player.getInventory().getItemInMainHand().subtract();
+                }else if (event.getItem() == player.getInventory().getItemInOffHand()){
+                    player.getInventory().getItemInOffHand().subtract();
+                }else{
+                    player.getInventory().remove(event.getItem());
+                }
             }
 
             event.setCancelled(true);
-            event.getItem().subtract();
-            event.getPlayer().setFoodLevel(19);
+            event.getPlayer().setFoodLevel(18);
         }
     }
 
@@ -48,14 +55,14 @@ public class FoodTrackerListener implements Listener {
         if (RPUniverse.getInstance().getBasicNeedsHandler().getConfig().isEnabled()) {
             event.setCancelled(true);
             Player player = (Player) event.getEntity();
-            player.setFoodLevel(19);
+            player.setFoodLevel(18);
         }
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (RPUniverse.getInstance().getBasicNeedsHandler().getConfig().isEnabled()) {
-            event.getPlayer().setFoodLevel(19);
+            event.getPlayer().setFoodLevel(18);
         }
     }
 }
