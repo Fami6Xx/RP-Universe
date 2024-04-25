@@ -15,7 +15,7 @@ import java.util.Queue;
 
 public class BasicNeedsHandler {
     private transient RPUniverse plugin;
-    private final HashMap<ItemStack, ConsumableItem> consumables = new HashMap<>();
+    private HashMap<ItemStack, ConsumableItem> consumables = new HashMap<>();
     private transient BasicNeedsConfig config;
     private transient BukkitTask actionBarTask;
     private transient BukkitTask removeNeedsTask;
@@ -28,6 +28,7 @@ public class BasicNeedsHandler {
         plugin.getServer().getPluginManager().registerEvents(new FoodTrackerListener(), plugin);
 
         if(config.isEnabled()) {
+            this.consumables = RPUniverse.getInstance().getDataSystem().getDataHandler().loadConsumables();
             actionBarTask = displayInterval();
             removeNeedsTask = removeNeedsInterval();
         }

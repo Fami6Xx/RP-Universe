@@ -62,6 +62,7 @@ public class DataSystem implements Listener {
             job.prepareForSave();
             dataHandler.saveJobData(job.getName(), job);
         });
+        dataHandler.saveConsumables(RPUniverse.getInstance().getBasicNeedsHandler());
         dataHandler.shutDown();
     }
 
@@ -200,6 +201,7 @@ public class DataSystem implements Listener {
             dataHandler.savePlayerData(data);
         });
         processSaveQueue();
+        dataHandler.saveConsumables(RPUniverse.getInstance().getBasicNeedsHandler());
         RPUniverse.getInstance().getJobsHandler().getJobs().forEach(job -> {
             job.prepareForSave();
             dataHandler.saveJobData(job.getName(), job);
