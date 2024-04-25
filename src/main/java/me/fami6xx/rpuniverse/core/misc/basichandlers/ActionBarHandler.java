@@ -4,15 +4,14 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ActionBarHandler {
-    private final Map<Player, Queue<String>> playerMessages = new HashMap<>();
+    private final HashMap<Player, BlockingQueue<String>> playerMessages = new HashMap<>();
 
     public ActionBarHandler() {
         cycleMessages();
@@ -25,7 +24,7 @@ public class ActionBarHandler {
      * @param messages The list of messages for the player.
      */
     public void addPlayer(Player player, List<String> messages) {
-        Queue<String> messageQueue = new LinkedList<>(messages);
+        BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>(messages);
         playerMessages.put(player, messageQueue);
     }
 
@@ -46,16 +45,12 @@ public class ActionBarHandler {
      * @param player The player to add the message for.
      * @param message The message to add.
      * @param force Whether to immediately display the message on the action bar.
-     * @param once Whether to add the message to the queue if force is true.
      */
-    public void addMessage(Player player, String message, boolean force, boolean once) {
-        Queue<String> messages = playerMessages.get(player);
+    public void addMessage(Player player, String message, boolean force) {
+        BlockingQueue<String> messages = playerMessages.get(player);
         if (messages != null) {
             if (force) {
                 player.sendActionBar(FamiUtils.format(message));
-                if (!once) {
-                    messages.add(message);
-                }
             } else {
                 messages.add(message);
             }
@@ -73,22 +68,9 @@ public class ActionBarHandler {
      *
      * @param player The player to add the message for.
      * @param message The message to add.
-     * @param force Whether to immediately display the message on the action bar.
-     */
-    public void addMessage(Player player, String message, boolean force) {
-        this.addMessage(player, message, force, false);
-    }
-
-    /**
-     * Add a message to the player's action bar.
-     * This method will add the given message to the action bar of the specified player.
-     * If the player is not currently displaying any messages, the action bar will start cycling through the messages periodically.
-     *
-     * @param player The player to add the message for.
-     * @param message The message to add.
      */
     public void addMessage(Player player, String message) {
-        this.addMessage(player, message, false, false);
+        this.addMessage(player, message, false);
     }
 
     /**
@@ -108,7 +90,7 @@ public class ActionBarHandler {
      * @param message The message to remove.
      */
     public void removeMessage(Player player, String message){
-        Queue<String> messages = playerMessages.get(player);
+        BlockingQueue<String> messages = playerMessages.get(player);
         if (messages != null) {
             messages.remove(message);
         }
@@ -122,17 +104,14 @@ public class ActionBarHandler {
             @Override
             public void run() {
                 Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-                    Queue<String> messages = playerMessages.get(player);
+                    BlockingQueue<String> messages = playerMessages.get(player);
                     if (messages != null && !messages.isEmpty()) {
                         String message = messages.poll();
                         player.sendActionBar(FamiUtils.format(message));
-                        messages.add(message);
+                    }else{
+                        playerMessages.remove(player);
                     }
                 });
-
-                playerMessages.keySet().stream()
-                        .filter(player -> !player.isOnline())
-                        .forEach(playerMessages::remove);
             }
         }.runTaskTimer(RPUniverse.getInstance(), 0L, 20L);
     }
