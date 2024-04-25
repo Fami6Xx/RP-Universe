@@ -99,6 +99,14 @@ public class MenuManager {
         }
     }
 
+    public void reopenMenus(Predicate<Player> predicate) {
+        for (PlayerMenu playerMenu : playerMenuMap.values()) {
+            if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getPlayer())) {
+                playerMenu.getCurrentMenu().open();
+            }
+        }
+    }
+
     public void reopenJobMenus(Predicate<Job> predicate) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
