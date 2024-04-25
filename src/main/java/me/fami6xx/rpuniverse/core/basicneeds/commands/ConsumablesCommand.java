@@ -48,7 +48,7 @@ public class ConsumablesCommand implements CommandExecutor {
             }
         }
 
-        new AllConsumablesMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), RPUniverse.getInstance().getBasicNeedsHandler());
+        new AllConsumablesMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), RPUniverse.getInstance().getBasicNeedsHandler()).open();
         return true;
     }
 }
