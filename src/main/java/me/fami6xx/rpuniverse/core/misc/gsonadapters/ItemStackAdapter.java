@@ -21,6 +21,11 @@ public class ItemStackAdapter implements JsonSerializer<ItemStack>, JsonDeserial
 
         if (src.hasItemMeta()) {
             ItemMeta meta = src.getItemMeta();
+            // Possible solution for before 1.13 is to look into the meta class and search for the method that returns the custom model data
+            // and then use reflection to get the value of that method
+            if (meta.hasCustomModelData()) {
+                jsonObject.addProperty("customModelData", meta.getCustomModelData());
+            }
             if (meta.hasDisplayName()) {
                 jsonObject.addProperty("displayName", meta.getDisplayName());
             }
@@ -70,6 +75,9 @@ public class ItemStackAdapter implements JsonSerializer<ItemStack>, JsonDeserial
         }
         if(jsonObject.has("unbreakable")){
             meta.setUnbreakable(true);
+        }
+        if(jsonObject.has("customModelData")){
+            meta.setCustomModelData(jsonObject.get("customModelData").getAsInt());
         }
 
         itemStack.setItemMeta(meta);
