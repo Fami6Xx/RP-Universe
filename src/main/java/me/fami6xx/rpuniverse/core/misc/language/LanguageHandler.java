@@ -147,6 +147,22 @@ public class LanguageHandler {
     public String allConsumableMenuAddItemMessage = "&7Hold the item you want to be added as consumable in your hand and type &cadd&7 or &ccancel&7 to cancel.";
     public String allConsumableMenuAddItemMessageError = "&cYou can't add air as consumable!";
     public String allConsumableMenuAddItemMessageSuccess = "&cYou added the item as consumable!";
+    public String allConsumableMenuInfoDisplayName = "&cInformation";
+    public String allConsumableMenuInfoLore = "&7Click an consumable to edit it.";
+    public String editConsumableMenuName = "&6RPUniverse &7| &cEdit Consumable";
+    public String editConsumableMenuPoopItemDisplayName = "&cPoop";
+    public String editConsumableMenuPoopItemLore = "&7Current value: &c{value}~&7Click to edit the poop consumable";
+    public String editConsumableMenuPeeItemDisplayName = "&cPee";
+    public String editConsumableMenuPeeItemLore = "&7Current value: &c{value}~&7Click to edit the pee consumable";
+    public String editConsumableMenuFoodItemDisplayName = "&cFood";
+    public String editConsumableMenuFoodItemLore = "&7Current value: &c{value}~&7Click to edit the food consumable";
+    public String editConsumableMenuHealthItemDisplayName = "&cHealth";
+    public String editConsumableMenuHealthItemLore = "&7Current value: &c{value}~&7Click to edit the health consumable";
+    public String editConsumableMenuDrinkItemDisplayName = "&cDrink";
+    public String editConsumableMenuDrinkItemLore = "&7Current value: &c{value}~&7Click to edit the drink consumable";
+    public String editConsumableMenuRemoveItemDisplayName = "&cRemove";
+    public String editConsumableMenuRemoveItemLore = "&7Click to remove the consumable";
+    public String editConsumableMenuRemoveItemMessage = "&cYou removed the consumable!";
 
 
 

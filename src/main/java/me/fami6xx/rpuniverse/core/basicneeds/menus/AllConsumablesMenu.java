@@ -63,7 +63,7 @@ public class AllConsumablesMenu extends EasyPaginatedMenu {
                 ItemStack item = e.getWhoClicked().getInventory().getItemInMainHand().clone();
                 if(item.getType() == Material.AIR){
                     e.getWhoClicked().sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuAddItemMessageError));
-                    return true;
+                    return false;
                 }
 
                 item.setAmount(1);
@@ -107,6 +107,7 @@ public class AllConsumablesMenu extends EasyPaginatedMenu {
     @Override
     public void addAdditionalItems() {
         inventory.setItem(45, FamiUtils.makeItem(Material.EMERALD_BLOCK, FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuAddItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuAddItemLore)));
+        inventory.setItem(53, FamiUtils.makeItem(Material.BOOKSHELF, FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuInfoDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuInfoLore)));
     }
 
     @Override
