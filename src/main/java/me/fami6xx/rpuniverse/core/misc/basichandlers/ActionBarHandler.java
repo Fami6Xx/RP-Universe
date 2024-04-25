@@ -84,8 +84,27 @@ public class ActionBarHandler {
         this.addMessage(player, message, false, false);
     }
 
+    /**
+     * Get queued messages for the player.
+     *
+     * @param player The player to get the messages for.
+     * @return The messages for the player.
+     */
     public Queue<String> getMessages(Player player){
         return playerMessages.get(player);
+    }
+
+    /**
+     * Remove a message from the player's action bar.
+     *
+     * @param player The player to remove the message from.
+     * @param message The message to remove.
+     */
+    public void removeMessage(Player player, String message){
+        Queue<String> messages = playerMessages.get(player);
+        if (messages != null) {
+            messages.remove(message);
+        }
     }
 
     /**
