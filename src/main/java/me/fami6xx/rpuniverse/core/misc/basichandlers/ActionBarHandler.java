@@ -3,12 +3,23 @@ package me.fami6xx.rpuniverse.core.misc.basichandlers;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-public class ActionBarHandler {
+public class ActionBarHandler implements Listener {
     private final Map<Player, Queue<String>> playerMessages = new HashMap<>();
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event){
+        Player player = event.getPlayer();
+        if(playerMessages.containsKey(player)){
+            cycleMessages(player);
+        }
+    }
 
     /**
      * Add a player to the playerMessages map and start cycling messages for that player.
@@ -19,7 +30,6 @@ public class ActionBarHandler {
     public void addPlayer(Player player, List<String> messages) {
         Queue<String> messageQueue = new LinkedList<>(messages);
         playerMessages.put(player, messageQueue);
-        cycleMessages(player);
     }
 
     /**
@@ -121,8 +131,6 @@ public class ActionBarHandler {
                     String message = messages.poll();
                     player.sendActionBar(FamiUtils.format(message));
                     messages.add(message);
-                } else {
-                    this.cancel();
                 }
             }
         }.runTaskTimer(RPUniverse.getInstance(), 0L, 20L);
