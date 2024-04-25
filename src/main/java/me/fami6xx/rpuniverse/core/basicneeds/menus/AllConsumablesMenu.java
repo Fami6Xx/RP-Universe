@@ -63,7 +63,12 @@ public class AllConsumablesMenu extends EasyPaginatedMenu {
                 ItemStack item = e.getWhoClicked().getInventory().getItemInMainHand().clone();
                 if(item.getType() == Material.AIR){
                     e.getWhoClicked().sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuAddItemMessageError));
-                    return false;
+                    return true;
+                }
+
+                if(handler.getConsumables().containsKey(item)){
+                    e.getWhoClicked().sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuAddItemMessageErrorAlreadyAdded));
+                    return true;
                 }
 
                 item.setAmount(1);
