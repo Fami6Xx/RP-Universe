@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.misc.datahandlers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
@@ -188,7 +189,11 @@ public class JSONDataHandler implements IDataHandler {
         }
 
         try (Writer writer = new FileWriter(consumablesFile)) {
-            gson.toJson(handler, writer);
+            JsonObject consumables = new JsonObject();
+            handler.getConsumables().forEach((item, consumable) -> {
+                consumables.add(gson.toJson(item, ItemStack.class), gson.toJsonTree(consumable));
+            });
+            gson.toJson(consumables, writer);
             return true;
         } catch (IOException e) {
             logger.severe(e.getMessage());
@@ -209,14 +214,20 @@ public class JSONDataHandler implements IDataHandler {
         }
 
         try (Reader reader = new FileReader(consumablesFile)) {
-            BasicNeedsHandler handler = gson.fromJson(reader, BasicNeedsHandler.class);
-            return handler.getConsumables();
+            HashMap<ItemStack, ConsumableItem> consumables = new HashMap<>();
+            JsonObject consumablesJson = gson.fromJson(reader, JsonObject.class);
+            consumablesJson.entrySet().forEach(entry -> {
+                ItemStack item = gson.fromJson(entry.getKey(), ItemStack.class);
+                ConsumableItem consumable = gson.fromJson(entry.getValue(), ConsumableItem.class);
+                consumables.put(item, consumable);
+            });
+            return consumables;
         } catch (IOException e) {
             logger.severe(e.getMessage());
-            return null;
+            return new HashMap<>();
         } catch (JsonParseException e) {
             logger.severe("Failed to load consumables");
-            return null;
+            return new HashMap<>();
         }
     }
 
