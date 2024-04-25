@@ -42,7 +42,7 @@ public class BasicNeedsHandler {
         }
     }
 
-    public BukkitTask displayInterval() {
+    private BukkitTask displayInterval() {
         return new BukkitRunnable() {
             @Override
             public void run() {
@@ -64,7 +64,7 @@ public class BasicNeedsHandler {
         }.runTaskTimer(plugin, 0, 20);
     }
 
-    public BukkitTask removeNeedsInterval() {
+    private BukkitTask removeNeedsInterval() {
         return new BukkitRunnable() {
             @Override
             public void run() {
