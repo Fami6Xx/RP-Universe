@@ -36,6 +36,11 @@ public class PlayerData {
     private String tag;
     private List<String> playerJobNames;
 
+    private int foodLevel = 100;
+    private int waterLevel = 100;
+    private int poopLevel = 100;
+    private int peeLevel = 100;
+
     public PlayerData(Player bindedPlayer) {
         this.bindedPlayer = bindedPlayer;
         this.bindedOfflinePlayer = null;
@@ -436,5 +441,76 @@ public class PlayerData {
     @Nullable
     public OfflinePlayer getBindedOfflinePlayer() {
         return bindedOfflinePlayer;
+    }
+
+    /**
+     * Gets the player's food level
+     *
+     * @return the player's food level (Higher is better)
+     */
+    public int getFoodLevel() {
+        return foodLevel;
+    }
+
+    /**
+     * Sets the player's food level
+     *
+     * @param foodLevel the player's food level (Higher is better)
+     */
+    public void setFoodLevel(int foodLevel) {
+        this.foodLevel = foodLevel;
+    }
+
+    /**
+     * Gets the player's water level
+     *
+     * @return the player's water level (Higher is better)
+     */
+    public int getWaterLevel() {
+        return waterLevel;
+    }
+
+    /**
+     * Sets the player's water level
+     *
+     * @param waterLevel the player's water level (Higher is better)
+     */
+    public void setWaterLevel(int waterLevel) {
+        this.waterLevel = waterLevel;
+    }
+
+    /**
+     * Gets the player's poop level
+     * @return the player's poop level (Higher is better)
+     */
+    public int getPoopLevel() {
+        return poopLevel;
+    }
+
+    /**
+     * Sets the player's poop level
+     *
+     * @param poopLevel the player's poop level (Higher is better)
+     */
+    public void setPoopLevel(int poopLevel) {
+        this.poopLevel = poopLevel;
+    }
+
+    /**
+     * Gets the player's pee level
+     *
+     * @return the player's pee level (Higher is better)
+     */
+    public int getPeeLevel() {
+        return peeLevel;
+    }
+
+    /**
+     * Sets the player's pee level
+     *
+     * @param peeLevel the player's pee level (Higher is better)
+     */
+    public void setPeeLevel(int peeLevel) {
+        this.peeLevel = peeLevel;
     }
 }
