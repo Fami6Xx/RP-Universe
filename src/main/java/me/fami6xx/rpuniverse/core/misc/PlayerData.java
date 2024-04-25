@@ -458,6 +458,7 @@ public class PlayerData {
      * @param foodLevel the player's food level (Higher is better)
      */
     public void setFoodLevel(int foodLevel) {
+        if (foodLevel > 100) foodLevel = 100;
         this.foodLevel = foodLevel;
     }
 
@@ -476,6 +477,7 @@ public class PlayerData {
      * @param waterLevel the player's water level (Higher is better)
      */
     public void setWaterLevel(int waterLevel) {
+        if (waterLevel > 100) waterLevel = 100;
         this.waterLevel = waterLevel;
     }
 
@@ -493,6 +495,7 @@ public class PlayerData {
      * @param poopLevel the player's poop level (Higher is better)
      */
     public void setPoopLevel(int poopLevel) {
+        if (poopLevel > 100) poopLevel = 100;
         this.poopLevel = poopLevel;
     }
 
@@ -511,6 +514,7 @@ public class PlayerData {
      * @param peeLevel the player's pee level (Higher is better)
      */
     public void setPeeLevel(int peeLevel) {
+        if (peeLevel > 100) peeLevel = 100;
         this.peeLevel = peeLevel;
     }
 }
