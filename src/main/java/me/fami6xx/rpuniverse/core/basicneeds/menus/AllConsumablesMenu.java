@@ -58,8 +58,18 @@ public class AllConsumablesMenu extends EasyPaginatedMenu {
         if(e.getSlot() == 45){
             e.getWhoClicked().closeInventory();
             e.getWhoClicked().sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuAddItemMessage));
+            e.getWhoClicked().sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().cancelActivityMessage));
             UniversalChatHandler universalChatHandler = RPUniverse.getInstance().getUniversalChatHandler();
             universalChatHandler.addToQueue((Player) e.getWhoClicked(), (player, message) -> {
+                if(message.equalsIgnoreCase("cancel")){
+                    e.getWhoClicked().sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().cancelSuccessful));
+                    return true;
+                }
+                if(!message.equalsIgnoreCase("add")){
+                    e.getWhoClicked().sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuAddItemMessage));
+                    return true;
+                }
+
                 ItemStack item = e.getWhoClicked().getInventory().getItemInMainHand().clone();
                 if(item.getType() == Material.AIR){
                     e.getWhoClicked().sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuAddItemMessageError));
@@ -76,7 +86,7 @@ public class AllConsumablesMenu extends EasyPaginatedMenu {
                 Gson gson = new GsonBuilder()
                         .registerTypeAdapter(ItemStack.class, new ItemStackAdapter())
                         .create();
-                String json = gson.toJson(item);
+                String json = gson.toJson(item, ItemStack.class);
                 handler.addConsumable(gson.fromJson(json, ItemStack.class), new ConsumableItem(0,0,0,0,0));
                 e.getWhoClicked().sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().allConsumableMenuAddItemMessageSuccess));
                 new BukkitRunnable() {
@@ -97,7 +107,12 @@ public class AllConsumablesMenu extends EasyPaginatedMenu {
                 }.runTaskLater(RPUniverse.getInstance(), 1);
                 return true;
             });
-            return;
+
+            if(e.getSlot() == 53) return;
+            if(e.getCurrentItem() == null) return;
+            if(!handler.isConsumable(e.getCurrentItem())) return;
+
+            new EditConsumableMenu(playerMenu, e.getCurrentItem(), handler.getConsumable(e.getCurrentItem()));
         }
     }
 
