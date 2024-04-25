@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
+import me.fami6xx.rpuniverse.core.basicneeds.ConsumableItem;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
@@ -11,6 +13,7 @@ import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 import java.io.*;
 import java.nio.file.Path;
@@ -161,6 +164,59 @@ public class JSONDataHandler implements IDataHandler {
         } catch (IOException e) {
             logger.severe(e.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Saves the consumables for the BasicNeedsHandler. The data is serialized and deserialized by the selected Data Handler.
+     *
+     * @param handler The BasicNeedsHandler to save consumables for.
+     * @return true if the data was saved successfully, false otherwise.
+     */
+    @Override
+    public boolean saveConsumables(BasicNeedsHandler handler) {
+        File consumablesFile = new File(RPUniverse.getInstance().getDataFolder().getPath() + "/consumables.json");
+        if(!consumablesFile.exists()) {
+            try {
+                if(!consumablesFile.createNewFile()) {
+                    return false;
+                }
+            } catch (IOException e) {
+                logger.severe(e.getMessage());
+                return false;
+            }
+        }
+
+        try (Writer writer = new FileWriter(consumablesFile)) {
+            gson.toJson(handler, writer);
+            return true;
+        } catch (IOException e) {
+            logger.severe(e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Loads the consumables for the BasicNeedsHandler. The data is serialized and deserialized by the selected Data Handler.
+     *
+     * @return A HashMap containing all consumables.
+     */
+    @Override
+    public HashMap<ItemStack, ConsumableItem> loadConsumables() {
+        File consumablesFile = new File(RPUniverse.getInstance().getDataFolder().getPath() + "/consumables.json");
+        if(!consumablesFile.exists()) {
+            return new HashMap<>();
+        }
+
+        try (Reader reader = new FileReader(consumablesFile)) {
+            BasicNeedsHandler handler = gson.fromJson(reader, BasicNeedsHandler.class);
+            return handler.getConsumables();
+        } catch (IOException e) {
+            logger.severe(e.getMessage());
+            return null;
+        } catch (JsonParseException e) {
+            logger.severe("Failed to load consumables");
+            return null;
         }
     }
 

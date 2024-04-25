@@ -1,7 +1,12 @@
 package me.fami6xx.rpuniverse.core.misc.datahandlers;
 
+import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
+import me.fami6xx.rpuniverse.core.basicneeds.ConsumableItem;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
 
 public interface IDataHandler {
 
@@ -54,6 +59,21 @@ public interface IDataHandler {
      * @return true if the data was saved successfully, false otherwise.
      */
     boolean saveJobData(String name, Job data);
+
+    /**
+     * Saves the consumables for the BasicNeedsHandler. The data is serialized and deserialized by the selected Data Handler.
+     *
+     * @param handler The BasicNeedsHandler to save consumables for.
+     * @return true if the data was saved successfully, false otherwise.
+     */
+    boolean saveConsumables(BasicNeedsHandler handler);
+
+    /**
+     * Loads the consumables for the BasicNeedsHandler. The data is serialized and deserialized by the selected Data Handler.
+     *
+     * @return A HashMap containing all consumables.
+     */
+    HashMap<ItemStack, ConsumableItem> loadConsumables();
 
     /**
      * Renames the job data from the old name to the new name. The data is serialized and deserialized by the selected Data Handler.
