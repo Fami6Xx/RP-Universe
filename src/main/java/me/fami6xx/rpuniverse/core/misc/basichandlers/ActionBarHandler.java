@@ -84,6 +84,10 @@ public class ActionBarHandler {
         this.addMessage(player, message, false, false);
     }
 
+    public Queue<String> getMessages(Player player){
+        return playerMessages.get(player);
+    }
+
     /**
      * Cycle through the messages for the given player and display them on the action bar periodically.
      *
