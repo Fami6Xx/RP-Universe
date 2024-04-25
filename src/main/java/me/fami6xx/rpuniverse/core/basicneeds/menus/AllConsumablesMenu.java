@@ -107,13 +107,13 @@ public class AllConsumablesMenu extends EasyPaginatedMenu {
                 }.runTaskLater(RPUniverse.getInstance(), 1);
                 return true;
             });
-
-            if(e.getSlot() == 53) return;
-            if(e.getCurrentItem() == null) return;
-            if(!handler.isConsumable(e.getCurrentItem())) return;
-
-            new EditConsumableMenu(playerMenu, e.getCurrentItem(), handler.getConsumable(e.getCurrentItem()));
         }
+
+        if(e.getSlot() == 53) return;
+        if(e.getCurrentItem() == null) return;
+        if(!handler.isConsumable(e.getCurrentItem())) return;
+
+        new EditConsumableMenu(playerMenu, e.getCurrentItem(), handler.getConsumable(e.getCurrentItem())).open();
     }
 
     @Override
