@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public class BasicNeedsHandler {
     private RPUniverse plugin;
-    private HashMap<ItemStack, ConsumableItem> consumables = new HashMap<>();
+    private final HashMap<ItemStack, ConsumableItem> consumables = new HashMap<>();
     private BasicNeedsConfig config;
 
 
@@ -64,7 +64,7 @@ public class BasicNeedsHandler {
      * @return true if the item is a consumable, false otherwise
      */
     public boolean isConsumable(ItemStack item) {
-        return consumables.containsKey(item);
+        return consumables.containsKey(item.asOne());
     }
 
     /**
