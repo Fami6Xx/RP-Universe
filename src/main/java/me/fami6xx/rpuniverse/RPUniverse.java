@@ -143,6 +143,7 @@ public final class RPUniverse extends JavaPlugin {
             this.dataSystem.shutdown();
             this.holoAPI.disable();
             this.createJobStarter.stop();
+            this.basicNeedsHandler.shutdown();
             if (nickHider != null)
                 this.nickHider.shutdown();
         } catch (NullPointerException ignored) {
