@@ -73,8 +73,8 @@ public class BasicNeedsHandler {
                     PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
                     playerData.setFoodLevel(playerData.getFoodLevel() - config.getRemovedHunger());
                     playerData.setWaterLevel(playerData.getWaterLevel() - config.getRemovedThirst());
-                    playerData.setPeeLevel(playerData.getPeeLevel() + config.getAddedPee());
-                    playerData.setPoopLevel(playerData.getPoopLevel() + config.getAddedPoop());
+                    playerData.setPeeLevel(playerData.getPeeLevel() - config.getAddedPee());
+                    playerData.setPoopLevel(playerData.getPoopLevel() - config.getAddedPoop());
                 });
             }
         }.runTaskTimer(plugin, 0, config.getInterval() * 60L);
