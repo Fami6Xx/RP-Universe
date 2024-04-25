@@ -42,8 +42,10 @@ public class EditConsumableMenu extends Menu {
     public void handleMenu(InventoryClickEvent e) {
         if(e.getSlot() == 10){
             if(e.isRightClick()) {
+                if(consumable.getPoop() + 1 > 100) return;
                 consumable.setPoop(consumable.getPoop() + 1);
             }else{
+                if(consumable.getPoop() - 1 < -100) return;
                 consumable.setPoop(consumable.getPoop() - 1);
             }
 
@@ -52,8 +54,10 @@ public class EditConsumableMenu extends Menu {
         }
         if(e.getSlot() == 16){
             if(e.isRightClick()) {
+                if(consumable.getPee() + 1 > 100) return;
                 consumable.setPee(consumable.getPee() + 1);
             }else{
+                if(consumable.getPee() - 1 < -100) return;
                 consumable.setPee(consumable.getPee() - 1);
             }
 
@@ -62,8 +66,10 @@ public class EditConsumableMenu extends Menu {
         }
         if(e.getSlot() == 12){
             if(e.isRightClick()) {
+                if(consumable.getFood() + 1 > 100) return;
                 consumable.setFood(consumable.getFood() + 1);
             }else{
+                if(consumable.getFood() - 1 < -100) return;
                 consumable.setFood(consumable.getFood() - 1);
             }
 
@@ -72,8 +78,10 @@ public class EditConsumableMenu extends Menu {
         }
         if(e.getSlot() == 13){
             if(e.isRightClick()) {
+                if(consumable.getHealth() + 1 > 20) return;
                 consumable.setHealth(consumable.getHealth() + 1);
             }else{
+                if(consumable.getHealth() - 1 < -20) return;
                 consumable.setHealth(consumable.getHealth() - 1);
             }
 
