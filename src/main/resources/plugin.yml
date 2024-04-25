@@ -52,6 +52,10 @@ commands:
   switchjob:
     description: Switches the job of a player
     usage: /<command> (jobId)
+  consumables:
+    description: Opens the consumables menu
+    usage: /<command>
+    aliases: [consumable, consumablemenu, basicneeds, basicneedsmenu]
 permissions:
   rpu.user:
     description: Gives access to all user commands
@@ -94,3 +98,5 @@ permissions:
     description: Allows the player to use the /settag command
   rpu.globalooc:
     description: Allows the player to use the global ooc chat
+  rpu.basicneeds.edit:
+    description: Allows the player to go to the /consumables menu
