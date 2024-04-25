@@ -146,6 +146,7 @@ public class LanguageHandler {
     public String allConsumableMenuAddItemLore = "&7Click to add a consumable";
     public String allConsumableMenuAddItemMessage = "&7Hold the item you want to be added as consumable in your hand and type &cadd&7 or &ccancel&7 to cancel.";
     public String allConsumableMenuAddItemMessageError = "&cYou can't add air as consumable!";
+    public String allConsumableMenuAddItemMessageErrorAlreadyAdded = "&cThis item is already added as consumable!";
     public String allConsumableMenuAddItemMessageSuccess = "&cYou added the item as consumable!";
     public String allConsumableMenuInfoDisplayName = "&cInformation";
     public String allConsumableMenuInfoLore = "&7Click an consumable to edit it.";
