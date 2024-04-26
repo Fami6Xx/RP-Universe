@@ -59,10 +59,10 @@ public class BasicNeedsHandler {
                         if (messages.size() >= 3) return;
                     }
                     HashMap<String, String> placeholders = new HashMap<>();
-                    placeholders.put("{food}", formatNeedForActionBar(playerData.getFoodLevel()));
-                    placeholders.put("{water}", formatNeedForActionBar(playerData.getWaterLevel()));
-                    placeholders.put("{pee}", formatNeedForActionBar(playerData.getPeeLevel()));
-                    placeholders.put("{poop}", formatNeedForActionBar(playerData.getPoopLevel()));
+                    placeholders.put("{food}", formatNeedForActionBar(playerData.getFoodLevel(), false));
+                    placeholders.put("{water}", formatNeedForActionBar(playerData.getWaterLevel(), false));
+                    placeholders.put("{pee}", formatNeedForActionBar(playerData.getPeeLevel(), true));
+                    placeholders.put("{poop}", formatNeedForActionBar(playerData.getPoopLevel(), true));
                     actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false);
                 });
             }
@@ -77,14 +77,23 @@ public class BasicNeedsHandler {
                     PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
                     playerData.setFoodLevel(playerData.getFoodLevel() - config.getRemovedHunger());
                     playerData.setWaterLevel(playerData.getWaterLevel() - config.getRemovedThirst());
-                    playerData.setPeeLevel(playerData.getPeeLevel() - config.getAddedPee());
-                    playerData.setPoopLevel(playerData.getPoopLevel() - config.getAddedPoop());
+                    playerData.setPeeLevel(playerData.getPeeLevel() + config.getAddedPee());
+                    playerData.setPoopLevel(playerData.getPoopLevel() + config.getAddedPoop());
                 });
             }
         }.runTaskTimer(plugin, 0, config.getInterval() * 60L);
     }
 
-    private String formatNeedForActionBar(int level) {
+    private String formatNeedForActionBar(int level, boolean isPoopOrPee) {
+        if (isPoopOrPee){
+            if (level < 25) {
+                return "&a" + level;
+            } else if (level < 70) {
+                return "&e" + level;
+            } else {
+                return "&4" + level;
+            }
+        }
         if (level < 25) {
             return "&4" + level;
         } else if (level < 75) {

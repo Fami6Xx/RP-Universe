@@ -38,8 +38,8 @@ public class PlayerData {
 
     private int foodLevel = 100;
     private int waterLevel = 100;
-    private int poopLevel = 100;
-    private int peeLevel = 100;
+    private int poopLevel = 0;
+    private int peeLevel = 0;
 
     public PlayerData(Player bindedPlayer) {
         this.bindedPlayer = bindedPlayer;
