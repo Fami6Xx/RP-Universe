@@ -41,7 +41,7 @@ public class EditConsumableMenu extends Menu {
     @Override
     public void handleMenu(InventoryClickEvent e) {
         if(e.getSlot() == 10){
-            if(e.isRightClick()) {
+            if(e.isLeftClick()) {
                 if(consumable.getPoop() + 1 > 100) return;
                 consumable.setPoop(consumable.getPoop() + 1);
             }else{
@@ -53,7 +53,7 @@ public class EditConsumableMenu extends Menu {
             return;
         }
         if(e.getSlot() == 16){
-            if(e.isRightClick()) {
+            if(e.isLeftClick()) {
                 if(consumable.getPee() + 1 > 100) return;
                 consumable.setPee(consumable.getPee() + 1);
             }else{
@@ -65,7 +65,7 @@ public class EditConsumableMenu extends Menu {
             return;
         }
         if(e.getSlot() == 12){
-            if(e.isRightClick()) {
+            if(e.isLeftClick()) {
                 if(consumable.getFood() + 1 > 100) return;
                 consumable.setFood(consumable.getFood() + 1);
             }else{
@@ -77,7 +77,7 @@ public class EditConsumableMenu extends Menu {
             return;
         }
         if(e.getSlot() == 13){
-            if(e.isRightClick()) {
+            if(e.isLeftClick()) {
                 if(consumable.getHealth() + 1 > 20) return;
                 consumable.setHealth(consumable.getHealth() + 1);
             }else{
@@ -89,7 +89,7 @@ public class EditConsumableMenu extends Menu {
             return;
         }
         if(e.getSlot() == 14){
-            if(e.isRightClick()) {
+            if(e.isLeftClick()) {
                 consumable.setWater(consumable.getWater() + 1);
             }else{
                 consumable.setWater(consumable.getWater() - 1);
