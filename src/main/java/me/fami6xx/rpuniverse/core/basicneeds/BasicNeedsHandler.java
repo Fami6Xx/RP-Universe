@@ -64,6 +64,10 @@ public class BasicNeedsHandler {
                     placeholders.put("{pee}", formatNeedForActionBar(playerData.getPeeLevel(), true));
                     placeholders.put("{poop}", formatNeedForActionBar(playerData.getPoopLevel(), true));
                     actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false);
+
+                    if (playerData.getFoodLevel() == 0 || playerData.getWaterLevel() == 0 || playerData.getPeeLevel() == 100 || playerData.getPoopLevel() == 100) {
+                        player.damage(1);
+                    }
                 });
             }
         }.runTaskTimer(plugin, 0, 20);
