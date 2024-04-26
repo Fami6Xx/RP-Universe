@@ -483,7 +483,7 @@ public class PlayerData {
 
     /**
      * Gets the player's poop level
-     * @return the player's poop level (Higher is better)
+     * @return the player's poop level (Lower is better)
      */
     public int getPoopLevel() {
         return poopLevel;
@@ -492,7 +492,7 @@ public class PlayerData {
     /**
      * Sets the player's poop level
      *
-     * @param poopLevel the player's poop level (Higher is better)
+     * @param poopLevel the player's poop level (Lower is better)
      */
     public void setPoopLevel(int poopLevel) {
         if (poopLevel > 100) poopLevel = 100;
@@ -502,7 +502,7 @@ public class PlayerData {
     /**
      * Gets the player's pee level
      *
-     * @return the player's pee level (Higher is better)
+     * @return the player's pee level (Lower is better)
      */
     public int getPeeLevel() {
         return peeLevel;
@@ -511,7 +511,7 @@ public class PlayerData {
     /**
      * Sets the player's pee level
      *
-     * @param peeLevel the player's pee level (Higher is better)
+     * @param peeLevel the player's pee level (Lower is better)
      */
     public void setPeeLevel(int peeLevel) {
         if (peeLevel > 100) peeLevel = 100;
