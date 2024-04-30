@@ -72,7 +72,7 @@ public class DoCommand implements CommandExecutor {
             }
         }
 
-        if(createHologram && message.length() > 20){
+        if(createHologram && message.length() >= 32){
             createHologram = false;
         }
 
