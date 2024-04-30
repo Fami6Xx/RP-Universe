@@ -28,13 +28,29 @@ public abstract class UpdatingHologramLine {
         new BukkitRunnable(){
             @Override
             public void run(){
-                if(!line.isDisabled()) {
-                    String update = update();
-                    if (!line.getText().equals(update)) {
-                        line.setText(update);
-                    }
-                }else {
+                if (line == null) {
                     cancel();
+                    return;
+                }
+
+                if (line.isDisabled()) {
+                    cancel();
+                    return;
+                }
+
+                if (line.getParent() == null) {
+                    cancel();
+                    return;
+                }
+
+                if (line.getParent().getParent().isDisabled()) {
+                    cancel();
+                    return;
+                }
+
+                String update = update();
+                if (!line.getText().equals(update)) {
+                    line.setText(update);
                 }
             }
         }.runTaskTimerAsynchronously(RPUniverse.getInstance(), 1, period);
