@@ -24,27 +24,33 @@ public abstract class UpdatingHologramLine {
 
     public abstract String update();
 
+    public abstract void onDisable();
+
     private void start(){
         new BukkitRunnable(){
             @Override
             public void run(){
                 if (line == null) {
                     cancel();
+                    onDisable();
                     return;
                 }
 
                 if (line.isDisabled()) {
                     cancel();
+                    onDisable();
                     return;
                 }
 
                 if (line.getParent() == null) {
                     cancel();
+                    onDisable();
                     return;
                 }
 
                 if (line.getParent().getParent().isDisabled()) {
                     cancel();
+                    onDisable();
                     return;
                 }
 
