@@ -167,6 +167,8 @@ public class LanguageHandler {
     public String editConsumableMenuRemoveItemDisplayName = "&cRemove";
     public String editConsumableMenuRemoveItemLore = "&7Click to remove the consumable";
     public String editConsumableMenuRemoveItemMessage = "&cYou removed the consumable!";
+    public String errorYouDontNeedToPoopMessage = "&cYou don't need to poop!";
+    public String successPoopMessage = "&cYou are pooping!";
 
 
 
@@ -193,6 +195,11 @@ public class LanguageHandler {
     public String errorDoCommandUsage = "&cUsage: /do <message>";
     public String doCommandMessage = "&7* &e{player} &e{message}";
     public String doCommandHologram = "&7* &e{message} &7*";
+
+    // DOC COMMAND MESSAGES
+    public String errorDocCommandUsage = "&cUsage: /doc <seconds> (message)";
+    public String docCommandMessage = "&7* &e{player} &a{message} {seconds}";
+    public String docCommandHologram = "&7* &a{message} {seconds} &7*";
 
     // STATUS AND STOP STATUS MESSAGES
     public String errorStatusCommandUsage = "&cUsage: /status <message>";
