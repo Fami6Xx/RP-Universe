@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse;
 import me.fami6xx.rpuniverse.core.DataSystem;
 import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
 import me.fami6xx.rpuniverse.core.basicneeds.commands.ConsumablesCommand;
+import me.fami6xx.rpuniverse.core.basicneeds.commands.PoopCommand;
 import me.fami6xx.rpuniverse.core.commands.*;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
@@ -110,6 +111,11 @@ public final class RPUniverse extends JavaPlugin {
         this.getCommand("settag").setExecutor(new SetTagCommand());
         this.getCommand("tag").setExecutor(new TagCommand());
         this.getCommand("switchjob").setExecutor(new SwitchJobCommand());
+        this.getCommand("poop").setExecutor(new PoopCommand());
+
+        DocCommand docCommand = new DocCommand();
+        this.getCommand("doc").setExecutor(docCommand);
+        getServer().getPluginManager().registerEvents(docCommand, this);
 
         this.createJobStarter = new CreateJobStarter(this);
         this.createJobStarter.start();

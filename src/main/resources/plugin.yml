@@ -17,6 +17,10 @@ commands:
     description: Sends a message acting as some kind of temporary player status
     usage: /<command> <message>
     permission: rpu.do
+  doc:
+    description: Sends a message and a hologram that acts as if player is doing something for some period of time
+    usage: /<command> <seconds> (message)
+    permission: rpu.doc
   status:
     description: Sends a message acting as some kind of player status
     usage: /<command> <message>
@@ -56,6 +60,9 @@ commands:
     description: Opens the consumables menu
     usage: /<command>
     aliases: [consumable, consumablemenu, basicneeds, basicneedsmenu]
+  poop:
+    description: Command used to empty the poop from basic needs
+    usage: /<command>
 permissions:
   rpu.user:
     description: Gives access to all user commands
@@ -65,6 +72,7 @@ permissions:
         rpu.status: true
         rpu.stopstatus: true
         rpu.globalooc: true
+        rpu.doc: true
   rpu.admin:
     description: Gives access to all admin commands
     children:
