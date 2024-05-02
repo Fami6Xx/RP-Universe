@@ -63,6 +63,9 @@ commands:
   poop:
     description: Command used to empty the poop from basic needs
     usage: /<command>
+  pee:
+    description: Command used to empty the pee from basic needs
+    usage: /<command>
 permissions:
   rpu.user:
     description: Gives access to all user commands
