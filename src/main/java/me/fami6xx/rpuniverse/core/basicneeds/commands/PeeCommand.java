@@ -29,12 +29,12 @@ public class PeeCommand implements CommandExecutor {
 
         Player player = (Player) sender;
         PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
-        if (playerData.getPoopLevel() <= 25) {
+        if (playerData.getPeeLevel() <= 25) {
             player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorYouDontNeedToPeeMessage));
             return true;
         }
 
-        playerData.setPoopLevel(0);
+        playerData.setPeeLevel(0);
         player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().successPeeMessage));
         HashMap<String, String> replace = new HashMap<>();
         replace.put("{message}", RPUniverse.getLanguageHandler().peeDocHologramMessage);
