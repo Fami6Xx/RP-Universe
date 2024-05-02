@@ -29,3 +29,6 @@ A quality API is a matter of course so that developers can customize and extend 
 - Property purchase
 - Comprehensive banking system
 - Localization system
+
+## Release
+[<img src="https://images.polymart.org/resource/5845/default.jpg" width="480" alt="Download RPUniverse | Minecraft Roleplay on Polymart.org" title="Download RPUniverse | Minecraft Roleplay on Polymart.org">](https://polymart.org/resource/rpuniverse-minecraft-roleplay.5845?utm_source=product-materials-image&utm_medium=referral&utm_campaign=product-5845-materials-image-default&utm_content=product-5845-user-2406-markdown)
