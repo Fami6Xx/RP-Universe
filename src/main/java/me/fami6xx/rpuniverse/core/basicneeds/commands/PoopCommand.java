@@ -9,6 +9,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+
 import static me.fami6xx.rpuniverse.core.commands.DocCommand.addDoc;
 
 public class PoopCommand implements CommandExecutor {
@@ -34,7 +36,9 @@ public class PoopCommand implements CommandExecutor {
 
         playerData.setPoopLevel(0);
         player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().successPoopMessage));
-        addDoc(player, 5, RPUniverse.getLanguageHandler().docCommandHologram, true);
+        HashMap<String, String> replace = new HashMap<>();
+        replace.put("{message}", RPUniverse.getLanguageHandler().poopDocHologramMessage);
+        addDoc(player, 5, FamiUtils.replace(RPUniverse.getLanguageHandler().docCommandHologram, replace), true);
         return true;
     }
 }
