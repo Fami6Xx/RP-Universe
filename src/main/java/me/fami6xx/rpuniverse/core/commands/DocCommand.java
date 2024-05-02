@@ -78,7 +78,7 @@ public class DocCommand implements CommandExecutor, Listener {
 
         HashMap<String, String> replace = new HashMap<>();
         replace.put("{player}", player.getName());
-        replace.put("{seconds}", String.valueOf(docSeconds));
+        replace.put("{seconds}", 1 + "/" + docSeconds);
         replace.put("{message}", message);
 
         FollowingHologram holo = new FollowingHologram(player, range, false, false);
