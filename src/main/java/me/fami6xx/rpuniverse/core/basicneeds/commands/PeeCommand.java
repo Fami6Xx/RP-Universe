@@ -38,7 +38,7 @@ public class PeeCommand implements CommandExecutor {
         player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().successPeeMessage));
         HashMap<String, String> replace = new HashMap<>();
         replace.put("{message}", RPUniverse.getLanguageHandler().peeDocHologramMessage);
-        addDoc(player, 5, FamiUtils.replace(RPUniverse.getLanguageHandler().docCommandHologram, replace), true);
+        addDoc(player, 5, FamiUtils.replace(RPUniverse.getLanguageHandler().peeDocHologramMessage, replace), true);
         return true;
     }
 }

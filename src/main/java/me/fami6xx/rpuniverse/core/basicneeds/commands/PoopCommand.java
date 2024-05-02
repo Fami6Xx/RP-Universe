@@ -38,7 +38,7 @@ public class PoopCommand implements CommandExecutor {
         player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().successPoopMessage));
         HashMap<String, String> replace = new HashMap<>();
         replace.put("{message}", RPUniverse.getLanguageHandler().poopDocHologramMessage);
-        addDoc(player, 5, FamiUtils.replace(RPUniverse.getLanguageHandler().docCommandHologram, replace), true);
+        addDoc(player, 5, FamiUtils.replace(RPUniverse.getLanguageHandler().poopDocHologramMessage, replace), true);
         return true;
     }
 }
