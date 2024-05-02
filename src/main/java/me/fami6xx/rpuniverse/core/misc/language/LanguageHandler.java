@@ -169,6 +169,10 @@ public class LanguageHandler {
     public String editConsumableMenuRemoveItemMessage = "&cYou removed the consumable!";
     public String errorYouDontNeedToPoopMessage = "&cYou don't need to poop!";
     public String successPoopMessage = "&cYou are pooping!";
+    public String poopDocHologramMessage = "Pooping";
+    public String errorYouDontNeedToPeeMessage = "&cYou don't need to pee!";
+    public String successPeeMessage = "&cYou are peeing!";
+    public String peeDocHologramMessage = "Peeing";
 
 
 
