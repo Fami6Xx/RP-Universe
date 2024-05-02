@@ -459,6 +459,7 @@ public class PlayerData {
      */
     public void setFoodLevel(int foodLevel) {
         if (foodLevel > 100) foodLevel = 100;
+        if (foodLevel < 0) foodLevel = 0;
         this.foodLevel = foodLevel;
     }
 
@@ -478,6 +479,7 @@ public class PlayerData {
      */
     public void setWaterLevel(int waterLevel) {
         if (waterLevel > 100) waterLevel = 100;
+        if (waterLevel < 0) waterLevel = 0;
         this.waterLevel = waterLevel;
     }
 
@@ -496,6 +498,7 @@ public class PlayerData {
      */
     public void setPoopLevel(int poopLevel) {
         if (poopLevel > 100) poopLevel = 100;
+        if (poopLevel < 0) poopLevel = 0;
         this.poopLevel = poopLevel;
     }
 
@@ -515,6 +518,7 @@ public class PlayerData {
      */
     public void setPeeLevel(int peeLevel) {
         if (peeLevel > 100) peeLevel = 100;
+        if (peeLevel < 0) peeLevel = 0;
         this.peeLevel = peeLevel;
     }
 }
