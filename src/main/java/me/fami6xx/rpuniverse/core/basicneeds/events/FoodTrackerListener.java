@@ -36,9 +36,9 @@ public class FoodTrackerListener implements Listener {
                     player.setHealth(player.getHealth() + consumable.getHealth());
                 }
 
-                if (event.getItem().asOne() == player.getInventory().getItemInMainHand().asOne()) {
+                if (handler.isConsumable(player.getInventory().getItemInMainHand()) && handler.getConsumable(player.getInventory().getItemInMainHand()) == handler.getConsumable(event.getItem())) {
                     player.getInventory().getItemInMainHand().subtract();
-                }else if (event.getItem().asOne() == player.getInventory().getItemInOffHand().asOne()){
+                }else if (handler.isConsumable(player.getInventory().getItemInOffHand()) && handler.getConsumable(player.getInventory().getItemInOffHand()) == handler.getConsumable(event.getItem())){
                     player.getInventory().getItemInOffHand().subtract();
                 }else{
                     player.getInventory().remove(event.getItem());
