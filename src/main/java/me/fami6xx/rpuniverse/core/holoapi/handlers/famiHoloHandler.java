@@ -75,7 +75,7 @@ public abstract class famiHoloHandler {
 
     public void stop(){
         task.cancel();
-        ((HashMap<UUID, ArrayList<famiHologram>>) getMap().clone()).forEach((uuid, holograms) -> holograms.forEach(famiHologram -> famiHologram.getHologram().delete()));
+        getMap().forEach((uuid, holograms) -> holograms.forEach(famiHologram -> famiHologram.getHologram().delete()));
         map.clear();
     }
     
