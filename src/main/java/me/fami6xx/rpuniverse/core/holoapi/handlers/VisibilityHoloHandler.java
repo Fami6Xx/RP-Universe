@@ -42,9 +42,6 @@ public class VisibilityHoloHandler extends famiHoloHandler {
             public List<Player> getList(UUID uuid) {
                 return hashMap.get(uuid) == null ? createList(uuid) : hashMap.get(uuid);
             }
-            public void removeList(UUID uuid){
-                hashMap.remove(uuid);
-            }
             public void updateList(UUID uuid, List<Player> list){
                 hashMap.replace(uuid, list);
             }
