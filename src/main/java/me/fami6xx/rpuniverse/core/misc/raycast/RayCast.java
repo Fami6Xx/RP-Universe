@@ -189,7 +189,7 @@ public class RayCast {
             if(ignoreSeeThroughBlocks){
                 if(block.isLiquid()) continue;
                 if(!block.getType().isOccluding()) continue;
-                if(block.getType().isTransparent()) continue;
+                if(block.getType().isSolid() && !block.getType().isOccluding()) continue;
             }
 
             hit = true;
