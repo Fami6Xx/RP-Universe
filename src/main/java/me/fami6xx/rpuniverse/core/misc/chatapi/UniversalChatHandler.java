@@ -53,7 +53,7 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
 
             String formattedMessage = FamiUtils.replaceAndFormat(localOOCMessage, replace);
 
-            FamiUtils.sendMessageInRange(e.getPlayer(), formattedMessage, RPUniverse.getInstance().getConfiguration().getInt("general.localOOCRange"));
+            FamiUtils.sendMessageInRange(e.getPlayer(), formattedMessage, range);
             boolean shouldSendToConsole = false;
             try{
                 shouldSendToConsole = RPUniverse.getInstance().getConfiguration().getBoolean("general.logLocalToConsole");

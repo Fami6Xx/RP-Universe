@@ -16,7 +16,6 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.*;
-import java.util.logging.Logger;
 
 public class DataSystem implements Listener {
     private static final String HANDLER_TYPE = "JSONDataHandler";

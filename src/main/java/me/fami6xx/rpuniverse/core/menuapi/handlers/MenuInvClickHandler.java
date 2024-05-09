@@ -2,7 +2,6 @@ package me.fami6xx.rpuniverse.core.menuapi.handlers;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
-import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
