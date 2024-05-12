@@ -25,6 +25,8 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <executable>${env.JAVA_HOME}/bin/javac</executable>
+                    <fork>true</fork>
                 </configuration>
             </plugin>
             <plugin>
