@@ -254,6 +254,9 @@ public class LanguageHandler {
     public String switchJobCommandError = "&cNo job found!";
     public String switchJobCommandErrorAlreadyInJob = "&cYou are already in this job!";
 
+    // LOCKS
+    public String allLocksMenuName = "&6RPUniverse &7| &cAll Locks";
+
 
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";
