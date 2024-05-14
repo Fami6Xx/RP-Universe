@@ -57,6 +57,7 @@ public class AllLocksMenu extends EasyPaginatedMenu {
     public List<MenuTag> getMenuTags() {
         List<MenuTag> menuTags = new ArrayList<>();
         menuTags.add(MenuTag.ADMIN);
+        menuTags.add(MenuTag.ALL_LOCKS);
         return menuTags;
     }
 

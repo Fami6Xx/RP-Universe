@@ -10,4 +10,5 @@ public enum MenuTag {
     JOB_ALL_POSITIONS,
     JOB_ALL_PLAYERS_INTERNAL,
     ALL_CONSUMABLES,
+    ALL_LOCKS,
 }
