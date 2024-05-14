@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.locks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Material;
@@ -23,8 +24,12 @@ public class AllLocksMenu extends EasyPaginatedMenu {
 
     @Override
     public ItemStack getItemFromIndex(int index) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getItemFromIndex'");
+        Lock lock = locks.get(index);
+        HashMap<String, String> placeholders = new HashMap<>();
+        placeholders.put("{lockOwner}", lock.getOwner() == null ? "None" : lock.getOwner());
+        placeholders.put("{lockJobName}", lock.getJobName() == null ? "None" : lock.getJobName());
+        placeholders.put("{lockMinWorkingLevel}", lock.getMinWorkingLevel() == 0 ? "None" : String.valueOf(lock.getMinWorkingLevel()));
+        return FamiUtils.makeItem(lock.getShownMaterial(), FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().lockItemDisplayName, placeholders), FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().lockItemLore, placeholders));
     }
 
     @Override
