@@ -1,7 +1,6 @@
 package me.fami6xx.rpuniverse.core.locks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
