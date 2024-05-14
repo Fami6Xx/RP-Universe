@@ -256,7 +256,12 @@ public class LanguageHandler {
 
     // LOCKS
     public String allLocksMenuName = "&6RPUniverse &7| &cAll Locks";
-
+    public String allLocksMenuCreateLockDisplayName = "&aCreate New Lock";
+    public String allLocksMenuCreateLockLore = "&7Click to create a new lock.";
+    public String allLocksMenuFilterDisplayName = "&aFilter";
+    public String allLocksMenuFilterLore = "&7Click to filter the locks.";
+    public String allLocksMenuSearchDisplayName = "&aSearch";
+    public String allLocksMenuSearchLore = "&7Click to search for a lock.";
 
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";

@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.locks;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,8 +40,12 @@ public class AllLocksMenu extends EasyPaginatedMenu {
 
     @Override
     public void addAdditionalItems() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addAdditionalItems'");
+        // 45 - Create Lock
+        // 52 - Search
+        // 53 - Filter
+        inventory.setItem(45, FamiUtils.makeItem(Material.EMERALD_BLOCK, RPUniverse.getLanguageHandler().allLocksMenuCreateLockDisplayName, RPUniverse.getLanguageHandler().allLocksMenuCreateLockLore));
+        inventory.setItem(52, FamiUtils.makeItem(Material.BARREL, RPUniverse.getLanguageHandler().allLocksMenuSearchDisplayName, RPUniverse.getLanguageHandler().allLocksMenuSearchLore));
+        inventory.setItem(53, FamiUtils.makeItem(Material.BOOK, RPUniverse.getLanguageHandler().allLocksMenuFilterDisplayName, RPUniverse.getLanguageHandler().allLocksMenuFilterLore));
     }
 
     @Override
