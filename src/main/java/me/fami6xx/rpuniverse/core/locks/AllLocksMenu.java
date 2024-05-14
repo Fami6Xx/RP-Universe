@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
@@ -29,7 +32,14 @@ public class AllLocksMenu extends EasyPaginatedMenu {
         placeholders.put("{lockOwner}", lock.getOwner() == null ? "None" : lock.getOwner());
         placeholders.put("{lockJobName}", lock.getJobName() == null ? "None" : lock.getJobName());
         placeholders.put("{lockMinWorkingLevel}", lock.getMinWorkingLevel() == 0 ? "None" : String.valueOf(lock.getMinWorkingLevel()));
-        return FamiUtils.makeItem(lock.getShownMaterial(), FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().lockItemDisplayName, placeholders), FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().lockItemLore, placeholders));
+        
+        ItemStack item = FamiUtils.makeItem(lock.getShownMaterial(), FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().lockItemDisplayName, placeholders), FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().lockItemLore, placeholders));
+
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(new NamespacedKey(RPUniverse.getInstance(), "lock"), PersistentDataType.INTEGER, index);
+        item.setItemMeta(meta);
+
+        return item;
     }
 
     @Override
