@@ -17,6 +17,10 @@ public abstract class PaginatedMenu extends Menu{
     public PaginatedMenu(PlayerMenu menu){
         super(menu);
     }
+
+    /**
+     * Adds the menu border to the inventory.
+     */
     public void addMenuBorder(){
         inventory.setItem(48, FamiUtils.makeItem(Material.STONE_BUTTON, FamiUtils.format(RPUniverse.getLanguageHandler().previousPageItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().previousPageItemLore)));
 
@@ -45,10 +49,21 @@ public abstract class PaginatedMenu extends Menu{
             }
         }
     }
+
+    /**
+     * Returns the maximum number of items per page.
+     *
+     * @return the maximum number of items per page.
+     */
     public int getMaxItemsPerPage() {
         return maxItemsPerPage;
     }
 
+    /**
+     * Returns the number of slots in the inventory.
+     *
+     * @return the number of slots in the inventory.
+     */
     @Override
     public int getSlots(){
         return 54;

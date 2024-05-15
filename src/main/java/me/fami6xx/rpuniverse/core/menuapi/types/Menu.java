@@ -39,6 +39,9 @@ public abstract class Menu implements InventoryHolder {
         playerMenu.getPlayer().openInventory(inventory);
     }
 
+    /**
+     * Opens the menu for the player.
+     */
     public void open() {
         Menu menu = this;
         new BukkitRunnable() {
@@ -73,11 +76,19 @@ public abstract class Menu implements InventoryHolder {
         }.runTaskLater(RPUniverse.getInstance(), 1L);
     }
 
+    /**
+     * Returns the inventory associated with this menu.
+     *
+     * @return the inventory associated with this menu.
+     */
     @Override
     public Inventory getInventory() {
         return inventory;
     }
 
+    /**
+     * Sets the filler glass item to the inventory.
+     */
     public void setFillerGlass(){
         for (int i = 0; i < getSlots(); i++) {
             if (inventory.getItem(i) == null){
@@ -86,6 +97,12 @@ public abstract class Menu implements InventoryHolder {
         }
     }
 
+    /**
+     * Makes a colored glass pane item.
+     *
+     * @param color the color of the glass pane.
+     * @return the colored glass pane item.
+     */
     public ItemStack makeColoredGlass(DyeColor color){
         Material coloredGlassPane = Material.matchMaterial(color.name() + "_STAINED_GLASS_PANE");
         if (coloredGlassPane == null) {
