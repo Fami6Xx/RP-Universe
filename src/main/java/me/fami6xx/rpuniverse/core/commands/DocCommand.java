@@ -66,9 +66,9 @@ public class DocCommand implements CommandExecutor, Listener {
     }
 
     public static void addDoc(Player player, int docSeconds, String message, boolean blockPlayerMovement){
-        int range = 0;
+        final int[] range = {0};
         try {
-            range = RPUniverse.getInstance().getConfiguration().getInt("holograms.range");
+            range[0] = RPUniverse.getInstance().getConfiguration().getInt("holograms.range");
         }catch (Exception exc){
             HashMap<String, String> replace = new HashMap<>();
             replace.put("{value}", "holograms.range");
@@ -81,7 +81,7 @@ public class DocCommand implements CommandExecutor, Listener {
         replace.put("{seconds}", 1 + "/" + docSeconds);
         replace.put("{message}", message);
 
-        FollowingHologram holo = new FollowingHologram(player, range, false, false);
+        FollowingHologram holo = new FollowingHologram(player, range[0], false, false);
         HologramLine line = holo.addLine(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().docCommandHologram, replace));
         if(blockPlayerMovement){
             blockedMovementPlayers.put(player, true);
@@ -91,6 +91,7 @@ public class DocCommand implements CommandExecutor, Listener {
             final int maxSeconds = docSeconds;
             final Player docPlayer = player;
             final String docMessage = message;
+            final int docRange = range[0];
             @Override
             public String update() {
                 HashMap<String, String> replaceHashMap = new HashMap<>();
@@ -100,7 +101,7 @@ public class DocCommand implements CommandExecutor, Listener {
                 String newLine = FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().docCommandHologram, replaceHashMap);
                 if(seconds <= maxSeconds){
                     seconds++;
-                    docPlayer.sendMessage(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().docCommandMessage, replaceHashMap));
+                    FamiUtils.sendMessageInRange(docPlayer, RPUniverse.getLanguageHandler().docCommandMessage, docRange, replaceHashMap);
                     return newLine;
                 }
                 holo.destroy();
