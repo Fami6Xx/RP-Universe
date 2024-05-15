@@ -13,22 +13,41 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+/**
+ * Manages player menus and handles menu-related events.
+ */
 public class MenuManager {
     MenuInvClickHandler clickHandler;
 
     private static final HashMap<Player, PlayerMenu> playerMenuMap = new HashMap<>();
 
+    /**
+     * Enables the menu manager by registering the click handler.
+     *
+     * @return true if the operation was successful.
+     */
     public boolean enable() {
         this.clickHandler = new MenuInvClickHandler();
         RPUniverse.getInstance().getServer().getPluginManager().registerEvents(this.clickHandler, RPUniverse.getInstance());
         return true;
     }
 
+    /**
+     * Disables the menu manager by unregistering the click handler.
+     *
+     * @return true if the operation was successful.
+     */
     public boolean disable() {
         InventoryClickEvent.getHandlerList().unregister(this.clickHandler);
         return true;
     }
 
+    /**
+     * Retrieves the PlayerMenu for a given player, creating one if it doesn't exist.
+     *
+     * @param player the player whose menu is to be retrieved.
+     * @return the PlayerMenu associated with the player.
+     */
     public PlayerMenu getPlayerMenu(Player player){
         PlayerMenu playerMenu;
         if (!(playerMenuMap.containsKey(player))) {
@@ -41,6 +60,11 @@ public class MenuManager {
         }
     }
 
+    /**
+     * Closes all job menus that match the given predicate.
+     *
+     * @param predicate the predicate to test jobs against.
+     */
     public void closeAllJobMenus(Predicate<Job> predicate) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
@@ -54,6 +78,11 @@ public class MenuManager {
         }
     }
 
+    /**
+     * Closes all menus for players whose UUID matches the given predicate.
+     *
+     * @param predicate the predicate to test UUIDs against.
+     */
     public void closeAllMenusUUIDPredicate(Predicate<UUID> predicate) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getPlayer().getUniqueId())) {
@@ -67,6 +96,12 @@ public class MenuManager {
         }
     }
 
+    /**
+     * Closes all menus for players whose UUID matches the given predicate and have the specified tags.
+     *
+     * @param predicate the predicate to test UUIDs against.
+     * @param tags      the tags to check for.
+     */
     public void closeAllMenusUUIDPredicate(Predicate<UUID> predicate, MenuTag... tags) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getPlayer().getUniqueId())) {
@@ -90,6 +125,11 @@ public class MenuManager {
         }
     }
 
+    /**
+     * Reopens the menu for a given player if it exists.
+     *
+     * @param player the player whose menu is to be reopened.
+     */
     public void reopenMenu(Player player) {
         if (playerMenuMap.containsKey(player)) {
             PlayerMenu playerMenu = playerMenuMap.get(player);
@@ -99,6 +139,11 @@ public class MenuManager {
         }
     }
 
+    /**
+     * Reopens menus for players that match the given predicate.
+     *
+     * @param predicate the predicate to test players against.
+     */
     public void reopenMenus(Predicate<Player> predicate) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getPlayer())) {
@@ -107,6 +152,11 @@ public class MenuManager {
         }
     }
 
+    /**
+     * Reopens job menus for jobs that match the given predicate.
+     *
+     * @param predicate the predicate to test jobs against.
+     */
     public void reopenJobMenus(Predicate<Job> predicate) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
@@ -115,6 +165,12 @@ public class MenuManager {
         }
     }
 
+    /**
+     * Reopens job menus for jobs that match the given predicate and have the specified tags.
+     *
+     * @param predicate the predicate to test jobs against.
+     * @param tags      the tags to check for.
+     */
     public void reopenJobMenus(Predicate<Job> predicate, MenuTag... tags) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
@@ -134,6 +190,12 @@ public class MenuManager {
         }
     }
 
+    /**
+     * Closes all job menus that match the given predicate and have the specified tags.
+     *
+     * @param predicate the predicate to test jobs against.
+     * @param tags      the tags to check for.
+     */
     public void closeAllJobMenus(Predicate<Job> predicate, MenuTag... tags) {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null && predicate.test(playerMenu.getEditingJob())) {
@@ -158,6 +220,9 @@ public class MenuManager {
         }
     }
 
+    /**
+     * Closes all menus.
+     */
     public void closeAllMenus() {
         for (PlayerMenu playerMenu : playerMenuMap.values()) {
             if (playerMenu.getCurrentMenu() != null) {
@@ -171,6 +236,11 @@ public class MenuManager {
         }
     }
 
+    /**
+     * Closes the menu for a given player.
+     *
+     * @param player the player whose menu is to be closed.
+     */
     public void closeMenu(Player player) {
         Player playerInstance = player;
         if (playerMenuMap.containsKey(player)) {
