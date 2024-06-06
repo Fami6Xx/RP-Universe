@@ -9,18 +9,40 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The JobsHandler is the main class for handling the jobs.
+ * It is responsible for loading the jobs, saving the jobs, and handling the jobs handler.
+ * <p>
+ * The JobsHandler is a singleton class, so only one instance of it should be created.
+ * <p>
+ * The JobsHandler is also a listener for the PlayerJoinEvent.
+ * This means that the JobsHandler will also listen for the PlayerJoinEvent and update the jobs accordingly.
+ */
 public class JobsHandler implements Listener {
     private final List<Job> jobs = new ArrayList<>();
     private final List<JobType> jobTypes = new ArrayList<>();
 
+    /**
+     * Constructor for the JobsHandler.
+     * Initializes the jobs and job types.
+     * Also loads all the jobs.
+     */
     public JobsHandler() {
         loadAllJobs();
     }
 
+    /**
+     * Shutdown the JobsHandler.
+     * Saves all the jobs.
+     */
     public void shutdown() {
         jobs.forEach(job -> RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getName(), job));
     }
 
+    /**
+     * Load all the jobs from the data handler.
+     * Also initializes the jobs and job types.
+     */
     public void loadAllJobs(){
         Job[] jobs = RPUniverse.getInstance().getDataSystem().getDataHandler().getAllJobData();
 
@@ -36,6 +58,11 @@ public class JobsHandler implements Listener {
         }
     }
 
+    /**
+     * Get a job by its name
+     * @param name The name of the job
+     * @return The job
+     */
     public Job getJobByName(String name){
         for(Job job : jobs){
             if(job.getName().equals(name)){
@@ -45,6 +72,11 @@ public class JobsHandler implements Listener {
         return null;
     }
 
+    /**
+     * Get a job type by its name
+     * @param name The name of the job type
+     * @return The job type
+     */
     public JobType getJobTypeByName(String name){
         for(JobType jobType : jobTypes){
             if(jobType.getName().equals(name)){
@@ -54,6 +86,10 @@ public class JobsHandler implements Listener {
         return null;
     }
 
+    /**
+     * Remove a job
+     * @param job The job to remove
+     */
     public void removeJob(Job job){
         job.remove();
         jobs.remove(job);
@@ -61,14 +97,26 @@ public class JobsHandler implements Listener {
         RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == job);
     }
 
+    /**
+     * Get the jobs
+     * @return The jobs
+     */
     public List<Job> getJobs() {
         return jobs;
     }
 
+    /**
+     * Get the job types
+     * @return The job types
+     */
     public List<JobType> getJobTypes() {
         return jobTypes;
     }
 
+    /**
+     * Add a job
+     * @param job The job to add
+     */
     public void addJob(Job job){
         jobs.add(job);
         RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getName(), job);
