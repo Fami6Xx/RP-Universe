@@ -37,7 +37,17 @@ public class LocksHandler {
     public List<Lock> getLocksByOwner(String owner) {
         List<Lock> result = new ArrayList<>();
         for (Lock lock : locks) {
-            if (lock.getOwner().equals(owner)) {
+            if (lock.getOwner() != null ? lock.getOwner().equals(owner) : false) {
+                result.add(lock);
+            }
+        }
+        return result;
+    }
+
+    public List<Lock> getLocksByJob(String jobName){
+        List<Lock> result = new ArrayList<>();
+        for (Lock lock : locks) {
+            if (lock.getJobName() != null && lock.getJobName().equals(jobName)) {
                 result.add(lock);
             }
         }
