@@ -8,6 +8,7 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
 import me.fami6xx.rpuniverse.core.basicneeds.ConsumableItem;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.locks.Lock;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
@@ -15,6 +16,8 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 import java.io.*;
 import java.nio.file.Path;
@@ -257,5 +260,51 @@ public class JSONDataHandler implements IDataHandler {
     @Override
     public int getQueueSaveTime() {
         return 20 * 60 * 5; // 5 minutes
+    }
+
+    @Override
+    public boolean saveLockData(Lock lock) {
+        Path lockFilePath = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/locks/" + lock.getLocation().hashCode() + ".json");
+        File lockFile = lockFilePath.toFile();
+        if (!lockFile.exists()) {
+            try {
+                if (!lockFile.createNewFile()) {
+                    return false;
+                }
+            } catch (IOException e) {
+                logger.severe(e.getMessage());
+                return false;
+            }
+        }
+
+        try (Writer writer = new FileWriter(lockFile)) {
+            gson.toJson(lock, writer);
+            return true;
+        } catch (IOException e) {
+            logger.severe(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public Lock[] getAllLockData() {
+        File lockDir = new File(RPUniverse.getInstance().getDataFolder().getPath() + "/locks/");
+        File[] files = lockDir.listFiles();
+        if (files == null) {
+            return new Lock[0];
+        }
+
+        List<Lock> locks = new ArrayList<>();
+        for (File file : files) {
+            try (Reader reader = new FileReader(file)) {
+                Lock lock = gson.fromJson(reader, Lock.class);
+                if (lock != null) {
+                    locks.add(lock);
+                }
+            } catch (IOException | JsonParseException e) {
+                logger.severe("Failed to load lock data from file: " + file.getName() + " with error: " + e.getMessage());
+            }
+        }
+        return locks.toArray(new Lock[0]);
     }
 }

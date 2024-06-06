@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.misc.datahandlers;
 import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
 import me.fami6xx.rpuniverse.core.basicneeds.ConsumableItem;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.locks.Lock;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import org.bukkit.inventory.ItemStack;
 
@@ -104,4 +105,16 @@ public interface IDataHandler {
      * @return The time in ticks between each save task run.
      */
     int getQueueSaveTime();
+
+    /**
+     * Saves lock
+     * @return Status if the lock has been saved.
+     */
+    boolean saveLockData(Lock lock);
+
+    /**
+     * Gets all the saved lock data.
+     * @return An array of all the saved lock data.
+     */
+    Lock[] getAllLockData();
 }
