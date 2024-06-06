@@ -10,6 +10,15 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * The ActionBarHandler is the main class for handling the action bars.
+ * It is responsible for adding, removing, and updating the action bars.
+ * <p>
+ * The ActionBarHandler is a singleton class, so only one instance of it should be created.
+ * <p>
+ * The ActionBarHandler is also a listener for the PlayerJoinEvent and PlayerQuitEvent.
+ * This means that the ActionBarHandler will also listen for these events and update the action bars accordingly.
+ */
 public class ActionBarHandler {
     private final HashMap<Player, BlockingQueue<String>> playerMessages = new HashMap<>();
 
