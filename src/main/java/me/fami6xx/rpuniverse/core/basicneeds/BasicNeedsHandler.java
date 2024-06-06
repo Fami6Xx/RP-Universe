@@ -16,6 +16,15 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.HashMap;
 import java.util.Queue;
 
+/**
+ * The BasicNeedsHandler is the main class for handling the basic needs.
+ * It is responsible for adding, removing, and updating the basic needs.
+ * <p>
+ * The BasicNeedsHandler is a singleton class, so only one instance of it should be created.
+ * <p>
+ * The BasicNeedsHandler is also a listener for the PlayerJoinEvent and PlayerQuitEvent.
+ * This means that the BasicNeedsHandler will also listen for these events and update the basic needs accordingly.
+ */
 public class BasicNeedsHandler {
     private transient RPUniverse plugin;
     private HashMap<ItemStack, ConsumableItem> consumables = new HashMap<>();
@@ -24,6 +33,11 @@ public class BasicNeedsHandler {
     private transient BukkitTask removeNeedsTask;
 
 
+    /**
+     * Initialize the BasicNeedsHandler.
+     * Loads the consumables and starts the tasks.
+     * @param plugin The plugin instance
+     */
     public void initialize(RPUniverse plugin) {
         this.plugin = plugin;
         this.config = new BasicNeedsConfig(plugin);
@@ -37,6 +51,10 @@ public class BasicNeedsHandler {
         }
     }
 
+    /**
+     * Shutdown the BasicNeedsHandler.
+     * Stops the tasks and removes the consumables.
+     */
     public void shutdown() {
         if(actionBarTask != null) {
             actionBarTask.cancel();
@@ -46,6 +64,10 @@ public class BasicNeedsHandler {
         }
     }
 
+    /**
+     * Display the interval.
+     * @return The interval
+     */
     private BukkitTask displayInterval() {
         return new BukkitRunnable() {
             @Override
