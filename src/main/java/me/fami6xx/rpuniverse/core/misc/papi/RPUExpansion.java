@@ -29,11 +29,41 @@ public class RPUExpansion extends PlaceholderExpansion {
 
     @Override
     public boolean persist() {
-        return true; // This is required or else PlaceholderAPI will unregister the Expansion on reload
+        return true;
     }
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
+        if(params.equalsIgnoreCase("mode")){
+            return RPUniverse.getPlayerData(player.getUniqueId().toString()).getPlayerMode().toString();
+        }
+
+        if(params.equalsIgnoreCase("job")){
+            return RPUniverse.getPlayerData(player.getUniqueId().toString()).getSelectedPlayerJob() != null ?
+             RPUniverse.getPlayerData(player.getUniqueId().toString()).getSelectedPlayerJob().getName() : RPUniverse.getLanguageHandler().bossBarPlayerNoJob;
+        }
+
+        if(params.equalsIgnoreCase("jobRank")){
+            return RPUniverse.getPlayerData(player.getUniqueId().toString()).getSelectedPlayerJob() != null ?
+            RPUniverse.getPlayerData(player.getUniqueId().toString()).getSelectedPlayerJob().getPlayerPosition(player.getUniqueId()).getName() : RPUniverse.getLanguageHandler().bossBarPlayerNoJob;
+        }
+
+        if(params.equalsIgnoreCase("poopLevel")){
+            return String.valueOf(RPUniverse.getPlayerData(player.getUniqueId().toString()).getPoopLevel());
+        }
+
+        if(params.equalsIgnoreCase("peeLevel")){
+            return String.valueOf(RPUniverse.getPlayerData(player.getUniqueId().toString()).getPeeLevel());
+        }
+
+        if(params.equalsIgnoreCase("foodLevel")){
+            return String.valueOf(RPUniverse.getPlayerData(player.getUniqueId().toString()).getFoodLevel());
+        }
+
+        if(params.equalsIgnoreCase("waterLevel")){
+            return String.valueOf(RPUniverse.getPlayerData(player.getUniqueId().toString()).getWaterLevel());
+        }
+
         return null;
     }
 }
