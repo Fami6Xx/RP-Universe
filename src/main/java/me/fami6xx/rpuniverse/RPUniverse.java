@@ -170,70 +170,141 @@ public final class RPUniverse extends JavaPlugin {
         return econ != null;
     }
 
+    /**
+     * Get the Economy
+     * @return The Economy
+     */
     public Economy getEconomy() {
         return econ;
     }
 
+    /**
+     * Get the UniversalChatHandler
+     * @return The UniversalChatHandler
+     */
     public UniversalChatHandler getUniversalChatHandler() {
         return universalChatHandler;
     }
 
+    /**
+     * Get the MenuManager
+     * @return The MenuManager
+     */
     public MenuManager getMenuManager() {
         return menuManager;
     }
 
+    /**
+     * Get the LanguageHandler
+     * @return The LanguageHandler
+     */
     public static LanguageHandler getLanguageHandler() {
         return getInstance().languageHandler;
     }
 
+    /**
+     * Get the FileConfiguration
+     * @return The FileConfiguration
+     */
     public FileConfiguration getConfiguration() {
         return config;
     }
 
+    /**
+     * Format a message
+     * @param message The message to format
+     * @return The formatted message
+     */
     public static String format(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
+    /**
+     * Get the prefix from the config
+     * @return The prefix
+     */
     public static String getPrefix() {
         return format(getInstance().getConfiguration().getString("prefix"));
     }
 
+    /**
+     * Get the DataSystem
+     * @return The DataSystem
+     */
     public DataSystem getDataSystem() {
         return dataSystem;
     }
 
+    /**
+     * Get the HoloAPI
+     * @return The HoloAPI
+     */
     public HoloAPI getHoloAPI() {
         return holoAPI;
     }
 
+    /**
+     * Get the JobsHandler
+     * @return The JobsHandler
+     */
     public JobsHandler getJobsHandler() {
         return jobsHandler;
     }
 
+    /**
+     * Get the RPUniverse instance
+     * @return The RPUniverse instance
+     */
     public static RPUniverse getInstance() {
         return (RPUniverse) getJavaPlugin();
     }
 
+    /**
+     * Get the JavaPlugin instance
+     * @return The JavaPlugin instance
+     */
     public static JavaPlugin getJavaPlugin() {
         return getProvidingPlugin(RPUniverse.class);
     }
 
+    /**
+     * Get the PlayerData from the DataSystem
+     * @param UUID The UUID of the player
+     * @return The PlayerData
+     */
     public static PlayerData getPlayerData(String UUID) {
         return getInstance().getDataSystem().getPlayerData(UUID);
     }
 
+    /**
+     * Get the BossBarHandler
+     * @return The BossBarHandler
+     */
     public BossBarHandler getBossBarHandler() {
         return bossBarHandler;
     }
 
+    /**
+     * Get the ActionBarHandler
+     * @return The ActionBarHandler
+     */
     public ActionBarHandler getActionBarHandler() {
         return actionBarHandler;
     }
 
+    /**
+     * Get the BasicNeedsHandler
+     * @return The BasicNeedsHandler
+     */
     public BasicNeedsHandler getBasicNeedsHandler() {
         return basicNeedsHandler;
     }
 
+    /**
+     * Get the version from the API
+     * @return The version
+     * @throws Exception
+     */
     private String getVersionFromAPI() throws Exception {
         String urlString = "https://api.polymart.org/v1/getResourceInfoSimple/?resource_id=5845&key=version";
         URL url = new URL(urlString);
@@ -259,6 +330,11 @@ public final class RPUniverse extends JavaPlugin {
         }
     }
 
+    /**
+     * Compare the version from the API with the version from the config
+     * @return If the versions are equal
+     * @throws Exception
+     */
     private boolean compareVersions() throws Exception {
         String apiVersion = getVersionFromAPI();
         String configVersion = RPUniverse.getInstance().getConfiguration().getString("version");
