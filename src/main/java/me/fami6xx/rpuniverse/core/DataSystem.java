@@ -17,6 +17,15 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.*;
 
+/**
+ * The DataSystem is the main class for handling the data.
+ * It is responsible for loading the player data, saving the player data, and handling the data handler.
+ * <p>
+ * The DataSystem is a singleton class, so only one instance of it should be created.
+ * <p>
+ * The DataSystem is also a listener for the PlayerJoinEvent and PlayerQuitEvent.
+ * This means that the DataSystem will also listen for these events and update the player data accordingly.
+ */
 public class DataSystem implements Listener {
     private static final String HANDLER_TYPE = "JSONDataHandler";
     private final IDataHandler dataHandler;
@@ -25,6 +34,11 @@ public class DataSystem implements Listener {
     private BukkitTask saveTask;
     private BukkitTask completeSaveTask;
 
+    /**
+     * Constructor for the DataSystem.
+     * Initializes the data handler, player data map, and save queue.
+     * Also starts the data handler and schedules the save tasks.
+     */
     public DataSystem() {
         this.dataHandler = selectDataHandler();
         this.playerDataMap = new ConcurrentHashMap<>();
