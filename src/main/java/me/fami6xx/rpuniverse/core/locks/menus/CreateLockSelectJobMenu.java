@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.locks.menus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.locks.LockHandler;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
@@ -43,8 +45,19 @@ public class CreateLockSelectJobMenu extends EasyPaginatedMenu{
 
     @Override
     public void handlePaginatedMenu(InventoryClickEvent e) {
-        int index = e.getSlot();
-        Job job = jobs.get(index);
+        Optional<Job> optionalJob = jobs.stream()
+            .filter(job1 -> {
+                HashMap<String, String> placeholders = new HashMap<>();
+                placeholders.put("{jobName}", job1.getName());
+                return e.getCurrentItem().getItemMeta().getDisplayName().equals(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().allJobsMenuJobName, placeholders));
+            })
+            .findFirst();
+
+        if(!optionalJob.isPresent()) {
+            return;
+        }
+
+        Job job = optionalJob.get();
         
         playerMenu.getPlayer().closeInventory();
         FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().createLockTypeMinimalWorkingLevel);
