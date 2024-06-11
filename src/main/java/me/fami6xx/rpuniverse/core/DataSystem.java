@@ -28,31 +28,36 @@ import java.util.concurrent.*;
  */
 public class DataSystem implements Listener {
     private static final String HANDLER_TYPE = "JSONDataHandler";
+    private static final long DATA_EXPIRATION_TIME = 300000; // 300 seconds in milliseconds
     private final IDataHandler dataHandler;
     private final ConcurrentMap<UUID, PlayerData> playerDataMap;
     private final ConcurrentLinkedQueue<PlayerData> saveQueue;
+    private final ConcurrentMap<UUID, Long> lastAccessTime;
     private BukkitTask saveTask;
     private BukkitTask completeSaveTask;
+    private BukkitTask expirationTask;
 
     /**
      * Constructor for the DataSystem.
-     * Initializes the data handler, player data map, and save queue.
-     * Also starts the data handler and schedules the save tasks.
+     * Initializes the data handler, player data map, save queue, and last access time map.
+     * Also starts the data handler and schedules the save tasks and expiration task.
      */
     public DataSystem() {
         this.dataHandler = selectDataHandler();
         this.playerDataMap = new ConcurrentHashMap<>();
         this.saveQueue = new ConcurrentLinkedQueue<>();
+        this.lastAccessTime = new ConcurrentHashMap<>();
         this.dataHandler.startUp();
         scheduleSaveTask();
         scheduleCompleteSaveTask();
+        scheduleExpirationTask();
         Bukkit.getPluginManager().registerEvents(this, RPUniverse.getInstance());
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
         this.getPlayerData(event.getPlayer().getUniqueId()).updatePlayer(event.getPlayer());
-
+        this.lastAccessTime.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
     }
 
     @EventHandler
@@ -60,6 +65,7 @@ public class DataSystem implements Listener {
         PlayerData data = getPlayerData(event.getPlayer().getUniqueId());
         data.setCurrentTagHologram(null);
         this.queuePlayerDataForSaving(data);
+        this.lastAccessTime.remove(event.getPlayer().getUniqueId());
     }
 
     /**
@@ -69,6 +75,7 @@ public class DataSystem implements Listener {
     public void shutdown(){
         saveTask.cancel();
         completeSaveTask.cancel();
+        expirationTask.cancel();
         playerDataMap.forEach((uuid,data) -> queuePlayerDataForSaving(data));
         processSaveQueue();
         RPUniverse.getInstance().getJobsHandler().getJobs().forEach(job -> {
@@ -122,6 +129,7 @@ public class DataSystem implements Listener {
         if(data != null){
             saveQueue.remove(data);
             playerDataMap.put(uuid, data);
+            this.lastAccessTime.put(uuid, System.currentTimeMillis());
             return data;
         }
 
@@ -130,15 +138,18 @@ public class DataSystem implements Listener {
         if (data != null) {
             data.loadAfterSave();
             playerDataMap.put(uuid, data);
+            this.lastAccessTime.put(uuid, System.currentTimeMillis());
         }else {
             if(RPUniverse.getInstance().getServer().getPlayer(uuid) == null){
                 OfflinePlayer player = RPUniverse.getInstance().getServer().getOfflinePlayer(uuid);
                 data = new PlayerData(player);
                 playerDataMap.put(uuid, data);
+                this.lastAccessTime.put(uuid, System.currentTimeMillis());
             }
 
             data = new PlayerData(RPUniverse.getInstance().getServer().getPlayer(uuid));
             playerDataMap.put(uuid, data);
+            this.lastAccessTime.put(uuid, System.currentTimeMillis());
         }
         return data;
     }
@@ -159,6 +170,7 @@ public class DataSystem implements Listener {
      */
     public void queuePlayerDataForSaving(PlayerData data) {
         playerDataMap.remove(data.getPlayerUUID());
+        lastAccessTime.remove(data.getPlayerUUID());
         saveQueue.offer(data);
     }
 
@@ -188,10 +200,28 @@ public class DataSystem implements Listener {
         );
     }
 
-    /**
-     * Gets the complete save time from the configuration.
-     * @return The complete save time.
-     */
+    private void scheduleExpirationTask() {
+        expirationTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                RPUniverse.getInstance(),
+                this::expireOldPlayerData,
+                0L,
+                6000L // Check every 5 minutes
+        );
+    }
+
+    private void expireOldPlayerData() {
+        long currentTime = System.currentTimeMillis();
+        for (UUID uuid : lastAccessTime.keySet()) {
+            if (currentTime - lastAccessTime.get(uuid) > DATA_EXPIRATION_TIME) {
+                PlayerData data = playerDataMap.remove(uuid);
+                if (data != null) {
+                    saveQueue.offer(data);
+                }
+                lastAccessTime.remove(uuid);
+            }
+        }
+    }
+
     private int getCompleteSaveTime(){
         int time = 0;
         try{
