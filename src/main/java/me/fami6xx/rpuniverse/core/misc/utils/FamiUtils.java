@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 public class FamiUtils {
     /**
      * Format the message
@@ -182,6 +184,31 @@ public class FamiUtils {
             return holder instanceof DoubleChestInventory;
         }
         return false;
+    }
+
+    /**
+     * Get the other chest block
+     * @param chestBlock The chest block to get the other chest block from
+     * @return The other chest block
+     */
+    public static @Nullable Block getOtherChestBlock(Block chestBlock) {
+        if (chestBlock.getState() instanceof Chest) {
+            Chest chest = (Chest) chestBlock.getState();
+            InventoryHolder holder = chest.getInventory().getHolder();
+            if (holder instanceof DoubleChestInventory) {
+                DoubleChestInventory doubleChest = (DoubleChestInventory) holder;
+                Chest leftChest = (Chest) doubleChest.getLeftSide();
+                Chest rightChest = (Chest) doubleChest.getRightSide();
+    
+                if (leftChest.getBlock().equals(chestBlock)) {
+                    return rightChest.getBlock();
+                } else {
+                    return leftChest.getBlock();
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
