@@ -173,7 +173,7 @@ public class FamiUtils {
      * @param block The block to check
      * @return True if the block is a double chest, false otherwise
      */
-    public boolean isDoubleChest(Block block) {
+    public static boolean isDoubleChest(Block block) {
         if (block.getState() instanceof Chest) {
             Chest chest = (Chest) block.getState();
             InventoryHolder holder = chest.getInventory().getHolder();
