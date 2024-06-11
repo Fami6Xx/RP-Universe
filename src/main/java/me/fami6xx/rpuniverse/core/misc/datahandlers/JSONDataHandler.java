@@ -268,7 +268,12 @@ public class JSONDataHandler implements IDataHandler {
         File lockFile = lockFilePath.toFile();
         if (!lockFile.exists()) {
             try {
-                if (!lockFile.mkdirs() && !lockFile.createNewFile()) {
+                if(!lockFile.getParentFile().exists()) {
+                    if(!lockFile.getParentFile().mkdirs()) {
+                        return false;
+                    }
+                }
+                if (!lockFile.createNewFile()) {
                     return false;
                 }
             } catch (IOException e) {
@@ -289,6 +294,12 @@ public class JSONDataHandler implements IDataHandler {
     @Override
     public Lock[] getAllLockData() {
         File lockDir = new File(RPUniverse.getInstance().getDataFolder().getPath() + "/locks/");
+        if(!lockDir.exists()) {
+            if(!lockDir.mkdirs()) {
+                return new Lock[0];
+            }
+            return new Lock[0];
+        }
         File[] files = lockDir.listFiles();
         if (files == null) {
             return new Lock[0];
