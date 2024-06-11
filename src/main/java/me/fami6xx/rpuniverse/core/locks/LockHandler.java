@@ -4,6 +4,8 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.locks.commands.LocksCommand;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,19 @@ public class LockHandler {
             if (lock == null) continue;
             this.locks.add(lock);
         }
+    }
+
+    /**
+     * Create a lock at the specified location with the specified owners, job name, minimum working level, and shown material.
+     * 
+     * @param location The location for the lock.
+     * @param shownMaterial The material to show for the lock.
+     * @param owners The owners of the lock.
+     * @param jobName The name of the job required to open the lock.
+     * @param minWorkingLevel The minimum working level required to open the lock.
+     */
+    public void createLock(Location location, Material shownMaterial, List<String> owners, String jobName, int minWorkingLevel) {
+        locks.add(new Lock(location, owners, jobName, minWorkingLevel, shownMaterial));
     }
 
     /**

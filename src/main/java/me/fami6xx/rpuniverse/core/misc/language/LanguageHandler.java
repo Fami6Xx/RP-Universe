@@ -269,6 +269,17 @@ public class LanguageHandler {
     public String lockCreationFailure = "&cFailed to create a lock.";
     public String invalidLockItem = "&cThis item cannot be locked.";
     public String createLockSelectTypeMenuName = "&6RPUniverse &7| &cSelect type of lock";
+    public String createLockSelectTypeMenuJobLockDisplayName = "&aJob Lock";
+    public String createLockSelectTypeMenuJobLockLore = "&7Lock this block for a specific job.";
+    public String createLockSelectTypeMenuPlayerLockDisplayName = "&dPlayer Lock";
+    public String createLockSelectTypeMenuPlayerLockLore = "&7Lock this block for a specific player or a specific set of players.";
+    public String createLockSelectTypeMenuUnopenableDisplayName = "&cUnopenable";
+    public String createLockSelectTypeMenuUnopenableLore = "&7Lock this block so that no one can open it.";
+    public String createLockSelectJobMenuName = "&6RPUniverse &7| &cSelect Job";
+    public String createLockTypeMinimalWorkingLevel = "&7Type in chat the minimal working level to open this door.";
+    public String createLockCanceled = "&cYou cancelled the lock creation!";
+    public String createLockTypePlayerNames = "&7Type in chat the player names separated by a comma (,) for whom the lock will apply.";
+    public String createLockNoPlayersFound = "&cNo valid players found. Lock not created.";
 
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";
