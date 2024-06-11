@@ -1,5 +1,8 @@
 package me.fami6xx.rpuniverse.core.locks;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Location;
@@ -14,13 +17,13 @@ import me.fami6xx.rpuniverse.core.jobs.Job;
 public class Lock {
     private Location location;
     private Material shownMaterial;
-    private String owner;
+    private List<String> owners;
     private String jobName;
     private int minWorkingLevel = 0;
 
-    public Lock(Location location, String owner, String jobName, int minWorkingLevel, Material shownMaterial) {
+    public Lock(Location location, List<String> owners, String jobName, int minWorkingLevel, Material shownMaterial) {
         this.location = location;
-        this.owner = owner;
+        this.owners = owners;
         this.jobName = jobName;
         this.minWorkingLevel = minWorkingLevel;
         this.shownMaterial = shownMaterial;
@@ -29,7 +32,7 @@ public class Lock {
     public Lock(Location location, Material shownMaterial, Player owner) {
         this.location = location;
         this.shownMaterial = shownMaterial;
-        this.owner = owner.getName();
+        this.owners = Arrays.asList(owner.getUniqueId().toString());
     }
 
     public Lock(Location location, Material shownMaterial, Job job, int minWorkingLevel) {
@@ -55,11 +58,11 @@ public class Lock {
     }
 
     /**
-     * Get the owner of the lock
-     * @return The owner of the lock
+     * Get the owners of the lock
+     * @return The list of owners of the lock
      */
-    public @Nullable String getOwner() {
-        return owner;
+    public @Nullable List<String> getOwners() {
+        return owners;
     }
 
     /**
