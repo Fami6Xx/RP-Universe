@@ -1,33 +1,38 @@
 package me.fami6xx.rpuniverse.core.locks;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.locks.commands.LocksCommand;
+
 import org.bukkit.Location;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Třída LocksHandler spravuje zámky v Minecraft světě.
- * Umožňuje načítání, ukládání a získávání zámků na základě různých kritérií.
+ * The lock handler class
+ * 
+ * @author Fami6xx
+ * @version 1.0
  */
-public class LocksHandler {
+public class LockHandler {
     private final List<Lock> locks = new ArrayList<>();
 
     /**
-     * Konstruktor, který načítá všechny zámky při inicializaci.
+     * Constructor, which loads all locks when the plugin is initialized.
      */
-    public LocksHandler() {
+    public LockHandler() {
         loadAllLocks();
+        RPUniverse.getInstance().getCommand("locks").setExecutor(new LocksCommand());
     }
 
     /**
-     * Uloží všechny zámky do datového systému při vypnutí pluginu.
+     * Save all locks to the data system when the plugin is shut down.
      */
     public void shutdown() {
         locks.forEach(lock -> RPUniverse.getInstance().getDataSystem().getDataHandler().saveLockData(lock));
     }
 
     /**
-     * Načte všechny zámky z datového systému do interního seznamu.
+     * Load all locks from the data system to the internal list.
      */
     private void loadAllLocks() {
         Lock[] loadedLocks = RPUniverse.getInstance().getDataSystem().getDataHandler().getAllLockData();
@@ -39,10 +44,10 @@ public class LocksHandler {
     }
 
     /**
-     * Vrátí zámek nacházející se na specifikované lokaci.
+     * Returns the lock located at the specified location.
      * 
-     * @param location Lokace, pro kterou se má najít zámek.
-     * @return Zámek na dané lokaci nebo null, pokud zámek neexistuje.
+     * @param location The location for which to find the lock.
+     * @return The lock at the given location or null if no lock exists.
      */
     public Lock getLockByLocation(Location location) {
         for (Lock lock : locks) {
@@ -54,10 +59,10 @@ public class LocksHandler {
     }
 
     /**
-     * Vrátí seznam zámků, které vlastní specifikovaný majitel.
+     * Returns a list of locks owned by the specified owner.
      * 
-     * @param owner Jméno majitele, pro kterého se mají najít zámky.
-     * @return Seznam zámků patřících danému majiteli.
+     * @param owner The name of the owner for whom to find locks.
+     * @return List of locks belonging to the specified owner.
      */
     public List<Lock> getLocksByOwner(String owner) {
         List<Lock> result = new ArrayList<>();
@@ -70,10 +75,10 @@ public class LocksHandler {
     }
 
     /**
-     * Vrátí seznam zámků, které jsou spojeny s určitou prací.
+     * Returns a list of locks associated with a specific job.
      * 
-     * @param jobName Název práce, pro kterou se mají najít zámky.
-     * @return Seznam zámků spojených s danou prací.
+     * @param jobName The name of the job for which to find locks.
+     * @return List of locks associated with the specified job.
      */
     public List<Lock> getLocksByJob(String jobName) {
         List<Lock> result = new ArrayList<>();
@@ -86,9 +91,9 @@ public class LocksHandler {
     }
 
     /**
-     * Vrátí seznam všech zámků spravovaných tímto handlerem.
+     * Returns a list of all locks managed by this handler.
      * 
-     * @return Seznam všech zámků.
+     * @return List of all locks.
      */
     public List<Lock> getAllLocks() {
         return new ArrayList<>(locks);

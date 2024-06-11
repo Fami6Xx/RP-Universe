@@ -66,6 +66,10 @@ commands:
   pee:
     description: Command used to empty the pee from basic needs
     usage: /<command>
+  locks:
+    description: Opens the locks menu
+    usage: /<command>
+    aliases: [lock, lockmenu]
 permissions:
   rpu.user:
     description: Gives access to all user commands

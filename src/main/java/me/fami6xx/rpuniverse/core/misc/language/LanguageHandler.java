@@ -264,6 +264,11 @@ public class LanguageHandler {
     public String allLocksMenuSearchLore = "&7Click to search for a lock.";
     public String lockItemDisplayName = "&7Lock";
     public String lockItemLore = "&7Owner: &c{lockOwner}~&7Job: &c{lockJobName}~&7Min. Working Level: &c{lockMinWorkingLevel}~&7Click to edit";
+    public String createLockPrompt = "&eClick the block you want to lock.";
+    public String lockCreationSuccess = "&aLock has been successfully created.";
+    public String lockCreationFailure = "&cFailed to create a lock.";
+    public String invalidLockItem = "&cThis item cannot be locked.";
+    public String createLockSelectTypeMenuName = "&6RPUniverse &7| &cSelect type of lock";
 
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";

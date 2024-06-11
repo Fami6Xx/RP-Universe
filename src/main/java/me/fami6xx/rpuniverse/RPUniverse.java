@@ -10,6 +10,7 @@ import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
 import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.JobsCommand;
+import me.fami6xx.rpuniverse.core.locks.LockHandler;
 import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
@@ -42,6 +43,7 @@ public final class RPUniverse extends JavaPlugin {
     private ActionBarHandler actionBarHandler;
     private NickHider nickHider;
     private BasicNeedsHandler basicNeedsHandler;
+    private LockHandler lockHandler;
 
     private FileConfiguration config;
     private Economy econ;
@@ -139,6 +141,9 @@ public final class RPUniverse extends JavaPlugin {
             this.nickHider = new NickHider();
             this.nickHider.init();
         }
+
+        this.lockHandler = new LockHandler();
+
         getLogger().info("RPUniverse enabled!");
     }
 
@@ -154,6 +159,7 @@ public final class RPUniverse extends JavaPlugin {
             if (nickHider != null)
                 this.nickHider.shutdown();
             this.dataSystem.shutdown();
+            this.lockHandler.shutdown();
         } catch (NullPointerException ignored) {
         }
     }
@@ -168,6 +174,14 @@ public final class RPUniverse extends JavaPlugin {
         }
         econ = rsp.getProvider();
         return econ != null;
+    }
+
+    /**
+     * Get the LockHandler
+     * @return The LockHandler
+     */
+    public LockHandler getLockHandler() {
+        return lockHandler;
     }
 
     /**
