@@ -67,7 +67,7 @@ public class LockHandler {
     public List<Lock> getLocksByOwner(String owner) {
         List<Lock> result = new ArrayList<>();
         for (Lock lock : locks) {
-            if (lock.getOwner() != null ? lock.getOwner().equals(owner) : false) {
+            if (lock.getOwners() != null && !lock.getOwners().isEmpty() ? lock.getOwners().contains(owner) : false) {
                 result.add(lock);
             }
         }
