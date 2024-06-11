@@ -268,7 +268,7 @@ public class JSONDataHandler implements IDataHandler {
         File lockFile = lockFilePath.toFile();
         if (!lockFile.exists()) {
             try {
-                if (!lockFile.createNewFile()) {
+                if (!lockFile.mkdirs() && !lockFile.createNewFile()) {
                     return false;
                 }
             } catch (IOException e) {
