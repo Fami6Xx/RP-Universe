@@ -29,7 +29,7 @@ public class LocksHandler {
     /**
      * Načte všechny zámky z datového systému do interního seznamu.
      */
-    public void loadAllLocks() {
+    private void loadAllLocks() {
         Lock[] loadedLocks = RPUniverse.getInstance().getDataSystem().getDataHandler().getAllLockData();
 
         for (Lock lock : loadedLocks) {
