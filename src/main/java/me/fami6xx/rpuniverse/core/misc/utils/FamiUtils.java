@@ -4,7 +4,9 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
+import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -180,5 +182,28 @@ public class FamiUtils {
             return holder instanceof DoubleChestInventory;
         }
         return false;
-    }   
+    }
+
+    /**
+     * Check if the block is a double door
+     * @param block The block to check
+     * @return True if the block is a double door, false otherwise
+     */
+    public static boolean isDoubleDoor(Block block) {
+        if (!(block.getBlockData() instanceof Door)) {
+            return false;
+        }
+        
+        Door door = (Door) block.getBlockData();
+        BlockFace facing = door.getFacing();
+        BlockFace hinge = door.getHinge() == Door.Hinge.RIGHT ? facing.getOppositeFace() : facing;
+
+        Block adjacentBlock = block.getRelative(hinge);
+        if (adjacentBlock.getType() == block.getType()) {
+            Door adjacentDoor = (Door) adjacentBlock.getBlockData();
+            return adjacentDoor.getFacing() == facing && adjacentDoor.getHinge() != door.getHinge();
+        }
+    
+        return false;
+    }
 }
