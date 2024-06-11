@@ -83,6 +83,10 @@ public class DataSystem implements Listener {
             dataHandler.saveJobData(job.getName(), job);
         });
         dataHandler.saveConsumables(RPUniverse.getInstance().getBasicNeedsHandler());
+        RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(lock -> {
+            dataHandler.saveLockData(lock);
+        });
+        RPUniverse.getInstance().getLogger().info("Saved all data");
         dataHandler.shutDown();
     }
 
@@ -200,6 +204,9 @@ public class DataSystem implements Listener {
         );
     }
 
+    /**
+     * Schedules a task to expire old player data.
+     */
     private void scheduleExpirationTask() {
         expirationTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
                 RPUniverse.getInstance(),
@@ -209,6 +216,9 @@ public class DataSystem implements Listener {
         );
     }
 
+    /**
+     * Expires old player data.
+     */
     private void expireOldPlayerData() {
         long currentTime = System.currentTimeMillis();
         for (UUID uuid : lastAccessTime.keySet()) {
@@ -222,6 +232,10 @@ public class DataSystem implements Listener {
         }
     }
 
+    /**
+     * Gets the complete save time from the configuration.
+     * @return The complete save time.
+     */
     private int getCompleteSaveTime(){
         int time = 0;
         try{
@@ -249,6 +263,10 @@ public class DataSystem implements Listener {
             job.prepareForSave();
             dataHandler.saveJobData(job.getName(), job);
         });
+        RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(lock -> {
+            dataHandler.saveLockData(lock);
+        });
+        RPUniverse.getInstance().getLogger().info("Saved all data");
     }
 
     /**
