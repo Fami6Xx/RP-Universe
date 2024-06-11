@@ -83,7 +83,6 @@ public class AllLocksMenu extends EasyPaginatedMenu {
 
                     if (isLockable(blockType)) {
                         createLock(event.getClickedBlock());
-                        player.sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().lockCreationSuccess));
                     } else {
                         player.sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().invalidLockItem));
                     }
@@ -124,7 +123,7 @@ public class AllLocksMenu extends EasyPaginatedMenu {
     }
 
     private void createLock(Block block) {
-        playerMenu.getPlayer().sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().lockCreationSuccess));
+        new CreateLockSelectTypeMenu(playerMenu, block).open();
     }
 
     @Override
