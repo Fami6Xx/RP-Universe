@@ -534,12 +534,10 @@ public class PlayerData {
             return false;
         }
 
-        // Kontrola, zda je hráč v seznamu vlastníků zámku
         if (lock.getOwners() != null && lock.getOwners().contains(playerUUID.toString())) {
             return true;
         }
 
-        // Kontrola, zda hráč splňuje požadavky na práci a úroveň práce
         if (lock.getJobName() != null && selectedPlayerJob != null && selectedPlayerJob.getName().equals(lock.getJobName())) {
             return selectedPlayerJob.getPlayerPosition(playerUUID).getWorkingStepPermissionLevel() >= lock.getMinWorkingLevel();
         }
