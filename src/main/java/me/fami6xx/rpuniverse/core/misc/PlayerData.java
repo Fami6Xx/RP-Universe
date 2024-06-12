@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.misc;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.locks.Lock;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import org.bukkit.Bukkit;
@@ -520,5 +521,29 @@ public class PlayerData {
         if (peeLevel > 100) peeLevel = 100;
         if (peeLevel < 0) peeLevel = 0;
         this.peeLevel = peeLevel;
+    }
+
+    /**
+     * Determines if the player can open a specified lock.
+     * @param lock The lock to check against.
+     * @return true if the player can open the lock, false otherwise.
+     */
+    public boolean canOpenLock(Lock lock) {
+        UUID playerUUID = getPlayerUUID();
+        if (playerUUID == null) {
+            return false;
+        }
+
+        // Kontrola, zda je hráč v seznamu vlastníků zámku
+        if (lock.getOwners() != null && lock.getOwners().contains(playerUUID.toString())) {
+            return true;
+        }
+
+        // Kontrola, zda hráč splňuje požadavky na práci a úroveň práce
+        if (lock.getJobName() != null && selectedPlayerJob != null && selectedPlayerJob.getName().equals(lock.getJobName())) {
+            return selectedPlayerJob.getPlayerPosition(playerUUID).getWorkingStepPermissionLevel() >= lock.getMinWorkingLevel();
+        }
+
+        return false;
     }
 }
