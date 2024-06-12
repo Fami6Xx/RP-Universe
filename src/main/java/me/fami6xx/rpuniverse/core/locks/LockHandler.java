@@ -2,9 +2,21 @@ package me.fami6xx.rpuniverse.core.locks;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.locks.commands.LocksCommand;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.InventoryHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +27,7 @@ import java.util.List;
  * @author Fami6xx
  * @version 1.0
  */
-public class LockHandler {
+public class LockHandler implements Listener {
     private final List<Lock> locks = new ArrayList<>();
 
     /**
@@ -24,6 +36,7 @@ public class LockHandler {
     public LockHandler() {
         loadAllLocks();
         RPUniverse.getInstance().getCommand("locks").setExecutor(new LocksCommand());
+        RPUniverse.getInstance().getServer().getPluginManager().registerEvents(this, RPUniverse.getInstance());
     }
 
     /**
@@ -112,5 +125,61 @@ public class LockHandler {
      */
     public List<Lock> getAllLocks() {
         return new ArrayList<>(locks);
+    }
+
+    /**
+     * Handles the player interact event.
+     * 
+     * @param event The event to handle.
+     */
+    @EventHandler
+    public void onPlayerInteractEvent(PlayerInteractEvent event) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Block block = event.getClickedBlock();
+            if (block == null) return;
+
+            Player player = event.getPlayer();
+            PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
+
+            Material type = block.getType();
+            List<Block> blocksToCheck = new ArrayList<>();
+
+            if(type == Material.AIR) return;
+
+            if (type.toString().contains("CHEST")) {
+                Chest chest = (Chest) block.getState();
+                InventoryHolder holder = chest.getInventory().getHolder();
+                if (holder instanceof DoubleChest) {
+                    DoubleChest doubleChest = (DoubleChest) holder;
+                    blocksToCheck.add(((Chest) doubleChest.getLeftSide()).getBlock());
+                    blocksToCheck.add(((Chest) doubleChest.getRightSide()).getBlock());
+                } else {
+                    blocksToCheck.add(block);
+                }
+            }
+
+            else if (type.toString().contains("TRAPDOOR")) {
+                blocksToCheck.add(block);
+            }
+
+            else if (type.toString().contains("DOOR")) {
+                blocksToCheck.add(block);
+
+                BlockFace facing = (block.getData() & 0x8) == 0x8 ? BlockFace.DOWN : BlockFace.UP;
+                blocksToCheck.add(block.getRelative(facing));
+            }
+            else {
+                blocksToCheck.add(block);
+            }
+
+            for (Block checkBlock : blocksToCheck) {
+                Lock lock = getLockByLocation(checkBlock.getLocation());
+                if (lock != null && !playerData.canOpenLock(lock)) {
+                    event.setCancelled(true);
+                    FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().cannotOpenLockMessage);
+                    return;
+                }
+            }
+        }
     }
 }

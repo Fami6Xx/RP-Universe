@@ -280,6 +280,7 @@ public class LanguageHandler {
     public String createLockCanceled = "&cYou cancelled the lock creation!";
     public String createLockTypePlayerNames = "&7Type in chat the player names separated by a comma (,) for whom the lock will apply.";
     public String createLockNoPlayersFound = "&cNo valid players found. Lock not created.";
+    public String cannotOpenLockMessage = "&cYou cannot open this lock!";
 
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";
