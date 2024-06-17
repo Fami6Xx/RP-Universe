@@ -17,8 +17,11 @@ import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.BossBarHandler;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
+import me.fami6xx.rpuniverse.core.misc.papi.RPUExpansion;
 import me.fami6xx.rpuniverse.core.misc.utils.NickHider;
 import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.HandlerList;
@@ -143,6 +146,11 @@ public final class RPUniverse extends JavaPlugin {
         }
 
         this.lockHandler = new LockHandler();
+
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new RPUExpansion(this).register();
+            getLogger().info("PlaceholderAPI hooked!");
+        }
 
         getLogger().info("RPUniverse enabled!");
     }
