@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.misc;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.jobs.Position;
 import me.fami6xx.rpuniverse.core.locks.Lock;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
@@ -539,7 +540,11 @@ public class PlayerData {
         }
 
         if (lock.getJobName() != null && selectedPlayerJob != null && selectedPlayerJob.getName().equals(lock.getJobName())) {
-            return selectedPlayerJob.getPlayerPosition(playerUUID).getWorkingStepPermissionLevel() >= lock.getMinWorkingLevel();
+            Position playerPos = selectedPlayerJob.getPlayerPosition(playerUUID);
+            
+            if(playerPos == null) return false;
+            if(playerPos.isBoss()) return true;
+            return playerPos.getWorkingStepPermissionLevel() >= lock.getMinWorkingLevel();
         }
 
         return false;
