@@ -266,7 +266,6 @@ public class DataSystem implements Listener {
         RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(lock -> {
             dataHandler.saveLockData(lock);
         });
-        RPUniverse.getInstance().getLogger().info("Saved all data");
     }
 
     /**
