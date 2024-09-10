@@ -33,7 +33,14 @@ public class FoodTrackerListener implements Listener {
                 data.setPoopLevel(data.getPoopLevel() + consumable.getPoop());
 
                 if (consumable.getHealth() > 0 || consumable.getHealth() < -20) {
-                    player.setHealth(player.getHealth() + consumable.getHealth());
+                    double health = player.getHealth() + consumable.getHealth();
+                    if(health > 20) {
+                        health = 20;
+                    }else if(health < 0) {
+                        health = 0;
+                    }
+
+                    player.setHealth(health);
                 }
 
                 if (handler.isConsumable(player.getInventory().getItemInMainHand()) && handler.getConsumable(player.getInventory().getItemInMainHand()) == handler.getConsumable(event.getItem())) {
