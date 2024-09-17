@@ -51,8 +51,13 @@ public final class RPUniverse extends JavaPlugin {
     private FileConfiguration config;
     private Economy econ;
 
+    private boolean isServerReload = false;
+
     @Override
     public void onEnable() {
+        if (isServerReload) {
+            getLogger().severe("We suspect you used /reload, RPUniverse does not support this and any issues reported after reloading will be ignored!");
+        }
         if (!setupEconomy()) {
             getLogger().severe("Vault is not installed or doesn't have any Economy plugin! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
@@ -170,6 +175,7 @@ public final class RPUniverse extends JavaPlugin {
             this.lockHandler.shutdown();
         } catch (NullPointerException ignored) {
         }
+        isServerReload = true;
     }
 
     private boolean setupEconomy() {
