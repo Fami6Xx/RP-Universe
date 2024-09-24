@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.locks;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -20,6 +21,7 @@ public class Lock {
     private List<String> owners;
     private String jobName;
     private int minWorkingLevel = 0;
+    private final UUID uuid = UUID.randomUUID();
 
     public Lock(Location location, List<String> owners, String jobName, int minWorkingLevel, Material shownMaterial) {
         this.location = location;
@@ -87,6 +89,14 @@ public class Lock {
      */
     public Material getShownMaterial() {
         return shownMaterial;
+    }
+
+    /**
+     * Get the UUID of the lock
+     * @return The UUID of the lock
+     */
+    public UUID getUUID() {
+        return uuid;
     }
 }
 

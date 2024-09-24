@@ -264,7 +264,7 @@ public class JSONDataHandler implements IDataHandler {
 
     @Override
     public boolean saveLockData(Lock lock) {
-        Path lockFilePath = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/locks/" + lock.getLocation().hashCode() + ".json");
+        Path lockFilePath = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/locks/" + lock.getUUID().toString() + ".json");
         File lockFile = lockFilePath.toFile();
         if (!lockFile.exists()) {
             try {
