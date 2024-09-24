@@ -18,6 +18,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -172,8 +174,13 @@ public class LockHandler implements Listener {
             else if (type.toString().contains("DOOR")) {
                 blocksToCheck.add(block);
 
-                BlockFace facing = (block.getData() & 0x8) == 0x8 ? BlockFace.DOWN : BlockFace.UP;
-                blocksToCheck.add(block.getRelative(facing));
+                Door door = (Door) block.getBlockData();
+
+                if (door.getHalf() == Bisected.Half.TOP) {
+                    blocksToCheck.add(block.getRelative(BlockFace.DOWN));
+                } else {
+                    blocksToCheck.add(block.getRelative(BlockFace.UP));
+                }
             }
             else {
                 blocksToCheck.add(block);
@@ -226,8 +233,13 @@ public class LockHandler implements Listener {
         else if (type.toString().contains("DOOR")) {
             blocksToCheck.add(block);
 
-            BlockFace facing = (block.getData() & 0x8) == 0x8 ? BlockFace.DOWN : BlockFace.UP;
-            blocksToCheck.add(block.getRelative(facing));
+            Door door = (Door) block.getBlockData();
+
+            if (door.getHalf() == Bisected.Half.TOP) {
+                blocksToCheck.add(block.getRelative(BlockFace.DOWN));
+            } else {
+                blocksToCheck.add(block.getRelative(BlockFace.UP));
+            }
         }
         else {
             blocksToCheck.add(block);
