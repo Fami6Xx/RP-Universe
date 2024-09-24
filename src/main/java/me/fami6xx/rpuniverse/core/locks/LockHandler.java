@@ -1,12 +1,19 @@
 package me.fami6xx.rpuniverse.core.locks;
 
+import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.holograms.Hologram;
+import eu.decentsoftware.holograms.api.holograms.HologramLine;
+import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.locks.commands.LocksCommand;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -16,10 +23,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.InventoryHolder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * The lock handler class
@@ -180,6 +187,105 @@ public class LockHandler implements Listener {
                     return;
                 }
             }
+        }
+    }
+
+
+    HashMap<UUID, Hologram> holograms = new HashMap<>();
+    HashMap<UUID, Lock> lockMap = new HashMap<>();
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
+        if (playerData == null) return;
+        if (playerData.getPlayerMode() != PlayerMode.ADMIN) return;
+        Block block = player.getTargetBlock(8);
+        if (block == null) return;
+
+        Material type = block.getType();
+        List<Block> blocksToCheck = new ArrayList<>();
+
+        if(type == Material.AIR) return;
+
+        if (type.toString().contains("CHEST")) {
+            Chest chest = (Chest) block.getState();
+            InventoryHolder holder = chest.getInventory().getHolder();
+            if (holder instanceof DoubleChest) {
+                DoubleChest doubleChest = (DoubleChest) holder;
+                blocksToCheck.add(((Chest) doubleChest.getLeftSide()).getBlock());
+                blocksToCheck.add(((Chest) doubleChest.getRightSide()).getBlock());
+            } else {
+                blocksToCheck.add(block);
+            }
+        }
+
+        else if (type.toString().contains("TRAPDOOR")) {
+            blocksToCheck.add(block);
+        }
+
+        else if (type.toString().contains("DOOR")) {
+            blocksToCheck.add(block);
+
+            BlockFace facing = (block.getData() & 0x8) == 0x8 ? BlockFace.DOWN : BlockFace.UP;
+            blocksToCheck.add(block.getRelative(facing));
+        }
+        else {
+            blocksToCheck.add(block);
+        }
+
+        for (Block checkBlock : blocksToCheck) {
+            Lock lock = getLockByLocation(checkBlock.getLocation());
+            if (lock == null) return;
+            RPUniverse.getInstance().getLogger().info("Lock found");
+
+            UUID playerUUID = player.getUniqueId();
+            Hologram existingHologram = holograms.get(playerUUID);
+            Location hologramLocation = lock.getLocation().add(player.getLocation().getDirection().normalize().multiply(-1).multiply(1.5)).add(0, 1, 0);
+
+            if (existingHologram != null) {
+                if (lock.equals(lockMap.get(playerUUID))) {
+                    RPUniverse.getInstance().getLogger().info("Moving hologram");
+                    DHAPI.moveHologram(existingHologram, hologramLocation);
+                    return;
+                } else {
+                    existingHologram.delete();
+                    holograms.remove(playerUUID);
+
+                    RPUniverse.getInstance().getLogger().info("Deleting old hologram");
+                }
+            }
+
+            Hologram hologram = DHAPI.createHologram(UUID.randomUUID().toString(), hologramLocation);
+            hologram.setDefaultVisibleState(false);
+            DHAPI.addHologramLine(hologram, FamiUtils.format("&8&k&lLLL"));
+            DHAPI.addHologramLine(hologram, FamiUtils.format("&c&lLocked"));
+            StringBuilder owners = new StringBuilder();
+            if (lock.getOwners() == null || lock.getOwners().isEmpty()) {
+                owners = new StringBuilder("None");
+            } else if (lock.getOwners().size() > 1){
+                for (int i = 0; i < lock.getOwners().size(); i++) {
+                    String uuid = lock.getOwners().get(i);
+                    OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+                    owners.append(offlineOwner.getName());
+                    if (i < lock.getOwners().size() - 1) {
+                        owners.append(", ");
+                    }
+                }
+            } else {
+                OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(UUID.fromString(lock.getOwners().get(0)));
+                owners = new StringBuilder(Objects.requireNonNull(offlineOwner.getName()));
+            }
+            DHAPI.addHologramLine(hologram, FamiUtils.format("&cOwners: &7" + owners));
+            String jobName = lock.getJobName() == null ? "None" : lock.getJobName();
+            DHAPI.addHologramLine(hologram, FamiUtils.format("&cJob: &7" + jobName));
+            int minWorkingLevel = lock.getMinWorkingLevel() == 0 ? 0 : lock.getMinWorkingLevel();
+            DHAPI.addHologramLine(hologram, FamiUtils.format("&cMin Working Level: &7" + minWorkingLevel));
+            DHAPI.addHologramLine(hologram, FamiUtils.format("&8&k&lLLL"));
+            hologram.setShowPlayer(player);
+            holograms.put(player.getUniqueId(), hologram);
+            lockMap.put(player.getUniqueId(), lock);
+
+            RPUniverse.getInstance().getLogger().info("Created hologram");
         }
     }
 }
