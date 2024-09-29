@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.basicneeds.events.FoodTrackerListener;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
@@ -101,6 +102,10 @@ public class BasicNeedsHandler {
             public void run() {
                 Bukkit.getServer().getOnlinePlayers().forEach(player -> {
                     PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
+
+                    boolean ignore = RPUniverse.getInstance().getConfiguration().getBoolean("basicNeeds.ignoreInMode");
+                    if (ignore && playerData.getPlayerMode() != PlayerMode.USER) return;
+
                     playerData.setFoodLevel(playerData.getFoodLevel() - config.getRemovedHunger());
                     playerData.setWaterLevel(playerData.getWaterLevel() - config.getRemovedThirst());
                     playerData.setPeeLevel(playerData.getPeeLevel() + config.getAddedPee());

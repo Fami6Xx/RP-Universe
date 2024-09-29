@@ -68,6 +68,7 @@ data:
 # The settings for the basic needs
 # enabled: If true, the basic needs are enabled
 # interval: The interval in seconds in which the basic needs are updated
+# ignoreInMode: If true, the plugin will ignore the mode (ADMIN or MODERATOR) for the basic needs
 # preferPermissionsOverModeForEdit: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR) for editing the basic needs
 # neededModeToEdit: The mode needed to edit the basic needs (ADMIN or MODERATOR)
 # removedHunger: The amount of hunger removed every interval
@@ -77,6 +78,7 @@ data:
 basicNeeds:
     enabled: true
     interval: 60
+    ignoreInMode: true
     preferPermissionsOverModeForEdit: false
     neededModeToEdit: ADMIN
     removedHunger: 4
