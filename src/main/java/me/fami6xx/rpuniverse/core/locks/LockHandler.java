@@ -104,7 +104,7 @@ public class LockHandler implements Listener {
     public List<Lock> getLocksByOwner(String owner) {
         List<Lock> result = new ArrayList<>();
         for (Lock lock : locks) {
-            if (lock.getOwners() != null && !lock.getOwners().isEmpty() ? lock.getOwners().contains(owner) : false) {
+            if (lock.getOwners() != null && !lock.getOwners().isEmpty() && lock.getOwners().contains(owner)) {
                 result.add(lock);
             }
         }
@@ -271,23 +271,7 @@ public class LockHandler implements Listener {
             hologram.setDefaultVisibleState(false);
             DHAPI.addHologramLine(hologram, FamiUtils.format("&8&k&lLLL"));
             DHAPI.addHologramLine(hologram, FamiUtils.format("&c&lLocked"));
-            StringBuilder owners = new StringBuilder();
-            if (lock.getOwners() == null || lock.getOwners().isEmpty()) {
-                owners = new StringBuilder("None");
-            } else if (lock.getOwners().size() > 1){
-                for (int i = 0; i < lock.getOwners().size(); i++) {
-                    String uuid = lock.getOwners().get(i);
-                    OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
-                    owners.append(offlineOwner.getName());
-                    if (i < lock.getOwners().size() - 1) {
-                        owners.append(", ");
-                    }
-                }
-            } else {
-                OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(UUID.fromString(lock.getOwners().get(0)));
-                owners = new StringBuilder(Objects.requireNonNull(offlineOwner.getName()));
-            }
-            DHAPI.addHologramLine(hologram, FamiUtils.format("&cOwners: &7" + owners));
+            DHAPI.addHologramLine(hologram, FamiUtils.format("&cOwners: &7" + lock.getOwnersAsString()));
             String jobName = lock.getJobName() == null ? "None" : lock.getJobName();
             DHAPI.addHologramLine(hologram, FamiUtils.format("&cJob: &7" + jobName));
             int minWorkingLevel = lock.getMinWorkingLevel() == 0 ? 0 : lock.getMinWorkingLevel();
