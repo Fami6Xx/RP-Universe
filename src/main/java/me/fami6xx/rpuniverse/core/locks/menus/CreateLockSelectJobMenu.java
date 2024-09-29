@@ -73,7 +73,7 @@ public class CreateLockSelectJobMenu extends EasyPaginatedMenu{
                 if(FamiUtils.isInteger(message)) {
                     int level = Integer.parseInt(message);
                     LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
-                    lockHandler.createLock(block.getLocation(), block.getType(), null, job.getName(), level);
+                    lockHandler.createLock(block.getLocation().toCenterLocation(), block.getType(), null, job.getName(), level);
                     FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().lockCreationSuccess);
                     return true;
                 }

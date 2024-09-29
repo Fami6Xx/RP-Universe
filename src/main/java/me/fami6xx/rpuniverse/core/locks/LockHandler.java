@@ -88,7 +88,7 @@ public class LockHandler implements Listener {
      */
     public Lock getLockByLocation(Location location) {
         for (Lock lock : locks) {
-            if (lock.getLocation().equals(location)) {
+            if (lock.getLocation().equals(location.toCenterLocation())) {
                 return lock;
             }
         }
@@ -247,7 +247,7 @@ public class LockHandler implements Listener {
 
         for (Block checkBlock : blocksToCheck) {
             Lock lock = getLockByLocation(checkBlock.getLocation());
-            if (lock == null) return;
+            if (lock == null) continue;
             RPUniverse.getInstance().getLogger().info("Lock found");
 
             UUID playerUUID = player.getUniqueId();
@@ -258,7 +258,7 @@ public class LockHandler implements Listener {
                 if (lock.equals(lockMap.get(playerUUID))) {
                     RPUniverse.getInstance().getLogger().info("Moving hologram");
                     DHAPI.moveHologram(existingHologram, hologramLocation);
-                    return;
+                    continue;
                 } else {
                     existingHologram.delete();
                     holograms.remove(playerUUID);

@@ -70,7 +70,7 @@ public class CreateLockSelectTypeMenu extends Menu {
                         return true;
                     }
     
-                    RPUniverse.getInstance().getLockHandler().createLock(block.getLocation(), block.getType(), playerUUIDs, null, 0);
+                    RPUniverse.getInstance().getLockHandler().createLock(block.getLocation().toCenterLocation(), block.getType(), playerUUIDs, null, 0);
                     FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().lockCreationSuccess);
                     return true;
                 }
@@ -79,7 +79,7 @@ public class CreateLockSelectTypeMenu extends Menu {
         }
         
         if(slot == 7) {
-            RPUniverse.getInstance().getLockHandler().createLock(block.getLocation(), block.getType(), null, null, 0);
+            RPUniverse.getInstance().getLockHandler().createLock(block.getLocation().toCenterLocation(), block.getType(), null, null, 0);
         }
     }
 
