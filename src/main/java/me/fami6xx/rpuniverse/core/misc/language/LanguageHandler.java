@@ -262,6 +262,7 @@ public class LanguageHandler {
     public String allLocksMenuFilterLore = "&7Click to filter the locks.";
     public String allLocksMenuSearchDisplayName = "&aSearch";
     public String allLocksMenuSearchLore = "&7Click to search for a lock.";
+    public String allLocksMenuSearchPrompt = "&7Type in chat the query you want to search for.";
     public String lockItemDisplayName = "&7Lock";
     public String lockItemLore = "&7Owner: &c{lockOwner}~&7Job: &c{lockJobName}~&7Min. Working Level: &c{lockMinWorkingLevel}~&7Click to edit";
     public String createLockPrompt = "&eClick the block you want to lock.";
