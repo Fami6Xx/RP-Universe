@@ -64,6 +64,11 @@ public class LockMenu extends Menu {
                 FamiUtils.sendMessageWithPrefix(player, "&aType the new minimum working level in chat.");
                 waitForMinWorkingLevelInput(player);
                 break;
+            case 7:
+                RPUniverse.getInstance().getLockHandler().removeLock(lock);
+                FamiUtils.sendMessageWithPrefix(player, "&cLock deleted.");
+                new AllLocksMenu(playerMenu).open();
+                break;
             case 8:
                 previousMenu.open();
                 break;
@@ -76,6 +81,8 @@ public class LockMenu extends Menu {
         inventory.setItem(1, FamiUtils.makeItem(Material.PAPER, "&aChange Owners"));
         inventory.setItem(2, FamiUtils.makeItem(Material.NAME_TAG, "&aChange Job Name"));
         inventory.setItem(3, FamiUtils.makeItem(Material.EXPERIENCE_BOTTLE, "&aChange Min Working Level"));
+
+        inventory.setItem(7, FamiUtils.makeItem(Material.BARRIER, "&cDelete"));
         inventory.setItem(8, FamiUtils.makeItem(Material.BARRIER, "&cBack"));
     }
 

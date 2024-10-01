@@ -158,6 +158,14 @@ public class LockHandler implements Listener {
     }
 
     /**
+     * Removes the specified lock from the list of locks.
+     * @param lock The lock to remove.
+     */
+    public void removeLock(Lock lock) {
+        locks.remove(lock);
+    }
+
+    /**
      * Handles the player interact event.
      * 
      * @param event The event to handle.
