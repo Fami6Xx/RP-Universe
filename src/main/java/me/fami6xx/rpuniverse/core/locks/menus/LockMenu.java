@@ -121,6 +121,12 @@ public class LockMenu extends Menu {
                 if (event.getPlayer().equals(player)) {
                     event.setCancelled(true);
                     List<String> newOwners = Arrays.asList(event.getMessage().split(","));
+
+                    // Convert to UUIDs
+                    for (int i = 0; i < newOwners.size(); i++) {
+                        newOwners.set(i, Bukkit.getOfflinePlayer(newOwners.get(i).trim()).getUniqueId().toString());
+                    }
+
                     lock.setOwners(newOwners);
                     FamiUtils.sendMessageWithPrefix(player, "&aOwners updated.");
                     HandlerList.unregisterAll(this);
