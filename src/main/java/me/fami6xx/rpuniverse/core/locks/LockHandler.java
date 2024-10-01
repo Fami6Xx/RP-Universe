@@ -175,7 +175,7 @@ public class LockHandler implements Listener {
      */
     @EventHandler
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) {
             Block block = event.getClickedBlock();
             if (block == null) return;
 
@@ -185,16 +185,28 @@ public class LockHandler implements Listener {
             Material type = block.getType();
             List<Block> blocksToCheck = new ArrayList<>();
 
-            if(type == Material.AIR) return;
+            if (type == Material.AIR) return;
 
             getAllLockBlocksFromBlock(block, type, blocksToCheck);
 
             for (Block checkBlock : blocksToCheck) {
                 Lock lock = getLockByLocation(checkBlock.getLocation());
-                if (lock != null && !playerData.canOpenLock(lock)) {
-                    event.setCancelled(true);
-                    FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().cannotOpenLockMessage);
-                    return;
+                if (lock != null) {
+                    if (player.isSneaking()) {
+                        if(playerData.getPlayerMode() == PlayerMode.ADMIN) {
+                            new LockMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), new AllLocksMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player)), lock).open();
+                            event.setCancelled(true);
+                            return;
+                        }else if(!playerData.canOpenLock(lock)) {
+                            event.setCancelled(true);
+                            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().cannotOpenLockMessage);
+                            return;
+                        }
+                    } else if (!playerData.canOpenLock(lock)) {
+                        event.setCancelled(true);
+                        FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().cannotOpenLockMessage);
+                        return;
+                    }
                 }
             }
         }
