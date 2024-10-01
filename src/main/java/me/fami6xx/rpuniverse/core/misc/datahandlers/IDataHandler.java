@@ -117,4 +117,10 @@ public interface IDataHandler {
      * @return An array of all the saved lock data.
      */
     Lock[] getAllLockData();
+
+    /**
+     * Removes the lock data from the data handler.
+     * @param lock The lock to remove.
+     */
+    void removeLockData(Lock lock);
 }

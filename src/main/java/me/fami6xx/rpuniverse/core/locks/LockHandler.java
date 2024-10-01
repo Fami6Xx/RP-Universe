@@ -166,6 +166,7 @@ public class LockHandler implements Listener {
      */
     public void removeLock(Lock lock) {
         locks.remove(lock);
+        RPUniverse.getInstance().getDataSystem().getDataHandler().removeLockData(lock);
     }
 
     /**

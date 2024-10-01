@@ -318,4 +318,13 @@ public class JSONDataHandler implements IDataHandler {
         }
         return locks.toArray(new Lock[0]);
     }
+
+    @Override
+    public void removeLockData(Lock lock) {
+        Path lockFilePath = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/locks/" + lock.getUUID().toString() + ".json");
+        File lockFile = lockFilePath.toFile();
+        if(lockFile.exists()) {
+            lockFile.delete();
+        }
+    }
 }
