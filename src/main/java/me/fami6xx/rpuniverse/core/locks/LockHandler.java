@@ -2,18 +2,14 @@ package me.fami6xx.rpuniverse.core.locks;
 
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
-import eu.decentsoftware.holograms.api.holograms.HologramLine;
-import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.locks.commands.LocksCommand;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -27,7 +23,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.util.Vector;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -77,6 +75,26 @@ public class LockHandler implements Listener {
      * @param minWorkingLevel The minimum working level required to open the lock.
      */
     public void createLock(Location location, Material shownMaterial, List<String> owners, String jobName, int minWorkingLevel) {
+        // Check if a lock already exists at the specified location
+        if (getLockByLocation(location) != null) {
+            RPUniverse.getInstance().getLogger().warning("A lock already exists at this location!");
+            return;
+        }
+
+        // If the block is a chest, check both sides of the chest
+        if (location.getBlock().getState() instanceof Chest) {
+            Chest chest = (Chest) location.getBlock().getState();
+            InventoryHolder holder = chest.getInventory().getHolder();
+            if (holder instanceof DoubleChest) {
+                DoubleChest doubleChest = (DoubleChest) holder;
+                if (getLockByLocation(((Chest) doubleChest.getLeftSide()).getBlock().getLocation()) != null ||
+                        getLockByLocation(((Chest) doubleChest.getRightSide()).getBlock().getLocation()) != null) {
+                    RPUniverse.getInstance().getLogger().warning("A lock already exists on one side of this double chest!");
+                    return;
+                }
+            }
+        }
+
         locks.add(new Lock(location, owners, jobName, minWorkingLevel, shownMaterial));
     }
 
@@ -86,9 +104,12 @@ public class LockHandler implements Listener {
      * @param location The location for which to find the lock.
      * @return The lock at the given location or null if no lock exists.
      */
-    public Lock getLockByLocation(Location location) {
+    public @Nullable Lock getLockByLocation(Location location) {
         for (Lock lock : locks) {
-            if (lock.getLocation().equals(location.toCenterLocation())) {
+            if (lock.getLocation().getBlockX() == location.getBlockX() &&
+                    lock.getLocation().getBlockY() == location.getBlockY() &&
+                    lock.getLocation().getBlockZ() == location.getBlockZ() &&
+                    lock.getLocation().getWorld().equals(location.getWorld())) {
                 return lock;
             }
         }
@@ -205,14 +226,23 @@ public class LockHandler implements Listener {
         Player player = event.getPlayer();
         PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
         if (playerData == null) return;
-        if (playerData.getPlayerMode() != PlayerMode.ADMIN) return;
+        if (playerData.getPlayerMode() != PlayerMode.ADMIN) {
+            checkHoloAndDelete(player.getUniqueId());
+            return;
+        }
         Block block = player.getTargetBlock(8);
-        if (block == null) return;
+        if (block == null) {
+            checkHoloAndDelete(player.getUniqueId());
+            return;
+        }
 
         Material type = block.getType();
         List<Block> blocksToCheck = new ArrayList<>();
 
-        if(type == Material.AIR) return;
+        if(type == Material.AIR) {
+            checkHoloAndDelete(player.getUniqueId());
+            return;
+        }
 
         if (type.toString().contains("CHEST")) {
             Chest chest = (Chest) block.getState();
@@ -248,22 +278,22 @@ public class LockHandler implements Listener {
         for (Block checkBlock : blocksToCheck) {
             Lock lock = getLockByLocation(checkBlock.getLocation());
             if (lock == null) continue;
-            RPUniverse.getInstance().getLogger().info("Lock found");
 
             UUID playerUUID = player.getUniqueId();
             Hologram existingHologram = holograms.get(playerUUID);
-            Location hologramLocation = lock.getLocation().add(player.getLocation().getDirection().normalize().multiply(-1).multiply(1.5)).add(0, 1, 0);
+            Vector direction = player.getLocation().getDirection().normalize();
+            direction.setY(0);
+
+            Location hologramLocation = lock.getLocation().add(direction.multiply(-1).multiply(1.5));
+            hologramLocation.setY(event.getPlayer().getEyeLocation().getY() + 0.5);
 
             if (existingHologram != null) {
                 if (lock.equals(lockMap.get(playerUUID))) {
-                    RPUniverse.getInstance().getLogger().info("Moving hologram");
                     DHAPI.moveHologram(existingHologram, hologramLocation);
                     continue;
                 } else {
                     existingHologram.delete();
                     holograms.remove(playerUUID);
-
-                    RPUniverse.getInstance().getLogger().info("Deleting old hologram");
                 }
             }
 
@@ -280,8 +310,14 @@ public class LockHandler implements Listener {
             hologram.setShowPlayer(player);
             holograms.put(player.getUniqueId(), hologram);
             lockMap.put(player.getUniqueId(), lock);
+        }
+    }
 
-            RPUniverse.getInstance().getLogger().info("Created hologram");
+    private void checkHoloAndDelete(UUID playerUUID) {
+        if(holograms.containsKey(playerUUID)) {
+            holograms.get(playerUUID).delete();
+            holograms.remove(playerUUID);
+            lockMap.remove(playerUUID);
         }
     }
 }

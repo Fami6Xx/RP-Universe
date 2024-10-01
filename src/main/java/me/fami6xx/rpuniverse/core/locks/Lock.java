@@ -27,7 +27,7 @@ public class Lock {
     private final UUID uuid = UUID.randomUUID();
 
     public Lock(Location location, List<String> owners, String jobName, int minWorkingLevel, Material shownMaterial) {
-        this.location = location;
+        this.location = new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
         this.owners = owners;
         this.jobName = jobName;
         this.minWorkingLevel = minWorkingLevel;
@@ -35,20 +35,20 @@ public class Lock {
     }
 
     public Lock(Location location, Material shownMaterial, Player owner) {
-        this.location = location;
+        this.location = new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
         this.shownMaterial = shownMaterial;
         this.owners = Arrays.asList(owner.getUniqueId().toString());
     }
 
     public Lock(Location location, Material shownMaterial, Job job, int minWorkingLevel) {
-        this.location = location;
+        this.location = new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
         this.shownMaterial = shownMaterial;
         this.jobName = job.getName();
         this.minWorkingLevel = minWorkingLevel;
     }
     
     public Lock(Location location, Material shownMaterial, String jobName, int minWorkingLevel) {
-        this.location = location;
+        this.location = new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
         this.shownMaterial = shownMaterial;
         this.jobName = jobName;
         this.minWorkingLevel = minWorkingLevel;
@@ -59,7 +59,7 @@ public class Lock {
      * @return The location of the lock
      */
     public Location getLocation() {
-        return location;
+        return location.clone();
     }
 
     /**
