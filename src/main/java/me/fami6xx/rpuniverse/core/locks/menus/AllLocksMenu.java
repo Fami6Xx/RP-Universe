@@ -85,6 +85,17 @@ public class AllLocksMenu extends EasyPaginatedMenu {
             waitForSearchQuery(player);
             return;
         }
+
+        ItemStack clickedItem = e.getCurrentItem();
+        if (clickedItem != null && clickedItem.getType() != Material.AIR) {
+            ItemMeta meta = clickedItem.getItemMeta();
+            int index = meta.getPersistentDataContainer().get(new NamespacedKey(RPUniverse.getInstance(), "lock"), PersistentDataType.INTEGER);
+
+            if (index >= 0 && index < locks.size()) {
+                Lock clickedLock = locks.get(index);
+                new LockMenu(playerMenu, this, clickedLock).open();
+            }
+        }
     }
 
     private void waitForSearchQuery(Player player) {
@@ -227,6 +238,11 @@ public class AllLocksMenu extends EasyPaginatedMenu {
             }
         }
         return filteredLocks;
+    }
+
+    private int getIndexFromSlot(int slot) {
+        int pageIndex = this.page * getMaxItemsPerPage();
+        return pageIndex + slot;
     }
 
     @Override

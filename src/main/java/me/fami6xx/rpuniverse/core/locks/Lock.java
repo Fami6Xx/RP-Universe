@@ -71,12 +71,45 @@ public class Lock {
     }
 
     /**
+     * Add an owner to the lock
+     * @param player The player to add as an owner
+     */
+    public void addOwner(Player player) {
+        this.owners.add(player.getUniqueId().toString());
+    }
+
+    /**
+     * Remove an owner from the lock
+     * @param player The player to remove as an owner
+     */
+    public void removeOwner(Player player) {
+        this.owners.remove(player.getUniqueId().toString());
+    }
+
+    /**
+     * Set owners of the lock
+     * @param owners The list of owners to set
+     */
+    public void setOwners(List<String> owners) {
+        this.owners = owners;
+    }
+
+    /**
      * Get the job name of the lock
      * @return The job name of the lock
      */
     public @Nullable String getJobName() {
         return jobName;
     }
+
+    /**
+     * Set the job name of the lock
+     * @param jobName The job name to set
+     */
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
 
     /**
      * Get the minimum working level of the lock
@@ -87,11 +120,27 @@ public class Lock {
     }
 
     /**
+     * Set the minimum working level of the lock
+     * @param minWorkingLevel The minimum working level to set
+     */
+    public void setMinWorkingLevel(int minWorkingLevel) {
+        this.minWorkingLevel = minWorkingLevel;
+    }
+
+    /**
      * Get the material shown in the All Locks menu
      * @return The material shown in the All Locks menu
      */
     public Material getShownMaterial() {
         return shownMaterial;
+    }
+
+    /**
+     * Set the material shown in the All Locks menu
+     * @param shownMaterial The material shown in the All Locks menu
+     */
+    public void setShownMaterial(Material shownMaterial) {
+        this.shownMaterial = shownMaterial;
     }
 
     /**
