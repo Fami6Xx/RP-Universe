@@ -86,6 +86,12 @@ public class AllLocksMenu extends EasyPaginatedMenu {
             return;
         }
 
+        if (e.getSlot() == 53) {
+            locks = RPUniverse.getInstance().getLockHandler().getAllLocks();
+            open();
+            return;
+        }
+
         ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem != null && clickedItem.getType() != Material.AIR) {
             ItemMeta meta = clickedItem.getItemMeta();
@@ -225,7 +231,7 @@ public class AllLocksMenu extends EasyPaginatedMenu {
         // 53 - Filter
         inventory.setItem(45, FamiUtils.makeItem(Material.EMERALD_BLOCK, RPUniverse.getLanguageHandler().allLocksMenuCreateLockDisplayName, RPUniverse.getLanguageHandler().allLocksMenuCreateLockLore));
         inventory.setItem(52, FamiUtils.makeItem(Material.BARREL, RPUniverse.getLanguageHandler().allLocksMenuSearchDisplayName, RPUniverse.getLanguageHandler().allLocksMenuSearchLore));
-        // inventory.setItem(53, FamiUtils.makeItem(Material.BOOK, RPUniverse.getLanguageHandler().allLocksMenuFilterDisplayName, RPUniverse.getLanguageHandler().allLocksMenuFilterLore));
+        inventory.setItem(53, FamiUtils.makeItem(Material.BOOK, FamiUtils.format("&cReset search"), FamiUtils.format("&7Click to reset the search.")));
     }
 
     private List<Lock> searchLocks(String query) {
@@ -238,11 +244,6 @@ public class AllLocksMenu extends EasyPaginatedMenu {
             }
         }
         return filteredLocks;
-    }
-
-    private int getIndexFromSlot(int slot) {
-        int pageIndex = this.page * getMaxItemsPerPage();
-        return pageIndex + slot;
     }
 
     @Override
