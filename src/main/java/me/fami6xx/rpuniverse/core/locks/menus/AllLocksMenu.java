@@ -9,6 +9,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -18,6 +23,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -41,7 +47,7 @@ public class AllLocksMenu extends EasyPaginatedMenu {
     public ItemStack getItemFromIndex(int index) {
         Lock lock = locks.get(index);
         HashMap<String, String> placeholders = new HashMap<>();
-        placeholders.put("{lockOwner}", lock.getOwners() == null ? "None" : lock.getOwners().toString());
+        placeholders.put("{lockOwner}", lock.getOwnersAsString());
         placeholders.put("{lockJobName}", lock.getJobName() == null ? "None" : lock.getJobName());
         placeholders.put("{lockMinWorkingLevel}", lock.getMinWorkingLevel() == 0 ? "None" : String.valueOf(lock.getMinWorkingLevel()));
         
@@ -72,6 +78,37 @@ public class AllLocksMenu extends EasyPaginatedMenu {
             waitForBlockClick(player);
             return;
         }
+
+        if (e.getSlot() == 52) {
+            player.closeInventory();
+            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().allLocksMenuSearchPrompt);
+            waitForSearchQuery(player);
+            return;
+        }
+    }
+
+    private void waitForSearchQuery(Player player) {
+        Listener listener = new Listener() {
+            @EventHandler
+            public void onPlayerChat(AsyncPlayerChatEvent event) {
+                if (event.getPlayer().equals(player)) {
+                    event.setCancelled(true);
+                    String query = event.getMessage();
+                    locks = searchLocks(query);
+                    open();
+                    HandlerList.unregisterAll(this);
+                }
+            }
+
+            @EventHandler
+            public void onPlayerDisconnect(PlayerQuitEvent event) {
+                if (event.getPlayer().equals(player)) {
+                    HandlerList.unregisterAll(this);
+                }
+            }
+        };
+
+        Bukkit.getPluginManager().registerEvents(listener, RPUniverse.getInstance());
     }
 
     private void waitForBlockClick(Player player) {
@@ -79,12 +116,53 @@ public class AllLocksMenu extends EasyPaginatedMenu {
             @EventHandler
             public void onBlockClick(PlayerInteractEvent event) {
                 if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getPlayer().equals(player)) {
+                    Block block = event.getClickedBlock();
                     Material blockType = event.getClickedBlock().getType();
 
-                    if (isLockable(blockType)) {
-                        createLock(event.getClickedBlock());
-                    } else {
-                        player.sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().invalidLockItem));
+                    Material type = block.getType();
+                    List<Block> blocksToCheck = new ArrayList<>();
+
+                    if (type.toString().contains("CHEST")) {
+                        Chest chest = (Chest) block.getState();
+                        InventoryHolder holder = chest.getInventory().getHolder();
+                        if (holder instanceof DoubleChest) {
+                            DoubleChest doubleChest = (DoubleChest) holder;
+                            blocksToCheck.add(((Chest) doubleChest.getLeftSide()).getBlock());
+                            blocksToCheck.add(((Chest) doubleChest.getRightSide()).getBlock());
+                        } else {
+                            blocksToCheck.add(block);
+                        }
+                    }
+
+                    else if (type.toString().contains("TRAPDOOR")) {
+                        blocksToCheck.add(block);
+                    }
+
+                    else if (type.toString().contains("DOOR")) {
+                        blocksToCheck.add(block);
+
+                        Door door = (Door) block.getBlockData();
+
+                        if (door.getHalf() == Bisected.Half.TOP) {
+                            blocksToCheck.add(block.getRelative(BlockFace.DOWN));
+                        } else {
+                            blocksToCheck.add(block.getRelative(BlockFace.UP));
+                        }
+                    }
+                    else {
+                        blocksToCheck.add(block);
+                    }
+
+                    for (Block checkBlock : blocksToCheck) {
+                        Lock lock = RPUniverse.getInstance().getLockHandler().getLockByLocation(checkBlock.getLocation());
+                        if (lock != null) continue;
+
+                        if (isLockable(blockType)) {
+                            createLock(event.getClickedBlock());
+                            player.sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().lockCreationSuccess));
+                        } else {
+                            player.sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().invalidLockItem));
+                        }
                     }
 
                     event.setCancelled(true);
@@ -108,6 +186,7 @@ public class AllLocksMenu extends EasyPaginatedMenu {
                         event.setCancelled(true);
                         HandlerList.unregisterAll(this);
                         creatingLockMap.put(player, false);
+                        player.sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().createLockCanceled));
                     }
                 }
             }
@@ -118,8 +197,10 @@ public class AllLocksMenu extends EasyPaginatedMenu {
 
     private boolean isLockable(Material material) {
         return material.isBlock() &&
-         material != Material.AIR &&
-         (material.toString().contains("DOOR") || material.toString().contains("CHEST") || material.toString().contains("BARREL"));
+                material != Material.AIR &&
+                (material.toString().contains("DOOR") ||
+                        material.toString().contains("CHEST") ||
+                        material.toString().contains("BARREL"));
     }
 
     private void createLock(Block block) {
@@ -133,7 +214,19 @@ public class AllLocksMenu extends EasyPaginatedMenu {
         // 53 - Filter
         inventory.setItem(45, FamiUtils.makeItem(Material.EMERALD_BLOCK, RPUniverse.getLanguageHandler().allLocksMenuCreateLockDisplayName, RPUniverse.getLanguageHandler().allLocksMenuCreateLockLore));
         inventory.setItem(52, FamiUtils.makeItem(Material.BARREL, RPUniverse.getLanguageHandler().allLocksMenuSearchDisplayName, RPUniverse.getLanguageHandler().allLocksMenuSearchLore));
-        inventory.setItem(53, FamiUtils.makeItem(Material.BOOK, RPUniverse.getLanguageHandler().allLocksMenuFilterDisplayName, RPUniverse.getLanguageHandler().allLocksMenuFilterLore));
+        // inventory.setItem(53, FamiUtils.makeItem(Material.BOOK, RPUniverse.getLanguageHandler().allLocksMenuFilterDisplayName, RPUniverse.getLanguageHandler().allLocksMenuFilterLore));
+    }
+
+    private List<Lock> searchLocks(String query) {
+        List<Lock> filteredLocks = new ArrayList<>();
+        for (Lock lock : locks) {
+            if (lock.getOwnersAsString().toLowerCase().contains(query.toLowerCase()) ||
+                    (lock.getJobName() != null && lock.getJobName().toLowerCase().contains(query.toLowerCase())) ||
+                    String.valueOf(lock.getMinWorkingLevel()).contains(query)) {
+                filteredLocks.add(lock);
+            }
+        }
+        return filteredLocks;
     }
 
     @Override
