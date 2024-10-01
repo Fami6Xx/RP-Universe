@@ -253,10 +253,6 @@ public class DataSystem implements Listener {
      * Saves all data.
      */
     public void saveAllData(){
-        playerDataMap.forEach((uuid,data) -> {
-            data.prepareForSave();
-            dataHandler.savePlayerData(data);
-        });
         processSaveQueue();
         dataHandler.saveConsumables(RPUniverse.getInstance().getBasicNeedsHandler());
         RPUniverse.getInstance().getJobsHandler().getJobs().forEach(job -> {
