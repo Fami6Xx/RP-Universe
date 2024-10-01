@@ -535,6 +535,10 @@ public class PlayerData {
             return false;
         }
 
+        if (playerMode == PlayerMode.ADMIN) {
+            return true;
+        }
+
         if (lock.getOwners() != null && lock.getOwners().contains(playerUUID.toString())) {
             return true;
         }
