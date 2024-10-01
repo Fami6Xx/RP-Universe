@@ -4,6 +4,8 @@ import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.locks.commands.LocksCommand;
+import me.fami6xx.rpuniverse.core.locks.menus.AllLocksMenu;
+import me.fami6xx.rpuniverse.core.locks.menus.LockMenu;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
@@ -20,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.InventoryHolder;
@@ -184,36 +187,7 @@ public class LockHandler implements Listener {
 
             if(type == Material.AIR) return;
 
-            if (type.toString().contains("CHEST")) {
-                Chest chest = (Chest) block.getState();
-                InventoryHolder holder = chest.getInventory().getHolder();
-                if (holder instanceof DoubleChest) {
-                    DoubleChest doubleChest = (DoubleChest) holder;
-                    blocksToCheck.add(((Chest) doubleChest.getLeftSide()).getBlock());
-                    blocksToCheck.add(((Chest) doubleChest.getRightSide()).getBlock());
-                } else {
-                    blocksToCheck.add(block);
-                }
-            }
-
-            else if (type.toString().contains("TRAPDOOR")) {
-                blocksToCheck.add(block);
-            }
-
-            else if (type.toString().contains("DOOR")) {
-                blocksToCheck.add(block);
-
-                Door door = (Door) block.getBlockData();
-
-                if (door.getHalf() == Bisected.Half.TOP) {
-                    blocksToCheck.add(block.getRelative(BlockFace.DOWN));
-                } else {
-                    blocksToCheck.add(block.getRelative(BlockFace.UP));
-                }
-            }
-            else {
-                blocksToCheck.add(block);
-            }
+            getAllLockBlocksFromBlock(block, type, blocksToCheck);
 
             for (Block checkBlock : blocksToCheck) {
                 Lock lock = getLockByLocation(checkBlock.getLocation());
@@ -252,36 +226,7 @@ public class LockHandler implements Listener {
             return;
         }
 
-        if (type.toString().contains("CHEST")) {
-            Chest chest = (Chest) block.getState();
-            InventoryHolder holder = chest.getInventory().getHolder();
-            if (holder instanceof DoubleChest) {
-                DoubleChest doubleChest = (DoubleChest) holder;
-                blocksToCheck.add(((Chest) doubleChest.getLeftSide()).getBlock());
-                blocksToCheck.add(((Chest) doubleChest.getRightSide()).getBlock());
-            } else {
-                blocksToCheck.add(block);
-            }
-        }
-
-        else if (type.toString().contains("TRAPDOOR")) {
-            blocksToCheck.add(block);
-        }
-
-        else if (type.toString().contains("DOOR")) {
-            blocksToCheck.add(block);
-
-            Door door = (Door) block.getBlockData();
-
-            if (door.getHalf() == Bisected.Half.TOP) {
-                blocksToCheck.add(block.getRelative(BlockFace.DOWN));
-            } else {
-                blocksToCheck.add(block.getRelative(BlockFace.UP));
-            }
-        }
-        else {
-            blocksToCheck.add(block);
-        }
+        getAllLockBlocksFromBlock(block, type, blocksToCheck);
 
         for (Block checkBlock : blocksToCheck) {
             Lock lock = getLockByLocation(checkBlock.getLocation());
@@ -321,11 +266,66 @@ public class LockHandler implements Listener {
         }
     }
 
+    public static void getAllLockBlocksFromBlock(Block block, Material type, List<Block> blocksToCheck) {
+        if (type.toString().contains("CHEST")) {
+            Chest chest = (Chest) block.getState();
+            InventoryHolder holder = chest.getInventory().getHolder();
+            if (holder instanceof DoubleChest) {
+                DoubleChest doubleChest = (DoubleChest) holder;
+                blocksToCheck.add(((Chest) doubleChest.getLeftSide()).getBlock());
+                blocksToCheck.add(((Chest) doubleChest.getRightSide()).getBlock());
+            } else {
+                blocksToCheck.add(block);
+            }
+        }
+
+        else if (type.toString().contains("TRAPDOOR")) {
+            blocksToCheck.add(block);
+        }
+
+        else if (type.toString().contains("DOOR")) {
+            blocksToCheck.add(block);
+
+            Door door = (Door) block.getBlockData();
+
+            if (door.getHalf() == Bisected.Half.TOP) {
+                blocksToCheck.add(block.getRelative(BlockFace.DOWN));
+            } else {
+                blocksToCheck.add(block.getRelative(BlockFace.UP));
+            }
+        }
+        else {
+            blocksToCheck.add(block);
+        }
+    }
+
     private void checkHoloAndDelete(UUID playerUUID) {
         if(holograms.containsKey(playerUUID)) {
             holograms.get(playerUUID).delete();
             holograms.remove(playerUUID);
             lockMap.remove(playerUUID);
+        }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
+        List<Block> blocksToCheck = new ArrayList<>();
+        getAllLockBlocksFromBlock(block, block.getType(), blocksToCheck);
+
+        boolean locked = false;
+        for (Block checkBlock : blocksToCheck) {
+            Lock lock = getLockByLocation(checkBlock.getLocation());
+            if (lock != null) {
+                locked = true;
+            }
+        }
+
+        if (locked) {
+            event.setCancelled(true);
+            FamiUtils.sendMessageWithPrefix(player, "&cYou need to remove the lock first before breaking this block.");
         }
     }
 }

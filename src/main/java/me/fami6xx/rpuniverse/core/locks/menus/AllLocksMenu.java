@@ -5,15 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import me.fami6xx.rpuniverse.core.locks.Lock;
+import me.fami6xx.rpuniverse.core.locks.LockHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
-import org.bukkit.block.data.Bisected;
-import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -23,7 +19,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -139,36 +134,7 @@ public class AllLocksMenu extends EasyPaginatedMenu {
                     Material type = block.getType();
                     List<Block> blocksToCheck = new ArrayList<>();
 
-                    if (type.toString().contains("CHEST")) {
-                        Chest chest = (Chest) block.getState();
-                        InventoryHolder holder = chest.getInventory().getHolder();
-                        if (holder instanceof DoubleChest) {
-                            DoubleChest doubleChest = (DoubleChest) holder;
-                            blocksToCheck.add(((Chest) doubleChest.getLeftSide()).getBlock());
-                            blocksToCheck.add(((Chest) doubleChest.getRightSide()).getBlock());
-                        } else {
-                            blocksToCheck.add(block);
-                        }
-                    }
-
-                    else if (type.toString().contains("TRAPDOOR")) {
-                        blocksToCheck.add(block);
-                    }
-
-                    else if (type.toString().contains("DOOR")) {
-                        blocksToCheck.add(block);
-
-                        Door door = (Door) block.getBlockData();
-
-                        if (door.getHalf() == Bisected.Half.TOP) {
-                            blocksToCheck.add(block.getRelative(BlockFace.DOWN));
-                        } else {
-                            blocksToCheck.add(block.getRelative(BlockFace.UP));
-                        }
-                    }
-                    else {
-                        blocksToCheck.add(block);
-                    }
+                    LockHandler.getAllLockBlocksFromBlock(block, type, blocksToCheck);
 
                     for (Block checkBlock : blocksToCheck) {
                         Lock lock = RPUniverse.getInstance().getLockHandler().getLockByLocation(checkBlock.getLocation());
