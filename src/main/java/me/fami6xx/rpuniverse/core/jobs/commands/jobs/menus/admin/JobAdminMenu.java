@@ -52,6 +52,9 @@ public class JobAdminMenu extends Menu {
             FamiUtils.sendMessage(player, "&7Job bank: &6" + job.getCurrentMoneyInJobBank());
             FamiUtils.sendMessage(player, "&7Current positions: &6" + job.getPositions().size());
             FamiUtils.sendMessage(player, "&7All players with this job: &6" + job.getAllPlayersInJob().size());
+            FamiUtils.sendMessage(player, "&7Boss can edit positions? &6" + (job.isBossCanEditPositions() ? "Yes" : "No"));
+            FamiUtils.sendMessage(player, "&7Players receive salary? &6" + (job.isPlayersReceiveSalary() ? "Yes" : "No"));
+            FamiUtils.sendMessage(player, "&7Salary interval: &6" + job.getSalaryInterval());
             FamiUtils.sendMessage(player, "&7Is job ready? &6" + (ready.isEmpty() ? "Yes" : "No"));
             if(!ready.isEmpty()){
                 FamiUtils.sendMessage(player, "&7Reasons:");
