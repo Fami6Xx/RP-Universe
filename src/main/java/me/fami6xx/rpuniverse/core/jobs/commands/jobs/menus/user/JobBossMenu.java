@@ -41,7 +41,9 @@ public class JobBossMenu extends Menu {
         if (e.getSlot() == 1) {
             new JobBankActionsMenu(playerMenu, this, job).open();
         } else if (e.getSlot() == 3) {
-            new JobAllPositionsMenu(playerMenu, job, false).open();
+            if (job.isBossCanEditPositions()) {
+                new JobAllPositionsMenu(playerMenu, job, false).open();
+            }
         } else if (e.getSlot() == 5) {
             new JobAllPlayersMenu(playerMenu, this).open();
         } else if (e.getSlot() == 7) {
@@ -56,7 +58,9 @@ public class JobBossMenu extends Menu {
     @Override
     public void setMenuItems() {
         inventory.setItem(1, FamiUtils.makeItem(Material.GOLD_INGOT, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuJobBankItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuJobBankItemLore)));
-        inventory.setItem(3, FamiUtils.makeItem(Material.PAPER, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuPositionItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuPositionItemLore)));
+        if (job.isBossCanEditPositions()) {
+            inventory.setItem(3, FamiUtils.makeItem(Material.PAPER, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuPositionItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuPositionItemLore)));
+        }
         inventory.setItem(5, FamiUtils.makeItem(Material.PLAYER_HEAD, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemLore)));
         if (job.getJobType() != null) {
             if (job.getJobType().hasBossMenu()) {
