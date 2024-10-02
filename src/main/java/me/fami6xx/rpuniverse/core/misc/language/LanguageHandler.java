@@ -65,6 +65,8 @@ public class LanguageHandler {
     public String jobAdminMenuJobTypeAdminItemLore = "&7Click to open admin job type menu";
     public String jobAdminMenuRemoveItemDisplayName = "&cRemove";
     public String jobAdminMenuRemoveItemLore = "&7Click to remove the job";
+    public String jobAdminMenuSettingsItemDisplayName = "&cJob settings";
+    public String jobAdminMenuSettingsItemLore = "&7Click to view / edit job settings";
     public String jobBankActionsMenuName = "&6RPUniverse &7| &cJob Bank Actions";
     public String jobBankActionsMenuAddMoneyItemDisplayName = "&cAdd Money";
     public String jobBankActionsMenuAddMoneyItemLore = "&7Click to add money to the job bank";

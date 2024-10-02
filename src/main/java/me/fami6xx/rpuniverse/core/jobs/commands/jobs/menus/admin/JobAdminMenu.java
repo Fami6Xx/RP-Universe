@@ -109,11 +109,14 @@ public class JobAdminMenu extends Menu {
             else
                 FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().errorJobNotReadyMessage);
         }
+        if(e.getSlot() == 25){
+            new JobSettingsMenu(playerMenu, this).open();
+        }
         if(e.getSlot() == 31){
             if(job.getJobType() == null || !job.getJobType().hasAdminMenu())
                 return;
 
-            // Code for opening the admin menu for the job type
+            job.getJobType().openAdminMenu(playerMenu.getPlayer());
         }
         if(e.getSlot() == 44){
             RPUniverse.getInstance().getJobsHandler().removeJob(job);
@@ -134,7 +137,7 @@ public class JobAdminMenu extends Menu {
         // Boss menu actions : Port to boss menu, change location :: 22
         // Select job type : Change job type :: 23
         // All players with this job :: 24
-        // Working permission levels admin menu ??? :: 25
+        // Admin menu for this job :: 25
         // Job Settings :: 29
         // Something :: 30
 
@@ -155,6 +158,7 @@ public class JobAdminMenu extends Menu {
         this.inventory.setItem(22, FamiUtils.makeItem(Material.ENDER_PEARL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemLore)));
         this.inventory.setItem(23, FamiUtils.makeItem(Material.BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemLore)));
         this.inventory.setItem(24, FamiUtils.makeItem(Material.PLAYER_HEAD, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemLore)));
+        this.inventory.setItem(25, FamiUtils.makeItem(Material.IRON_SWORD, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuSettingsItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuSettingsItemLore)));
         if(job.getJobType() != null && job.getJobType().hasAdminMenu())
             this.inventory.setItem(31, FamiUtils.makeItem(Material.WRITABLE_BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemLore)));
         this.inventory.setItem(44, FamiUtils.makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemLore)));

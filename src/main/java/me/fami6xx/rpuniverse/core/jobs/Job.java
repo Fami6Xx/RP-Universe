@@ -46,8 +46,11 @@ public class Job {
     private transient Map<UUID, Position> playerPositions;
     private List<Position> jobPositions;
     private String jobName;
-    private int jobBank = 0;
+    private double jobBank = 0;
     private Location bossMenuLocation;
+    private boolean bossCanEditPositions = false;
+    private boolean playersReceiveSalary = true;
+    private int salaryInterval = 360;
 
     /**
      * Creates a new AJob instance that is empty.
@@ -261,6 +264,56 @@ public class Job {
      */
     public String getName() {
         return jobName;
+    }
+
+    /**
+     * Retrieves the bossCanEditPositions field.
+     * @return The bossCanEditPositions field as a boolean.
+     */
+    public boolean isBossCanEditPositions() {
+        return bossCanEditPositions;
+    }
+
+    /**
+     * Sets the bossCanEditPositions field.
+     * @param bossCanEditPositions The value to set the bossCanEditPositions field to.
+     */
+    public void setBossCanEditPositions(boolean bossCanEditPositions) {
+        this.bossCanEditPositions = bossCanEditPositions;
+    }
+
+    /**
+     * Retrieves the playersReceiveSalary field.
+     * @return The playersReceiveSalary field as a boolean.
+     */
+    public boolean isPlayersReceiveSalary() {
+        return playersReceiveSalary;
+    }
+
+    /**
+     * Sets the playersReceiveSalary field.
+     * @param playersReceiveSalary The value to set the playersReceiveSalary field to.
+     */
+    public void setPlayersReceiveSalary(boolean playersReceiveSalary) {
+        this.playersReceiveSalary = playersReceiveSalary;
+    }
+
+    /**
+     * Retrieves the salaryInterval field.
+     * This field is in seconds.
+     * @return The salaryInterval field as an integer.
+     */
+    public int getSalaryInterval() {
+        return salaryInterval;
+    }
+
+    /**
+     * Sets the salaryInterval field.
+     * This field is in seconds.
+     * @param salaryInterval The value to set the salaryInterval field to.
+     */
+    public void setSalaryInterval(int salaryInterval) {
+        this.salaryInterval = salaryInterval;
     }
 
     /**
@@ -517,7 +570,7 @@ public class Job {
      *
      * @param money The amount of money to add to the job bank. Must be a positive integer.
      */
-    public void addMoneyToJobBank(int money) {
+    public void addMoneyToJobBank(double money) {
         jobBank += money;
         RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
@@ -528,7 +581,7 @@ public class Job {
      * @param money The amount of money to remove from the job bank. Must be a positive integer.
      * @return {@code true} if the money was successfully removed from the job bank, {@code false} otherwise.
      */
-    public boolean removeMoneyFromJobBank(int money) {
+    public boolean removeMoneyFromJobBank(double money) {
         if(jobBank >= money) {
             jobBank -= money;
             RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
@@ -542,7 +595,7 @@ public class Job {
      *
      * @return An integer representing the current amount of money in the job bank.
      */
-    public int getCurrentMoneyInJobBank() {
+    public double getCurrentMoneyInJobBank() {
         return jobBank;
     }
 
