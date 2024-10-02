@@ -69,6 +69,7 @@ public class JobSettingsMenu extends Menu implements Listener {
         inventory.setItem(5, FamiUtils.makeItem(Material.DIAMOND, "&cSalary time in seconds", "&7Current: &c" + playerMenu.getEditingJob().getSalaryInterval() + "&7 seconds", "", "&7Determines at what interval do players receive their salary in seconds", "&7Click to change"));
 
         inventory.setItem(8, FamiUtils.makeItem(Material.BARRIER, "&cBack", "&7Go back to the previous menu"));
+        setFillerGlass();
     }
 
     @Override
