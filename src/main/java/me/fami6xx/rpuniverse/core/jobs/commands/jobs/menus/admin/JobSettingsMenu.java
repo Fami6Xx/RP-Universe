@@ -39,6 +39,10 @@ public class JobSettingsMenu extends Menu implements Listener {
     @Override
     public void handleMenu(InventoryClickEvent e) {
         switch (e.getSlot()) {
+            case 2:
+                playerMenu.getEditingJob().setSalaryBeingRemovedFromBank(!playerMenu.getEditingJob().isSalaryBeingRemovedFromBank());
+                this.open();
+                break;
             case 3:
                 playerMenu.getEditingJob().setBossCanEditPositions(!playerMenu.getEditingJob().isBossCanEditPositions());
                 this.open();
@@ -53,6 +57,10 @@ public class JobSettingsMenu extends Menu implements Listener {
                 FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), "&7Type &6cancel &7to cancel.");
                 waitForSalaryIntervalInput(playerMenu.getPlayer(), this);
                 break;
+            case 6:
+                playerMenu.getEditingJob().setBossCanRemoveMoneyFromBank(!playerMenu.getEditingJob().isBossCanRemoveMoneyFromBank());
+                this.open();
+                break;
             case 8:
                 previousMenu.open();
                 break;
@@ -64,9 +72,11 @@ public class JobSettingsMenu extends Menu implements Listener {
 
     @Override
     public void setMenuItems() {
+        inventory.setItem(2, FamiUtils.makeItem(Material.DIAMOND, "&cSalary being removed from bank", "&7Current: " + (playerMenu.getEditingJob().isSalaryBeingRemovedFromBank() ? "&aYes" : "&cNo"), "&7Click to toggle"));
         inventory.setItem(3, FamiUtils.makeItem(Material.ANVIL, "&cBoss can edit positions", "&7Current: " + (playerMenu.getEditingJob().isBossCanEditPositions() ? "&aYes" : "&cNo"), "&7Click to toggle"));
         inventory.setItem(4, FamiUtils.makeItem(Material.ENDER_PEARL, "&cPlayers receive salary", "&7Current: " + (playerMenu.getEditingJob().isPlayersReceiveSalary() ? "&aYes" : "&cNo"), "&7Click to toggle"));
         inventory.setItem(5, FamiUtils.makeItem(Material.DIAMOND, "&cSalary time in seconds", "&7Current: &c" + playerMenu.getEditingJob().getSalaryInterval() + "&7 seconds", "", "&7Determines at what interval do players receive their salary in seconds", "&7Click to change"));
+        inventory.setItem(6, FamiUtils.makeItem(Material.GOLD_INGOT, "&cBoss can remove money from bank", "&7Current: " + (playerMenu.getEditingJob().isBossCanRemoveMoneyFromBank() ? "&aYes" : "&cNo"), "&7Click to toggle"));
 
         inventory.setItem(8, FamiUtils.makeItem(Material.BARRIER, "&cBack", "&7Go back to the previous menu"));
         setFillerGlass();

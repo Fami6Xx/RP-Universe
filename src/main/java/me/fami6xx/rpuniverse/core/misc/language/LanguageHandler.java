@@ -80,6 +80,7 @@ public class LanguageHandler {
     public String jobBankActionsMenuRemoveMoneyMessage = "&7Type the amount of money you want to remove from the job bank in chat.";
     public String jobBankActionsMenuRemoveMoneySuccessMessage = "&cYou removed money from the job bank!";
     public String jobBankActionsMenuRemoveMoneyErrorMessage = "&cYou can't remove this amount of money from the job bank!";
+    public String jobBankActionsMenuRemoveMoneyNoPermissionMessage = "&cYou don't have permission to remove money from the job bank!";
     public String jobAllPositionsMenuName = "&6RPUniverse &7| &c All positions";
     public String jobAllPositionsMenuAddPositionItemDisplayName = "&cCreate Position";
     public String jobAllPositionsMenuAddPositionItemLore = "&7Click to start the process of creating a position";

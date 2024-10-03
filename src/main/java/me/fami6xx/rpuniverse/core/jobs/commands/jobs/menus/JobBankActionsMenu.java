@@ -6,6 +6,7 @@ import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
@@ -75,6 +76,10 @@ public class JobBankActionsMenu extends Menu {
             });
         }
         if(e.getSlot() == 5){
+            if (!job.isBossCanEditPositions() && RPUniverse.getPlayerData(playerMenu.getPlayer().getUniqueId().toString()).getPlayerMode() != PlayerMode.ADMIN) {
+                FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), languageHandler.jobBankActionsMenuRemoveMoneyNoPermissionMessage);
+                return;
+            }
             FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), languageHandler.jobBankActionsMenuRemoveMoneyMessage);
             FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), languageHandler.cancelActivityMessage);
             playerMenu.getPlayer().closeInventory();
