@@ -51,6 +51,8 @@ public class Job {
     private boolean bossCanEditPositions = false;
     private boolean playersReceiveSalary = true;
     private int salaryInterval = 360;
+    private boolean salaryBeingRemovedFromBank = true;
+    private boolean bossCanRemoveMoneyFromBank = true;
 
     /**
      * Creates a new AJob instance that is empty.
@@ -761,5 +763,37 @@ public class Job {
             JSONJobTypeData = jobType.toString();
 
         return GSON.toJson(this);
+    }
+
+    /**
+     * Retrieves the bossCanRemoveMoneyFromBank field.
+     * @return The bossCanRemoveMoneyFromBank field as a boolean.
+     */
+    public boolean isSalaryBeingRemovedFromBank() {
+        return salaryBeingRemovedFromBank;
+    }
+
+    /**
+     * Sets the salaryBeingRemovedFromBank field.
+     * @param salaryBeingRemovedFromBank The value to set the salaryBeingRemovedFromBank field to.
+     */
+    public void setSalaryBeingRemovedFromBank(boolean salaryBeingRemovedFromBank) {
+        this.salaryBeingRemovedFromBank = salaryBeingRemovedFromBank;
+    }
+
+    /**
+     * Retrieves the bossCanRemoveMoneyFromBank field.
+     * @return The bossCanRemoveMoneyFromBank field as a boolean.
+     */
+    public boolean isBossCanRemoveMoneyFromBank() {
+        return bossCanRemoveMoneyFromBank;
+    }
+
+    /**
+     * Sets the bossCanRemoveMoneyFromBank field.
+     * @param bossCanRemoveMoneyFromBank The value to set the bossCanRemoveMoneyFromBank field to.
+     */
+    public void setBossCanRemoveMoneyFromBank(boolean bossCanRemoveMoneyFromBank) {
+        this.bossCanRemoveMoneyFromBank = bossCanRemoveMoneyFromBank;
     }
 }

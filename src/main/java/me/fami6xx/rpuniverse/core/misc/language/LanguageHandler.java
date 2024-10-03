@@ -260,8 +260,6 @@ public class LanguageHandler {
     public String allLocksMenuName = "&6RPUniverse &7| &cAll Locks";
     public String allLocksMenuCreateLockDisplayName = "&aCreate New Lock";
     public String allLocksMenuCreateLockLore = "&7Click to create a new lock.";
-    public String allLocksMenuFilterDisplayName = "&aFilter";
-    public String allLocksMenuFilterLore = "&7Click to filter the locks.";
     public String allLocksMenuSearchDisplayName = "&aSearch";
     public String allLocksMenuSearchLore = "&7Click to search for a lock.";
     public String allLocksMenuSearchPrompt = "&7Type in chat the query you want to search for.";
@@ -269,7 +267,6 @@ public class LanguageHandler {
     public String lockItemLore = "&7Owner: &c{lockOwner}~&7Job: &c{lockJobName}~&7Min. Working Level: &c{lockMinWorkingLevel}~&7Click to edit";
     public String createLockPrompt = "&eClick the block you want to lock.";
     public String lockCreationSuccess = "&aLock has been successfully created.";
-    public String lockCreationFailure = "&cFailed to create a lock.";
     public String invalidLockItem = "&cThis item cannot be locked.";
     public String createLockSelectTypeMenuName = "&6RPUniverse &7| &cSelect type of lock";
     public String createLockSelectTypeMenuJobLockDisplayName = "&aJob Lock";
@@ -284,6 +281,10 @@ public class LanguageHandler {
     public String createLockTypePlayerNames = "&7Type in chat the player names separated by a comma (,) for whom the lock will apply.";
     public String createLockNoPlayersFound = "&cNo valid players found. Lock not created.";
     public String cannotOpenLockMessage = "&cYou cannot open this lock!";
+
+    // SALARY
+    public String salaryReceivedMessage = "&c&lSALARY &8» &aYou received &6{salary}$ &afrom your jobs.";
+    public String salaryJobDoesntHaveEnoughMoney = "&c&lSALARY &8» &cThe job &6{jobName} &cdoesn't have enough money to pay you!";
 
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";

@@ -2,12 +2,18 @@ package me.fami6xx.rpuniverse.core.jobs;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The JobsHandler is the main class for handling the jobs.
@@ -22,6 +28,8 @@ public class JobsHandler implements Listener {
     private final List<Job> jobs = new ArrayList<>();
     private final List<JobType> jobTypes = new ArrayList<>();
 
+    private BukkitTask salaryTask;
+
     /**
      * Constructor for the JobsHandler.
      * Initializes the jobs and job types.
@@ -29,6 +37,7 @@ public class JobsHandler implements Listener {
      */
     public JobsHandler() {
         loadAllJobs();
+        startSalaryTask();
     }
 
     /**
@@ -37,6 +46,7 @@ public class JobsHandler implements Listener {
      */
     public void shutdown() {
         jobs.forEach(job -> RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getName(), job));
+        salaryTask.cancel();
     }
 
     /**
@@ -145,5 +155,44 @@ public class JobsHandler implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         RPUniverse.getInstance().getBossBarHandler().updateBossBar(event.getPlayer());
+    }
+
+    public void startSalaryTask(){
+        salaryTask = RPUniverse.getInstance().getServer().getScheduler().runTaskTimerAsynchronously(RPUniverse.getInstance(), () -> {
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
+                if(data == null) return;
+                data.increaseTimeOnline();
+
+                AtomicReference<Double> salary = new AtomicReference<>((double) 0);
+                data.getPlayerJobs().forEach(job -> {
+                    if (job.isPlayersReceiveSalary()) {
+                        int timeOnline = data.getTimeOnline();
+                        if (timeOnline != 0 && timeOnline % job.getSalaryInterval() == 0){
+                            if (job.getPlayerPosition(player.getUniqueId()) == null) return;
+
+                            if (job.getCurrentMoneyInJobBank() < job.getPlayerPosition(player.getUniqueId()).getSalary()) {
+                                HashMap<String, String> placeholders = new HashMap<>();
+                                placeholders.put("{jobName}", job.getName());
+                                FamiUtils.sendMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().salaryJobDoesntHaveEnoughMoney, placeholders));
+                            }
+
+                            if (job.isSalaryBeingRemovedFromBank()) {
+                                job.removeMoneyFromJobBank(job.getPlayerPosition(player.getUniqueId()).getSalary());
+                            }
+                            salary.updateAndGet(v -> new Double((double) (v + job.getPlayerPosition(player.getUniqueId()).getSalary())));
+                        }
+                    }
+                });
+
+                if (salary.get() != 0) {
+                    RPUniverse.getInstance().getEconomy().depositPlayer(player, salary.get());
+                    HashMap<String, String> placeholders = new HashMap<>();
+                    placeholders.put("{salary}", salary.get().toString());
+
+                    RPUniverse.getInstance().getActionBarHandler().addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().salaryReceivedMessage, placeholders));
+                }
+            });
+        }, 0, 20);
     }
 }
