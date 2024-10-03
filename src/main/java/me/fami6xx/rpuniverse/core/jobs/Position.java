@@ -22,7 +22,7 @@ public class Position {
      * @param isBoss Boolean flag if position is a boss
      * @param isDefault Boolean flag if position is default
      */
-    public Position(String name, int salary, int workingStepPermissionLevel, boolean isBoss, boolean isDefault) {
+    public Position(String name, double salary, int workingStepPermissionLevel, boolean isBoss, boolean isDefault) {
         this.name = name;
         this.salary = salary;
         this.workingStepPermissionLevel = workingStepPermissionLevel;

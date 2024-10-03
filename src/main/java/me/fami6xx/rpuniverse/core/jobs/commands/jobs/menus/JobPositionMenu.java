@@ -61,7 +61,6 @@ public class JobPositionMenu extends Menu {
         return 9;
     }
 
-    // ToDo: Implement moving the position left or right
     @Override
     public void handleMenu(InventoryClickEvent e) {
         if(e.getSlot() == 1 ){
@@ -111,7 +110,7 @@ public class JobPositionMenu extends Menu {
                 }
 
                 try{
-                    int salary = Integer.parseInt(message);
+                    double salary = Double.parseDouble(message);
                     if(salary < 0){
                         FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().errorPositionSalaryTooLowMessage);
                         return false;

@@ -92,7 +92,7 @@ public class JobAllPositionsMenu extends EasyPaginatedMenu {
                     }
 
                     try{
-                        int salary = Integer.parseInt(message1);
+                        double salary = Double.parseDouble(message1);
                         if(salary < 0){
                             player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorPositionSalaryTooLowMessage));
                             return false;
