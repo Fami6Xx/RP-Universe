@@ -142,6 +142,6 @@ public class VisibilityHoloHandler extends famiHoloHandler {
                     }
                 }));
             }
-        }.runTaskTimerAsynchronously(RPUniverse.getInstance(), 0L, 1L);
+        }.runTaskTimer(RPUniverse.getInstance(), 0L, 1L);
     }
 }
