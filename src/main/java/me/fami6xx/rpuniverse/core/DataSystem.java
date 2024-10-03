@@ -83,9 +83,7 @@ public class DataSystem implements Listener {
             dataHandler.saveJobData(job.getName(), job);
         });
         dataHandler.saveConsumables(RPUniverse.getInstance().getBasicNeedsHandler());
-        RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(lock -> {
-            dataHandler.saveLockData(lock);
-        });
+        RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(dataHandler::saveLockData);
         RPUniverse.getInstance().getLogger().info("Saved all data");
         dataHandler.shutDown();
     }
@@ -238,7 +236,7 @@ public class DataSystem implements Listener {
      * @return The complete save time.
      */
     private int getCompleteSaveTime(){
-        int time = 0;
+        int time;
         try{
             time = RPUniverse.getInstance().getConfiguration().getInt("data.completeSaveInterval");
         }catch (Exception exc){
@@ -260,9 +258,7 @@ public class DataSystem implements Listener {
             job.prepareForSave();
             dataHandler.saveJobData(job.getName(), job);
         });
-        RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(lock -> {
-            dataHandler.saveLockData(lock);
-        });
+        RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(dataHandler::saveLockData);
     }
 
     /**
