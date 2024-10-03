@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class Position {
     private String name;
-    private int salary;
+    private double salary;
     private int workingStepPermissionLevel;
     private boolean isBoss;
     private boolean isDefault;
@@ -51,7 +51,7 @@ public class Position {
      * Getter method for salary
      * @return Salary of the position
      */
-    public int getSalary() {
+    public double getSalary() {
         return salary;
     }
 
@@ -59,7 +59,7 @@ public class Position {
      * Setter method for salary
      * @param salary New salary of the position
      */
-    public void setSalary(int salary) {
+    public void setSalary(double salary) {
         this.salary = salary;
         RPUniverse.getInstance().getMenuManager().reopenJobMenus(job -> job.getPositions().contains(this), MenuTag.JOB_POSITION, MenuTag.JOB_POSITION_INTERNAL);
     }
