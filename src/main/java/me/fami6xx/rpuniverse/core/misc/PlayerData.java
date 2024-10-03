@@ -31,6 +31,7 @@ public class PlayerData {
     private transient Job selectedPlayerJob = null;
     private transient PlayerMode playerMode = PlayerMode.USER;
     private transient famiHologram currentTagHologram;
+    private transient int timeOnline = 0;
 
     private final UUID dataUUID;
     private String playerUUID;
@@ -139,6 +140,22 @@ public class PlayerData {
                 }
             }
         };
+    }
+
+    /**
+     * Increase time online by 1 second
+     */
+    public void increaseTimeOnline(){
+        timeOnline++;
+    }
+
+    /**
+     * Retrieves the time online for the player data in seconds.
+     *
+     * @return the time online of the player data
+     */
+    public int getTimeOnline(){
+        return timeOnline;
     }
 
     /**
