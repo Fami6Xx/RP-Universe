@@ -117,6 +117,7 @@ public class DataSystem implements Listener {
         // Firstly, check the playerDataMap if the user has already been loaded.
         PlayerData data = playerDataMap.get(uuid);
         if (data != null) {
+            this.lastAccessTime.put(data.getPlayerUUID(), System.currentTimeMillis());
             return data;
         }
 
