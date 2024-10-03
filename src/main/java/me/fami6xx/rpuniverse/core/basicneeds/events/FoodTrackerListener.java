@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -54,6 +55,18 @@ public class FoodTrackerListener implements Listener {
 
             event.setCancelled(true);
             event.getPlayer().setFoodLevel(18);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (RPUniverse.getInstance().getBasicNeedsHandler().getConfig().isEnabled()) {
+            event.setKeepInventory(true);
+            PlayerData data = RPUniverse.getPlayerData(event.getEntity().getUniqueId().toString());
+            data.setFoodLevel(50);
+            data.setWaterLevel(50);
+            data.setPeeLevel(0);
+            data.setPoopLevel(0);
         }
     }
 
