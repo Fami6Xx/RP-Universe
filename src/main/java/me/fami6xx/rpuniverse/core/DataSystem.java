@@ -151,6 +151,7 @@ public class DataSystem implements Listener {
             }
 
             data = new PlayerData(RPUniverse.getInstance().getServer().getPlayer(uuid));
+            data.updatePlayer(RPUniverse.getInstance().getServer().getPlayer(uuid));
             playerDataMap.put(uuid, data);
             this.lastAccessTime.put(uuid, System.currentTimeMillis());
         }
