@@ -291,6 +291,8 @@ public class LockHandler implements Listener {
                 } else {
                     blocksToCheck.add(block);
                 }
+            }else{
+                blocksToCheck.add(block);
             }
         }
 
