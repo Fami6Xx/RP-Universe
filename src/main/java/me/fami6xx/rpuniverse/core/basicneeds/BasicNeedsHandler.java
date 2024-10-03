@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.basicneeds;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.PlayerDamageByBasicNeedsEvent;
 import me.fami6xx.rpuniverse.core.basicneeds.events.FoodTrackerListener;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
@@ -89,6 +90,10 @@ public class BasicNeedsHandler {
                     actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false);
 
                     if (playerData.getFoodLevel() == 0 || playerData.getWaterLevel() == 0 || playerData.getPeeLevel() == 100 || playerData.getPoopLevel() == 100) {
+                        PlayerDamageByBasicNeedsEvent event = new PlayerDamageByBasicNeedsEvent(player, 1);
+                        Bukkit.getPluginManager().callEvent(event);
+
+                        if (event.isCancelled()) return;
                         player.damage(1);
                     }
                 });
