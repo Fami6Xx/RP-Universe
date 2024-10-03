@@ -281,14 +281,16 @@ public class LockHandler implements Listener {
 
     public static void getAllLockBlocksFromBlock(Block block, Material type, List<Block> blocksToCheck) {
         if (type.toString().contains("CHEST")) {
-            Chest chest = (Chest) block.getState();
-            InventoryHolder holder = chest.getInventory().getHolder();
-            if (holder instanceof DoubleChest) {
-                DoubleChest doubleChest = (DoubleChest) holder;
-                blocksToCheck.add(((Chest) doubleChest.getLeftSide()).getBlock());
-                blocksToCheck.add(((Chest) doubleChest.getRightSide()).getBlock());
-            } else {
-                blocksToCheck.add(block);
+            if(!type.toString().contains("ENDER")) {
+                Chest chest = (Chest) block.getState();
+                InventoryHolder holder = chest.getInventory().getHolder();
+                if (holder instanceof DoubleChest) {
+                    DoubleChest doubleChest = (DoubleChest) holder;
+                    blocksToCheck.add(((Chest) doubleChest.getLeftSide()).getBlock());
+                    blocksToCheck.add(((Chest) doubleChest.getRightSide()).getBlock());
+                } else {
+                    blocksToCheck.add(block);
+                }
             }
         }
 
