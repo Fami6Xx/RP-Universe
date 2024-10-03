@@ -6,7 +6,7 @@
 
 # If there was an update changing something in the config, you need to
 # delete the config file and restart the server to generate a new one.
-version: '0.91'
+version: '0.95'
 
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 
