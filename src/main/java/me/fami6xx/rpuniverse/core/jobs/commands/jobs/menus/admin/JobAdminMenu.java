@@ -104,7 +104,7 @@ public class JobAdminMenu extends Menu {
             new JobBossLocationMenu(playerMenu, job, this).open();
         }
         if(e.getSlot() == 23){
-
+            new JobSelectJobType(playerMenu, job, this).open();
         }
         if(e.getSlot() == 24){
             if(job.isJobReady().isEmpty())
