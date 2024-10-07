@@ -164,7 +164,7 @@ public class JobsHandler implements Listener {
     }
 
     private void startSalaryTask(){
-        salaryTask = RPUniverse.getInstance().getServer().getScheduler().runTaskTimerAsynchronously(RPUniverse.getInstance(), () -> {
+        salaryTask = RPUniverse.getInstance().getServer().getScheduler().runTaskTimer(RPUniverse.getInstance(), () -> {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
                 if(data == null) return;
