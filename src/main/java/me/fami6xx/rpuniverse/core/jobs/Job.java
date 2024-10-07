@@ -383,6 +383,8 @@ public class Job {
      * @param jobType The job type to be set. Must not be null.
      */
     public void setJobType(@NotNull JobType jobType) {
+        jobType = jobType.getNewInstance(this);
+
         this.jobType = jobType;
         this.jobTypeName = jobType.getName();
         this.JSONJobTypeData = null;
