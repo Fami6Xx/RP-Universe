@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.jobs.types;
 
+import me.fami6xx.rpuniverse.core.jobs.Job;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -90,7 +91,7 @@ public interface JobType {
      * This method is used when adding a jobType to the list of job types so that the jobType can be instantiated.
      * @return a new instance of the JobType.
      */
-    JobType getNewInstance();
+    JobType getNewInstance(Job job);
 
     /**
      * Retrieves the data of the job type in JSON format.
