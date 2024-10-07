@@ -54,7 +54,7 @@ public class JobsHandler implements Listener {
      * Load all the jobs from the data handler.
      * Also initializes the jobs and job types.
      */
-    public void loadAllJobs(){
+    private void loadAllJobs(){
         Job[] jobs = RPUniverse.getInstance().getDataSystem().getDataHandler().getAllJobData();
 
         for(Job job : jobs){
@@ -161,7 +161,7 @@ public class JobsHandler implements Listener {
         RPUniverse.getInstance().getBossBarHandler().updateBossBar(event.getPlayer());
     }
 
-    public void startSalaryTask(){
+    private void startSalaryTask(){
         salaryTask = RPUniverse.getInstance().getServer().getScheduler().runTaskTimerAsynchronously(RPUniverse.getInstance(), () -> {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
