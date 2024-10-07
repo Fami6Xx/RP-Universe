@@ -9,6 +9,7 @@ import eu.decentsoftware.holograms.api.holograms.Hologram;
 import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.JobLoadedEvent;
 import me.fami6xx.rpuniverse.core.api.MoneyAddedToJobBankEvent;
 import me.fami6xx.rpuniverse.core.api.MoneyRemovedFromJobBankEvent;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
@@ -131,6 +132,9 @@ public class Job {
             jobType.fromJsonJobTypeData(JSONJobTypeData);
             jobType.initialize();
         }
+
+        JobLoadedEvent event = new JobLoadedEvent(this);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     /**
@@ -380,6 +384,7 @@ public class Job {
     public void setJobType(JobType jobType) {
         this.jobType = jobType;
         this.jobTypeName = jobType.getName();
+        this.JSONJobTypeData = null;
         RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == this);
     }
 
