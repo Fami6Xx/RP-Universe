@@ -38,7 +38,8 @@ public class JobSelectJobType extends EasyPaginatedMenu {
         ItemMeta meta = item.getItemMeta();
         NamespacedKey key = new NamespacedKey(RPUniverse.getInstance(), "jobType");
         meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, index);
-        return jobType.getIcon();
+        item.setItemMeta(meta);
+        return item;
     }
 
     @Override
