@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.jobs;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.JobDeletedEvent;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
@@ -101,6 +102,9 @@ public class JobsHandler implements Listener {
      * @param job The job to remove
      */
     public void removeJob(Job job){
+        JobDeletedEvent event = new JobDeletedEvent(job);
+        Bukkit.getPluginManager().callEvent(event);
+
         job.remove();
         jobs.remove(job);
         RPUniverse.getInstance().getDataSystem().getDataHandler().removeJobData(job.getName());

@@ -9,6 +9,8 @@ import eu.decentsoftware.holograms.api.holograms.Hologram;
 import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.MoneyAddedToJobBankEvent;
+import me.fami6xx.rpuniverse.core.api.MoneyRemovedFromJobBankEvent;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.user.JobBossMenu;
@@ -578,6 +580,8 @@ public class Job {
         BigDecimal bd = new BigDecimal(jobBank + money);
         bd = bd.setScale(2, RoundingMode.HALF_UP);
         jobBank = bd.doubleValue();
+        MoneyAddedToJobBankEvent event = new MoneyAddedToJobBankEvent(money, jobBank, this);
+        Bukkit.getPluginManager().callEvent(event);
         RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
 
@@ -592,6 +596,8 @@ public class Job {
             BigDecimal bd = new BigDecimal(jobBank - money);
             bd = bd.setScale(2, RoundingMode.HALF_UP);
             jobBank = bd.doubleValue();
+            MoneyRemovedFromJobBankEvent event = new MoneyRemovedFromJobBankEvent(money, jobBank, this);
+            Bukkit.getPluginManager().callEvent(event);
             RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
             return true;
         }
