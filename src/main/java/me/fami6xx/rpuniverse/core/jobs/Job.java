@@ -24,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -381,10 +382,11 @@ public class Job {
      *
      * @param jobType The job type to be set. Must not be null.
      */
-    public void setJobType(JobType jobType) {
+    public void setJobType(@NotNull JobType jobType) {
         this.jobType = jobType;
         this.jobTypeName = jobType.getName();
         this.JSONJobTypeData = null;
+        this.jobType.initialize();
         RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == this);
     }
 
