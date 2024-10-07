@@ -149,6 +149,8 @@ public class JobsHandler implements Listener {
         jobTypes.add(jobType);
 
         jobs.forEach(job -> {
+            if(job.getJobType() != null) return;
+            if(job.getJobTypeName() == null) return;
             if(job.getJobTypeName().equals(jobType.getName())){
                 JobType newInstance = jobType.getNewInstance(job);
                 job.setJobType(newInstance);
