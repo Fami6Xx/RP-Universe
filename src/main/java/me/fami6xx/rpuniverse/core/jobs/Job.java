@@ -24,6 +24,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -573,7 +575,9 @@ public class Job {
      * @param money The amount of money to add to the job bank. Must be a positive integer.
      */
     public void addMoneyToJobBank(double money) {
-        jobBank += money;
+        BigDecimal bd = new BigDecimal(jobBank + money);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        jobBank = bd.doubleValue();
         RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
 
@@ -585,7 +589,9 @@ public class Job {
      */
     public boolean removeMoneyFromJobBank(double money) {
         if(jobBank >= money) {
-            jobBank -= money;
+            BigDecimal bd = new BigDecimal(jobBank - money);
+            bd = bd.setScale(2, RoundingMode.HALF_UP);
+            jobBank = bd.doubleValue();
             RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
             return true;
         }
@@ -598,7 +604,9 @@ public class Job {
      * @return An integer representing the current amount of money in the job bank.
      */
     public double getCurrentMoneyInJobBank() {
-        return jobBank;
+        BigDecimal bd = new BigDecimal(jobBank);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     /**
