@@ -52,7 +52,7 @@ commands:
   globalooc:
     description: Sends a message to the global OOC chat
     usage: /<command> <message>
-    aliases: [ooc, gchat, globalchat]
+    aliases: [ooc, gchat, globalchat, gooc, go]
   switchjob:
     description: Switches the job of a player
     usage: /<command> (jobId)
@@ -70,6 +70,10 @@ commands:
     description: Opens the locks menu
     usage: /<command>
     aliases: [lock, lockmenu]
+  rpuniverse:
+    description: Main command of the plugin
+    usage: /<command> <subcommand>
+    aliases: [rpu]
 permissions:
   rpu.user:
     description: Gives access to all user commands
@@ -89,6 +93,8 @@ permissions:
         rpu.adminmode: true
         rpu.tag: true
         rpu.settag: true
+        rpu.user: true
+        rpu.core.command: true
   rpu.multiplejobs:
     description: Allows the player to have multiple jobs (if enabled in the config)
   rpu.me:
@@ -115,3 +121,5 @@ permissions:
     description: Allows the player to use the global ooc chat
   rpu.basicneeds.edit:
     description: Allows the player to go to the /consumables menu
+  rpu.core.command:
+    description: Allows the player to use the /rpu command

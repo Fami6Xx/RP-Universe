@@ -157,6 +157,9 @@ public final class RPUniverse extends JavaPlugin {
             getLogger().info("PlaceholderAPI hooked!");
         }
 
+        this.getCommand("rpuniverse").setExecutor(new RPUCoreCommand());
+        this.getCommand("rpuniverse").setTabCompleter(new RPUCoreAutoComplete());
+
         getLogger().info("RPUniverse enabled!");
     }
 
