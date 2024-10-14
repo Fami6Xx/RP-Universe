@@ -4,10 +4,6 @@
 # If you want to edit something, please stop the server first!
 # If you have any questions, please contact me on discord: https://discord.gg/SRzxwmBxk5
 
-# If there was an update changing something in the config, you need to
-# delete the config file and restart the server to generate a new one.
-version: '1.0'
-
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 
 # The prefix for all messages (color codes are supported, RichText is not currently supported)

@@ -53,6 +53,8 @@ public final class RPUniverse extends JavaPlugin {
 
     private boolean isServerReload = false;
 
+    private final static double version = 1.02;
+
     @Override
     public void onEnable() {
         if (isServerReload) {
@@ -368,7 +370,7 @@ public final class RPUniverse extends JavaPlugin {
      */
     private boolean compareVersions() throws Exception {
         String apiVersion = getVersionFromAPI();
-        String configVersion = RPUniverse.getInstance().getConfiguration().getString("version");
+        String configVersion = version + "";
 
         return apiVersion.equals(configVersion);
     }
