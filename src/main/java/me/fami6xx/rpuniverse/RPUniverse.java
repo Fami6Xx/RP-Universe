@@ -359,7 +359,7 @@ public final class RPUniverse extends JavaPlugin {
             // Return the version
             return response.toString();
         } else {
-            throw new RuntimeException("Failed : HTTP error code : " + responseCode);
+            throw new RuntimeException("Failed version check: HTTP error code : " + responseCode);
         }
     }
 
