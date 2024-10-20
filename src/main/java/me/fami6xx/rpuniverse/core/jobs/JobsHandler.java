@@ -14,6 +14,8 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -163,18 +165,25 @@ public class JobsHandler implements Listener {
         RPUniverse.getInstance().getBossBarHandler().updateBossBar(event.getPlayer());
     }
 
-    private void startSalaryTask(){
+    private void startSalaryTask() {
         salaryTask = RPUniverse.getInstance().getServer().getScheduler().runTaskTimer(RPUniverse.getInstance(), () -> {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
-                if(data == null) return;
+                if (data == null) return;
                 data.increaseTimeOnline();
 
-                AtomicReference<Double> salary = new AtomicReference<>((double) 0);
+                AtomicReference<Double> salary = new AtomicReference<>(0.0);
+                AtomicBoolean runThroughJobs = new AtomicBoolean(false);
+
                 data.getPlayerJobs().forEach(job -> {
+                    if (job == null) {
+                        runThroughJobs.set(true);
+                        return;
+                    }
+
                     if (job.isPlayersReceiveSalary()) {
                         int timeOnline = data.getTimeOnline();
-                        if (timeOnline != 0 && timeOnline % job.getSalaryInterval() == 0){
+                        if (timeOnline != 0 && timeOnline % job.getSalaryInterval() == 0) {
                             if (job.getPlayerPosition(player.getUniqueId()) == null) return;
 
                             if (job.getCurrentMoneyInJobBank() < job.getPlayerPosition(player.getUniqueId()).getSalary()) {
@@ -186,10 +195,14 @@ public class JobsHandler implements Listener {
                             if (job.isSalaryBeingRemovedFromBank()) {
                                 job.removeMoneyFromJobBank(job.getPlayerPosition(player.getUniqueId()).getSalary());
                             }
-                            salary.updateAndGet(v -> new Double((double) (v + job.getPlayerPosition(player.getUniqueId()).getSalary())));
+                            salary.updateAndGet(v -> v + job.getPlayerPosition(player.getUniqueId()).getSalary());
                         }
                     }
                 });
+
+                if(runThroughJobs.get()) {
+                    data.getPlayerJobs().removeIf(Objects::isNull);
+                }
 
                 if (salary.get() != 0) {
                     RPUniverse.getInstance().getEconomy().depositPlayer(player, salary.get());
