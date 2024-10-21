@@ -156,8 +156,8 @@ public class JobsHandler implements Listener {
             if(job.getJobTypeName().equals(jobType.getName())){
                 JobType newInstance = jobType.getNewInstance(job);
                 String string = job.getJobTypeData();
-                job.setJobType(newInstance);
                 if (string != null) newInstance.fromJsonJobTypeData(string);
+                job.setJobType(newInstance);
             }
         });
     }

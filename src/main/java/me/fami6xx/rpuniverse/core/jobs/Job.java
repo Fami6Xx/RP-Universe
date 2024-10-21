@@ -383,13 +383,12 @@ public class Job {
     }
 
     /**
-     * Sets the job type of the job.
+     * Sets the job type of the job. Requires that the Job Type has been new instanced.
+     * <code>JobType#getNewInstance(Job)</code>
      *
      * @param jobType The job type to be set. Must not be null.
      */
     public void setJobType(@NotNull JobType jobType) {
-        jobType = jobType.getNewInstance(this);
-
         this.jobType = jobType;
         this.jobTypeName = jobType.getName();
         this.JSONJobTypeData = null;
