@@ -24,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -593,6 +594,14 @@ public class Job {
         BigDecimal bd = new BigDecimal(jobBank + money);
         bd = bd.setScale(2, RoundingMode.HALF_UP);
         jobBank = bd.doubleValue();
+        Job job = this;
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                MoneyAddedToJobBankEvent event = new MoneyAddedToJobBankEvent(money, jobBank, job);
+                Bukkit.getPluginManager().callEvent(event);
+            }
+        }.runTask(RPUniverse.getInstance());
         MoneyAddedToJobBankEvent event = new MoneyAddedToJobBankEvent(money, jobBank, this);
         Bukkit.getPluginManager().callEvent(event);
         RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
@@ -609,8 +618,14 @@ public class Job {
             BigDecimal bd = new BigDecimal(jobBank - money);
             bd = bd.setScale(2, RoundingMode.HALF_UP);
             jobBank = bd.doubleValue();
-            MoneyRemovedFromJobBankEvent event = new MoneyRemovedFromJobBankEvent(money, jobBank, this);
-            Bukkit.getPluginManager().callEvent(event);
+            Job job = this;
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    MoneyRemovedFromJobBankEvent event = new MoneyRemovedFromJobBankEvent(money, jobBank, job);
+                    Bukkit.getPluginManager().callEvent(event);
+                }
+            }.runTask(RPUniverse.getInstance());
             RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
             return true;
         }
