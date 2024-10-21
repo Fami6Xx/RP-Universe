@@ -48,7 +48,7 @@ public class JobsHandler implements Listener {
      * Saves all the jobs.
      */
     public void shutdown() {
-        jobs.forEach(job -> RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getName(), job));
+        jobs.forEach(job -> RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getJobUUID().toString(), job));
         salaryTask.cancel();
     }
 
@@ -109,7 +109,7 @@ public class JobsHandler implements Listener {
 
         job.remove();
         jobs.remove(job);
-        RPUniverse.getInstance().getDataSystem().getDataHandler().removeJobData(job.getName());
+        RPUniverse.getInstance().getDataSystem().getDataHandler().removeJobData(job.getJobUUID().toString());
         RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == job);
     }
 
@@ -135,7 +135,7 @@ public class JobsHandler implements Listener {
      */
     public void addJob(Job job){
         jobs.add(job);
-        RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getName(), job);
+        RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getJobUUID().toString(), job);
     }
 
     /**

@@ -45,7 +45,7 @@ public class JSONDataHandler implements IDataHandler {
 
             File jobsDir = new File(jobDataDirectory.toUri());
             if(!jobsDir.exists()){
-                if(!jobsDir.mkdirs()) return false;
+                return jobsDir.mkdirs();
             }
 
             return true;
@@ -111,8 +111,8 @@ public class JSONDataHandler implements IDataHandler {
     }
 
     @Override
-    public Job getJobData(String name) {
-        Path jobFilePath = jobDataDirectory.resolve(name + ".json");
+    public Job getJobData(String uuid) {
+        Path jobFilePath = jobDataDirectory.resolve(uuid + ".json");
 
         try (Reader reader = new FileReader(jobFilePath.toFile())) {
             return gson.fromJson(reader, Job.class);
@@ -120,33 +120,14 @@ public class JSONDataHandler implements IDataHandler {
             logger.severe(e.getMessage());
             return null;
         } catch (JsonParseException e) {
-            logger.severe("Failed to load data for job: " + name);
+            logger.severe("Failed to load data for job: " + uuid);
             return null;
         }
     }
 
     @Override
-    public boolean renameJobData(String oldName, String newName) {
-        Path oldJobFilePath = jobDataDirectory.resolve(oldName + ".json");
-        Path newJobFilePath = jobDataDirectory.resolve(newName + ".json");
-
-        File oldJobFile = oldJobFilePath.toFile();
-        File newJobFile = newJobFilePath.toFile();
-
-        if(!oldJobFile.exists()) {
-            return false;
-        }
-
-        if(newJobFile.exists()) {
-            return false;
-        }
-
-        return oldJobFile.renameTo(newJobFile);
-    }
-
-    @Override
-    public boolean saveJobData(String name, Job data) {
-        Path jobFilePath = jobDataDirectory.resolve(name + ".json");
+    public boolean saveJobData(String uuid, Job data) {
+        Path jobFilePath = jobDataDirectory.resolve(uuid + ".json");
 
         File jobFile = jobFilePath.toFile();
         if(!jobFile.exists()) {
@@ -248,8 +229,8 @@ public class JSONDataHandler implements IDataHandler {
     }
 
     @Override
-    public boolean removeJobData(String name) {
-        Path jobFilePath = jobDataDirectory.resolve(name + ".json");
+    public boolean removeJobData(String uuid) {
+        Path jobFilePath = jobDataDirectory.resolve(uuid + ".json");
         File jobFile = jobFilePath.toFile();
         if(!jobFile.exists()) {
             return false;

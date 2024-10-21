@@ -80,7 +80,7 @@ public class DataSystem implements Listener {
         processSaveQueue();
         RPUniverse.getInstance().getJobsHandler().getJobs().forEach(job -> {
             job.prepareForSave();
-            dataHandler.saveJobData(job.getName(), job);
+            dataHandler.saveJobData(job.getJobUUID().toString(), job);
         });
         dataHandler.saveConsumables(RPUniverse.getInstance().getBasicNeedsHandler());
         RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(dataHandler::saveLockData);
@@ -257,7 +257,7 @@ public class DataSystem implements Listener {
         dataHandler.saveConsumables(RPUniverse.getInstance().getBasicNeedsHandler());
         RPUniverse.getInstance().getJobsHandler().getJobs().forEach(job -> {
             job.prepareForSave();
-            dataHandler.saveJobData(job.getName(), job);
+            dataHandler.saveJobData(job.getJobUUID().toString(), job);
         });
         RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(dataHandler::saveLockData);
     }

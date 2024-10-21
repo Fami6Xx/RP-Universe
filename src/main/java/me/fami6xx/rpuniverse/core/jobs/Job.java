@@ -45,6 +45,7 @@ public class Job {
             .create();
     private transient JobType jobType;
     private transient Hologram bossMenuHologram;
+    private UUID jobUUID = UUID.randomUUID();
     private String jobTypeName = null;
     private String JSONJobTypeData = null;
     private HashMap<UUID, String> playerPositionsSave = new HashMap<>();
@@ -110,6 +111,10 @@ public class Job {
         this(jobName, jobBank, bossMenuLocation, jobPositions);
         this.playerPositions = playerPositions;
         createBossMenuHologram();
+    }
+
+    public UUID getJobUUID() {
+        return jobUUID;
     }
 
     /**
@@ -333,7 +338,6 @@ public class Job {
      * @param newName The new name for the job. Must not be null.
      */
     public void renameJob(String newName) {
-        RPUniverse.getInstance().getDataSystem().getDataHandler().renameJobData(jobName, newName);
         this.jobName = newName;
         createBossMenuHologram();
         RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == this);
@@ -764,6 +768,23 @@ public class Job {
     public static Job getJob(String jobName){
         for(Job job : RPUniverse.getInstance().getJobsHandler().getJobs()){
             if(job.getName().equalsIgnoreCase(jobName)){
+                return job;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieves a Job object with the specified job UUID.
+     *
+     * @param jobUUID The UUID of the job to retrieve. Must not be null.
+     * @return The Job object with the specified job UUID, or null if no job with that UUID exists.
+     */
+    @Nullable
+    public static Job getJobByUUID(String jobUUID){
+        for(Job job : RPUniverse.getInstance().getJobsHandler().getJobs()){
+            if(job.getJobUUID().toString().equals(jobUUID)){
                 return job;
             }
         }

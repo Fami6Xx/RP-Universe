@@ -35,9 +35,9 @@ public class PlayerData {
 
     private final UUID dataUUID;
     private String playerUUID;
-    private String selectedJobName;
+    private String selectedJobUUID;
     private String tag;
-    private List<String> playerJobNames;
+    private List<String> playerJobUUIDs;
 
     private int foodLevel = 100;
     private int waterLevel = 100;
@@ -231,11 +231,11 @@ public class PlayerData {
     public void prepareForSave(){
         playerUUID = getPlayerUUID().toString();
 
-        selectedJobName = selectedPlayerJob == null ? null : selectedPlayerJob.getName();
+        selectedJobUUID = selectedPlayerJob == null ? null : selectedPlayerJob.getJobUUID().toString();
 
-        playerJobNames = new ArrayList<>();
+        playerJobUUIDs = new ArrayList<>();
         for(Job job : playerJobs)
-            playerJobNames.add(job.getName());
+            playerJobUUIDs.add(job.getName());
     }
 
     /**
@@ -255,13 +255,13 @@ public class PlayerData {
         if(Bukkit.getPlayer(playerUUID) != null) this.bindedPlayer = Bukkit.getPlayer(playerUUID);
         else this.bindedOfflinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID));
 
-        if(selectedJobName != null)
-            selectedPlayerJob = Job.getJob(selectedJobName);
+        if(selectedJobUUID != null)
+            selectedPlayerJob = Job.getJobByUUID(selectedJobUUID);
 
         playerJobs = new ArrayList<>();
-        if(playerJobNames != null) {
-            for (String jobName : playerJobNames) {
-                playerJobs.add(Job.getJob(jobName));
+        if(playerJobUUIDs != null) {
+            for (String jobUUID : playerJobUUIDs) {
+                playerJobs.add(Job.getJobByUUID(jobUUID));
             }
         }
 
