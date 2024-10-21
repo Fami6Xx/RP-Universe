@@ -44,6 +44,11 @@ public interface JobType {
     void initialize();
 
     /**
+     * Stops the job type.
+     */
+    void stop();
+
+    /**
      * Opens the admin menu for the JobType.
      * <p>
      * This method is used to open the admin menu for a specific JobType. The admin menu allows users with the appropriate
