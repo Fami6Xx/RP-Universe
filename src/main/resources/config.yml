@@ -4,6 +4,9 @@
 # If you want to edit something, please stop the server first!
 # If you have any questions, please contact me on discord: https://discord.gg/SRzxwmBxk5
 
+# Config version (PLEASE DO NOT TOUCH THIS)
+configVersion: 1
+
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 
 # The prefix for all messages (color codes are supported, RichText is not currently supported)

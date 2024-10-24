@@ -59,13 +59,6 @@ public final class RPUniverse extends JavaPlugin {
         if (isServerReload) {
             getLogger().severe("We suspect you used /reload, RPUniverse does not support this and any issues reported after reloading will be ignored!");
         }
-        if (!setupEconomy()) {
-            getLogger().severe("Vault is not installed or doesn't have any Economy plugin! Disabling plugin...");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }else{
-            getLogger().info("Economy plugin hooked!");
-        }
 
         if (!getDataFolder().exists()) {
             getDataFolder().mkdir();
@@ -80,6 +73,27 @@ public final class RPUniverse extends JavaPlugin {
                 this.saveDefaultConfig();
             }
             config = this.getConfig();
+        }
+
+        if (!config.contains("configVersion")) {
+            getLogger().severe("Your config is outdated! Please delete it and restart the server to generate a new one.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        int confVersion = config.getInt("configVersion");
+        if (confVersion != 1) {
+            getLogger().severe("Your config is outdated! Please delete it and restart the server to generate a new one.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        if (!setupEconomy()) {
+            getLogger().severe("Vault is not installed or doesn't have any Economy plugin! Disabling plugin...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }else{
+            getLogger().info("Economy plugin hooked!");
         }
 
         languageHandler = new LanguageHandler(this);
