@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.misc.chatapi;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -11,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 
@@ -19,6 +21,21 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent e){
+        PlayerMenu playerMenu = RPUniverse.getInstance().getMenuManager().getPlayerMenu(e.getPlayer());
+
+        if (playerMenu != null && playerMenu.getPendingAction() != null) {
+            e.setCancelled(true);
+            String input = e.getMessage();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    playerMenu.getPendingAction().accept(input);
+                    playerMenu.clearPendingAction();
+                }
+            }.runTaskLater(RPUniverse.getInstance(), 1L);
+            return;
+        }
+
         if(chatExecuteQueueHashMap.containsKey(e.getPlayer())){
             e.setCancelled(true);
             IChatExecuteQueue queue = chatExecuteQueueHashMap.get(e.getPlayer());

@@ -8,12 +8,16 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public abstract class EasyPaginatedMenu extends PaginatedMenu {
+    private static final int START_SLOT = 10;
+    private static final int SLOTS_PER_ROW = 7;
+
     public EasyPaginatedMenu(PlayerMenu menu){
         super(menu);
     }
@@ -71,7 +75,12 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
             }
         }
 
-        handlePaginatedMenu(e);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                handlePaginatedMenu(e);
+            }
+        }.runTask(RPUniverse.getInstance());
     }
 
     @Override
@@ -104,4 +113,29 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
      * A method where you can add your own items to the inventory border for example.
      */
     public abstract void addAdditionalItems();
+
+    /**
+     * Maps the clicked slot to the index in the list.
+     *
+     * @param slot The inventory slot that was clicked.
+     * @return The corresponding index in the list, or -1 if the slot doesn't correspond to an item.
+     */
+    public int getSlotIndex(int slot) {
+        int relativeSlot = slot - START_SLOT;
+
+        if (relativeSlot < 0) {
+            return -1;
+        }
+
+        int row = relativeSlot / SLOTS_PER_ROW;
+        int col = relativeSlot % SLOTS_PER_ROW;
+
+        int index = row * SLOTS_PER_ROW + col;
+
+        if (index >= getCollectionSize()) {
+            return -1;
+        }
+
+        return index;
+    }
 }
