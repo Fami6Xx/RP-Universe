@@ -13,6 +13,7 @@ import me.fami6xx.rpuniverse.core.jobs.commands.jobs.JobsCommand;
 import me.fami6xx.rpuniverse.core.locks.LockHandler;
 import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.VersionInfo;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.BossBarHandler;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
@@ -52,8 +53,6 @@ public final class RPUniverse extends JavaPlugin {
     private Economy econ;
 
     private boolean isServerReload = false;
-
-    private final static double version = 1.02;
 
     @Override
     public void onEnable() {
@@ -366,11 +365,11 @@ public final class RPUniverse extends JavaPlugin {
     /**
      * Compare the version from the API with the version from the config
      * @return If the versions are equal
-     * @throws Exception
+     * @throws Exception If the version check fails
      */
     private boolean compareVersions() throws Exception {
         String apiVersion = getVersionFromAPI();
-        String configVersion = version + "";
+        String configVersion = VersionInfo.getVersion();
 
         return apiVersion.equals(configVersion);
     }
