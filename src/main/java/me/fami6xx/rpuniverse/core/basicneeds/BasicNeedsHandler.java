@@ -120,7 +120,13 @@ public class BasicNeedsHandler {
         }.runTaskTimer(plugin, 0, config.getInterval() * 60L);
     }
 
-    private String formatNeedForActionBar(int level, boolean isPoopOrPee) {
+    /**
+     * Format the need for the action bar.
+     * @param level The level
+     * @param isPoopOrPee <code>true</code> for poop or pee, <code>false</code> for food or water
+     * @return The formatted need
+     */
+    public static String formatNeedForActionBar(int level, boolean isPoopOrPee) {
         if (isPoopOrPee){
             if (level < 25) {
                 return "&a" + level;

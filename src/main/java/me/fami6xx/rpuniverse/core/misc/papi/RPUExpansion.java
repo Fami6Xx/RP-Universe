@@ -2,6 +2,8 @@ package me.fami6xx.rpuniverse.core.misc.papi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,6 +64,22 @@ public class RPUExpansion extends PlaceholderExpansion {
 
         if(params.equalsIgnoreCase("waterLevel")){
             return String.valueOf(RPUniverse.getPlayerData(player.getUniqueId().toString()).getWaterLevel());
+        }
+
+        if(params.equalsIgnoreCase("poopLevelFormated")){
+            return FamiUtils.format(BasicNeedsHandler.formatNeedForActionBar(RPUniverse.getPlayerData(player.getUniqueId().toString()).getPoopLevel(), true));
+        }
+
+        if(params.equalsIgnoreCase("peeLevelFormated")){
+            return FamiUtils.format(BasicNeedsHandler.formatNeedForActionBar(RPUniverse.getPlayerData(player.getUniqueId().toString()).getPeeLevel(), true));
+        }
+
+        if(params.equalsIgnoreCase("foodLevelFormated")){
+            return FamiUtils.format(BasicNeedsHandler.formatNeedForActionBar(RPUniverse.getPlayerData(player.getUniqueId().toString()).getFoodLevel(), false));
+        }
+
+        if(params.equalsIgnoreCase("waterLevelFormated")){
+            return FamiUtils.format(BasicNeedsHandler.formatNeedForActionBar(RPUniverse.getPlayerData(player.getUniqueId().toString()).getWaterLevel(), false));
         }
 
         return null;
