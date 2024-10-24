@@ -65,6 +65,7 @@ data:
 
 # The settings for the basic needs
 # enabled: If true, the basic needs are enabled
+# sendToActionBar: If true, the basic needs are sent to the action bar
 # interval: The interval in seconds in which the basic needs are updated
 # ignoreInMode: If true, the plugin will ignore the mode (ADMIN or MODERATOR) for the basic needs
 # preferPermissionsOverModeForEdit: If true, the plugin will prefer permissions over the mode (ADMIN or MODERATOR) for editing the basic needs
@@ -75,6 +76,7 @@ data:
 # addedPee: The amount of pee added every interval
 basicNeeds:
     enabled: true
+    sendToActionBar: true
     interval: 60
     ignoreInMode: true
     preferPermissionsOverModeForEdit: false

@@ -87,7 +87,9 @@ public class BasicNeedsHandler {
                     placeholders.put("{water}", formatNeedForActionBar(playerData.getWaterLevel(), false));
                     placeholders.put("{pee}", formatNeedForActionBar(playerData.getPeeLevel(), true));
                     placeholders.put("{poop}", formatNeedForActionBar(playerData.getPoopLevel(), true));
-                    actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false);
+
+                    if(RPUniverse.getInstance().getConfiguration().getBoolean("basicNeeds.sendToActionBar"))
+                        actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false);
 
                     if (playerData.getFoodLevel() == 0 || playerData.getWaterLevel() == 0 || playerData.getPeeLevel() == 100 || playerData.getPoopLevel() == 100) {
                         PlayerDamageByBasicNeedsEvent event = new PlayerDamageByBasicNeedsEvent(player, 1);
