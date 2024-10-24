@@ -72,16 +72,11 @@ public final class RPUniverse extends JavaPlugin {
             if (configYml.length == 0) {
                 this.saveDefaultConfig();
             }
+            this.reloadConfig();
             config = this.getConfig();
         }
 
-        if (!config.contains("configVersion")) {
-            getLogger().severe("Your config is outdated! Please delete it and restart the server to generate a new one.");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        int confVersion = config.getInt("configVersion");
+        int confVersion = config.getInt("configVersion", -1);
         if (confVersion != 1) {
             getLogger().severe("Your config is outdated! Please delete it and restart the server to generate a new one.");
             getServer().getPluginManager().disablePlugin(this);
