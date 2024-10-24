@@ -1,4 +1,6 @@
 package me.fami6xx.rpuniverse.core.misc;
+import me.fami6xx.rpuniverse.RPUniverse;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -17,7 +19,7 @@ public class VersionInfo {
                 version1 = "unknown";
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            RPUniverse.getInstance().getLogger().severe("Failed to load version properties: " + ex.getMessage());
             version1 = "unknown";
         }
         VERSION = version1;
