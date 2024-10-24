@@ -152,6 +152,10 @@ public class Job {
             bossMenuHologram.delete();
         }
 
+        if (jobType != null) {
+            jobType.stop();
+        }
+
         for(UUID playerUUID : playerPositions.keySet()){
             if(playerPositions.get(playerUUID).isBoss()){
                 RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);

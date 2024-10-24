@@ -48,7 +48,12 @@ public class JobsHandler implements Listener {
      * Saves all the jobs.
      */
     public void shutdown() {
-        jobs.forEach(job -> RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getJobUUID().toString(), job));
+        jobs.forEach(job -> {
+            if(job.getJobType() != null) {
+                job.getJobType().stop();
+            }
+            RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getJobUUID().toString(), job);
+        });
         salaryTask.cancel();
     }
 
