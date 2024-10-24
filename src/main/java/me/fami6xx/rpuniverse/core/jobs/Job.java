@@ -601,8 +601,6 @@ public class Job {
                 Bukkit.getPluginManager().callEvent(event);
             }
         }.runTask(RPUniverse.getInstance());
-        MoneyAddedToJobBankEvent event = new MoneyAddedToJobBankEvent(money, jobBank, this);
-        Bukkit.getPluginManager().callEvent(event);
         RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
 
