@@ -24,6 +24,11 @@ import java.util.Map;
  */
 public class BossBarHandler {
     private final Map<Player, BossBar> bossBars = new HashMap<>();
+    private final boolean enabled;
+
+    public BossBarHandler() {
+        enabled = RPUniverse.getInstance().getConfiguration().getBoolean("general.bossBarEnabled");
+    }
 
     /**
      * Add a player to the boss bar
@@ -31,6 +36,10 @@ public class BossBarHandler {
      * @param message The message to display on the boss bar
      */
     public void addPlayer(Player player, String message) {
+        if (!enabled) {
+            return;
+        }
+
         BossBar bossBar = Bukkit.createBossBar(message, getBarColor(), BarStyle.SOLID);
         bossBar.addPlayer(player);
         bossBars.put(player, bossBar);
@@ -41,6 +50,10 @@ public class BossBarHandler {
      * @param player The player to remove
      */
     public void removePlayer(Player player) {
+        if (!enabled) {
+            return;
+        }
+
         BossBar bossBar = bossBars.remove(player);
         if (bossBar != null) {
             bossBar.removePlayer(player);
@@ -53,6 +66,10 @@ public class BossBarHandler {
      * @param message The message to set the boss bar to
      */
     public void setMessage(Player player, String message) {
+        if (!enabled) {
+            return;
+        }
+
         BossBar bossBar = bossBars.get(player);
         if (bossBar != null) {
             bossBar.setTitle(message);
@@ -67,6 +84,10 @@ public class BossBarHandler {
      * @param player The player to update the boss bar of
      */
     public void updateBossBar(Player player){
+        if (!enabled) {
+            return;
+        }
+
         String message = "";
         PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
 

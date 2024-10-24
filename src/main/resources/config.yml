@@ -10,6 +10,7 @@
 prefix: '&c&lRPU &8»&r'
 
 # General settings
+# bossBarEnabled: If true, the boss bar is enabled, if false, the boss bar is disabled
 # bossBarColor: The color of the boss bar (BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW)
 # hideNicknames: If true, the plugin will hide the nicknames of the players
 # localOOC: If true, the OOC chat when player just types in the chat is local
@@ -19,6 +20,7 @@ prefix: '&c&lRPU &8»&r'
 # globalOOC: If true, the global ooc command is registered
 # globalOOCFormat: The format of the global OOC chat
 general:
+    bossBarEnabled: true
     bossBarColor: RED
     hideNicknames: true
     localOOC: true
