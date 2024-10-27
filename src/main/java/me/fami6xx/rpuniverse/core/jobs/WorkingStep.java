@@ -22,6 +22,7 @@ public class WorkingStep {
     private static final Logger LOGGER = RPUniverse.getInstance().getLogger();
 
     private UUID uuid = UUID.randomUUID();
+    private UUID jobUUID;
     private List<Location> workingLocations;
     private int timeForStep; // In ticks
     private ItemStack itemNeeded; // Can be null
@@ -47,10 +48,11 @@ public class WorkingStep {
      * @param name                        The name of the working step.
      * @param description                 The description of the working step.
      * @param workingStepBeingDoneMessage The message displayed when the working step is being done.
+     * @param jobUUID                     The UUID of the job that this working step belongs to.
      */
     public WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, @Nullable ItemStack itemNeeded, int amountOfItemNeeded,
                        @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel,
-                       @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage) {
+                       @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID) {
         this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
         this.itemNeeded = itemNeeded;
@@ -61,6 +63,7 @@ public class WorkingStep {
         this.name = name;
         this.description = description;
         this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
+        this.jobUUID = jobUUID;
     }
 
     /**
@@ -68,7 +71,8 @@ public class WorkingStep {
      */
     private WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, @Nullable ItemStack itemNeeded, int amountOfItemNeeded,
                         @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel,
-                        @Nonnull UUID uuid, @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage) {
+                        @Nonnull UUID uuid, @Nonnull String name, @Nonnull String description,
+                        @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID) {
         this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
         this.itemNeeded = itemNeeded;
@@ -80,6 +84,7 @@ public class WorkingStep {
         this.name = name;
         this.description = description;
         this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
+        this.jobUUID = jobUUID;
     }
 
     /**
@@ -93,9 +98,10 @@ public class WorkingStep {
      * @param name                        The name of the working step.
      * @param description                 The description of the working step.
      * @param workingStepBeingDoneMessage The message displayed when the working step is being done.
+     * @param jobUUID                     The UUID of the job that this working step belongs to.
      */
     public WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel,
-                       @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage) {
+                       @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID) {
         this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
         this.itemNeeded = null;
@@ -106,9 +112,17 @@ public class WorkingStep {
         this.name = name;
         this.description = description;
         this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
+        this.jobUUID = jobUUID;
     }
 
-    // Getters and setters for the new fields
+    /**
+     * Gets the UUID of the job that this working step belongs to.
+     *
+     * @return The job UUID.
+     */
+    public UUID getJobUUID() {
+        return jobUUID;
+    }
 
     /**
      * Gets the name of the working step.
@@ -163,8 +177,6 @@ public class WorkingStep {
     public void setWorkingStepBeingDoneMessage(@Nonnull String workingStepBeingDoneMessage) {
         this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
     }
-
-    // Existing getters and setters...
 
     /**
      * Retrieves the needed permission level for the working step.
@@ -346,10 +358,11 @@ public class WorkingStep {
             String name = yaml.getString("name");
             String description = yaml.getString("description");
             String workingStepBeingDoneMessage = yaml.getString("workingStepBeingDoneMessage");
+            UUID jobUUID = UUID.fromString(yaml.getString("jobUUID"));
 
             return new WorkingStep(workingLocations, timeForStep, itemNeeded, amountOfItemNeeded,
                     itemGiven, amountOfItemGiven, neededPermissionLevel,
-                    uuid, name, description, workingStepBeingDoneMessage);
+                    uuid, name, description, workingStepBeingDoneMessage, jobUUID);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "An error occurred while parsing WorkingStep object from string {\n" + s + "\n}, with error: " + e.getMessage());
             return null;
@@ -360,6 +373,7 @@ public class WorkingStep {
     public String toString() {
         YamlConfiguration yaml = new YamlConfiguration();
         yaml.set("uuid", uuid.toString());
+        yaml.set("jobUUID", jobUUID.toString());
         yaml.set("workingLocations", workingLocations);
         yaml.set("timeForStep", timeForStep);
         if (itemNeeded != null) {

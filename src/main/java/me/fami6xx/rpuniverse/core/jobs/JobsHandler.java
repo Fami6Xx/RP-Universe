@@ -2,10 +2,15 @@ package me.fami6xx.rpuniverse.core.jobs;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.JobDeletedEvent;
+import me.fami6xx.rpuniverse.core.api.WorkingStepLocationAddedEvent;
+import me.fami6xx.rpuniverse.core.api.WorkingStepLocationRemovedEvent;
+import me.fami6xx.rpuniverse.core.api.holograms.WorkingStepHologram;
+import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -30,6 +35,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class JobsHandler implements Listener {
     private final List<Job> jobs = new ArrayList<>();
     private final List<JobType> jobTypes = new ArrayList<>();
+
+    private final HashMap<WorkingStep, Location> stepLocationHashMap = new HashMap<>();
+    private final HashMap<Location, famiHologram> hologramHashMap = new HashMap<>();
 
     private BukkitTask salaryTask;
 
@@ -170,6 +178,21 @@ public class JobsHandler implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         RPUniverse.getInstance().getBossBarHandler().updateBossBar(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onWorkingStepLocationAdded(WorkingStepLocationAddedEvent event) {
+        stepLocationHashMap.put(event.getWorkingStep(), event.getLocation());
+
+        WorkingStepHologram holo = new WorkingStepHologram(event.getWorkingStep(), event.getLocation(), getJobs().stream().filter(job -> job.getJobUUID() == event.getWorkingStep().getJobUUID()).findFirst().orElse(null));
+        hologramHashMap.put(event.getLocation(), holo);
+    }
+
+    @EventHandler
+    public void onWorkingStepLocationRemoved(WorkingStepLocationRemovedEvent event) {
+        stepLocationHashMap.remove(event.getWorkingStep());
+        hologramHashMap.get(event.getLocation()).destroy();
+        hologramHashMap.remove(event.getLocation());
     }
 
     private void startSalaryTask() {
