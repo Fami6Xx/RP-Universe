@@ -75,6 +75,7 @@ public class WorkingLocationsMenu extends EasyPaginatedMenu {
     @Override
     public void handlePaginatedMenu(InventoryClickEvent e) {
         int index = getMaxItemsPerPage() * page + getSlotIndex(e.getSlot());
+        if (index < 0) return;
         if (index >= getCollectionSize()) return;
 
         org.bukkit.Location loc = workingStep.getWorkingLocations().get(index);
