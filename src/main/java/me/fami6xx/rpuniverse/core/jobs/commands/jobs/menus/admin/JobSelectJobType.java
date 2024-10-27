@@ -63,7 +63,7 @@ public class JobSelectJobType extends EasyPaginatedMenu {
 
         int index = meta.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
         JobType jobType = jobTypes.get(index);
-        job.setJobType(jobType);
+        job.setJobType(jobType.getNewInstance(job));
         new JobAdminMenu(playerMenu, job).open();
     }
 
