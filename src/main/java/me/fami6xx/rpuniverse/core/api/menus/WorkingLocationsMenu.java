@@ -109,7 +109,7 @@ public class WorkingLocationsMenu extends EasyPaginatedMenu {
 
         if (name.equalsIgnoreCase("Add New Location")) {
             Player player = (Player) e.getWhoClicked();
-            player.sendMessage(FamiUtils.formatWithPrefix("Please stand at the desired location and enter 'here' to add it."));
+            player.sendMessage(FamiUtils.formatWithPrefix("&7Please stand at the desired location and enter 'here' to add it."));
             playerMenu.setPendingAction((input) -> {
                 if (input.equalsIgnoreCase("here")) {
                     workingStep.addWorkingLocation(player.getLocation());
@@ -120,10 +120,10 @@ public class WorkingLocationsMenu extends EasyPaginatedMenu {
                             Bukkit.getPluginManager().callEvent(event);
                         }
                     }.runTask(RPUniverse.getJavaPlugin());
-                    player.sendMessage(FamiUtils.formatWithPrefix("Location added."));
+                    player.sendMessage(FamiUtils.formatWithPrefix("&7Location added."));
                     open();
                 } else {
-                    player.sendMessage(FamiUtils.formatWithPrefix("Invalid input. Please try again."));
+                    player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid input. Please try again."));
                 }
             });
             player.closeInventory();

@@ -46,28 +46,28 @@ public class WorkingStepEditorMenu extends Menu {
 
         switch (displayName) {
             case "Edit Name":
-                player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new name for the working step."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new name for the working step."));
                 playerMenu.setPendingAction((input) -> {
                     workingStep.setName(input);
-                    player.sendMessage(FamiUtils.formatWithPrefix("Name updated to \"" + input + "\"."));
+                    player.sendMessage(FamiUtils.formatWithPrefix("&7Name updated to \"" + input + "\"."));
                     this.open();
                 });
                 player.closeInventory();
                 break;
             case "Edit Description":
-                player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new description for the working step."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new description for the working step."));
                 playerMenu.setPendingAction((input) -> {
                     workingStep.setDescription(input);
-                    player.sendMessage(FamiUtils.formatWithPrefix("Description updated."));
+                    player.sendMessage(FamiUtils.formatWithPrefix("&7Description updated."));
                     this.open();
                 });
                 player.closeInventory();
                 break;
             case "Edit Working Step Being Done Message":
-                player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new message displayed during the working step."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new message displayed during the working step."));
                 playerMenu.setPendingAction((input) -> {
                     workingStep.setWorkingStepBeingDoneMessage(input);
-                    player.sendMessage(FamiUtils.formatWithPrefix("Working step message updated."));
+                    player.sendMessage(FamiUtils.formatWithPrefix("&7Working step message updated."));
                     this.open();
                 });
                 player.closeInventory();
@@ -77,30 +77,30 @@ public class WorkingStepEditorMenu extends Menu {
                 locationsMenu.open();
                 break;
             case "Edit Time for Step":
-                player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new time for the step in ticks. (Seconds * 20)"));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new time for the step in ticks. (Seconds * 20)"));
                 playerMenu.setPendingAction((input) -> {
                     try {
                         int newTime = Integer.parseInt(input);
                         workingStep.setTimeForStep(newTime);
-                        player.sendMessage(FamiUtils.formatWithPrefix("Time for step updated to " + newTime + " ticks."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Time for step updated to " + newTime + " ticks."));
                         this.open();
                     } catch (NumberFormatException ex) {
-                        player.sendMessage(FamiUtils.formatWithPrefix("Invalid number format."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid number format."));
                     }
                 });
                 player.closeInventory();
                 break;
             case "Edit Item Needed":
-                player.sendMessage(FamiUtils.formatWithPrefix("Please select an item in your hand to set as the needed item, then type 'complete'."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please select an item in your hand to set as the needed item, then type 'complete'."));
                 playerMenu.setPendingAction((input) -> {
                     if (input.equalsIgnoreCase("complete")) {
                         ItemStack item = player.getInventory().getItemInMainHand();
                         if (item.getType() == Material.AIR) {
                             workingStep.setItemNeeded(null);
-                            player.sendMessage(FamiUtils.formatWithPrefix("Item needed updated to nothing."));
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Item needed updated to nothing."));
                         } else {
                             workingStep.setItemNeeded(item);
-                            player.sendMessage(FamiUtils.formatWithPrefix("Item needed updated to " + item.getType().name() + "."));
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Item needed updated to " + item.getType().name() + "."));
                         }
                         this.open();
                         return;
@@ -108,39 +108,39 @@ public class WorkingStepEditorMenu extends Menu {
                     Material material = Material.matchMaterial(input.toUpperCase());
                     if (material != null) {
                         workingStep.setItemNeeded(new ItemStack(material));
-                        player.sendMessage(FamiUtils.formatWithPrefix("Item needed updated to " + material.name() + "."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Item needed updated to " + material.name() + "."));
                         this.open();
                     } else {
-                        player.sendMessage(FamiUtils.formatWithPrefix("Invalid material."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid material."));
                     }
                 });
                 player.closeInventory();
                 break;
             case "Edit Amount of Item Needed":
-                player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new amount of the item needed."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new amount of the item needed."));
                 playerMenu.setPendingAction((input) -> {
                     try {
                         int newAmount = Integer.parseInt(input);
                         workingStep.setAmountOfItemNeeded(newAmount);
-                        player.sendMessage(FamiUtils.formatWithPrefix("Amount of item needed updated to " + newAmount + "."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Amount of item needed updated to " + newAmount + "."));
                         this.open();
                     } catch (NumberFormatException ex) {
-                        player.sendMessage(FamiUtils.formatWithPrefix("Invalid number format."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid number format."));
                     }
                 });
                 player.closeInventory();
                 break;
             case "Edit Item Given":
-                player.sendMessage(FamiUtils.formatWithPrefix("Please select an item in your hand to set as the item given and type 'complete'."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please select an item in your hand to set as the item given and type 'complete'."));
                 playerMenu.setPendingAction((input) -> {
                     if (input.equalsIgnoreCase("complete")) {
                         ItemStack item = player.getInventory().getItemInMainHand();
                         if (item.getType() == Material.AIR) {
-                            player.sendMessage(FamiUtils.formatWithPrefix("Item given cannot be air."));
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Item given cannot be air."));
                             return;
                         }
                         workingStep.setItemGiven(item);
-                        player.sendMessage(FamiUtils.formatWithPrefix("Item given updated to " + item.getType().name() + "."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Item given updated to " + item.getType().name() + "."));
                         this.open();
                         return;
                     }
@@ -148,52 +148,52 @@ public class WorkingStepEditorMenu extends Menu {
                     Material material = Material.matchMaterial(input.toUpperCase());
                     if (material != null) {
                         workingStep.setItemGiven(new ItemStack(material));
-                        player.sendMessage(FamiUtils.formatWithPrefix("Item given updated to " + material.name() + "."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Item given updated to " + material.name() + "."));
                         this.open();
                     } else {
-                        player.sendMessage(FamiUtils.formatWithPrefix("Invalid material."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid material."));
                     }
                 });
                 player.closeInventory();
                 break;
             case "Edit Amount of Item Given":
-                player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new amount of the item given."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new amount of the item given."));
                 playerMenu.setPendingAction((input) -> {
                     try {
                         int newAmount = Integer.parseInt(input);
                         if (newAmount > 0) {
                             workingStep.setAmountOfItemGiven(newAmount);
-                            player.sendMessage(FamiUtils.formatWithPrefix("Amount of item given updated to " + newAmount + "."));
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Amount of item given updated to " + newAmount + "."));
                             this.open();
                         } else {
-                            player.sendMessage(FamiUtils.formatWithPrefix("Amount must be greater than zero."));
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Amount must be greater than zero."));
                         }
                     } catch (NumberFormatException ex) {
-                        player.sendMessage(FamiUtils.formatWithPrefix("Invalid number format."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid number format."));
                     }
                 });
                 player.closeInventory();
                 break;
             case "Edit Needed Permission Level":
-                player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new permission level required."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new permission level required."));
                 playerMenu.setPendingAction((input) -> {
                     try {
                         int newLevel = Integer.parseInt(input);
                         if (newLevel > 0) {
                             workingStep.setNeededPermissionLevel(newLevel);
-                            player.sendMessage(FamiUtils.formatWithPrefix("Permission level updated to " + newLevel + "."));
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Permission level updated to " + newLevel + "."));
                             this.open();
                         } else {
-                            player.sendMessage(FamiUtils.formatWithPrefix("Permission level must be greater than zero."));
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Permission level must be greater than zero."));
                         }
                     } catch (NumberFormatException ex) {
-                        player.sendMessage(FamiUtils.formatWithPrefix("Invalid number format."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid number format."));
                     }
                 });
                 player.closeInventory();
                 break;
             case "Save and Close":
-                player.sendMessage(FamiUtils.formatWithPrefix("Working step saved successfully."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Working step saved successfully."));
                 player.closeInventory();
                 break;
             case "Cancel":

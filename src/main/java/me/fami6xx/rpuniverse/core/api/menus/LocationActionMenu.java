@@ -66,7 +66,7 @@ public class LocationActionMenu extends Menu {
                     }
                 }.runTask(RPUniverse.getJavaPlugin());
 
-                player.sendMessage(FamiUtils.formatWithPrefix("Location has been repositioned to your current location."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Location has been repositioned to your current location."));
                 this.open();
                 break;
             case "Remove Location":
@@ -77,12 +77,12 @@ public class LocationActionMenu extends Menu {
                         Bukkit.getPluginManager().callEvent(new WorkingStepLocationRemovedEvent(workingStep, location));
                     }
                 }.runTask(RPUniverse.getJavaPlugin());
-                player.sendMessage(FamiUtils.formatWithPrefix("Location has been removed."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Location has been removed."));
                 player.closeInventory();
                 break;
             case "Port to Location":
                 player.teleport(location);
-                player.sendMessage(FamiUtils.formatWithPrefix("Teleported to the location."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Teleported to the location."));
                 player.closeInventory();
                 break;
             case "Back":
