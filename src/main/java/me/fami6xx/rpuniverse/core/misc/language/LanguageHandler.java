@@ -24,6 +24,10 @@ public class LanguageHandler {
     public String moderatorTag = "&b&lMODERATOR";
     public String adminTag = "&c&lADMIN";
 
+    public String interactToWork = "&7Click me to work!";
+    public String missingNeededItem = "&cYou are missing a needed item!";
+    public String youNeedToWait = "&cYou need to wait!";
+
     public String basicNeedsActionBarMessage = "&cFood: {food} &8| &cWater: {water} &8| &cPoop: {poop} &8| &cPee: {pee}";
 
     // JOB HOLOGRAM

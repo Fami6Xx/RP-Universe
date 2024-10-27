@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class WorkingStepEditorMenu extends Menu {
@@ -46,14 +45,39 @@ public class WorkingStepEditorMenu extends Menu {
         String displayName = ChatColor.stripColor(clicked.getItemMeta().getDisplayName());
 
         switch (displayName) {
+            case "Edit Name":
+                player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new name for the working step."));
+                playerMenu.setPendingAction((input) -> {
+                    workingStep.setName(input);
+                    player.sendMessage(FamiUtils.formatWithPrefix("Name updated to \"" + input + "\"."));
+                    this.open();
+                });
+                player.closeInventory();
+                break;
+            case "Edit Description":
+                player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new description for the working step."));
+                playerMenu.setPendingAction((input) -> {
+                    workingStep.setDescription(input);
+                    player.sendMessage(FamiUtils.formatWithPrefix("Description updated."));
+                    this.open();
+                });
+                player.closeInventory();
+                break;
+            case "Edit Working Step Being Done Message":
+                player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new message displayed during the working step."));
+                playerMenu.setPendingAction((input) -> {
+                    workingStep.setWorkingStepBeingDoneMessage(input);
+                    player.sendMessage(FamiUtils.formatWithPrefix("Working step message updated."));
+                    this.open();
+                });
+                player.closeInventory();
+                break;
             case "Edit Working Locations":
-                // Open WorkingLocationsMenu
                 WorkingLocationsMenu locationsMenu = new WorkingLocationsMenu(playerMenu, workingStep);
                 locationsMenu.open();
                 break;
             case "Edit Time for Step":
                 player.sendMessage(FamiUtils.formatWithPrefix("Please enter the new time for the step in ticks. (Seconds * 20)"));
-
                 playerMenu.setPendingAction((input) -> {
                     try {
                         int newTime = Integer.parseInt(input);
@@ -74,10 +98,10 @@ public class WorkingStepEditorMenu extends Menu {
                         if (item.getType() == Material.AIR) {
                             workingStep.setItemNeeded(null);
                             player.sendMessage(FamiUtils.formatWithPrefix("Item needed updated to nothing."));
-                            return;
+                        } else {
+                            workingStep.setItemNeeded(item);
+                            player.sendMessage(FamiUtils.formatWithPrefix("Item needed updated to " + item.getType().name() + "."));
                         }
-                        workingStep.setItemNeeded(item);
-                        player.sendMessage(FamiUtils.formatWithPrefix("Item needed updated to " + workingStep.getItemNeeded().getType().name() + "."));
                         this.open();
                         return;
                     }
@@ -85,6 +109,7 @@ public class WorkingStepEditorMenu extends Menu {
                     if (material != null) {
                         workingStep.setItemNeeded(new ItemStack(material));
                         player.sendMessage(FamiUtils.formatWithPrefix("Item needed updated to " + material.name() + "."));
+                        this.open();
                     } else {
                         player.sendMessage(FamiUtils.formatWithPrefix("Invalid material."));
                     }
@@ -114,8 +139,8 @@ public class WorkingStepEditorMenu extends Menu {
                             player.sendMessage(FamiUtils.formatWithPrefix("Item given cannot be air."));
                             return;
                         }
-                        workingStep.setItemNeeded(item);
-                        player.sendMessage(FamiUtils.formatWithPrefix("Item needed updated to " + workingStep.getItemNeeded().getType().name() + "."));
+                        workingStep.setItemGiven(item);
+                        player.sendMessage(FamiUtils.formatWithPrefix("Item given updated to " + item.getType().name() + "."));
                         this.open();
                         return;
                     }
@@ -184,24 +209,37 @@ public class WorkingStepEditorMenu extends Menu {
     public void setMenuItems() {
         inventory.clear();
 
-        inventory.setItem(11, createMenuItem(Material.COMMAND_BLOCK, "Edit Working Locations", "Click to manage working locations."));
-        inventory.setItem(13, createMenuItem(Material.CLOCK, "Edit Time for Step", "Click to set the time required for this step."));
-        inventory.setItem(15, createMenuItem(Material.EMERALD, "Edit Item Needed", "Click to set the required item."));
-        inventory.setItem(19, createMenuItem(Material.NETHER_STAR, "Edit Amount of Item Needed", "Click to set the amount of the required item."));
-        inventory.setItem(21, createMenuItem(Material.GOLD_INGOT, "Edit Item Given", "Click to set the item given upon completion."));
-        inventory.setItem(23, createMenuItem(Material.DIAMOND, "Edit Amount of Item Given", "Click to set the amount of the item given."));
-        inventory.setItem(29, createMenuItem(Material.EXPERIENCE_BOTTLE, "Edit Needed Permission Level", "Click to set the required permission level."));
-        inventory.setItem(49, createMenuItem(Material.LIME_WOOL, "Save and Close", "Click to save changes and close the menu."));
-        inventory.setItem(51, createMenuItem(Material.RED_WOOL, "Cancel", "Click to cancel edits and close the menu."));
+        // Display current values in lore
+        inventory.setItem(10, createMenuItem(Material.NAME_TAG, "Edit Name", "Current: " + workingStep.getName(), "Click to edit the name."));
+        inventory.setItem(12, createMenuItem(Material.BOOK, "Edit Description", "Current: " + workingStep.getDescription(), "Click to edit the description."));
+        inventory.setItem(14, createMenuItem(Material.PAPER, "Edit Working Step Being Done Message", "Current: " + workingStep.getWorkingStepBeingDoneMessage(), "Click to edit the message."));
+        inventory.setItem(16, createMenuItem(Material.COMMAND_BLOCK, "Edit Working Locations", "Click to manage working locations."));
+
+        inventory.setItem(20, createMenuItem(Material.CLOCK, "Edit Time for Step", "Current: " + workingStep.getTimeForStep() + " ticks", "Click to set the time required for this step."));
+        inventory.setItem(22, createMenuItem(Material.EMERALD, "Edit Item Needed", "Current: " + (workingStep.getItemNeeded() != null ? workingStep.getItemNeeded().getType().name() : "None"), "Click to set the required item."));
+        inventory.setItem(24, createMenuItem(Material.NETHER_STAR, "Edit Amount of Item Needed", "Current: " + workingStep.getAmountOfItemNeeded(), "Click to set the amount of the required item."));
+
+        inventory.setItem(30, createMenuItem(Material.GOLD_INGOT, "Edit Item Given", "Current: " + workingStep.getItemGiven().getType().name(), "Click to set the item given upon completion."));
+        inventory.setItem(32, createMenuItem(Material.DIAMOND, "Edit Amount of Item Given", "Current: " + workingStep.getAmountOfItemGiven(), "Click to set the amount of the item given."));
+        inventory.setItem(34, createMenuItem(Material.EXPERIENCE_BOTTLE, "Edit Needed Permission Level", "Current: " + workingStep.getNeededPermissionLevel(), "Click to set the required permission level."));
+
+        inventory.setItem(48, createMenuItem(Material.LIME_WOOL, "Save and Close", "Click to save changes and close the menu."));
+        inventory.setItem(50, createMenuItem(Material.RED_WOOL, "Cancel", "Click to cancel edits and close the menu."));
 
         setFillerGlass();
     }
 
-    private ItemStack createMenuItem(Material material, String name, String lore) {
+    private ItemStack createMenuItem(Material material, String name, String... loreLines) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.GREEN + name);
-        meta.setLore(Arrays.asList(ChatColor.GRAY + lore));
+
+        List<String> lore = new ArrayList<>();
+        for (String line : loreLines) {
+            lore.add(ChatColor.GRAY + line);
+        }
+        meta.setLore(lore);
+
         item.setItemMeta(meta);
         return item;
     }
