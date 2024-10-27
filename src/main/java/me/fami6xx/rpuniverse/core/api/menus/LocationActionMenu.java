@@ -1,16 +1,21 @@
 package me.fami6xx.rpuniverse.core.api.menus;
 
+import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.WorkingStepLocationAddedEvent;
+import me.fami6xx.rpuniverse.core.api.WorkingStepLocationRemovedEvent;
 import me.fami6xx.rpuniverse.core.jobs.WorkingStep;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,11 +57,26 @@ public class LocationActionMenu extends Menu {
                 org.bukkit.Location playerLoc = player.getLocation();
                 workingStep.getWorkingLocations().remove(location);
                 workingStep.getWorkingLocations().add(playerLoc);
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.getPluginManager().callEvent(new WorkingStepLocationRemovedEvent(workingStep, location));
+                        Bukkit.getPluginManager().callEvent(new WorkingStepLocationAddedEvent(workingStep, playerLoc));
+                    }
+                }.runTask(RPUniverse.getJavaPlugin());
+
                 player.sendMessage(FamiUtils.formatWithPrefix("Location has been repositioned to your current location."));
                 this.open();
                 break;
             case "Remove Location":
                 workingStep.removeWorkingLocation(location);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.getPluginManager().callEvent(new WorkingStepLocationRemovedEvent(workingStep, location));
+                    }
+                }.runTask(RPUniverse.getJavaPlugin());
                 player.sendMessage(FamiUtils.formatWithPrefix("Location has been removed."));
                 player.closeInventory();
                 break;

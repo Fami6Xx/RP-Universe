@@ -1,16 +1,21 @@
 package me.fami6xx.rpuniverse.core.api.menus;
 
+import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.WorkingStepLocationAddedEvent;
 import me.fami6xx.rpuniverse.core.jobs.WorkingStep;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +113,13 @@ public class WorkingLocationsMenu extends EasyPaginatedMenu {
             playerMenu.setPendingAction((input) -> {
                 if (input.equalsIgnoreCase("here")) {
                     workingStep.addWorkingLocation(player.getLocation());
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            Event event = new WorkingStepLocationAddedEvent(workingStep, player.getLocation());
+                            Bukkit.getPluginManager().callEvent(event);
+                        }
+                    }.runTask(RPUniverse.getJavaPlugin());
                     player.sendMessage(FamiUtils.formatWithPrefix("Location added."));
                     open();
                 } else {
