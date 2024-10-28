@@ -11,6 +11,7 @@ import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -112,6 +113,7 @@ public class BasicNeedsHandler {
 
                     boolean ignore = RPUniverse.getInstance().getConfiguration().getBoolean("basicNeeds.ignoreInMode");
                     if (ignore && playerData.getPlayerMode() != PlayerMode.USER) return;
+                    if (ignore && player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
 
                     playerData.setFoodLevel(playerData.getFoodLevel() - config.getRemovedHunger());
                     playerData.setWaterLevel(playerData.getWaterLevel() - config.getRemovedThirst());
