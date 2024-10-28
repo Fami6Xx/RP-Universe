@@ -175,6 +175,15 @@ public class JobsHandler implements Listener {
         });
     }
 
+    private Job getJobByUUID(String uuid){
+        for(Job job : jobs){
+            if(job.getJobUUID().toString().equals(uuid)){
+                return job;
+            }
+        }
+        return null;
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         RPUniverse.getInstance().getBossBarHandler().updateBossBar(event.getPlayer());
@@ -184,7 +193,7 @@ public class JobsHandler implements Listener {
     public void onWorkingStepLocationAdded(WorkingStepLocationAddedEvent event) {
         stepLocationHashMap.put(event.getWorkingStep(), event.getLocation());
 
-        WorkingStepHologram holo = new WorkingStepHologram(event.getWorkingStep(), event.getLocation(), getJobs().stream().filter(job -> job.getJobUUID() == event.getWorkingStep().getJobUUID()).findFirst().orElse(null));
+        WorkingStepHologram holo = new WorkingStepHologram(event.getWorkingStep(), event.getLocation(), getJobByUUID(event.getWorkingStep().getJobUUID().toString()));
         hologramHashMap.put(event.getLocation(), holo);
     }
 
