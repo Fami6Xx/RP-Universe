@@ -11,7 +11,7 @@ public class ProgressBarString extends BukkitRunnable {
     private final IExecuteQueue updateCallback;
     private final IExecuteQueue endCallback;
 
-    private final String symbol = "█";
+    private final String symbol = "|";
 
     /**
      * Constructs a ProgressBar instance.

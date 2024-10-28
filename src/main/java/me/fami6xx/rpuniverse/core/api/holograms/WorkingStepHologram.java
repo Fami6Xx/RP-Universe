@@ -76,7 +76,12 @@ public class WorkingStepHologram extends famiHologram implements Listener {
     }
 
     public void recreatePages() {
-        DHAPI.removeHologramPage(getHologram(), 0);
+        getHologram().updateAll();
+        int size = getHologram().getPages().size();
+        for (int i = 0; i < size; i++) {
+            DHAPI.removeHologramPage(getHologram(), i);
+        }
+        getHologram().updateAll();
         HologramPage page0 = DHAPI.addHologramPage(getHologram());
         DHAPI.addHologramLine(page0, FamiUtils.format("&c&l" + job.getName()));
         DHAPI.addHologramLine(page0, "");
@@ -90,7 +95,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                 // Check working step conditions
                 if(!shouldShow(player)) return true;
                 if (step.getItemNeeded() != null && !player.getInventory().containsAtLeast(step.getItemNeeded(), step.getAmountOfItemNeeded())) {
-                    player.sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().missingNeededItem));
+                    player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
                     return true;
                 }
 
@@ -99,6 +104,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                     removeItems(player, step.getItemNeeded(), step.getAmountOfItemNeeded());
 
                 // Start working
+                getHologram().hideClickableEntitiesAll();
                 DHAPI.removeHologramPage(getHologram(), 0);
                 HologramPage page1 = DHAPI.addHologramPage(getHologram());
                 DHAPI.addHologramLine(page1, FamiUtils.format("&c&l" + job.getName()));
@@ -111,17 +117,25 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                 progressBar = new ProgressBarString("", step.getTimeForStep(), () -> {
                     DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString()));
                 }, () -> {
-                    getHologram().getPages().clear();
                     for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
-                        getBaseLocation().getWorld().dropItemNaturally(getBaseLocation(), step.getItemGiven().clone());
+                        getBaseLocation().getWorld().dropItemNaturally(getBaseLocation(), step.getItemGiven().clone().asOne());
                     }
                     recreatePages();
                 });
-                progressBar.runTask(RPUniverse.getJavaPlugin());
+                progressBar.runTaskTimer(RPUniverse.getJavaPlugin(), 0L, 1L);
 
                 return true;
             }
         }, ""));
+        DHAPI.updateHologram(getHologram().getName());
+        getHologram().getShowPlayers().forEach(player -> {
+            Player player1 = Bukkit.getPlayer(player);
+            if (player1 != null) {
+                if (shouldShow(player1)) {
+                    getHologram().showClickableEntities(player1);
+                }
+            }
+        });
     }
 
     public boolean removeItems(Player player, ItemStack itemToRemove, int amountToRemove) {
