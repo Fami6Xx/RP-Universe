@@ -241,9 +241,12 @@ public class LockHandler implements Listener {
 
         getAllLockBlocksFromBlock(block, type, blocksToCheck);
 
+        boolean found = false;
+
         for (Block checkBlock : blocksToCheck) {
             Lock lock = getLockByLocation(checkBlock.getLocation());
             if (lock == null) continue;
+            found = true;
 
             UUID playerUUID = player.getUniqueId();
             Hologram existingHologram = holograms.get(playerUUID);
@@ -276,6 +279,10 @@ public class LockHandler implements Listener {
             hologram.setShowPlayer(player);
             holograms.put(player.getUniqueId(), hologram);
             lockMap.put(player.getUniqueId(), lock);
+        }
+
+        if (!found) {
+            checkHoloAndDelete(player.getUniqueId());
         }
     }
 
