@@ -43,7 +43,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         this.job = job;
 
         getHologram().setDefaultVisibleState(false);
-        updateVisibility(RPUniverse.getInstance().getConfiguration().getDouble("holograms.range"), false);
+        updateVisibility(RPUniverse.getInstance().getConfiguration().getDouble("jobs.menuRange"), false);
 
         recreatePages();
 
