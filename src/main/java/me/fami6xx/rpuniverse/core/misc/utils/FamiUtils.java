@@ -160,13 +160,16 @@ public class FamiUtils {
 
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(FamiUtils.format(displayName));
-        List<String> loreList = Arrays.asList(lore);
-        if(lore.length == 1){
-            if(lore[0] != null || !lore[0].isEmpty())
+
+        if (lore != null && lore.length > 0) {
+            List<String> loreList = Arrays.asList(lore);
+            if (lore.length == 1 && (lore[0] != null && !lore[0].isEmpty())) {
                 loreList = Arrays.asList(lore[0].split("~"));
+            }
+            loreList = loreList.stream().map(FamiUtils::format).collect(Collectors.toList());
+            itemMeta.setLore(loreList);
         }
-        loreList = loreList.stream().map(FamiUtils::format).collect(Collectors.toList());
-        itemMeta.setLore(loreList);
+
         item.setItemMeta(itemMeta);
 
         return item;
