@@ -170,7 +170,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         progressBar = new ProgressBarString("", step.getTimeForStep(), () -> DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString())),
                 () -> {
                     for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
-                        getBaseLocation().getWorld().dropItem(getBaseLocation(), step.getItemGiven().clone().asOne());
+                        getBaseLocation().getWorld().dropItem(getBaseLocation().add(0, getBaseLocation().getY() / 2 * -1, 0), step.getItemGiven().clone().asOne());
                     }
                     recreatePages();
                 });
