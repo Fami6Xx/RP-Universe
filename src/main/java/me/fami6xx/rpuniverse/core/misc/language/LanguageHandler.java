@@ -26,7 +26,7 @@ public class LanguageHandler {
 
     public String interactToWork = "&7Click me to work!";
     public String missingNeededItem = "&cYou are missing a needed item!";
-    public String clickGreenItemsToContinue = "&aClick on green items in the menu to continue";
+    public String clickGreenItemsToContinue = "&aClick green to continue";
     public String clickedItemDisplayName = "&cClicked";
     public String clickMeItemDisplayName = "&aClick me!";
 
