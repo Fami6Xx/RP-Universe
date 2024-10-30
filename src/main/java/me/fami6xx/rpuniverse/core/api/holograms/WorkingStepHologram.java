@@ -7,6 +7,7 @@ import eu.decentsoftware.holograms.api.actions.ClickType;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.WorkingStepLocationRemovedEvent;
+import me.fami6xx.rpuniverse.core.api.menus.WorkingStepInteractableMenu;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
@@ -76,6 +77,13 @@ public class WorkingStepHologram extends famiHologram implements Listener {
     }
 
     public void recreatePages() {
+        if (progressBar != null) {
+            progressBar.cancel();
+        }
+        setFirstStage();
+    }
+
+    private void setFirstStage() {
         getHologram().updateAll();
         int size = getHologram().getPages().size();
         for (int i = 0; i < size; i++) {
@@ -89,44 +97,54 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         DHAPI.addHologramLine(page0, FamiUtils.format("&7" + step.getDescription()));
         DHAPI.addHologramLine(page0, "");
         DHAPI.addHologramLine(page0, FamiUtils.format(RPUniverse.getLanguageHandler().interactToWork));
-        page0.addAction(ClickType.LEFT, new Action(new ActionType(UUID.randomUUID().toString()) {
-            @Override
-            public boolean execute(Player player, String... strings) {
-                // Check working step conditions
-                if(!shouldShow(player)) return true;
-                if (step.getItemNeeded() != null && !player.getInventory().containsAtLeast(step.getItemNeeded(), step.getAmountOfItemNeeded())) {
-                    player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
+
+        if (!step.isInteractableFirstStage()) {
+            page0.addAction(ClickType.LEFT, new Action(new ActionType(UUID.randomUUID().toString()) {
+                @Override
+                public boolean execute(Player player, String... strings) {
+                    // Check working step conditions
+                    if(!shouldShow(player)) return true;
+                    if (step.getItemNeeded() != null && !player.getInventory().containsAtLeast(step.getItemNeeded(), step.getAmountOfItemNeeded())) {
+                        player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
+                        return true;
+                    }
+
+                    // Remove the needed amount of item
+                    if (step.getItemNeeded() != null)
+                        removeItems(player, step.getItemNeeded(), step.getAmountOfItemNeeded());
+
+                    // Start working
+                    setSecondStage();
+
                     return true;
                 }
-
-                // Remove the needed amount of item
-                if (step.getItemNeeded() != null)
-                    removeItems(player, step.getItemNeeded(), step.getAmountOfItemNeeded());
-
-                // Start working
-                getHologram().hideClickableEntitiesAll();
-                DHAPI.removeHologramPage(getHologram(), 0);
-                HologramPage page1 = DHAPI.addHologramPage(getHologram());
-                DHAPI.addHologramLine(page1, FamiUtils.format("&c&l" + job.getName()));
-                DHAPI.addHologramLine(page1, "");
-                DHAPI.addHologramLine(page1, "");
-                DHAPI.addHologramLine(page1, "");
-                DHAPI.addHologramLine(page1, FamiUtils.format("&7" + step.getName()));
-                DHAPI.addHologramLine(page1, FamiUtils.format("&7" + step.getWorkingStepBeingDoneMessage()));
-                DHAPI.addHologramLine(page1, "");
-                progressBar = new ProgressBarString("", step.getTimeForStep(), () -> {
-                    DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString()));
-                }, () -> {
-                    for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
-                        getBaseLocation().getWorld().dropItemNaturally(getBaseLocation(), step.getItemGiven().clone().asOne());
+            }, ""));
+        } else {
+            page0.addAction(ClickType.LEFT, new Action(new ActionType(UUID.randomUUID().toString()) {
+                @Override
+                public boolean execute(Player player, String... strings) {
+                    // Check working step conditions
+                    if(!shouldShow(player)) return true;
+                    if (step.getItemNeeded() != null && !player.getInventory().containsAtLeast(step.getItemNeeded(), step.getAmountOfItemNeeded())) {
+                        player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
+                        return true;
                     }
-                    recreatePages();
-                });
-                progressBar.runTaskTimer(RPUniverse.getJavaPlugin(), 0L, 1L);
 
-                return true;
-            }
-        }, ""));
+                    // Remove the needed amount of item
+                    if (step.getItemNeeded() != null)
+                        removeItems(player, step.getItemNeeded(), step.getAmountOfItemNeeded());
+
+                    // Start working
+                    new WorkingStepInteractableMenu(
+                            RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
+                            () -> setSecondStage()
+                    ).open();
+
+                    return true;
+                }
+            }, ""));
+        }
+
         DHAPI.updateHologram(getHologram().getName());
         getHologram().getShowPlayers().forEach(player -> {
             Player player1 = Bukkit.getPlayer(player);
@@ -136,6 +154,27 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                 }
             }
         });
+    }
+
+    private void setSecondStage() {
+        getHologram().hideClickableEntitiesAll();
+        DHAPI.removeHologramPage(getHologram(), 0);
+        HologramPage page1 = DHAPI.addHologramPage(getHologram());
+        DHAPI.addHologramLine(page1, FamiUtils.format("&c&l" + job.getName()));
+        DHAPI.addHologramLine(page1, "");
+        DHAPI.addHologramLine(page1, "");
+        DHAPI.addHologramLine(page1, "");
+        DHAPI.addHologramLine(page1, FamiUtils.format("&7" + step.getName()));
+        DHAPI.addHologramLine(page1, FamiUtils.format("&7" + step.getWorkingStepBeingDoneMessage()));
+        DHAPI.addHologramLine(page1, "");
+        progressBar = new ProgressBarString("", step.getTimeForStep(), () -> DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString())),
+                () -> {
+                    for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
+                        getBaseLocation().getWorld().dropItem(getBaseLocation(), step.getItemGiven().clone().asOne());
+                    }
+                    recreatePages();
+                });
+        progressBar.runTaskTimer(RPUniverse.getJavaPlugin(), 0L, 1L);
     }
 
     public boolean removeItems(Player player, ItemStack itemToRemove, int amountToRemove) {

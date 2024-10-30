@@ -26,7 +26,9 @@ public class LanguageHandler {
 
     public String interactToWork = "&7Click me to work!";
     public String missingNeededItem = "&cYou are missing a needed item!";
-    public String youNeedToWait = "&cYou need to wait!";
+    public String clickGreenItemsToContinue = "&aClick on green items in the menu to continue";
+    public String clickedItemDisplayName = "&cClicked";
+    public String clickMeItemDisplayName = "&aClick me!";
 
     public String basicNeedsActionBarMessage = "&cFood: {food} &8| &cWater: {water} &8| &cPoop: {poop} &8| &cPee: {pee}";
 

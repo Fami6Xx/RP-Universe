@@ -1,7 +1,6 @@
 package me.fami6xx.rpuniverse.core.jobs;
 
 import me.fami6xx.rpuniverse.RPUniverse;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -31,6 +30,8 @@ public class WorkingStep {
     private int amountOfItemGiven; // Must be more than zero
     private int neededPermissionLevel; // Must be more than zero
 
+    private boolean interactableFirstStage = false;
+
     private String name;
     private String description;
     private String workingStepBeingDoneMessage;
@@ -49,10 +50,12 @@ public class WorkingStep {
      * @param description                 The description of the working step.
      * @param workingStepBeingDoneMessage The message displayed when the working step is being done.
      * @param jobUUID                     The UUID of the job that this working step belongs to.
+     * @param interactableFirstStage      Whether the first stage is interactable.
      */
     public WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, @Nullable ItemStack itemNeeded, int amountOfItemNeeded,
                        @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel,
-                       @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID) {
+                       @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID,
+                       boolean interactableFirstStage) {
         this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
         this.itemNeeded = itemNeeded;
@@ -64,6 +67,7 @@ public class WorkingStep {
         this.description = description;
         this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
         this.jobUUID = jobUUID;
+        this.interactableFirstStage = interactableFirstStage;
     }
 
     /**
@@ -72,7 +76,7 @@ public class WorkingStep {
     private WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, @Nullable ItemStack itemNeeded, int amountOfItemNeeded,
                         @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel,
                         @Nonnull UUID uuid, @Nonnull String name, @Nonnull String description,
-                        @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID) {
+                        @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID, boolean interactableFirstStage) {
         this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
         this.itemNeeded = itemNeeded;
@@ -85,6 +89,7 @@ public class WorkingStep {
         this.description = description;
         this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
         this.jobUUID = jobUUID;
+        this.interactableFirstStage = interactableFirstStage;
     }
 
     /**
@@ -99,9 +104,11 @@ public class WorkingStep {
      * @param description                 The description of the working step.
      * @param workingStepBeingDoneMessage The message displayed when the working step is being done.
      * @param jobUUID                     The UUID of the job that this working step belongs to.
+     * @param interactableFirstStage      Whether the first stage is interactable.
      */
     public WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel,
-                       @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID) {
+                       @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID,
+                       boolean interactableFirstStage) {
         this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
         this.itemNeeded = null;
@@ -113,6 +120,7 @@ public class WorkingStep {
         this.description = description;
         this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
         this.jobUUID = jobUUID;
+        this.interactableFirstStage = interactableFirstStage;
     }
 
     /**
@@ -324,6 +332,24 @@ public class WorkingStep {
     }
 
     /**
+     * Gets whether the first stage is interactable.
+     *
+     * @return True if the first stage is interactable, false otherwise.
+     */
+    public boolean isInteractableFirstStage() {
+        return interactableFirstStage;
+    }
+
+    /**
+     * Sets whether the first stage is interactable.
+     *
+     * @param interactableFirstStage True if the first stage should be interactable, false otherwise.
+     */
+    public void setInteractableFirstStage(boolean interactableFirstStage) {
+        this.interactableFirstStage = interactableFirstStage;
+    }
+
+    /**
      * Converts a string representation of a WorkingStep object into an actual WorkingStep object.
      *
      * @param s The string representation of the WorkingStep object.
@@ -359,10 +385,11 @@ public class WorkingStep {
             String description = yaml.getString("description");
             String workingStepBeingDoneMessage = yaml.getString("workingStepBeingDoneMessage");
             UUID jobUUID = UUID.fromString(yaml.getString("jobUUID"));
+            boolean interactableFirstStage = yaml.getBoolean("interactableFirstStage", false);
 
             return new WorkingStep(workingLocations, timeForStep, itemNeeded, amountOfItemNeeded,
                     itemGiven, amountOfItemGiven, neededPermissionLevel,
-                    uuid, name, description, workingStepBeingDoneMessage, jobUUID);
+                    uuid, name, description, workingStepBeingDoneMessage, jobUUID, interactableFirstStage);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "An error occurred while parsing WorkingStep object from string {\n" + s + "\n}, with error: " + e.getMessage());
             return null;
@@ -386,6 +413,7 @@ public class WorkingStep {
         yaml.set("name", name);
         yaml.set("description", description);
         yaml.set("workingStepBeingDoneMessage", workingStepBeingDoneMessage);
+        yaml.set("interactableFirstStage", interactableFirstStage);
         return yaml.saveToString();
     }
 }

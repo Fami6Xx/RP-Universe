@@ -192,6 +192,12 @@ public class WorkingStepEditorMenu extends Menu {
                 });
                 player.closeInventory();
                 break;
+            case "Toggle Interactable First Stage":
+                boolean currentValue = workingStep.isInteractableFirstStage();
+                workingStep.setInteractableFirstStage(!currentValue);
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Interactable First Stage set to " + !currentValue + "."));
+                this.open();
+                break;
             case "Save and Close":
                 player.sendMessage(FamiUtils.formatWithPrefix("&7Working step saved successfully."));
                 player.closeInventory();
@@ -222,6 +228,7 @@ public class WorkingStepEditorMenu extends Menu {
         inventory.setItem(30, createMenuItem(Material.GOLD_INGOT, "Edit Item Given", "Current: " + workingStep.getItemGiven().getType().name(), "Click to set the item given upon completion."));
         inventory.setItem(32, createMenuItem(Material.DIAMOND, "Edit Amount of Item Given", "Current: " + workingStep.getAmountOfItemGiven(), "Click to set the amount of the item given."));
         inventory.setItem(34, createMenuItem(Material.EXPERIENCE_BOTTLE, "Edit Needed Permission Level", "Current: " + workingStep.getNeededPermissionLevel(), "Click to set the required permission level."));
+        inventory.setItem(38, createMenuItem(Material.LEVER, "Toggle Interactable First Stage", "Current: " + workingStep.isInteractableFirstStage(), "Click to toggle interactable first stage."));
 
         inventory.setItem(48, createMenuItem(Material.LIME_WOOL, "Save and Close", "Click to save changes and close the menu."));
         inventory.setItem(50, createMenuItem(Material.RED_WOOL, "Cancel", "Click to cancel edits and close the menu."));
