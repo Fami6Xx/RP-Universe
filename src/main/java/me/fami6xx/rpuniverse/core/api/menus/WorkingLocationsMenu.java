@@ -113,7 +113,7 @@ public class WorkingLocationsMenu extends EasyPaginatedMenu {
             player.sendMessage(FamiUtils.formatWithPrefix("&7Please stand at the desired location and enter 'here' to add it."));
             playerMenu.setPendingAction((input) -> {
                 if (input.equalsIgnoreCase("here")) {
-                    workingStep.addWorkingLocation(player.getLocation());
+                    workingStep.addWorkingLocation(player.getLocation().add(0,1.5,0));
                     new BukkitRunnable() {
                         @Override
                         public void run() {
