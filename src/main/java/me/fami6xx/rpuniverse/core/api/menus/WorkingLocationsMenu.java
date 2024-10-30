@@ -9,6 +9,7 @@ import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -113,11 +114,12 @@ public class WorkingLocationsMenu extends EasyPaginatedMenu {
             player.sendMessage(FamiUtils.formatWithPrefix("&7Please stand at the desired location and enter 'here' to add it."));
             playerMenu.setPendingAction((input) -> {
                 if (input.equalsIgnoreCase("here")) {
-                    workingStep.addWorkingLocation(player.getLocation().add(0,1.5,0));
+                    Location loc = player.getLocation().add(0, 2.5, 0);
+                    workingStep.addWorkingLocation(loc);
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            Event event = new WorkingStepLocationAddedEvent(workingStep, player.getLocation());
+                            Event event = new WorkingStepLocationAddedEvent(workingStep, loc);
                             Bukkit.getPluginManager().callEvent(event);
                         }
                     }.runTask(RPUniverse.getJavaPlugin());
