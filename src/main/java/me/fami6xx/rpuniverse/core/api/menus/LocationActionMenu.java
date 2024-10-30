@@ -56,7 +56,7 @@ public class LocationActionMenu extends Menu {
             case "Reposition to Player's Location":
                 org.bukkit.Location playerLoc = player.getLocation();
                 workingStep.getWorkingLocations().remove(location);
-                workingStep.getWorkingLocations().add(playerLoc);
+                workingStep.getWorkingLocations().add(playerLoc.add(0, 1.5, 0));
 
                 new BukkitRunnable() {
                     @Override
