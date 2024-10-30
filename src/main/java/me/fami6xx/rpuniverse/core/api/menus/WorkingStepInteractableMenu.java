@@ -33,7 +33,7 @@ public class WorkingStepInteractableMenu extends Menu {
 
     @Override
     public int getSlots() {
-        return 54; // Double chest
+        return 36;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class WorkingStepInteractableMenu extends Menu {
         inventory.clear();
         paneSlots.clear();
 
-        int numberOfPanes = random.nextInt(6) + 5; // 5-10 panes
+        int numberOfPanes = random.nextInt(11) + 5; // 5-15 panes
 
         while (paneSlots.size() < numberOfPanes) {
             int slot = random.nextInt(getSlots());
