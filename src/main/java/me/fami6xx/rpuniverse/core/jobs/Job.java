@@ -590,6 +590,7 @@ public class Job {
 
     /**
      * Adds the specified amount of money to the job bank.
+     * Calls the MoneyAddedToJobBankEvent.
      *
      * @param money The amount of money to add to the job bank. Must be a positive integer.
      */
@@ -610,6 +611,7 @@ public class Job {
 
     /**
      * Removes the specified amount of money from the job bank.
+     * Calls the MoneyRemovedFromJobBankEvent.
      *
      * @param money The amount of money to remove from the job bank. Must be a positive integer.
      * @return {@code true} if the money was successfully removed from the job bank, {@code false} otherwise.
@@ -642,6 +644,17 @@ public class Job {
         BigDecimal bd = new BigDecimal(jobBank);
         bd = bd.setScale(2, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    /**
+     * Retrieves the current amount of money available in the job bank.
+     * It doesn't round the value.
+     * It doesn't call any event.
+     *
+     * @param jobBank The new amount of money in the job bank.
+     */
+    public void setJobBank(double jobBank) {
+        this.jobBank = jobBank;
     }
 
     /**
