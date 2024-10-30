@@ -164,7 +164,6 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         DHAPI.addHologramLine(page1, "");
         DHAPI.addHologramLine(page1, "");
         DHAPI.addHologramLine(page1, "");
-        DHAPI.addHologramLine(page1, FamiUtils.format("&7" + step.getName()));
         DHAPI.addHologramLine(page1, FamiUtils.format("&7" + step.getWorkingStepBeingDoneMessage()));
         DHAPI.addHologramLine(page1, "");
         progressBar = new ProgressBarString("", step.getTimeForStep(), () -> DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString())),
