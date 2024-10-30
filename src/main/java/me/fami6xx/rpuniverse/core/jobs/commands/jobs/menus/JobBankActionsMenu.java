@@ -76,7 +76,7 @@ public class JobBankActionsMenu extends Menu {
             });
         }
         if(e.getSlot() == 5){
-            if (!job.isBossCanEditPositions() && RPUniverse.getPlayerData(playerMenu.getPlayer().getUniqueId().toString()).getPlayerMode() != PlayerMode.ADMIN) {
+            if (!job.isBossCanRemoveMoneyFromBank() && RPUniverse.getPlayerData(playerMenu.getPlayer().getUniqueId().toString()).getPlayerMode() != PlayerMode.ADMIN) {
                 FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), languageHandler.jobBankActionsMenuRemoveMoneyNoPermissionMessage);
                 return;
             }
