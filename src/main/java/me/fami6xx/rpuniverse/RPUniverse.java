@@ -14,6 +14,7 @@ import me.fami6xx.rpuniverse.core.locks.LockHandler;
 import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.VersionInfo;
+import me.fami6xx.rpuniverse.core.misc.balance.BalanceChangeNotifier;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.BossBarHandler;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
@@ -48,6 +49,7 @@ public final class RPUniverse extends JavaPlugin {
     private NickHider nickHider;
     private BasicNeedsHandler basicNeedsHandler;
     private LockHandler lockHandler;
+    private BalanceChangeNotifier balanceChangeNotifier;
 
     private FileConfiguration config;
     private Economy econ;
@@ -169,6 +171,12 @@ public final class RPUniverse extends JavaPlugin {
 
         this.getCommand("rpuniverse").setExecutor(new RPUCoreCommand());
         this.getCommand("rpuniverse").setTabCompleter(new RPUCoreAutoComplete());
+
+        if (config.getBoolean("balance.enableTracker")) {
+            balanceChangeNotifier = new BalanceChangeNotifier(this);
+            getServer().getPluginManager().registerEvents(balanceChangeNotifier, this);
+            balanceChangeNotifier.runTaskTimer(this, 0, config.getLong("balance.check-interval"));
+        }
 
         getLogger().info("RPUniverse enabled!");
     }

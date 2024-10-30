@@ -5,7 +5,7 @@
 # If you have any questions, please contact me on discord: https://discord.gg/SRzxwmBxk5
 
 # Config version (PLEASE DO NOT TOUCH THIS)
-configVersion: 1
+configVersion: 2
 
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 
@@ -88,3 +88,12 @@ basicNeeds:
     removedThirst: 2
     addedPoop: 4
     addedPee: 2
+
+# The settings for the balance
+# enableTracker: If true, the balance tracker is enabled
+# check-interval: The interval in ticks in which the balance is checked
+# discordWebhookURL: The discord webhook URL for the balance tracker
+balance:
+    enableTracker: false
+    check-interval: 60 # Time in ticks (20 ticks = 1 second)
+    discordWebhookURL: ''
