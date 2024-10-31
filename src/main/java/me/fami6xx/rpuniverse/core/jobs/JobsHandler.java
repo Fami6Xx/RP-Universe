@@ -1,9 +1,8 @@
 package me.fami6xx.rpuniverse.core.jobs;
 
 import me.fami6xx.rpuniverse.RPUniverse;
-import me.fami6xx.rpuniverse.core.api.JobDeletedEvent;
-import me.fami6xx.rpuniverse.core.api.WorkingStepLocationAddedEvent;
-import me.fami6xx.rpuniverse.core.api.WorkingStepLocationRemovedEvent;
+import me.fami6xx.rpuniverse.core.api.*;
+import me.fami6xx.rpuniverse.core.api.holograms.SellStepHologram;
 import me.fami6xx.rpuniverse.core.api.holograms.WorkingStepHologram;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
@@ -39,6 +38,8 @@ public class JobsHandler implements Listener {
     private final HashMap<WorkingStep, Location> stepLocationHashMap = new HashMap<>();
     private final HashMap<Location, famiHologram> hologramHashMap = new HashMap<>();
 
+    private final HashMap<SellStep, famiHologram> sellStepHologramHashMap = new HashMap<>();
+
     private BukkitTask salaryTask;
 
     /**
@@ -63,6 +64,11 @@ public class JobsHandler implements Listener {
             RPUniverse.getInstance().getDataSystem().getDataHandler().saveJobData(job.getJobUUID().toString(), job);
         });
         salaryTask.cancel();
+        hologramHashMap.values().forEach(famiHologram::destroy);
+        sellStepHologramHashMap.values().forEach(famiHologram::destroy);
+        hologramHashMap.clear();
+        sellStepHologramHashMap.clear();
+        stepLocationHashMap.clear();
     }
 
     /**
@@ -203,10 +209,21 @@ public class JobsHandler implements Listener {
     }
 
     @EventHandler
+    public void onSellStepLocationAdded(SellStepLocationAddedEvent event) {
+        sellStepHologramHashMap.put(event.getSellStep(), new SellStepHologram(event.getSellStep(), getJobByUUID(event.getSellStep().getJobUUID().toString())));
+    }
+
+    @EventHandler
     public void onWorkingStepLocationRemoved(WorkingStepLocationRemovedEvent event) {
         stepLocationHashMap.remove(event.getWorkingStep());
         hologramHashMap.get(event.getLocation()).destroy();
         hologramHashMap.remove(event.getLocation());
+    }
+
+    @EventHandler
+    public void onSellStepLocationRemoved(SellStepLocationRemovedEvent event) {
+        sellStepHologramHashMap.get(event.getSellStep()).destroy();
+        sellStepHologramHashMap.remove(event.getSellStep());
     }
 
     private void startSalaryTask() {

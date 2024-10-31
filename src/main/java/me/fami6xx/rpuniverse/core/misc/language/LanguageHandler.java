@@ -25,6 +25,8 @@ public class LanguageHandler {
     public String adminTag = "&c&lADMIN";
 
     public String interactToWork = "&7Click me to work!";
+    public String interactToSell = "&7Click me to sell!";
+    public String processingSell = "&cProcessing sell...";
     public String missingNeededItem = "&cYou are missing a needed item!";
     public String clickGreenItemsToContinue = "&aClick green to continue";
     public String clickedItemDisplayName = "&cClicked";
