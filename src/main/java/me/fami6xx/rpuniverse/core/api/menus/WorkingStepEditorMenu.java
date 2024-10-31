@@ -198,12 +198,63 @@ public class WorkingStepEditorMenu extends Menu {
                 player.sendMessage(FamiUtils.formatWithPrefix("&7Interactable First Stage set to " + !currentValue + "."));
                 this.open();
                 break;
+            case "Toggle Drop Rare Item":
+                boolean currentDropRareItem = workingStep.isDropRareItem();
+                workingStep.setDropRareItem(!currentDropRareItem);
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Drop Rare Item set to " + !currentDropRareItem + "."));
+                this.open();
+                break;
+            case "Edit Rare Item Drop Percentage":
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new drop percentage (0-100)."));
+                playerMenu.setPendingAction((input) -> {
+                    try {
+                        double newPercentage = Double.parseDouble(input);
+                        if (newPercentage >= 0.0 && newPercentage <= 100.0) {
+                            workingStep.setPercentage(newPercentage);
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Drop percentage updated to " + newPercentage + "%."));
+
+                            this.open();
+                        } else {
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Percentage must be between 0 and 100."));
+                        }
+                    } catch (NumberFormatException ex) {
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid number format."));
+                    }
+                });
+                player.closeInventory();
+                break;
+            case "Edit Rare Item":
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please select an item in your hand to set as the rare item, then type 'complete'."));
+                playerMenu.setPendingAction((input) -> {
+                    if (input.equalsIgnoreCase("complete")) {
+                        ItemStack item = player.getInventory().getItemInMainHand();
+                        if (item.getType() == Material.AIR) {
+                            workingStep.setRareItem(null);
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Rare item removed."));
+                        } else {
+                            workingStep.setRareItem(item);
+                            player.sendMessage(FamiUtils.formatWithPrefix("&7Rare item updated to " + item.getType().name() + "."));
+                        }
+                        this.open();
+                        return;
+                    }
+                    Material material = Material.matchMaterial(input.toUpperCase());
+                    if (material != null) {
+                        workingStep.setRareItem(new ItemStack(material));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Rare item updated to " + material.name() + "."));
+                        this.open();
+                    } else {
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid material."));
+                    }
+                });
+                player.closeInventory();
+                break;
             case "Save and Close":
                 player.sendMessage(FamiUtils.formatWithPrefix("&7Working step saved successfully."));
                 player.closeInventory();
                 break;
             case "Cancel":
-                player.sendMessage(FamiUtils.formatWithPrefix("Edits canceled."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Edits canceled."));
                 player.closeInventory();
                 break;
             default:
@@ -229,6 +280,10 @@ public class WorkingStepEditorMenu extends Menu {
         inventory.setItem(30, createMenuItem(Material.GOLD_INGOT, "Edit Item Given", "Current: " + workingStep.getItemGiven().getType().name(), "Click to set the item given upon completion."));
         inventory.setItem(32, createMenuItem(Material.DIAMOND, "Edit Amount of Item Given", "Current: " + workingStep.getAmountOfItemGiven(), "Click to set the amount of the item given."));
         inventory.setItem(34, createMenuItem(Material.EXPERIENCE_BOTTLE, "Edit Needed Permission Level", "Current: " + workingStep.getNeededPermissionLevel(), "Click to set the required permission level."));
+
+        inventory.setItem(38, createMenuItem(Material.CHEST, "Toggle Drop Rare Item", "Current: " + workingStep.isDropRareItem(), "Click to toggle dropping a rare item."));
+        inventory.setItem(40, createMenuItem(Material.PAPER, "Edit Rare Item Drop Percentage", "Current: " + workingStep.getPercentage() + "%", "Click to set the drop percentage."));
+        inventory.setItem(42, createMenuItem(Material.DIAMOND, "Edit Rare Item", "Current: " + (workingStep.getRareItem() != null ? workingStep.getRareItem().getType().name() : "None"), "Click to set the rare item."));
 
         inventory.setItem(48, createMenuItem(Material.LIME_WOOL, "Save and Close", "Click to save changes and close the menu."));
         inventory.setItem(50, createMenuItem(Material.RED_WOOL, "Cancel", "Click to cancel edits and close the menu."));

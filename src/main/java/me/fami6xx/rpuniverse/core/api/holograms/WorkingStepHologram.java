@@ -25,11 +25,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Random;
 import java.util.UUID;
 
 public class WorkingStepHologram extends famiHologram implements Listener {
     HoloAPI api = RPUniverse.getInstance().getHoloAPI();
     private ProgressBarString progressBar;
+    private final static Random random = new Random();
 
     WorkingStep step;
     Job job;
@@ -166,11 +168,28 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         DHAPI.addHologramLine(page1, "");
         DHAPI.addHologramLine(page1, FamiUtils.format("&7" + step.getWorkingStepBeingDoneMessage()));
         DHAPI.addHologramLine(page1, "");
-        progressBar = new ProgressBarString("", step.getTimeForStep(), () -> DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString())),
+        progressBar = new ProgressBarString("", step.getTimeForStep(),
+                () -> DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString())),
                 () -> {
-                    for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
-                        getBaseLocation().getWorld().dropItem(getBaseLocation().add(0, getBaseLocation().getY() / 2 * -1, 0), step.getItemGiven().clone().asOne());
+                    if (step.isDropRareItem() && step.getRareItem() != null) {
+                        double chance = step.getPercentage();
+                        double randomValue = random.nextDouble() * 100;
+                        if (randomValue <= chance) {
+                            // Drop the rare item
+                            getBaseLocation().getWorld().dropItem(getBaseLocation().add(0, getBaseLocation().getY() / 2 * -1, 0), step.getRareItem().clone().asOne());
+                        }else{
+                            // Drop the regular items
+                            for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
+                                getBaseLocation().getWorld().dropItem(getBaseLocation().add(0, getBaseLocation().getY() / 2 * -1, 0), step.getItemGiven().clone().asOne());
+                            }
+                        }
+                    }else{
+                        // Drop the regular items
+                        for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
+                            getBaseLocation().getWorld().dropItem(getBaseLocation().add(0, getBaseLocation().getY() / 2 * -1, 0), step.getItemGiven().clone().asOne());
+                        }
                     }
+
                     recreatePages();
                 });
         progressBar.runTaskTimer(RPUniverse.getJavaPlugin(), 0L, 1L);
