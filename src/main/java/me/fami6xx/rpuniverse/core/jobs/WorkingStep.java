@@ -32,6 +32,10 @@ public class WorkingStep {
 
     private boolean interactableFirstStage = false;
 
+    private boolean dropRareItem = false;
+    private double percentage = 0.0;
+    private ItemStack rareItem; // Can be null
+
     private String name;
     private String description;
     private String workingStepBeingDoneMessage;
@@ -51,11 +55,14 @@ public class WorkingStep {
      * @param workingStepBeingDoneMessage The message displayed when the working step is being done.
      * @param jobUUID                     The UUID of the job that this working step belongs to.
      * @param interactableFirstStage      Whether the first stage is interactable.
+     * @param dropRareItem                Whether a rare item can drop.
+     * @param percentage                  The percentage chance of dropping the rare item.
+     * @param rareItem                    The rare item that can be dropped.
      */
     public WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, @Nullable ItemStack itemNeeded, int amountOfItemNeeded,
                        @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel,
                        @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID,
-                       boolean interactableFirstStage) {
+                       boolean interactableFirstStage, boolean dropRareItem, double percentage, @Nullable ItemStack rareItem) {
         this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
         this.itemNeeded = itemNeeded;
@@ -68,6 +75,9 @@ public class WorkingStep {
         this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
         this.jobUUID = jobUUID;
         this.interactableFirstStage = interactableFirstStage;
+        this.dropRareItem = dropRareItem;
+        setPercentage(percentage);
+        this.rareItem = rareItem;
     }
 
     /**
@@ -76,7 +86,8 @@ public class WorkingStep {
     private WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, @Nullable ItemStack itemNeeded, int amountOfItemNeeded,
                         @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel,
                         @Nonnull UUID uuid, @Nonnull String name, @Nonnull String description,
-                        @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID, boolean interactableFirstStage) {
+                        @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID, boolean interactableFirstStage,
+                        boolean dropRareItem, double percentage, @Nullable ItemStack rareItem) {
         this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
         this.itemNeeded = itemNeeded;
@@ -90,6 +101,9 @@ public class WorkingStep {
         this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
         this.jobUUID = jobUUID;
         this.interactableFirstStage = interactableFirstStage;
+        this.dropRareItem = dropRareItem;
+        setPercentage(percentage);
+        this.rareItem = rareItem;
     }
 
     /**
@@ -105,22 +119,74 @@ public class WorkingStep {
      * @param workingStepBeingDoneMessage The message displayed when the working step is being done.
      * @param jobUUID                     The UUID of the job that this working step belongs to.
      * @param interactableFirstStage      Whether the first stage is interactable.
+     * @param dropRareItem                Whether a rare item can drop.
+     * @param percentage                  The percentage chance of dropping the rare item.
+     * @param rareItem                    The rare item that can be dropped.
      */
-    public WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, @Nonnull ItemStack itemGiven, int amountOfItemGiven, int neededPermissionLevel,
-                       @Nonnull String name, @Nonnull String description, @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID,
-                       boolean interactableFirstStage) {
-        this.workingLocations = workingLocations;
-        this.timeForStep = timeForStep;
-        this.itemNeeded = null;
-        this.amountOfItemNeeded = 0;
-        this.itemGiven = itemGiven;
-        this.amountOfItemGiven = amountOfItemGiven;
-        this.neededPermissionLevel = neededPermissionLevel;
-        this.name = name;
-        this.description = description;
-        this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
-        this.jobUUID = jobUUID;
-        this.interactableFirstStage = interactableFirstStage;
+    public WorkingStep(@Nonnull List<Location> workingLocations, int timeForStep, @Nonnull ItemStack itemGiven, int amountOfItemGiven,
+                       int neededPermissionLevel, @Nonnull String name, @Nonnull String description,
+                       @Nonnull String workingStepBeingDoneMessage, @Nonnull UUID jobUUID, boolean interactableFirstStage,
+                       boolean dropRareItem, double percentage, @Nullable ItemStack rareItem) {
+        this(workingLocations, timeForStep, null, 0, itemGiven, amountOfItemGiven, neededPermissionLevel, name,
+                description, workingStepBeingDoneMessage, jobUUID, interactableFirstStage, dropRareItem, percentage, rareItem);
+    }
+
+    /**
+     * Checks if a rare item can drop.
+     *
+     * @return True if a rare item can drop, false otherwise.
+     */
+    public boolean isDropRareItem() {
+        return dropRareItem;
+    }
+
+    /**
+     * Sets whether a rare item can drop.
+     *
+     * @param dropRareItem True if a rare item can drop, false otherwise.
+     */
+    public void setDropRareItem(boolean dropRareItem) {
+        this.dropRareItem = dropRareItem;
+    }
+
+    /**
+     * Gets the percentage chance of dropping the rare item.
+     *
+     * @return The percentage chance (0 to 100).
+     */
+    public double getPercentage() {
+        return percentage;
+    }
+
+    /**
+     * Sets the percentage chance of dropping the rare item.
+     *
+     * @param percentage The percentage chance (0 to 100).
+     */
+    public void setPercentage(double percentage) {
+        if (percentage < 0.0 || percentage > 100.0) {
+            throw new IllegalArgumentException("Percentage must be between 0 and 100.");
+        }
+        this.percentage = percentage;
+    }
+
+    /**
+     * Gets the rare item that can be dropped.
+     *
+     * @return The rare item.
+     */
+    @Nullable
+    public ItemStack getRareItem() {
+        return rareItem;
+    }
+
+    /**
+     * Sets the rare item that can be dropped.
+     *
+     * @param rareItem The rare item.
+     */
+    public void setRareItem(@Nullable ItemStack rareItem) {
+        this.rareItem = rareItem;
     }
 
     /**
@@ -367,9 +433,6 @@ public class WorkingStep {
                 for (Object obj : rawLocations) {
                     if (obj instanceof Location) {
                         workingLocations.add((Location) obj);
-                    } else if (obj instanceof YamlConfiguration) {
-                        Location loc = (Location) obj;
-                        workingLocations.add(loc);
                     }
                 }
             }
@@ -387,9 +450,13 @@ public class WorkingStep {
             UUID jobUUID = UUID.fromString(yaml.getString("jobUUID"));
             boolean interactableFirstStage = yaml.getBoolean("interactableFirstStage", false);
 
+            boolean dropRareItem = yaml.getBoolean("dropRareItem", false);
+            double percentage = yaml.getDouble("percentage", 0.0);
+            ItemStack rareItem = yaml.getItemStack("rareItem");
+
             return new WorkingStep(workingLocations, timeForStep, itemNeeded, amountOfItemNeeded,
-                    itemGiven, amountOfItemGiven, neededPermissionLevel,
-                    uuid, name, description, workingStepBeingDoneMessage, jobUUID, interactableFirstStage);
+                    itemGiven, amountOfItemGiven, neededPermissionLevel, uuid, name, description,
+                    workingStepBeingDoneMessage, jobUUID, interactableFirstStage, dropRareItem, percentage, rareItem);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "An error occurred while parsing WorkingStep object from string {\n" + s + "\n}, with error: " + e.getMessage());
             return null;
@@ -414,6 +481,11 @@ public class WorkingStep {
         yaml.set("description", description);
         yaml.set("workingStepBeingDoneMessage", workingStepBeingDoneMessage);
         yaml.set("interactableFirstStage", interactableFirstStage);
+        yaml.set("dropRareItem", dropRareItem);
+        yaml.set("percentage", percentage);
+        if (rareItem != null) {
+            yaml.set("rareItem", rareItem);
+        }
         return yaml.saveToString();
     }
 }
