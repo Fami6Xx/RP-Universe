@@ -21,10 +21,12 @@ import java.util.UUID;
 
 public class SellStepsMenu extends EasyPaginatedMenu {
     private List<SellStep> sellSteps;
+    private UUID jobUUID;
 
-    public SellStepsMenu(PlayerMenu menu, List<SellStep> sellSteps) {
+    public SellStepsMenu(PlayerMenu menu, List<SellStep> sellSteps, UUID jobUUID) {
         super(menu);
         this.sellSteps = sellSteps;
+        this.jobUUID = jobUUID;
     }
 
     @Override
@@ -78,7 +80,7 @@ public class SellStepsMenu extends EasyPaginatedMenu {
             if (displayName.equalsIgnoreCase("Create New Sell Step")) {
                 // Create a new SellStep with default values
                 SellStep newSellStep = new SellStep(
-                        UUID.randomUUID(),
+                        jobUUID,
                         player.getLocation().add(0, 2.5, 0),
                         new ItemStack(Material.DIRT), // Default item
                         10.0, // Default item value
