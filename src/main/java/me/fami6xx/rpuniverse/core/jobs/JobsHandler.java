@@ -175,7 +175,12 @@ public class JobsHandler implements Listener {
         });
     }
 
-    private Job getJobByUUID(String uuid){
+    /**
+     * Get a job by its UUID
+     * @param uuid The UUID of the job
+     * @return The job
+     */
+    public Job getJobByUUID(String uuid){
         for(Job job : jobs){
             if(job.getJobUUID().toString().equals(uuid)){
                 return job;
