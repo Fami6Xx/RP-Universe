@@ -101,7 +101,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         DHAPI.addHologramLine(page0, FamiUtils.format(RPUniverse.getLanguageHandler().interactToWork));
 
         if (!step.isInteractableFirstStage()) {
-            page0.addAction(ClickType.LEFT, new Action(new ActionType(UUID.randomUUID().toString()) {
+            page0.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
                 @Override
                 public boolean execute(Player player, String... strings) {
                     // Check working step conditions
@@ -122,7 +122,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                 }
             }, ""));
         } else {
-            page0.addAction(ClickType.LEFT, new Action(new ActionType(UUID.randomUUID().toString()) {
+            page0.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
                 @Override
                 public boolean execute(Player player, String... strings) {
                     // Check working step conditions
