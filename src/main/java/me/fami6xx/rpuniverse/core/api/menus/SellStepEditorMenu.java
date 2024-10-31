@@ -231,11 +231,11 @@ public class SellStepEditorMenu extends Menu {
         inventory.setItem(10, createMenuItem(Material.NAME_TAG, "Edit Name", "Current: " + sellStep.getName(), "Click to edit the name."));
         inventory.setItem(12, createMenuItem(Material.BOOK, "Edit Description", "Current: " + sellStep.getDescription(), "Click to edit the description."));
         inventory.setItem(14, createMenuItem(Material.COMPASS, "Edit Location", "Click to set the sell location to your current position."));
+        inventory.setItem(16, createMenuItem(Material.GOLD_NUGGET, "Edit Item Value", "Current: $" + sellStep.getItemValue(), "Click to set the item's value."));
 
         inventory.setItem(20, createMenuItem(Material.GOLD_INGOT, "Edit Item to Sell", "Current: " + sellStep.getItemToSell().getType().name(), "Click to set the item to sell."));
         inventory.setItem(22, createMenuItem(Material.CLOCK, "Edit Time to Sell", "Current: " + sellStep.getTimeToSell() + " ticks", "Click to set the time required to sell."));
         inventory.setItem(24, createMenuItem(Material.CHEST, "Edit Max Sell Amount", "Current: " + sellStep.getMaxSellAmount(), "Click to set the maximum sell amount."));
-        inventory.setItem(26, createMenuItem(Material.GOLD_NUGGET, "Edit Item Value", "Current: $" + sellStep.getItemValue(), "Click to set the item's value."));
 
         inventory.setItem(30, createMenuItem(Material.EMERALD, "Edit Player Percentage", "Current: " + sellStep.getPlayerPercentage() + "%", "Click to set the percentage for player."));
         inventory.setItem(32, createMenuItem(Material.EXPERIENCE_BOTTLE, "Edit Job Percentage", "Current: " + sellStep.getJobPercentage() + "%", "Click to set the percentage for job."));
