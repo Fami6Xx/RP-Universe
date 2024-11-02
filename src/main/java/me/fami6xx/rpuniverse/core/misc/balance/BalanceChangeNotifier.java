@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.misc.balance;
 import me.fami6xx.rpuniverse.RPUniverse;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,7 +46,8 @@ public class BalanceChangeNotifier extends BukkitRunnable implements Listener {
             if (currentBalance != previousBalance) {
                 balanceMap.put(uuid, currentBalance);
 
-                String payload = preparePayload(player.getName(), previousBalance, currentBalance);
+                // Pass the player's location to preparePayload
+                String payload = preparePayload(player.getName(), previousBalance, currentBalance, player.getLocation());
 
                 sendToWebhookAsync(payload);
             }
@@ -67,13 +69,21 @@ public class BalanceChangeNotifier extends BukkitRunnable implements Listener {
         balanceMap.remove(uuid);
     }
 
-    private String preparePayload(String playerName, double oldBalance, double newBalance) {
+    // Updated method signature to include Location
+    private String preparePayload(String playerName, double oldBalance, double newBalance, Location location) {
         JSONObject json = new JSONObject();
 
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
 
         String formattedOldBalance = currencyFormat.format(Double.parseDouble(String.format("%.2f", oldBalance)));
         String formattedNewBalance = currencyFormat.format(Double.parseDouble(String.format("%.2f", newBalance)));
+
+        // Get the player's location coordinates as integers
+        int x = location.getBlockX();
+        int y = location.getBlockY();
+        int z = location.getBlockZ();
+
+        String locationString = String.format("X: %d, Y: %d, Z: %d", x, y, z);
 
         // Create an embed object
         JSONObject embed = new JSONObject();
@@ -82,10 +92,14 @@ public class BalanceChangeNotifier extends BukkitRunnable implements Listener {
                 "Player **%s**'s balance changed.",
                 playerName
         ));
-        embed.put("fields", Arrays.asList(
-                createField("Old Balance", formattedOldBalance, true),
-                createField("New Balance", formattedNewBalance, true)
-        ));
+
+        // Create the fields array
+        List<JSONObject> fields = new ArrayList<>();
+        fields.add(createField("Old Balance", formattedOldBalance, true));
+        fields.add(createField("New Balance", formattedNewBalance, true));
+        fields.add(createField("Location", locationString, false)); // Include the location field
+
+        embed.put("fields", fields);
         embed.put("timestamp", java.time.Instant.now().toString());
 
         // Add the embed to the payload
