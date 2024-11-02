@@ -126,6 +126,7 @@ public final class RPUniverse extends JavaPlugin {
 
         this.getCommand("me").setExecutor(new MeCommand());
         this.getCommand("do").setExecutor(new DoCommand());
+        this.getCommand("try").setExecutor(new TryCommand());
         this.getCommand("status").setExecutor(new StatusCommand());
         this.getCommand("stopstatus").setExecutor(new StatusCommand());
         this.getCommand("jobs").setExecutor(new JobsCommand());

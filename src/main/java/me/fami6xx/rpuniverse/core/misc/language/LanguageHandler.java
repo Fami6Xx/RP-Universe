@@ -203,17 +203,18 @@ public class LanguageHandler {
 
     // ME COMMAND MESSAGES
     public String errorMeCommandUsage = "&cUsage: /me <message>";
-    public String meCommandMessage = "&7* &e{player} &c{message}";
+    public String meCommandMessage = "&7* &c{player} &8» &c{message}";
     public String meCommandHologram = "&7* &c{message} &7*";
 
     // DO COMMAND MESSAGES
     public String errorDoCommandUsage = "&cUsage: /do <message>";
-    public String doCommandMessage = "&7* &e{player} &e{message}";
+    public String doCommandMessage = "&7* &e{player} &8» &e{message}";
     public String doCommandHologram = "&7* &e{message} &7*";
 
     // DOC COMMAND MESSAGES
     public String errorDocCommandUsage = "&cUsage: /doc <seconds> (message)";
-    public String docCommandMessage = "&7* &e{player} &a{message} {seconds}";
+    public String errorDocCommandAlreadyActive = "&cYou already have an active doc command!";
+    public String docCommandMessage = "&7* &a{player} &8» &a{message} {seconds}";
     public String docCommandHologram = "&7* &a{message} {seconds} &7*";
 
     // STATUS AND STOP STATUS MESSAGES
@@ -297,6 +298,13 @@ public class LanguageHandler {
 
     // CONFIG MESSAGES
     public String invalidValueInConfigMessage = "&cInvalid value in config.yml! &7(&c{value}&7)";
+
+    // TRY MESSAGES
+    public String tryCommandCooldownMessage = "&cYou need to wait &l{time}&r&c seconds before using this command again!";
+    public String tryCommandYesMessage = "&4&l/TRY &r&a{player} &7got a &a&lYES&7!";
+    public String tryCommandNoMessage = "&4&l/TRY &r&a{player} &7got a &c&lNO&7!";
+    public String tryCommandHologramYes = "&7* &a&lYES &7*";
+    public String tryCommandHologramNo = "&7* &4&lNO &7*";
 
     private final JavaPlugin plugin;
     private FileConfiguration languageConfig;

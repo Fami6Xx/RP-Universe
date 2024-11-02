@@ -21,6 +21,10 @@ commands:
     description: Sends a message and a hologram that acts as if player is doing something for some period of time
     usage: /<command> <seconds> (message)
     permission: rpu.doc
+  try:
+    description: Sends a message that has 50% chance of saing no or yes
+    usage: /<command>
+    permission: rpu.try
   status:
     description: Sends a message acting as some kind of player status
     usage: /<command> <message>
@@ -76,7 +80,7 @@ commands:
     aliases: [rpu]
 permissions:
   rpu.user:
-    description: Gives access to all user commands
+    description: Gives access to all user commands (me, do, doc, try, status, globalooc)
     children:
         rpu.me: true
         rpu.do: true
@@ -84,6 +88,7 @@ permissions:
         rpu.stopstatus: true
         rpu.globalooc: true
         rpu.doc: true
+        rpu.try: true
   rpu.admin:
     description: Gives access to all admin commands
     children:
@@ -101,6 +106,8 @@ permissions:
     description: Allows the player to use the /me command
   rpu.do:
     description: Allows the player to use the /do command
+  rpu.try:
+    description: Allows the player to use the /try command
   rpu.status:
     description: Allows the player to use the /status command
   rpu.stopstatus:
