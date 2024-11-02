@@ -14,9 +14,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DocCommand implements CommandExecutor, Listener {
     private static HashMap<Player, Boolean> blockedMovementPlayers = new HashMap<>();
+    private static ConcurrentHashMap<Player, Long> activeDocCommands = new ConcurrentHashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -30,6 +32,19 @@ public class DocCommand implements CommandExecutor, Listener {
         if (args.length == 0) {
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorDocCommandUsage);
             return true;
+        }
+
+        // Check if the player has an active /doc command
+        if (activeDocCommands.containsKey(player)) {
+            long expireTime = activeDocCommands.get(player);
+            if (System.currentTimeMillis() < expireTime) {
+                // Command is still active
+                FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorDocCommandAlreadyActive);
+                return true;
+            } else {
+                // Command has expired, remove from map
+                activeDocCommands.remove(player);
+            }
         }
 
         if(!FamiUtils.isInteger(args[0])){
@@ -66,6 +81,9 @@ public class DocCommand implements CommandExecutor, Listener {
     }
 
     public static void addDoc(Player player, int docSeconds, String message, boolean blockPlayerMovement){
+        long expireTime = System.currentTimeMillis() + docSeconds * 1000L;
+        activeDocCommands.put(player, expireTime);
+
         final int[] range = {0};
         try {
             range[0] = RPUniverse.getInstance().getConfiguration().getInt("holograms.range");
@@ -106,6 +124,7 @@ public class DocCommand implements CommandExecutor, Listener {
                 }
                 holo.destroy();
                 blockedMovementPlayers.remove(docPlayer);
+                activeDocCommands.remove(docPlayer);
                 return newLine;
             }
 
@@ -113,6 +132,7 @@ public class DocCommand implements CommandExecutor, Listener {
             public void onDisable() {
                 holo.destroy();
                 blockedMovementPlayers.remove(docPlayer);
+                activeDocCommands.remove(docPlayer);
             }
         };
     }
