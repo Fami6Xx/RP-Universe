@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.jobs;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import eu.decentsoftware.holograms.api.actions.Action;
 import eu.decentsoftware.holograms.api.actions.ActionType;
 import eu.decentsoftware.holograms.api.actions.ClickType;
@@ -48,7 +49,7 @@ public class Job {
     private transient Hologram bossMenuHologram;
     private UUID jobUUID = UUID.randomUUID();
     private String jobTypeName = null;
-    private String JSONJobTypeData = null;
+    private JsonObject JSONJobTypeData = null;
     private HashMap<UUID, String> playerPositionsSave = new HashMap<>();
 
     private transient Map<UUID, Position> playerPositions;
@@ -405,7 +406,7 @@ public class Job {
      *
      * @return The job type data of the job as a String.
      */
-    public String getJobTypeData() {
+    public JsonObject getJobTypeData() {
         return JSONJobTypeData;
     }
 
@@ -833,7 +834,7 @@ public class Job {
     @Override
     public String toString() {
         if(jobType != null)
-            JSONJobTypeData = jobType.toString();
+            JSONJobTypeData = jobType.getJsonJobTypeData();
 
         return GSON.toJson(this);
     }

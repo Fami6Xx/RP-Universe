@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.jobs.types;
 
+import com.google.gson.JsonObject;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -102,11 +103,11 @@ public interface JobType {
      * Retrieves the data of the job type in JSON format.
      * @return The data of the job type in JSON format.
      */
-    String getJsonJobTypeData();
+    JsonObject getJsonJobTypeData();
 
     /**
      * Sets the data of the job type from JSON format.
      * @param json The data of the job type in JSON format.
      */
-    void fromJsonJobTypeData(String json);
+    void fromJsonJobTypeData(JsonObject json);
 }

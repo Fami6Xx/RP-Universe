@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.jobs;
 
+import com.google.gson.JsonObject;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.*;
 import me.fami6xx.rpuniverse.core.api.holograms.SellStepHologram;
@@ -174,8 +175,8 @@ public class JobsHandler implements Listener {
             if(job.getJobTypeName() == null) return;
             if(job.getJobTypeName().equals(jobType.getName())){
                 JobType newInstance = jobType.getNewInstance(job);
-                String string = job.getJobTypeData();
-                if (string != null) newInstance.fromJsonJobTypeData(string);
+                JsonObject object = job.getJobTypeData();
+                if (object != null) newInstance.fromJsonJobTypeData(object);
                 job.setJobType(newInstance);
             }
         });
