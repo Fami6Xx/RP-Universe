@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.commands;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.BeforeCharacterKilledEvent;
 import me.fami6xx.rpuniverse.core.api.CharacterKilledEvent;
+import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
@@ -230,5 +231,13 @@ public class RPUCoreCommand implements CommandExecutor {
             if (lock.getOwners() == null) return false;
             return lock.getOwners().contains(player.getUniqueId().toString());
         }).forEach(lock -> RPUniverse.getInstance().getLockHandler().removeLock(lock));
+
+        RPUniverse.getInstance().getActionBarHandler().getMessages(player).clear();
+        RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().forEach((uuid, holo) -> {
+            if (uuid.equals(player.getUniqueId())) {
+                holo.forEach(famiHologram::destroy);
+            }
+        });
+        RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().remove(player.getUniqueId());
     }
 }
