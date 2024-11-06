@@ -211,6 +211,7 @@ public class RPUCoreCommand implements CommandExecutor {
         data.setPeeLevel(0);
         data.setPoopLevel(0);
         data.setPlayerMode(PlayerMode.USER);
+        data.setSelectedPlayerJob(null);
 
         player.getInventory().clear();
         player.getEnderChest().clear();
@@ -222,5 +223,12 @@ public class RPUCoreCommand implements CommandExecutor {
         if (player.getInventory().getHelmet() != null) player.getInventory().getHelmet().setAmount(0);
         Economy econ = RPUniverse.getInstance().getEconomy();
         econ.withdrawPlayer(player, econ.getBalance(player));
+
+        RPUniverse.getInstance().getMenuManager().closeMenu(player);
+
+        RPUniverse.getInstance().getLockHandler().getAllLocks().stream().filter(lock -> {
+            if (lock.getOwners() == null) return false;
+            return lock.getOwners().contains(player.getUniqueId().toString());
+        }).forEach(lock -> RPUniverse.getInstance().getLockHandler().removeLock(lock));
     }
 }
