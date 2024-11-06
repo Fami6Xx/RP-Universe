@@ -96,6 +96,12 @@ public class PlayerData {
      * @param job The job to be set as the selected player job.
      */
     public void setSelectedPlayerJob(Job job){
+        if (job == null) {
+            this.selectedPlayerJob = null;
+            RPUniverse.getInstance().getBossBarHandler().updateBossBar(bindedPlayer);
+            return;
+        }
+
         if(playerJobs.contains(job)) {
             this.selectedPlayerJob = job;
 
