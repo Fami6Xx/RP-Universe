@@ -212,7 +212,6 @@ public class RPUCoreCommand implements CommandExecutor {
         data.setPeeLevel(0);
         data.setPoopLevel(0);
         data.setPlayerMode(PlayerMode.USER);
-        data.setSelectedPlayerJob(null);
 
         player.getInventory().clear();
         player.getEnderChest().clear();
