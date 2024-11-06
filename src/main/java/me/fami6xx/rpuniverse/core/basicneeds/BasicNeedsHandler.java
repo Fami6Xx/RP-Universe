@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.PlayerDamageByBasicNeedsEvent;
+import me.fami6xx.rpuniverse.core.api.ShowBasicNeedsActionBarEvent;
 import me.fami6xx.rpuniverse.core.basicneeds.events.FoodTrackerListener;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
@@ -89,8 +90,13 @@ public class BasicNeedsHandler {
                     placeholders.put("{pee}", formatNeedForActionBar(playerData.getPeeLevel(), true));
                     placeholders.put("{poop}", formatNeedForActionBar(playerData.getPoopLevel(), true));
 
-                    if(RPUniverse.getInstance().getConfiguration().getBoolean("basicNeeds.sendToActionBar"))
-                        actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false);
+                    if(RPUniverse.getInstance().getConfiguration().getBoolean("basicNeeds.sendToActionBar")) {
+                        ShowBasicNeedsActionBarEvent event = new ShowBasicNeedsActionBarEvent(player);
+                        Bukkit.getPluginManager().callEvent(event);
+                        if (!event.isCancelled()) {
+                            actionBarHandler.addMessage(player, FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().basicNeedsActionBarMessage, placeholders), false);
+                        }
+                    }
 
                     if (playerData.getFoodLevel() == 0 || playerData.getWaterLevel() == 0 || playerData.getPeeLevel() == 100 || playerData.getPoopLevel() == 100) {
                         PlayerDamageByBasicNeedsEvent event = new PlayerDamageByBasicNeedsEvent(player, 1);
