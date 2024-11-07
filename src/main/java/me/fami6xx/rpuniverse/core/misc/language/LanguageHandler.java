@@ -261,7 +261,7 @@ public class LanguageHandler {
 
     //  SWITCH JOB
     public String switchJobCommandInfo = "&7Type the id of the job you want to switch to in the command. &7(&c/switchjob <id>&7)";
-    public String switchJobCommandJobList = "&7» &c{jobId} &7- &e{jobName}";
+    public String switchJobCommandJobList = "&c{jobId} &7- &e{jobName}";
     public String switchJobCommandSuccess = "&cYou switched to the job! &7(&c{jobName}&7)";
     public String switchJobCommandError = "&cNo job found!";
     public String switchJobCommandErrorAlreadyInJob = "&cYou are already in this job!";

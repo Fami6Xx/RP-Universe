@@ -15,62 +15,82 @@ import java.util.HashMap;
 public class SwitchJobCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             sender.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorOnlyPlayersCanUseThisCommandMessage));
             return true;
         }
 
         Player player = (Player) sender;
         PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
-        if(playerData.getPlayerMode() != PlayerMode.USER){
+
+        if (playerData.getPlayerMode() != PlayerMode.USER) {
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorYouAreNotInUserMode);
             return true;
         }
 
-        if(playerData.getSelectedPlayerJob() == null){
+        if (playerData.getPlayerJobs().isEmpty() && playerData.getSelectedPlayerJob() == null) {
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorYouDontHaveAnyJob);
             return true;
         }
 
-        if(playerData.getPlayerJobs().size() == 1){
-            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorYouDontHaveAnyMoreJobs);
-            return true;
-        }
-
-        if(args.length == 0){
+        if (args.length == 0) {
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandInfo);
             int id = 1;
+
+            // List the "No Job" option
+            HashMap<String, String> placeholders = new HashMap<>();
+            placeholders.put("{jobName}", RPUniverse.getLanguageHandler().bossBarPlayerNoJob);
+            placeholders.put("{jobId}", String.valueOf(id));
+            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandJobList, placeholders);
+            id++;
+
+            // List available jobs
             for (Job job : playerData.getPlayerJobs()) {
-                HashMap<String, String> placeholders = new HashMap<>();
+                placeholders = new HashMap<>();
                 placeholders.put("{jobName}", job.getName());
-                placeholders.put("{jobId}", id + "");
+                placeholders.put("{jobId}", String.valueOf(id));
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandJobList, placeholders);
                 id++;
             }
             return true;
         }
 
-        if(!FamiUtils.isInteger(args[0])){
+        if (!FamiUtils.isInteger(args[0])) {
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandError);
             return true;
         }
 
         int jobId = Integer.parseInt(args[0]);
-        if(jobId < 1 || jobId > playerData.getPlayerJobs().size()){
+
+        if (jobId < 1 || jobId > playerData.getPlayerJobs().size() + 1) {
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandError);
             return true;
         }
 
-        Job job = playerData.getPlayerJobs().get(jobId - 1);
-        if(job == playerData.getSelectedPlayerJob()){
+        if (jobId == 1) {
+            if (playerData.getSelectedPlayerJob() == null) {
+                FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandErrorAlreadyInJob);
+                return true;
+            }
+
+            playerData.setSelectedPlayerJob(null);
+            HashMap<String, String> placeholders = new HashMap<>();
+            placeholders.put("{jobName}", RPUniverse.getLanguageHandler().bossBarPlayerNoJob);
+            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandSuccess, placeholders);
+            return true;
+        }
+
+        Job job = playerData.getPlayerJobs().get(jobId - 2);
+
+        if (job.equals(playerData.getSelectedPlayerJob())) {
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandErrorAlreadyInJob);
             return true;
         }
 
         playerData.setSelectedPlayerJob(job);
-        FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandSuccess, new HashMap<String, String>(){{
-            put("{jobName}", job.getName());
-        }});
+        HashMap<String, String> placeholders = new HashMap<>();
+        placeholders.put("{jobName}", job.getName());
+        FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().switchJobCommandSuccess, placeholders);
 
         return true;
     }

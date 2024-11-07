@@ -241,7 +241,7 @@ public class PlayerData {
 
         playerJobUUIDs = new ArrayList<>();
         for(Job job : playerJobs)
-            playerJobUUIDs.add(job.getName());
+            playerJobUUIDs.add(job.getJobUUID().toString());
     }
 
     /**
