@@ -183,7 +183,15 @@ public class AllLocksMenu extends EasyPaginatedMenu {
                 material != Material.AIR &&
                 (material.toString().contains("DOOR") ||
                         material.toString().contains("CHEST") ||
-                        material.toString().contains("BARREL"));
+                        material.toString().contains("BARREL") ||
+                        material.toString().contains("SHULKER_BOX") ||
+                        material.toString().contains("FURNACE") ||
+                        material.toString().contains("SMOKER") ||
+                        material.toString().contains("BLAST_FURNACE") ||
+                        material.toString().contains("DISPENSER") ||
+                        material.toString().contains("DROPPER") ||
+                        material.toString().contains("HOPPER") ||
+                        material.toString().contains("LECTERN"));
     }
 
     private void createLock(Block block) {
@@ -205,7 +213,8 @@ public class AllLocksMenu extends EasyPaginatedMenu {
         for (Lock lock : locks) {
             if (lock.getOwnersAsString().toLowerCase().contains(query.toLowerCase()) ||
                     (lock.getJobName() != null && lock.getJobName().toLowerCase().contains(query.toLowerCase())) ||
-                    String.valueOf(lock.getMinWorkingLevel()).contains(query)) {
+                    String.valueOf(lock.getMinWorkingLevel()).contains(query) ||
+                    lock.getShownMaterial().toString().contains(query)) {
                 filteredLocks.add(lock);
             }
         }
