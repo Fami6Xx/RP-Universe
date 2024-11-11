@@ -99,7 +99,7 @@ public class LockHandler implements Listener {
         }
 
         // If the block is a door, check both sides of the door
-        if (location.getBlock().getType().toString().contains("DOOR")) {
+        if (location.getBlock().getType().toString().contains("DOOR") && location.getBlock().getBlockData() instanceof Door) {
             Door door = (Door) location.getBlock().getBlockData();
 
             if (door.getHalf() == Bisected.Half.TOP) {
