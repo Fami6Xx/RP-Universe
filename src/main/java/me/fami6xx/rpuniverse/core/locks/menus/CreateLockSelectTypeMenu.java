@@ -17,6 +17,7 @@ import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.chatapi.IChatExecuteQueue;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 
 public class CreateLockSelectTypeMenu extends Menu {
     private Block block;
@@ -78,8 +79,10 @@ public class CreateLockSelectTypeMenu extends Menu {
             });
         }
         
-        if(slot == 7) {
+        if(slot == 4) {
             RPUniverse.getInstance().getLockHandler().createLock(block.getLocation().toCenterLocation(), block.getType(), null, null, 0);
+            FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().lockCreationSuccess);
+            playerMenu.getPlayer().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
         }
     }
 
@@ -91,7 +94,7 @@ public class CreateLockSelectTypeMenu extends Menu {
         inventory.setItem(5, FamiUtils.makeItem(Material.PLAYER_HEAD, 
             RPUniverse.getLanguageHandler().createLockSelectTypeMenuPlayerLockDisplayName, 
             RPUniverse.getLanguageHandler().createLockSelectTypeMenuPlayerLockLore));
-        inventory.setItem(7, FamiUtils.makeItem(Material.BARRIER, 
+        inventory.setItem(4, FamiUtils.makeItem(Material.BARRIER,
             RPUniverse.getLanguageHandler().createLockSelectTypeMenuUnopenableDisplayName, 
             RPUniverse.getLanguageHandler().createLockSelectTypeMenuUnopenableLore));
     
