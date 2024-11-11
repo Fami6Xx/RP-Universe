@@ -98,6 +98,23 @@ public class LockHandler implements Listener {
             }
         }
 
+        // If the block is a door, check both sides of the door
+        if (location.getBlock().getType().toString().contains("DOOR")) {
+            Door door = (Door) location.getBlock().getBlockData();
+
+            if (door.getHalf() == Bisected.Half.TOP) {
+                if (getLockByLocation(location.getBlock().getRelative(BlockFace.DOWN).getLocation()) != null) {
+                    RPUniverse.getInstance().getLogger().warning("A lock already exists on the bottom side of this door!");
+                    return;
+                }
+            } else {
+                if (getLockByLocation(location.getBlock().getRelative(BlockFace.UP).getLocation()) != null) {
+                    RPUniverse.getInstance().getLogger().warning("A lock already exists on the top side of this door!");
+                    return;
+                }
+            }
+        }
+
         locks.add(new Lock(location, owners, jobName, minWorkingLevel, shownMaterial));
     }
 
@@ -301,10 +318,6 @@ public class LockHandler implements Listener {
             }else{
                 blocksToCheck.add(block);
             }
-        }
-
-        else if (type.toString().contains("TRAPDOOR")) {
-            blocksToCheck.add(block);
         }
 
         else if (type.toString().contains("DOOR")) {
