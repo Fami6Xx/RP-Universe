@@ -15,5 +15,4 @@ install:
   - export PATH=$M2_HOME/bin:$PATH
   - mvn -version
   # Build your project using the newly installed Maven
-  - mvn clean
-  - mvn package
+  - mvn clean install -B -V
