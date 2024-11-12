@@ -39,7 +39,7 @@ import java.util.Arrays;
 /**
  * Main class of the plugin <p>
  * Contains API access and plugin setup. <p>
- * To get the instance of this class, use <code>RPUniverse.getInstance()<code/>
+ * To get the instance of this class, use <code>RPUniverse.getInstance()</code>
  */
 public final class RPUniverse extends JavaPlugin {
     private DataSystem dataSystem;
