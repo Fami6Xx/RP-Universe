@@ -21,6 +21,7 @@ import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import me.fami6xx.rpuniverse.core.misc.papi.RPUExpansion;
 import me.fami6xx.rpuniverse.core.misc.utils.NickHider;
+import me.fami6xx.rpuniverse.core.properties.PropertyManager;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -55,6 +56,7 @@ public final class RPUniverse extends JavaPlugin {
     private BasicNeedsHandler basicNeedsHandler;
     private LockHandler lockHandler;
     private BalanceChangeNotifier balanceChangeNotifier;
+    private PropertyManager propertyManager;
 
     private FileConfiguration config;
     private Economy econ;
@@ -128,6 +130,8 @@ public final class RPUniverse extends JavaPlugin {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        this.propertyManager = new PropertyManager(this);
 
         this.getCommand("me").setExecutor(new MeCommand());
         this.getCommand("do").setExecutor(new DoCommand());
@@ -395,5 +399,13 @@ public final class RPUniverse extends JavaPlugin {
         String configVersion = VersionInfo.getVersion();
 
         return apiVersion.equals(configVersion);
+    }
+
+    /**
+     * Gets the PropertyManager instance
+     * @return The PropertyManager instance
+     */
+    public PropertyManager getPropertyManager() {
+        return propertyManager;
     }
 }
