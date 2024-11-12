@@ -142,9 +142,9 @@ public class AllLocksMenu extends EasyPaginatedMenu {
 
                         if (isLockable(blockType)) {
                             createLock(event.getClickedBlock());
-                            player.sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().lockCreationSuccess));
+                            player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().lockCreationSuccess));
                         } else {
-                            player.sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().invalidLockItem));
+                            player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().invalidLockItem));
                         }
                     }
 
@@ -169,7 +169,7 @@ public class AllLocksMenu extends EasyPaginatedMenu {
                         event.setCancelled(true);
                         HandlerList.unregisterAll(this);
                         creatingLockMap.put(player, false);
-                        player.sendMessage(FamiUtils.format(RPUniverse.getLanguageHandler().createLockCanceled));
+                        player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().createLockCanceled));
                     }
                 }
             }
