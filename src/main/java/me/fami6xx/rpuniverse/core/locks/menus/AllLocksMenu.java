@@ -181,17 +181,7 @@ public class AllLocksMenu extends EasyPaginatedMenu {
     private boolean isLockable(Material material) {
         return material.isBlock() &&
                 material != Material.AIR &&
-                (material.toString().contains("DOOR") ||
-                        material.toString().contains("CHEST") ||
-                        material.toString().contains("BARREL") ||
-                        material.toString().contains("SHULKER_BOX") ||
-                        material.toString().contains("FURNACE") ||
-                        material.toString().contains("SMOKER") ||
-                        material.toString().contains("BLAST_FURNACE") ||
-                        material.toString().contains("DISPENSER") ||
-                        material.toString().contains("DROPPER") ||
-                        material.toString().contains("HOPPER") ||
-                        material.toString().contains("LECTERN"));
+                (material.isBlock() && material.isInteractable());
     }
 
     private void createLock(Block block) {
