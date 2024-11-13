@@ -16,6 +16,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -30,7 +31,9 @@ import java.util.UUID;
 public class CreatePropertyProcess implements Listener {
     private final Player player;
     private final List<Block> lockedBlock = new ArrayList<>();
+    private final List<Material> lockedMaterials = new ArrayList<>();
     private final BukkitTask displayTask;
+    private final BukkitTask checkMaterialsTask;
     private final CreatePropertyProcess instance = this;
 
     /**
@@ -43,12 +46,38 @@ public class CreatePropertyProcess implements Listener {
         Bukkit.getPluginManager().registerEvents(this, RPUniverse.getInstance());
 
         displayTask = startDisplayOfLockedBlocks();
+        checkMaterialsTask = startControlOfLockedMaterials();
 
         player.getInventory().addItem(getPropertyCreationWand());
         FamiUtils.sendMessageWithPrefix(player, "&aProperty creation wand has been added to your inventory");
         FamiUtils.sendMessageWithPrefix(player, "&7Left click on a block you want to lock");
         FamiUtils.sendMessageWithPrefix(player, "&7Right click on a block you want to unlock");
         FamiUtils.sendMessageWithPrefix(player, "&7Drop the item to proceed");
+    }
+
+    /**
+     * Starts a task to control locked materials. If the material of a locked block changes, the block will be unlocked.
+     * @return the BukkitTask for controlling locked materials
+     */
+    protected BukkitTask startControlOfLockedMaterials() {
+        return new BukkitRunnable() {
+            @Override
+            public void run() {
+                List<Integer> indexesToRemove = new ArrayList<>();
+                for (int i = 0; i < lockedBlock.size(); i++) {
+                    Block block = lockedBlock.get(i);
+                    if (!(block.getType().isBlock() && block.getType().isInteractable())) {
+                        indexesToRemove.add(i);
+                        FamiUtils.sendMessageWithPrefix(player, "&cBlock has been unlocked because it is not lockable");
+                    }
+                }
+
+                for (int i : indexesToRemove) {
+                    lockedBlock.remove(i);
+                    lockedMaterials.remove(i);
+                }
+            }
+        }.runTaskTimer(RPUniverse.getInstance(), 0, 10);
     }
 
     /**
@@ -65,22 +94,33 @@ public class CreatePropertyProcess implements Listener {
                 for (Block block : localLockedBlocks) {
                     float forAdd = 0.25f;
                     World world = block.getWorld();
-                    Location blockLoc = block.getLocation();
 
                     List<Block> blocksToCheck = new ArrayList<>();
                     LockHandler.getAllLockBlocksFromBlock(block, block.getType(), blocksToCheck);
-                    if(blocksToCheck.size() == 1) {
-                        // Calculate borders of block
-                        for (double x = blockLoc.getBlockX(); x <= blockLoc.getBlockX() + 1; x += forAdd) {
-                            for (double y = blockLoc.getBlockY(); y <= blockLoc.getBlockY() + 1; y += forAdd) {
-                                for (double z = blockLoc.getBlockZ(); z <= blockLoc.getBlockZ() + 1; z += forAdd) {
-                                    boolean edge = false;
-                                    if ((x == blockLoc.getBlockX() || x == blockLoc.getBlockX() + 1) &&
-                                            (y == blockLoc.getBlockY() || y == blockLoc.getBlockY() + 1)) edge = true;
-                                    if ((z == blockLoc.getBlockZ() || z == blockLoc.getBlockZ() + 1) &&
-                                            (y == blockLoc.getBlockY() || y == blockLoc.getBlockY() + 1)) edge = true;
-                                    if ((x == blockLoc.getBlockX() || x == blockLoc.getBlockX() + 1) &&
-                                            (z == blockLoc.getBlockZ() || z == blockLoc.getBlockZ() + 1)) edge = true;
+
+                    if (blocksToCheck.size() == 1) {
+                        // Single block case
+                        Block singleBlock = blocksToCheck.get(0);
+                        Location blockLoc = singleBlock.getLocation();
+
+                        double minX = blockLoc.getBlockX();
+                        double minY = blockLoc.getBlockY();
+                        double minZ = blockLoc.getBlockZ();
+                        double maxX = minX + 1;
+                        double maxY = minY + 1;
+                        double maxZ = minZ + 1;
+
+                        for (double x = minX; x <= maxX; x += forAdd) {
+                            for (double y = minY; y <= maxY; y += forAdd) {
+                                for (double z = minZ; z <= maxZ; z += forAdd) {
+                                    boolean edge = (
+                                            (x == minX || x == maxX) && (y == minY || y == maxY)
+                                    ) || (
+                                            (x == minX || x == maxX) && (z == minZ || z == maxZ)
+                                    ) || (
+                                            (y == minY || y == maxY) && (z == minZ || z == maxZ)
+                                    );
+
                                     if (edge) {
                                         Location newLoc = new Location(world, x, y, z);
                                         new ParticleBuilder(Particle.REDSTONE)
@@ -93,19 +133,33 @@ public class CreatePropertyProcess implements Listener {
                                 }
                             }
                         }
-                    }else if(blocksToCheck.size() == 2) {
-                        Location loc1 = blocksToCheck.get(0).getLocation();
-                        Location loc2 = blocksToCheck.get(1).getLocation();
-                        for (double x = loc1.getBlockX(); x <= loc2.getBlockX(); x += forAdd) {
-                            for (double y = loc1.getBlockY(); y <= loc2.getBlockY(); y += forAdd) {
-                                for (double z = loc1.getBlockZ(); z <= loc2.getBlockZ(); z += forAdd) {
-                                    boolean edge = false;
-                                    if ((x == loc1.getBlockX() || x == loc2.getBlockX()) &&
-                                            (y == loc1.getBlockY() || y == loc2.getBlockY())) edge = true;
-                                    if ((z == loc1.getBlockZ() || z == loc2.getBlockZ()) &&
-                                            (y == loc1.getBlockY() || y == loc2.getBlockY())) edge = true;
-                                    if ((x == loc1.getBlockX() || x == loc2.getBlockX()) &&
-                                            (z == loc1.getBlockZ() || z == loc2.getBlockZ())) edge = true;
+
+                    } else if (blocksToCheck.size() == 2) {
+                        // Two blocks case
+                        Block block1 = blocksToCheck.get(0);
+                        Block block2 = blocksToCheck.get(1);
+                        Location loc1 = block1.getLocation();
+                        Location loc2 = block2.getLocation();
+
+                        // Determine the bounding box
+                        double minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
+                        double minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
+                        double minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
+                        double maxX = Math.max(loc1.getBlockX(), loc2.getBlockX()) + 1;
+                        double maxY = Math.max(loc1.getBlockY(), loc2.getBlockY()) + 1;
+                        double maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ()) + 1;
+
+                        for (double x = minX; x <= maxX; x += forAdd) {
+                            for (double y = minY; y <= maxY; y += forAdd) {
+                                for (double z = minZ; z <= maxZ; z += forAdd) {
+                                    boolean edge = (
+                                            (x == minX || x == maxX) && (y == minY || y == maxY)
+                                    ) || (
+                                            (x == minX || x == maxX) && (z == minZ || z == maxZ)
+                                    ) || (
+                                            (y == minY || y == maxY) && (z == minZ || z == maxZ)
+                                    );
+
                                     if (edge) {
                                         Location newLoc = new Location(world, x, y, z);
                                         new ParticleBuilder(Particle.REDSTONE)
@@ -121,7 +175,7 @@ public class CreatePropertyProcess implements Listener {
                     }
                 }
             }
-        }.runTaskTimerAsynchronously(RPUniverse.getInstance(), 0, 10);
+        }.runTaskTimer(RPUniverse.getInstance(), 0, 5);
     }
 
     /**
@@ -194,6 +248,17 @@ public class CreatePropertyProcess implements Listener {
     }
 
     /**
+     * Handles the event when a player leaves the server.
+     *
+     * @param e the PlayerQuitEvent
+     */
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent e) {
+        if (!e.getPlayer().equals(player)) return;
+        instance.cancel();
+    }
+
+    /**
      * Handles the event when a player interacts with a block.
      *
      * @param e the PlayerInteractEvent
@@ -223,9 +288,13 @@ public class CreatePropertyProcess implements Listener {
                 }else if(lockHandler.getLockByLocation(b.getLocation()) != null) {
                     FamiUtils.sendMessageWithPrefix(player, "&cBlock is already locked");
                     return;
+                }else if(!(b.getType().isBlock() && b.getType().isInteractable())) {
+                    FamiUtils.sendMessageWithPrefix(player, "&cBlock is not lockable");
+                    return;
                 }
             }
 
+            lockedMaterials.add(e.getClickedBlock().getType());
             lockedBlock.add(e.getClickedBlock());
             FamiUtils.sendMessageWithPrefix(player, "&aBlock has been locked");
         } else if (e.getAction().name().contains("RIGHT")) {
@@ -261,6 +330,8 @@ public class CreatePropertyProcess implements Listener {
      */
     protected void cancel() {
         displayTask.cancel();
+        checkMaterialsTask.cancel();
+        player.getInventory().remove(getPropertyCreationWand());
         HandlerList.unregisterAll(this);
     }
 

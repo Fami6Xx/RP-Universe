@@ -29,7 +29,7 @@ public class AllPropertiesMenu extends EasyPaginatedMenu {
     @Override
     public ItemStack getItemFromIndex(int index) {
         Property property = properties.get(index);
-        ItemStack item = FamiUtils.makeItem(Material.BLACK_WOOL, "&cProperty: " + (index + 1),
+        ItemStack item = FamiUtils.makeItem(Material.BROWN_WOOL, "&cProperty: " + (index + 1),
                 "&7Owner: &a" + (property.getOwner() == null ? "&cNone" : Bukkit.getOfflinePlayer(property.getOwner()).getName()),
                 "&7Rentable: " + (property.isRentable() ? "&aYes" : "&cNo"),
                 "&7Price: &a" + property.getPrice() + "&7$");

@@ -42,7 +42,7 @@ public class PropertyManager implements Listener {
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
         }
-        gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationAdapter()).create();
+        gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationAdapter()).setPrettyPrinting().create();
 
         loadProperties();
         inactivityCheckerTask = startInactivityChecker();
