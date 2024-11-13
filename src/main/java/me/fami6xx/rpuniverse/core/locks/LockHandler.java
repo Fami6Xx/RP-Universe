@@ -76,12 +76,14 @@ public class LockHandler implements Listener {
      * @param owners The owners of the lock.
      * @param jobName The name of the job required to open the lock.
      * @param minWorkingLevel The minimum working level required to open the lock.
+     *
+     * @return The created lock. Null if a lock already exists at the specified location.
      */
-    public void createLock(Location location, Material shownMaterial, List<String> owners, String jobName, int minWorkingLevel) {
+    public Lock createLock(Location location, Material shownMaterial, List<String> owners, String jobName, int minWorkingLevel) {
         // Check if a lock already exists at the specified location
         if (getLockByLocation(location) != null) {
             RPUniverse.getInstance().getLogger().warning("A lock already exists at this location!");
-            return;
+            return null;
         }
 
         // If the block is a chest, check both sides of the chest
@@ -93,7 +95,7 @@ public class LockHandler implements Listener {
                 if (getLockByLocation(((Chest) doubleChest.getLeftSide()).getBlock().getLocation()) != null ||
                         getLockByLocation(((Chest) doubleChest.getRightSide()).getBlock().getLocation()) != null) {
                     RPUniverse.getInstance().getLogger().warning("A lock already exists on one side of this double chest!");
-                    return;
+                    return null;
                 }
             }
         }
@@ -105,17 +107,19 @@ public class LockHandler implements Listener {
             if (door.getHalf() == Bisected.Half.TOP) {
                 if (getLockByLocation(location.getBlock().getRelative(BlockFace.DOWN).getLocation()) != null) {
                     RPUniverse.getInstance().getLogger().warning("A lock already exists on the bottom side of this door!");
-                    return;
+                    return null;
                 }
             } else {
                 if (getLockByLocation(location.getBlock().getRelative(BlockFace.UP).getLocation()) != null) {
                     RPUniverse.getInstance().getLogger().warning("A lock already exists on the top side of this door!");
-                    return;
+                    return null;
                 }
             }
         }
 
-        locks.add(new Lock(location, owners, jobName, minWorkingLevel, shownMaterial));
+        Lock createdLock = new Lock(location, owners, jobName, minWorkingLevel, shownMaterial);
+        locks.add(createdLock);
+        return createdLock;
     }
 
     /**
