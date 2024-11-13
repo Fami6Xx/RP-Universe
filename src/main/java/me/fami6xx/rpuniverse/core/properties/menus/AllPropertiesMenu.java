@@ -6,9 +6,11 @@ import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import me.fami6xx.rpuniverse.core.properties.Property;
+import me.fami6xx.rpuniverse.core.properties.process.CreatePropertyProcess;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -52,7 +54,7 @@ public class AllPropertiesMenu extends EasyPaginatedMenu {
         if (e.getSlot() == 45) {
             // Create a new property
             e.getWhoClicked().closeInventory();
-            // TODO Start the process of creating a new property
+            new CreatePropertyProcess((Player) e.getWhoClicked());
             return;
         }
 

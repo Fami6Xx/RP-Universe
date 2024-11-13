@@ -22,6 +22,7 @@ import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import me.fami6xx.rpuniverse.core.misc.papi.RPUExpansion;
 import me.fami6xx.rpuniverse.core.misc.utils.NickHider;
 import me.fami6xx.rpuniverse.core.properties.PropertyManager;
+import me.fami6xx.rpuniverse.core.properties.commands.PropertiesCommand;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -131,6 +132,8 @@ public final class RPUniverse extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
+        this.lockHandler = new LockHandler();
+
         this.propertyManager = new PropertyManager(this);
 
         this.getCommand("me").setExecutor(new MeCommand());
@@ -146,6 +149,7 @@ public final class RPUniverse extends JavaPlugin {
         this.getCommand("switchjob").setExecutor(new SwitchJobCommand());
         this.getCommand("poop").setExecutor(new PoopCommand());
         this.getCommand("pee").setExecutor(new PeeCommand());
+        this.getCommand("properties").setExecutor(new PropertiesCommand());
 
         DocCommand docCommand = new DocCommand();
         this.getCommand("doc").setExecutor(docCommand);
@@ -171,8 +175,6 @@ public final class RPUniverse extends JavaPlugin {
             this.nickHider = new NickHider();
             this.nickHider.init();
         }
-
-        this.lockHandler = new LockHandler();
 
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new RPUExpansion(this).register();

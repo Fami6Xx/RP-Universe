@@ -78,6 +78,10 @@ commands:
     description: Main command of the plugin
     usage: /<command> <subcommand>
     aliases: [rpu]
+  properties:
+    description: Opens the properties menu
+    usage: /<command>
+    aliases: [property, propertymenu]
 permissions:
   rpu.user:
     description: Gives access to all user commands (me, do, doc, try, status, globalooc)
@@ -100,6 +104,7 @@ permissions:
         rpu.settag: true
         rpu.user: true
         rpu.core.command: true
+        rpu.properties: true
   rpu.multiplejobs:
     description: Allows the player to have multiple jobs (if enabled in the config)
   rpu.me:
@@ -130,3 +135,5 @@ permissions:
     description: Allows the player to go to the /consumables menu
   rpu.core.command:
     description: Allows the player to use the /rpu command
+  rpu.properties:
+    description: Allows the player to use the /properties command
