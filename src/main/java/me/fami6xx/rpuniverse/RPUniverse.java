@@ -204,8 +204,10 @@ public final class RPUniverse extends JavaPlugin {
             this.basicNeedsHandler.shutdown();
             if (nickHider != null)
                 this.nickHider.shutdown();
-            this.dataSystem.shutdown();
             this.lockHandler.shutdown();
+            this.propertyManager.disable();
+            balanceChangeNotifier.cancel();
+            this.dataSystem.shutdown();
         } catch (NullPointerException ignored) {
         }
         isServerReload = true;
