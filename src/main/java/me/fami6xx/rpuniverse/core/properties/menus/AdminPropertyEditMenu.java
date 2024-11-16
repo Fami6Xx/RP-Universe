@@ -16,9 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class AdminPropertyEditMenu extends Menu {
 
@@ -73,6 +71,11 @@ public class AdminPropertyEditMenu extends Menu {
                 break;
             case "Edit Trusted Players":
                 openTrustedPlayersMenu(player);
+                break;
+            case "Set Hologram Location":
+                property.setHologramLocation(player.getLocation().add(0, 2, 0));
+                FamiUtils.sendMessageWithPrefix(player, "&aHologram location set to your current location.");
+                open();
                 break;
             case "Back":
                 // Implement back navigation if necessary
@@ -137,13 +140,22 @@ public class AdminPropertyEditMenu extends Menu {
         );
         inventory.setItem(15, editTrustedPlayers);
 
+        // Set Hologram Location
+        ItemStack setHologramLocation = FamiUtils.makeItem(
+                Material.END_CRYSTAL,
+                "&6Set Hologram Location",
+                "&7Current Location: &a" + property.getHologramLocation().getBlockX() + ", " + property.getHologramLocation().getBlockY() + ", " + property.getHologramLocation().getBlockZ(),
+                "&eClick to set the hologram location."
+        );
+        inventory.setItem(16, setHologramLocation);
+
         // Back Button (if needed)
         ItemStack backButton = FamiUtils.makeItem(
                 Material.ARROW,
                 "&cBack",
                 "&7Return to the previous menu."
         );
-        inventory.setItem(16, backButton);
+        inventory.setItem(22, backButton);
 
         // Fill the rest of the inventory with filler glass
         setFillerGlass();
@@ -151,7 +163,7 @@ public class AdminPropertyEditMenu extends Menu {
 
     @Override
     public List<MenuTag> getMenuTags() {
-        return Arrays.asList(MenuTag.ADMIN);
+        return List.of(MenuTag.ADMIN);
     }
 
     // Helper Methods

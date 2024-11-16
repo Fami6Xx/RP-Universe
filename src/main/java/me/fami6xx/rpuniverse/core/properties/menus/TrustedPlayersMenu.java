@@ -7,11 +7,14 @@ import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import me.fami6xx.rpuniverse.core.properties.Property;
 import me.fami6xx.rpuniverse.core.properties.helpers.AddTrustedPlayerInputListener;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.*;
 
@@ -54,15 +57,18 @@ public class TrustedPlayersMenu extends EasyPaginatedMenu {
 
         UUID playerUUID = trustedPlayers.get(index);
         Player trustedPlayer = RPUniverse.getInstance().getServer().getPlayer(playerUUID);
-        String playerName = trustedPlayer != null ? trustedPlayer.getName() : "Offline Player";
+        String playerName = trustedPlayer != null ? trustedPlayer.getName() : Bukkit.getServer().getOfflinePlayer(playerUUID).getName();
 
-        // Display name with the option to remove
-        ItemStack playerItem = FamiUtils.makeItem(
-                Material.PLAYER_HEAD,
-                "&a" + playerName,
-                "&7UUID: " + playerUUID.toString(),
-                "&eClick to remove from trusted players."
-        );
+        ItemStack playerItem = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) playerItem.getItemMeta();
+        meta.setOwningPlayer(trustedPlayer != null ? trustedPlayer : Bukkit.getOfflinePlayer(playerUUID));
+        meta.setDisplayName(FamiUtils.format("&a" + playerName));
+        meta.setLore(Arrays.asList(
+                FamiUtils.format("&7UUID: " + playerUUID),
+                FamiUtils.format("&eClick to remove from trusted players.")
+        ));
+        playerItem.setItemMeta(meta);
+
 
         return playerItem;
     }
@@ -75,45 +81,19 @@ public class TrustedPlayersMenu extends EasyPaginatedMenu {
     @Override
     public void handlePaginatedMenu(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
-        ItemStack clickedItem = e.getCurrentItem();
+        int slot = e.getSlot();
+        int index = getSlotIndex(slot);
 
-        if (clickedItem == null || !clickedItem.hasItemMeta()) return;
+        if (index >= 0 && index < getCollectionSize()) {
+            UUID playerUUID = property.getTrustedPlayers().get(index);
+            OfflinePlayer offlinePlayer = RPUniverse.getInstance().getServer().getOfflinePlayer(playerUUID);
+            String playerName = offlinePlayer.getName() != null ? offlinePlayer.getName() : "Unknown Player";
 
-        String displayName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
-
-        if (displayName.startsWith("a")) { // Assuming all trusted players have display names starting with &a
-            // Remove trusted player
-            String playerName = displayName.substring(2); // Remove the color code
-            UUID playerUUID = getUUIDByName(playerName);
-            if (playerUUID != null) {
-                property.removeTrustedPlayer(playerUUID);
-                RPUniverse.getInstance().getPropertyManager().saveProperty(property);
-                FamiUtils.sendMessageWithPrefix(player, "&aRemoved " + playerName + " from trusted players.");
-                open(); // Refresh the menu
-            } else {
-                FamiUtils.sendMessageWithPrefix(player, "&cPlayer not found.");
-            }
+            property.removeTrustedPlayer(playerUUID);
+            RPUniverse.getInstance().getPropertyManager().saveProperty(property);
+            FamiUtils.sendMessageWithPrefix(player, "&aRemoved " + playerName + " from trusted players.");
+            open(); // Refresh the menu
         }
-    }
-
-    /**
-     * Retrieves a player's UUID by their username.
-     *
-     * @param name The player's username.
-     * @return The UUID if found, otherwise null.
-     */
-    private UUID getUUIDByName(String name) {
-        Player target = RPUniverse.getInstance().getServer().getPlayerExact(name);
-        if (target != null) {
-            return target.getUniqueId();
-        }
-
-        target = RPUniverse.getInstance().getServer().getOfflinePlayer(name).getPlayer();
-        if (target != null) {
-            return target.getUniqueId();
-        }
-
-        return null;
     }
 
     /**
@@ -149,6 +129,8 @@ public class TrustedPlayersMenu extends EasyPaginatedMenu {
             FamiUtils.sendMessageWithPrefix(player, "&ePlease enter the username of the player to trust:");
 
             RPUniverse.getInstance().getServer().getPluginManager().registerEvents(new AddTrustedPlayerInputListener(player, property, this), RPUniverse.getInstance());
+        } else {
+            super.handleMenu(e);
         }
     }
 }
