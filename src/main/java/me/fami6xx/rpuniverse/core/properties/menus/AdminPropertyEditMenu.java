@@ -77,8 +77,13 @@ public class AdminPropertyEditMenu extends Menu {
                 FamiUtils.sendMessageWithPrefix(player, "&aHologram location set to your current location.");
                 open();
                 break;
+            case "Delete Property":
+                FamiUtils.sendMessageWithPrefix(player, "&cProperty " + property.getPropertyId().toString() + " has been deleted.");
+                RPUniverse.getInstance().getPropertyManager().removeProperty(property.getPropertyId());
+                new AllPropertiesMenu(playerMenu).open();
+                break;
             case "Back":
-                // Implement back navigation if necessary
+                new AllPropertiesMenu(playerMenu).open();
                 break;
             default:
                 break;
@@ -155,7 +160,15 @@ public class AdminPropertyEditMenu extends Menu {
                 "&cBack",
                 "&7Return to the previous menu."
         );
-        inventory.setItem(22, backButton);
+        inventory.setItem(21, backButton);
+
+        // Delete Property
+        ItemStack deleteButton = FamiUtils.makeItem(
+                Material.BARRIER,
+                "&cDelete Property",
+                "&7Click to delete this property."
+        );
+        inventory.setItem(22, deleteButton);
 
         // Fill the rest of the inventory with filler glass
         setFillerGlass();
