@@ -1,16 +1,25 @@
 package me.fami6xx.rpuniverse.core.properties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.holograms.Hologram;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
+import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.locks.Lock;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 /**
  * Represents a property in the RP Universe.
@@ -28,6 +37,8 @@ public class Property {
     private UUID owner;
     private List<UUID> trustedPlayers;
     private long lastActive; // timestamp in milliseconds
+
+    private famiHologram hologram;
 
     /**
      * Constructs a new Property with the specified property ID.
@@ -65,13 +76,21 @@ public class Property {
         if (count != locksUUID.size()) {
             RPUniverse.getInstance().getLogger().severe("Property " + propertyId + " has invalid locks.");
         }
+
+        if (hologramLocation != null) {
+            if (hologram != null)
+                hologram.destroy();
+            hologram = startHologram();
+        }
     }
 
     /**
      * Deactivates the property, deleting the hologram.
      */
     protected void deactivate() {
-
+        if (hologram != null) {
+            hologram.destroy();
+        }
     }
 
     /**
@@ -84,6 +103,71 @@ public class Property {
         RPUniverse.getInstance().getLockHandler().getAllLocks().stream()
                 .filter(lock -> locksUUID.contains(lock.getUUID()))
                 .forEach(lock -> RPUniverse.getInstance().getLockHandler().removeLock(lock));
+
+        // Remove the hologram
+        if (hologram != null) {
+            hologram.destroy();
+        }
+    }
+
+    /**
+     * Starts the hologram for the property.
+     *
+     * @return the hologram
+     */
+    private famiHologram startHologram() {
+        StaticHologram hologram = new StaticHologram(hologramLocation) {
+            @Override
+            public boolean shouldShow(Player player) {
+                if (player == null) return false;
+                if (owner == null) return true;
+                if (player.getUniqueId() == owner) return true;
+
+                PlayerData playerData = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
+                if (playerData.getPlayerMode() == PlayerMode.ADMIN) return true;
+
+                return false;
+            }
+
+            @Override
+            public int getPageToDisplay(Player player) {
+                if (player == null) return 0;
+                if (player.getUniqueId() == owner) return 2;
+
+                PlayerData playerData = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
+                if (playerData.getPlayerMode() == PlayerMode.ADMIN) return 3;
+
+                if (rentable) return 1;
+                return 0;
+            }
+        };
+
+        Hologram holo = hologram.getHologram();
+        String[] buyableHologramLines = RPUniverse.getLanguageHandler().propertyBuyableHologram.split("~");
+        String[] rentableHologramLines = RPUniverse.getLanguageHandler().propertyRentableHologram.split("~");
+        String[] ownerHologramLines = RPUniverse.getLanguageHandler().propertyOwnerHologram.split("~");
+        String[] adminHologramLines = {
+                "&7&k|",
+                "&c&lProperty",
+                "&7&k|",
+                "&6ID: &e" + propertyId,
+                "&6Owner: &e" + (owner == null ? "None" : owner),
+                "&6Price: &e" + price,
+                "&6Rentable: &e" + rentable,
+                "&7&k|",
+                "&cClick to edit"
+        };
+
+        for (String buyableHologramLine : buyableHologramLines) {
+            hologram.addLine(FamiUtils.format(buyableHologramLine));
+        }
+        DHAPI.addHologramPage(holo, Arrays.stream(rentableHologramLines).map(FamiUtils::format).toList());
+        DHAPI.addHologramPage(holo, Arrays.stream(ownerHologramLines).map(FamiUtils::format).toList());
+        DHAPI.addHologramPage(holo, Arrays.stream(adminHologramLines).map(FamiUtils::format).toList());
+
+        // ToDo Add the click action
+
+        return hologram;
     }
 
     /**
@@ -124,11 +208,19 @@ public class Property {
 
     /**
      * Sets the location of the hologram associated with the property.
+     * <p>
+     * Destroys the current hologram and creates a new one.
      *
      * @param hologramLocation the new hologram location
      */
     public void setHologramLocation(Location hologramLocation) {
         this.hologramLocation = hologramLocation;
+
+        if (hologram != null) {
+            hologram.destroy();
+        }
+
+        hologram = startHologram();
     }
 
     /**

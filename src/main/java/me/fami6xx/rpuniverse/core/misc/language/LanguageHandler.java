@@ -306,6 +306,13 @@ public class LanguageHandler {
     public String tryCommandHologramYes = "&7* &a&lYES &7*";
     public String tryCommandHologramNo = "&7* &4&lNO &7*";
 
+    // PROPERTY MESSAGES
+    public String propertyBuyableHologram = "&7&k|~&c&lProperty&7&k|~&7This property can be bought!~&7Click to open menu!";
+    public String propertyRentableHologram = "&7&k|~&c&lProperty&7&k|~&7This property is available for rent!~&7Click to open menu!";
+    public String propertyOwnerHologram = "&7&k|~&c&lProperty&7&k|~&7This is your property!~&7Click to open menu!";
+
+    public String propertyMenuName = "&6RPUniverse &7| &cProperty";
+
     private final JavaPlugin plugin;
     private FileConfiguration languageConfig;
 
