@@ -52,7 +52,6 @@ public class AllPropertiesMenu extends EasyPaginatedMenu {
         if (!e.getCurrentItem().hasItemMeta()) return;
 
         if (e.getSlot() == 45) {
-            // Create a new property
             e.getWhoClicked().closeInventory();
             new CreatePropertyProcess((Player) e.getWhoClicked());
             return;
@@ -63,7 +62,7 @@ public class AllPropertiesMenu extends EasyPaginatedMenu {
         if (!meta.getPersistentDataContainer().has(key, PersistentDataType.INTEGER)) return;
         int index = meta.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
         Property property = properties.get(index);
-        // TODO Open the property menu
+        new AdminPropertyEditMenu(playerMenu, property).open();
     }
 
     @Override
