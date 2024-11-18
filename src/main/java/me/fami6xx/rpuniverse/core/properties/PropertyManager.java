@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.gson.Gson;
@@ -240,6 +241,16 @@ public class PropertyManager implements Listener {
      */
     @EventHandler
     public void onPlayerLogin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        Property property = getPropertyByOwner(player.getUniqueId());
+        if (property != null) {
+            property.updateLastActive();
+            saveProperty(property);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Property property = getPropertyByOwner(player.getUniqueId());
         if (property != null) {
