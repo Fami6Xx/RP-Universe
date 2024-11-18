@@ -135,6 +135,12 @@ public class VisibilityHoloHandler extends famiHoloHandler {
                             List<Player> finalList =
                                     nowVisible.stream()
                                             .filter(holo::isVisible)
+                                            .peek(player -> {
+                                                if (holo.getShownPage(player) != holo.getPageToDisplay(player)) {
+                                                    holo.hide(player);
+                                                    holo.show(player);
+                                                }
+                                            })
                                             .collect(Collectors.toList());
 
                             updateList(holo.getUUID(), finalList);

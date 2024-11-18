@@ -10,12 +10,14 @@ import me.fami6xx.rpuniverse.core.properties.helpers.ChangeOwnerInputListener;
 import me.fami6xx.rpuniverse.core.properties.helpers.MaxRentDurationInputListener;
 import me.fami6xx.rpuniverse.core.properties.helpers.PriceInputListener;
 import me.fami6xx.rpuniverse.core.properties.helpers.RentDurationInputListener;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdminPropertyEditMenu extends Menu {
@@ -35,12 +37,12 @@ public class AdminPropertyEditMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return FamiUtils.format("&6Edit Property: " + property.getPropertyId());
+        return FamiUtils.format("&cEdit Property: &7" + property.getHologramLocation().getBlockX() + ", " + property.getHologramLocation().getBlockY() + ", " + property.getHologramLocation().getBlockZ());
     }
 
     @Override
     public int getSlots() {
-        return 54; // Standard double chest size
+        return 36;
     }
 
     @Override
@@ -67,6 +69,15 @@ public class AdminPropertyEditMenu extends Menu {
                 setMaxRentDuration(player);
                 break;
             case "Change Owner":
+                if (e.isShiftClick()) {
+                    property.setOwner(null);
+                    property.setTrustedPlayers(new ArrayList<>());
+                    property.setRentStart(0);
+                    property.setRentDuration(0);
+                    RPUniverse.getInstance().getPropertyManager().saveProperty(property);
+                    open();
+                    break;
+                }
                 changeOwner(player);
                 break;
             case "Edit Trusted Players":
@@ -131,8 +142,9 @@ public class AdminPropertyEditMenu extends Menu {
         ItemStack changeOwner = FamiUtils.makeItem(
                 Material.PLAYER_HEAD,
                 "&6Change Owner",
-                "&7Current Owner: " + (property.getOwner() != null ? property.getOwner() : "None"),
-                "&eClick to assign a new owner."
+                "&7Current Owner: " + (property.getOwner() != null ? Bukkit.getOfflinePlayer(property.getOwner()).getName() : "None"),
+                "&eClick to assign a new owner.",
+                "&eShift + Click to remove owner."
         );
         inventory.setItem(14, changeOwner);
 
@@ -150,7 +162,7 @@ public class AdminPropertyEditMenu extends Menu {
                 Material.END_CRYSTAL,
                 "&6Set Hologram Location",
                 "&7Current Location: &a" + property.getHologramLocation().getBlockX() + ", " + property.getHologramLocation().getBlockY() + ", " + property.getHologramLocation().getBlockZ(),
-                "&eClick to set the hologram location."
+                "&eClick to set the hologram location to your current location."
         );
         inventory.setItem(16, setHologramLocation);
 

@@ -307,9 +307,9 @@ public class LanguageHandler {
     public String tryCommandHologramNo = "&7* &4&lNO &7*";
 
     // PROPERTY MESSAGES
-    public String propertyBuyableHologram = "&7&k|~&c&lProperty&7&k|~&7This property can be bought!~&7Click to open menu!";
-    public String propertyRentableHologram = "&7&k|~&c&lProperty&7&k|~&7This property is available for rent!~&7Click to open menu!";
-    public String propertyOwnerHologram = "&7&k|~&c&lProperty&7&k|~&7This is your property!~&7Click to open menu!";
+    public String propertyBuyableHologram = "&7&k|~&c&lProperty~&7&k|~&7This property can be bought!~&7Click to open menu!";
+    public String propertyRentableHologram = "&7&k|~&c&lProperty~&7&k|~&7This property is available for rent!~&7Click to open menu!";
+    public String propertyOwnerHologram = "&7&k|~&c&lProperty~&7&k|~&7This is your property!~&7Click to open menu!";
 
     public String buyPropertyMenuName = "&6RPUniverse &7| &cPurchase Property";
     public String buyPropertyMenuConfirmPurchaseItemDisplayName = "&aConfirm Purchase";
@@ -345,7 +345,7 @@ public class LanguageHandler {
     public String propertyDetailsMenuBackItemDisplayName = "&cBack";
     public String propertyDetailsMenuBackItemLore = "&7Click to go back.";
     public String propertyDetailsMenuDetailsItemDisplayName = "&eProperty Details";
-    public String propertyDetailsMenuDetailsItemLore = "&7Property ID: &e{propertyId}~&7Owner: &e{owner}~&7Price: &e{price}~&7Rentable: &e{rentable}~&7Locks: &e{locksCount}~&7Rent Start: &e{rentStart}~&7Rent Duration: &e{rentDuration} days";
+    public String propertyDetailsMenuDetailsItemLore = "&7Owner: &e{owner}~&7Price: &e{price}~&7Rentable: &e{rentable}~&7Rent Start: &e{rentStart}~&7Rent Duration: &e{rentDuration} days";
     public String managePropertyMenuExtendRentItemDisplayName = "&eExtend Rent";
     public String managePropertyMenuExtendRentItemLore = "&7Extend your rent by 1 day.~&7Cost: &e{price}~&7Click to extend.";
 

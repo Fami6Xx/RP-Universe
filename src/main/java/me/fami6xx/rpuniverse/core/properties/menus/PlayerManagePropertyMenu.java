@@ -105,16 +105,33 @@ public class PlayerManagePropertyMenu extends Menu {
                 RPUniverse.getLanguageHandler().managePropertyMenuCloseItemLore.split("~")
         );
 
-        // Extend Rent Item
-        ItemStack extendRentItem = FamiUtils.makeItem(
-                Material.CLOCK,
-                RPUniverse.getLanguageHandler().managePropertyMenuExtendRentItemDisplayName,
-                RPUniverse.getLanguageHandler().managePropertyMenuExtendRentItemLore.split("~")
-        );
+        HashMap<String, String> placeholders = new HashMap<>();
+        placeholders.put("{price}", String.valueOf(property.getPrice()));
+        placeholders.put("{rentable}", String.valueOf(property.isRentable()));
 
-        inventory.setItem(10, trustedPlayersItem);
-        inventory.setItem(13, propertyDetailsItem);
-        inventory.setItem(16, extendRentItem);
+        String[] loreLines = RPUniverse.getLanguageHandler().managePropertyMenuExtendRentItemLore.split("~");
+        List<String> loreList = new ArrayList<>();
+        for (String line : loreLines) {
+            loreList.add(FamiUtils.replace(line, placeholders));
+        }
+        loreLines = loreList.toArray(new String[0]);
+
+        if (property.isRentable()) {
+            // Extend Rent Item
+            ItemStack extendRentItem = FamiUtils.makeItem(
+                    Material.CLOCK,
+                    RPUniverse.getLanguageHandler().managePropertyMenuExtendRentItemDisplayName,
+                    loreLines
+            );
+
+            inventory.setItem(16, extendRentItem);
+            inventory.setItem(10, trustedPlayersItem);
+            inventory.setItem(13, propertyDetailsItem);
+        } else {
+            inventory.setItem(10, trustedPlayersItem);
+            inventory.setItem(16, propertyDetailsItem);
+        }
+
         inventory.setItem(22, closeItem);
         setFillerGlass();
     }

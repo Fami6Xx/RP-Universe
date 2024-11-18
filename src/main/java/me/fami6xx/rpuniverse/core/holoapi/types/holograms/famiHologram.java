@@ -10,12 +10,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 public abstract class famiHologram {
     private final Hologram hologram;
     private final UUID uuid = UUID.randomUUID();
+    private final transient HashMap<UUID, Integer> playerPages = new HashMap<>();
 
     private double distance;
     private boolean seeThroughBlocks;
@@ -108,7 +110,10 @@ public abstract class famiHologram {
             return;
 
         hologram.setShowPlayer(player);
-        hologram.show(player, getPageToDisplay(player));
+
+        playerPages.put(player.getUniqueId(), getPageToDisplay(player));
+
+        hologram.show(player, playerPages.get(player.getUniqueId()));
         hologram.showClickableEntities(player);
     }
 
@@ -141,7 +146,17 @@ public abstract class famiHologram {
 
         hologram.hideClickableEntities(player);
         hologram.removeShowPlayer(player);
+        playerPages.remove(player.getUniqueId());
         hologram.hide(player);
+    }
+
+    /**
+     * Get shown page for player
+     * @param player Player to get shown page for
+     * @return Shown page for player
+     */
+    public int getShownPage(Player player){
+        return playerPages.getOrDefault(player.getUniqueId(), 0);
     }
 
     /**

@@ -25,6 +25,7 @@ import me.fami6xx.rpuniverse.core.properties.menus.AdminPropertyEditMenu;
 import me.fami6xx.rpuniverse.core.properties.menus.BuyPropertyMenu;
 import me.fami6xx.rpuniverse.core.properties.menus.PlayerManagePropertyMenu;
 import me.fami6xx.rpuniverse.core.properties.menus.RentPropertyMenu;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -123,26 +124,40 @@ public class Property {
      * @return the hologram
      */
     private famiHologram startHologram() {
-        StaticHologram hologram = new StaticHologram(hologramLocation) {
+        Property property = this;
+        StaticHologram hologram = new StaticHologram(hologramLocation, false, RPUniverse.getInstance().getConfiguration().getDouble("jobs.menuRange"), false) {
             @Override
             public boolean shouldShow(Player player) {
-                if (player == null) return false;
-                if (owner == null) return true;
-                if (player.getUniqueId() == owner) return true;
-
+                if (player == null) return true;
                 PlayerData playerData = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
-                if (playerData.getPlayerMode() == PlayerMode.ADMIN) return true;
+                if (playerData.getPlayerMode() == PlayerMode.ADMIN) {
+                    if (getHologram() == null) return true;
+                    if (getHologram().getPage(3) == null) return true;
+                    String[] adminHologramLines = getAdminHologramLines();
+                    for (int i = 0; i < getHologram().getPage(3).getLines().size(); i++) {
+                        String content = getHologram().getPage(3).getLines().get(i).getContent();
+                        String adminContent = FamiUtils.format(adminHologramLines[i]);
+                        if (!content.equals(adminContent)) {
+                            getHologram().getPage(3).getLines().get(i).setContent(FamiUtils.format(adminHologramLines[i]));
+                        }
+                    }
+                    return true;
+                }
 
-                return false;
+                if (owner == null) return true;
+                if (player.getUniqueId().toString().equals(owner.toString())) return true;
+
+                return true;
             }
 
             @Override
             public int getPageToDisplay(Player player) {
                 if (player == null) return 0;
-                if (player.getUniqueId() == owner) return 2;
 
                 PlayerData playerData = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
                 if (playerData.getPlayerMode() == PlayerMode.ADMIN) return 3;
+
+                if (owner != null && player.getUniqueId().toString().equals(owner.toString())) return 2;
 
                 if (rentable) return 1;
                 return 0;
@@ -153,26 +168,13 @@ public class Property {
         String[] buyableHologramLines = RPUniverse.getLanguageHandler().propertyBuyableHologram.split("~");
         String[] rentableHologramLines = RPUniverse.getLanguageHandler().propertyRentableHologram.split("~");
         String[] ownerHologramLines = RPUniverse.getLanguageHandler().propertyOwnerHologram.split("~");
-        String[] adminHologramLines = {
-                "&7&k|",
-                "&c&lProperty",
-                "&7&k|",
-                "&6ID: &e" + propertyId,
-                "&6Owner: &e" + (owner == null ? "None" : owner),
-                "&6Price: &e" + price,
-                "&6Rentable: &e" + rentable,
-                "&7&k|",
-                "&cClick to edit"
-        };
 
         for (String buyableHologramLine : buyableHologramLines) {
             hologram.addLine(FamiUtils.format(buyableHologramLine));
         }
         DHAPI.addHologramPage(holo, Arrays.stream(rentableHologramLines).map(FamiUtils::format).toList());
         DHAPI.addHologramPage(holo, Arrays.stream(ownerHologramLines).map(FamiUtils::format).toList());
-        DHAPI.addHologramPage(holo, Arrays.stream(adminHologramLines).map(FamiUtils::format).toList());
-
-        Property property = this;
+        DHAPI.addHologramPage(holo, Arrays.stream(getAdminHologramLines()).map(FamiUtils::format).toList());
 
         holo.getPages().forEach(page -> page.addAction(ClickType.RIGHT,  new Action(new ActionType(UUID.randomUUID().toString()) {
             @Override
@@ -181,7 +183,7 @@ public class Property {
                 PlayerData playerData = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
                 if (playerData.getPlayerMode() == PlayerMode.ADMIN) {
                     new AdminPropertyEditMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), property).open();
-                } else if (player.getUniqueId() == owner) {
+                } else if (owner != null && player.getUniqueId().toString().equals(owner.toString())) {
                     new PlayerManagePropertyMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), property).open();
                 } else if (rentable) {
                     new RentPropertyMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), property).open();
@@ -193,6 +195,19 @@ public class Property {
         }, "")));
 
         return hologram;
+    }
+
+    private String[] getAdminHologramLines() {
+        return new String[] {
+                "&7&k|",
+                "&c&lProperty",
+                "&7&k|",
+                "&6Owner: &e" + (owner == null ? "None" : Bukkit.getServer().getOfflinePlayer(owner).getName()),
+                "&6Price: &e" + price + "&7$",
+                "&6Rentable: &e" + rentable,
+                "&7&k|",
+                "&cClick to edit"
+        };
     }
 
     /**

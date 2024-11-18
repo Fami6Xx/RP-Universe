@@ -48,11 +48,9 @@ public class PropertyDetailsMenu extends Menu {
     public void setMenuItems() {
         // Create item to display property details
         HashMap<String, String> placeholders = new HashMap<>();
-        placeholders.put("{propertyId}", property.getPropertyId().toString());
         placeholders.put("{owner}", getOwnerName());
         placeholders.put("{price}", String.valueOf(property.getPrice()));
         placeholders.put("{rentable}", String.valueOf(property.isRentable()));
-        placeholders.put("{locksCount}", String.valueOf(property.getLocksUUID().size()));
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 

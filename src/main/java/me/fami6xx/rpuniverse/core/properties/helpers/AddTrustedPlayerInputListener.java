@@ -36,6 +36,11 @@ public class AddTrustedPlayerInputListener implements Listener {
         if (target == null) {
             FamiUtils.sendMessageWithPrefix(player, "&cPlayer not found or is offline.");
         } else {
+            if (target.equals(player)) {
+                FamiUtils.sendMessageWithPrefix(player, "&cYou cannot add yourself as a trusted player.");
+                return;
+            }
+
             UUID targetUUID = target.getUniqueId();
             if (property.getTrustedPlayers().contains(targetUUID)) {
                 FamiUtils.sendMessageWithPrefix(player, "&cPlayer is already a trusted player.");
