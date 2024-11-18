@@ -9,6 +9,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.actions.Action;
+import eu.decentsoftware.holograms.api.actions.ActionType;
+import eu.decentsoftware.holograms.api.actions.ClickType;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
@@ -18,6 +21,10 @@ import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import me.fami6xx.rpuniverse.core.properties.menus.AdminPropertyEditMenu;
+import me.fami6xx.rpuniverse.core.properties.menus.BuyPropertyMenu;
+import me.fami6xx.rpuniverse.core.properties.menus.PlayerManagePropertyMenu;
+import me.fami6xx.rpuniverse.core.properties.menus.RentPropertyMenu;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -165,7 +172,25 @@ public class Property {
         DHAPI.addHologramPage(holo, Arrays.stream(ownerHologramLines).map(FamiUtils::format).toList());
         DHAPI.addHologramPage(holo, Arrays.stream(adminHologramLines).map(FamiUtils::format).toList());
 
-        // ToDo Add the click action
+        Property property = this;
+
+        holo.getPages().forEach(page -> page.addAction(ClickType.RIGHT,  new Action(new ActionType(UUID.randomUUID().toString()) {
+            @Override
+            public boolean execute(Player player, String... strings) {
+                if (player == null) return true;
+                PlayerData playerData = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
+                if (playerData.getPlayerMode() == PlayerMode.ADMIN) {
+                    new AdminPropertyEditMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), property).open();
+                } else if (player.getUniqueId() == owner) {
+                    new PlayerManagePropertyMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), property).open();
+                } else if (rentable) {
+                    new RentPropertyMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), property).open();
+                } else {
+                    new BuyPropertyMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), property).open();
+                }
+                return true;
+            }
+        }, "")));
 
         return hologram;
     }
