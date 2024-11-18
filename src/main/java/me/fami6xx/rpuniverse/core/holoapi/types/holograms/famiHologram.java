@@ -82,6 +82,8 @@ public abstract class famiHologram {
             hologram.hideAll();
         }
 
+        if (!hologram.isDisabled())
+            hologram.hideClickableEntitiesAll();
 
         getHologram().delete();
 
