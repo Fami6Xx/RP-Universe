@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.misc.utils;
 import me.fami6xx.rpuniverse.RPUniverse;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -14,8 +15,10 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -250,6 +253,36 @@ public class FamiUtils {
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(meta);
         return item;
+    }
+
+    /**
+     * Creates a skull item with the given owner, display name, and lore.
+     *
+     * @param owner The owner of the skull
+     * @param displayName The display name of the skull
+     * @param lore The lore of the skull
+     * @return The created skull item
+     */
+    public static ItemStack makeSkullItem(OfflinePlayer owner, String displayName, String... lore) {
+        ItemStack skullItem = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta skullMeta = (SkullMeta) skullItem.getItemMeta();
+
+        skullMeta.setOwningPlayer(owner);
+
+        if (displayName != null && !displayName.isEmpty()) {
+            skullMeta.setDisplayName(format(displayName));
+        }
+
+        if (lore != null && lore.length > 0) {
+            List<String> loreList = new ArrayList<>();
+            for (String line : lore) {
+                loreList.add(format(line));
+            }
+            skullMeta.setLore(loreList);
+        }
+
+        skullItem.setItemMeta(skullMeta);
+        return skullItem;
     }
 
 }
