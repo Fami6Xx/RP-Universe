@@ -318,7 +318,28 @@ public class LanguageHandler {
     public String buyPropertyMenuCancelItemLore = "&7Click to cancel the purchase.";
     public String successfullyPurchasedPropertyMessage = "&aYou have successfully purchased the property!";
     public String errorYouDoNotHaveEnoughMoneyToPurchasePropertyMessage = "&cYou do not have enough money to purchase this property!";
-    public String propertyMenuName = "&6RPUniverse &7| &cProperty";
+
+    // Rent Property Menu Strings
+    public String rentPropertyMenuName = "&6RPUniverse &7| &cRent Property";
+    public String rentPropertyMenuDurationItemDisplayName = "&eRent for {duration}";
+    public String rentPropertyMenuDurationItemLore = "&7Price: &e{price}~&7Click to select {duration}.";
+    public String rentPropertyMenuConfirmRentItemDisplayName = "&aConfirm Rent";
+    public String rentPropertyMenuConfirmRentItemLore = "&7Total Price: &e{totalPrice}~&7Click to confirm the rent.";
+    public String rentPropertyMenuCancelItemDisplayName = "&cCancel";
+    public String rentPropertyMenuCancelItemLore = "&7Click to cancel the rent.";
+    public String successfullyRentedPropertyMessage = "&aYou have successfully rented the property!";
+    public String errorYouDoNotHaveEnoughMoneyToRentPropertyMessage = "&cYou do not have enough money to rent this property!";
+    public String rentPropertyMenuDurations = "1 Day:1~7 Days:7~30 Days:30";
+
+    // Manage Property Menu Strings
+    public String managePropertyMenuName = "&6RPUniverse &7| &cManage Property";
+    public String managePropertyMenuTrustedPlayersItemDisplayName = "&eManage Trusted Players";
+    public String managePropertyMenuTrustedPlayersItemLore = "&7Add or remove trusted players.~&7Click to manage.";
+    public String managePropertyMenuPropertyDetailsItemDisplayName = "&eProperty Details";
+    public String managePropertyMenuPropertyDetailsItemLore = "&7View property information.";
+    public String managePropertyMenuCloseItemDisplayName = "&cClose";
+    public String managePropertyMenuCloseItemLore = "&7Click to close the menu.";
+
 
     private final JavaPlugin plugin;
     private FileConfiguration languageConfig;
