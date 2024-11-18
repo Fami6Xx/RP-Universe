@@ -126,7 +126,7 @@ public class RentPropertyMenu extends Menu {
         String[] durationLore = RPUniverse.getLanguageHandler().rentPropertyMenuDurationItemLore.split("~");
         HashMap<String, String> placeholders = new HashMap<>();
 
-        int[] slots = {10, 12, 14, 16}; // Adjust slots based on the number of durations
+        int[] slots = {10, 13, 16}; // Adjust slots based on the number of durations
 
         for (int i = 0; i < durationOptions.size(); i++) {
             if (i >= slots.length) break; // Avoid IndexOutOfBoundsException

@@ -79,11 +79,27 @@ public class Lock {
     }
 
     /**
+     * Add an owner to the lock
+     * @param uuid The UUID of the player to add as an owner
+     */
+    public void addOwner(UUID uuid) {
+        this.owners.add(uuid.toString());
+    }
+
+    /**
      * Remove an owner from the lock
      * @param player The player to remove as an owner
      */
     public void removeOwner(Player player) {
         this.owners.remove(player.getUniqueId().toString());
+    }
+
+    /**
+     * Remove an owner from the lock
+     * @param uuid The UUID of the player to remove as an owner
+     */
+    public void removeOwner(UUID uuid) {
+        this.owners.remove(uuid.toString());
     }
 
     /**

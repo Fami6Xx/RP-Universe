@@ -173,6 +173,21 @@ public class LockHandler implements Listener {
     }
 
     /**
+     * Returns the lock with the specified UUID.
+     *
+     * @param uuid The UUID of the lock to find.
+     * @return The lock with the specified UUID or null if no lock exists.
+     */
+    public Lock getLockByUUID(UUID uuid) {
+        for (Lock lock : locks) {
+            if (lock.getUUID().toString().equals(uuid.toString())) {
+                return lock;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns a list of all locks managed by this handler.
      * 
      * @return List of all locks.

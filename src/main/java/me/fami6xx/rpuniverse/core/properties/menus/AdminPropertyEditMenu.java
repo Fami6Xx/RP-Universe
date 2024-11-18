@@ -180,7 +180,7 @@ public class AdminPropertyEditMenu extends Menu {
                 "&cDelete Property",
                 "&7Click to delete this property."
         );
-        inventory.setItem(22, deleteButton);
+        inventory.setItem(23, deleteButton);
 
         // Fill the rest of the inventory with filler glass
         setFillerGlass();

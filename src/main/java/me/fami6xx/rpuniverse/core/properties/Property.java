@@ -17,6 +17,7 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.locks.Lock;
+import me.fami6xx.rpuniverse.core.locks.LockHandler;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
@@ -204,7 +205,7 @@ public class Property {
                 "&7&k|",
                 "&6Owner: &e" + (owner == null ? "None" : Bukkit.getServer().getOfflinePlayer(owner).getName()),
                 "&6Price: &e" + price + "&7$",
-                "&6Rentable: &e" + rentable,
+                "&6Rentable: &e" + (rentable ? "Yes" : "No"),
                 "&7&k|",
                 "&cClick to edit"
         };
@@ -332,8 +333,26 @@ public class Property {
      * @param owner the new owner UUID
      */
     public void setOwner(UUID owner) {
+        if (owner != null) {
+            LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
+            for (UUID lockUUID : locksUUID) {
+                Lock lock = lockHandler.getLockByUUID(lockUUID);
+                if (lock != null) {
+                    lock.removeOwner(owner);
+                }
+            }
+        }
         this.owner = owner;
         updateLastActive();
+        if (owner != null) {
+            LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
+            for (UUID lockUUID : locksUUID) {
+                Lock lock = lockHandler.getLockByUUID(lockUUID);
+                if (lock != null) {
+                    lock.addOwner(owner);
+                }
+            }
+        }
     }
 
     /**
@@ -351,7 +370,25 @@ public class Property {
      * @param trustedPlayers the new list of trusted players
      */
     public void setTrustedPlayers(List<UUID> trustedPlayers) {
+        this.trustedPlayers.forEach(uuid -> {
+            LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
+            for (UUID lockUUID : locksUUID) {
+                Lock lock = lockHandler.getLockByUUID(lockUUID);
+                if (lock != null) {
+                    lock.removeOwner(uuid);
+                }
+            }
+        });
         this.trustedPlayers = trustedPlayers;
+        this.trustedPlayers.forEach(uuid -> {
+            LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
+            for (UUID lockUUID : locksUUID) {
+                Lock lock = lockHandler.getLockByUUID(lockUUID);
+                if (lock != null) {
+                    lock.addOwner(uuid);
+                }
+            }
+        });
     }
 
     /**
@@ -362,6 +399,13 @@ public class Property {
     public void addTrustedPlayer(UUID playerUUID) {
         if (!trustedPlayers.contains(playerUUID)) {
             trustedPlayers.add(playerUUID);
+            LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
+            for (UUID lockUUID : locksUUID) {
+                Lock lock = lockHandler.getLockByUUID(lockUUID);
+                if (lock != null) {
+                    lock.addOwner(playerUUID);
+                }
+            }
         }
     }
 
@@ -372,6 +416,13 @@ public class Property {
      */
     public void removeTrustedPlayer(UUID playerUUID) {
         trustedPlayers.remove(playerUUID);
+        LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
+        for (UUID lockUUID : locksUUID) {
+            Lock lock = lockHandler.getLockByUUID(lockUUID);
+            if (lock != null) {
+                lock.removeOwner(playerUUID);
+            }
+        }
     }
 
     /**
