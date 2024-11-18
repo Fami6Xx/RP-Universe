@@ -340,6 +340,21 @@ public class LanguageHandler {
     public String managePropertyMenuCloseItemDisplayName = "&cClose";
     public String managePropertyMenuCloseItemLore = "&7Click to close the menu.";
 
+    // Property Details Menu Strings
+    public String propertyDetailsMenuName = "&6RPUniverse &7| &cProperty Details";
+    public String propertyDetailsMenuBackItemDisplayName = "&cBack";
+    public String propertyDetailsMenuBackItemLore = "&7Click to go back.";
+    public String propertyDetailsMenuDetailsItemDisplayName = "&eProperty Details";
+    public String propertyDetailsMenuDetailsItemLore = "&7Property ID: &e{propertyId}~&7Owner: &e{owner}~&7Price: &e{price}~&7Rentable: &e{rentable}~&7Locks: &e{locksCount}~&7Rent Start: &e{rentStart}~&7Rent Duration: &e{rentDuration} days";
+    public String managePropertyMenuExtendRentItemDisplayName = "&eExtend Rent";
+    public String managePropertyMenuExtendRentItemLore = "&7Extend your rent by 1 day.~&7Cost: &e{price}~&7Click to extend.";
+
+    // Rent Extension Messages
+    public String rentExtensionSuccessMessage = "&aYour rent has been extended by 1 day!";
+    public String rentExtensionInsufficientFundsMessage = "&cYou do not have enough money to extend the rent.";
+    public String rentExtensionMaxDurationMessage = "&cYou cannot extend the rent further due to maximum rent duration.";
+
+
 
     private final JavaPlugin plugin;
     private FileConfiguration languageConfig;
