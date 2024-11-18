@@ -191,7 +191,6 @@ public class CreatePropertyProcess implements Listener {
 
             e.getItemDrop().remove();
             e.getPlayer().getInventory().remove(getPropertyCreationWand());
-            e.setCancelled(true);
 
             if (lockedBlock.isEmpty()) {
                 FamiUtils.sendMessageWithPrefix(player, "&cYou have not locked any blocks");
