@@ -107,6 +107,7 @@ public abstract class famiHologram {
 
         hologram.setShowPlayer(player);
         hologram.show(player, getPageToDisplay(player));
+        hologram.showClickableEntities(player);
     }
 
     /**
@@ -136,6 +137,7 @@ public abstract class famiHologram {
         if(!hologram.isVisible(player))
             return;
 
+        hologram.hideClickableEntities(player);
         hologram.removeShowPlayer(player);
         hologram.hide(player);
     }
