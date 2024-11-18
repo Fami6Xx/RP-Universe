@@ -45,7 +45,7 @@ public class Property {
     private List<UUID> trustedPlayers;
     private long lastActive; // timestamp in milliseconds
 
-    private famiHologram hologram;
+    private transient famiHologram hologram;
 
     /**
      * Constructs a new Property with the specified property ID.
