@@ -32,6 +32,10 @@ public class ChangeOwnerInputListener implements Listener {
             FamiUtils.sendMessageWithPrefix(player, "&cPlayer not found or is offline.");
         } else {
             property.setOwner(newOwner.getUniqueId());
+            if (property.isRentable()) {
+                property.setRentStart(System.currentTimeMillis());
+                property.setRentDuration(30 * 24 * 60 * 60 * 1000L); // 30 days
+            }
             RPUniverse.getInstance().getPropertyManager().saveProperty(property);
             FamiUtils.sendMessageWithPrefix(player, "&aOwner changed to " + newOwner.getName() + ".");
         }
