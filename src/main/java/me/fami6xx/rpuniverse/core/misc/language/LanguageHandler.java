@@ -311,6 +311,13 @@ public class LanguageHandler {
     public String propertyRentableHologram = "&7&k|~&c&lProperty&7&k|~&7This property is available for rent!~&7Click to open menu!";
     public String propertyOwnerHologram = "&7&k|~&c&lProperty&7&k|~&7This is your property!~&7Click to open menu!";
 
+    public String buyPropertyMenuName = "&6RPUniverse &7| &cPurchase Property";
+    public String buyPropertyMenuConfirmPurchaseItemDisplayName = "&aConfirm Purchase";
+    public String buyPropertyMenuConfirmPurchaseItemLore = "&7Price: &e{price}~&7Click to confirm the purchase.";
+    public String buyPropertyMenuCancelItemDisplayName = "&cCancel";
+    public String buyPropertyMenuCancelItemLore = "&7Click to cancel the purchase.";
+    public String successfullyPurchasedPropertyMessage = "&aYou have successfully purchased the property!";
+    public String errorYouDoNotHaveEnoughMoneyToPurchasePropertyMessage = "&cYou do not have enough money to purchase this property!";
     public String propertyMenuName = "&6RPUniverse &7| &cProperty";
 
     private final JavaPlugin plugin;
