@@ -19,7 +19,7 @@ import java.util.HashMap;
 public class UniversalChatHandler implements Listener, CommandExecutor {
     private HashMap<Player, IChatExecuteQueue> chatExecuteQueueHashMap = new HashMap<>();
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onChat(AsyncPlayerChatEvent e){
         PlayerMenu playerMenu = RPUniverse.getInstance().getMenuManager().getPlayerMenu(e.getPlayer());
 
@@ -48,7 +48,7 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
             e.setCancelled(true);
 
             HashMap<String, String> replace = new HashMap<>();
-            replace.put("{player}", e.getPlayer().getName());
+            replace.put("{player}", e.getPlayer().getDisplayName());
             replace.put("{message}", e.getMessage());
 
             String localOOCMessage = "";
@@ -120,7 +120,7 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
         String message = builder.toString();
 
         HashMap<String, String> replace = new HashMap<>();
-        replace.put("{player}", player.getName());
+        replace.put("{player}", player.getDisplayName());
         replace.put("{message}", message);
 
         String globalOOCMessage = "";
