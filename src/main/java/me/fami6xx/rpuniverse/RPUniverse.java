@@ -28,15 +28,17 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
 
 /**
  * Main class of the plugin <p>
@@ -73,17 +75,34 @@ public final class RPUniverse extends JavaPlugin {
         if (!getDataFolder().exists()) {
             getDataFolder().mkdir();
             this.saveDefaultConfig();
-            config = this.getConfig();
-        } else {
-            String[] configYml = Arrays.stream(getDataFolder().list())
-                    .filter(s -> s.equals("config.yml"))
-                    .toArray(String[]::new);
-
-            if (configYml.length == 0) {
-                this.saveDefaultConfig();
-            }
             this.reloadConfig();
             config = this.getConfig();
+        } else {
+            File configFile = new File(getDataFolder(), "config.yml");
+            if (!configFile.exists()) {
+                saveDefaultConfig();
+            }
+
+            YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getResource("config.yml")));
+            FileConfiguration config = getConfig();
+
+            boolean changesMade = false;
+
+            for (String key : defaultConfig.getKeys(true)) {
+                if (!config.isSet(key)) {
+                    config.set(key, defaultConfig.get(key));
+                    changesMade = true;
+                }
+            }
+
+            if (changesMade) {
+                try {
+                    config.save(configFile);
+                } catch (IOException e) {
+                    getLogger().severe("Failed to save config.yml: " + e.getMessage());
+                }
+            }
+            this.config = config;
         }
 
         int confVersion = config.getInt("configVersion", -1);
