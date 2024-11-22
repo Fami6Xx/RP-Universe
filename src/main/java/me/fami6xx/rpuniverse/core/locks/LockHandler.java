@@ -3,6 +3,8 @@ package me.fami6xx.rpuniverse.core.locks;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.LockCreatedEvent;
+import me.fami6xx.rpuniverse.core.api.LockDeletedEvent;
 import me.fami6xx.rpuniverse.core.locks.commands.LocksCommand;
 import me.fami6xx.rpuniverse.core.locks.menus.AllLocksMenu;
 import me.fami6xx.rpuniverse.core.locks.menus.LockMenu;
@@ -79,7 +81,7 @@ public class LockHandler implements Listener {
      *
      * @return The created lock. Null if a lock already exists at the specified location.
      */
-    public Lock createLock(Location location, Material shownMaterial, List<String> owners, String jobName, int minWorkingLevel) {
+    public synchronized Lock createLock(Location location, Material shownMaterial, List<String> owners, String jobName, int minWorkingLevel) {
         // Check if a lock already exists at the specified location
         if (getLockByLocation(location) != null) {
             RPUniverse.getInstance().getLogger().warning("A lock already exists at this location!");
@@ -118,6 +120,7 @@ public class LockHandler implements Listener {
         }
 
         Lock createdLock = new Lock(location, owners, jobName, minWorkingLevel, shownMaterial);
+        new LockCreatedEvent(createdLock).callEvent();
         locks.add(createdLock);
         return createdLock;
     }
@@ -189,6 +192,7 @@ public class LockHandler implements Listener {
 
     /**
      * Returns a list of all locks managed by this handler.
+     * This list is a copy of the internal list and can be modified without affecting the internal list.
      * 
      * @return List of all locks.
      */
@@ -198,9 +202,15 @@ public class LockHandler implements Listener {
 
     /**
      * Removes the specified lock from the list of locks.
+     * <p>
+     * This method also triggers a {@link LockDeletedEvent} which can be cancelled to prevent the lock from being removed.
+     *
      * @param lock The lock to remove.
      */
-    public void removeLock(Lock lock) {
+    public synchronized void removeLock(Lock lock) {
+        LockDeletedEvent event = new LockDeletedEvent(lock);
+        RPUniverse.getInstance().getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
         locks.remove(lock);
         RPUniverse.getInstance().getDataSystem().getDataHandler().removeLockData(lock);
     }
