@@ -35,6 +35,7 @@ import org.bukkit.entity.Player;
  */
 public class Property {
     private final UUID propertyId;
+    private transient List<Lock> locks;
     private List<UUID> locksUUID;
     private JsonObject hologramLocationData;
     private transient Location hologramLocation;
@@ -81,6 +82,7 @@ public class Property {
         hologramLocation = gson.fromJson(hologramLocationData, Location.class);
 
         List<Lock> locks = RPUniverse.getInstance().getLockHandler().getAllLocks();
+        locks.stream().filter(lock -> locksUUID.contains(lock.getUUID())).forEach(locks::add);
         long count = locks.stream().filter(lock -> locksUUID.contains(lock.getUUID())).count();
         if (count != locksUUID.size()) {
             RPUniverse.getInstance().getLogger().severe("Property " + propertyId + " has invalid locks.");
@@ -236,6 +238,10 @@ public class Property {
      */
     public void setLockedBlocks(List<UUID> locksUUID) {
         this.locksUUID = locksUUID;
+        this.locks.clear();
+        RPUniverse.getInstance().getLockHandler().getAllLocks().stream()
+                .filter(lock -> locksUUID.contains(lock.getUUID()))
+                .forEach(locks::add);
     }
 
     /**
@@ -371,22 +377,16 @@ public class Property {
      */
     public void setTrustedPlayers(List<UUID> trustedPlayers) {
         this.trustedPlayers.forEach(uuid -> {
-            LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
-            for (UUID lockUUID : locksUUID) {
-                Lock lock = lockHandler.getLockByUUID(lockUUID);
-                if (lock != null) {
-                    lock.removeOwner(uuid);
-                }
+            for (Lock lock : locks) {
+                if (lock == null) continue;
+                lock.removeOwner(uuid);
             }
         });
         this.trustedPlayers = trustedPlayers;
         this.trustedPlayers.forEach(uuid -> {
-            LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
-            for (UUID lockUUID : locksUUID) {
-                Lock lock = lockHandler.getLockByUUID(lockUUID);
-                if (lock != null) {
-                    lock.addOwner(uuid);
-                }
+            for (Lock lock : locks) {
+                if (lock == null) continue;
+                lock.addOwner(uuid);
             }
         });
     }
@@ -399,12 +399,9 @@ public class Property {
     public void addTrustedPlayer(UUID playerUUID) {
         if (!trustedPlayers.contains(playerUUID)) {
             trustedPlayers.add(playerUUID);
-            LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
-            for (UUID lockUUID : locksUUID) {
-                Lock lock = lockHandler.getLockByUUID(lockUUID);
-                if (lock != null) {
-                    lock.addOwner(playerUUID);
-                }
+            for(Lock lock : locks) {
+                if (lock == null) continue;
+                lock.addOwner(playerUUID);
             }
         }
     }
@@ -416,12 +413,9 @@ public class Property {
      */
     public void removeTrustedPlayer(UUID playerUUID) {
         trustedPlayers.remove(playerUUID);
-        LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
-        for (UUID lockUUID : locksUUID) {
-            Lock lock = lockHandler.getLockByUUID(lockUUID);
-            if (lock != null) {
-                lock.removeOwner(playerUUID);
-            }
+        for(Lock lock : locks) {
+            if (lock == null) continue;
+            lock.removeOwner(playerUUID);
         }
     }
 
