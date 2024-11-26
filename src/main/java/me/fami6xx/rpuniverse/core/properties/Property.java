@@ -477,4 +477,12 @@ public class Property {
     public void setRentMaximumDuration(long rentMaximumDuration) {
         this.rentMaximumDuration = rentMaximumDuration;
     }
+
+    /**
+     * Gets the associated locks of the property.
+     * @return the associated locks
+     */
+    public List<Lock> getAssociatedLocks() {
+        return locks;
+    }
 }
