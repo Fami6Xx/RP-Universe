@@ -93,6 +93,9 @@ public class AdminPropertyEditMenu extends Menu {
                 RPUniverse.getInstance().getPropertyManager().removeProperty(property.getPropertyId());
                 new AllPropertiesMenu(playerMenu).open();
                 break;
+            case "Locks":
+                new PropertyAllLocksMenu(playerMenu, property).open();
+                break;
             case "Back":
                 new AllPropertiesMenu(playerMenu).open();
                 break;
@@ -172,7 +175,15 @@ public class AdminPropertyEditMenu extends Menu {
                 "&cBack",
                 "&7Return to the previous menu."
         );
-        inventory.setItem(21, backButton);
+        inventory.setItem(20, backButton);
+
+        // Locks
+        ItemStack locks = FamiUtils.makeItem(
+                Material.IRON_DOOR,
+                "&6Locks",
+                "&7Manage locks for this property."
+        );
+        inventory.setItem(22, locks);
 
         // Delete Property
         ItemStack deleteButton = FamiUtils.makeItem(
@@ -180,7 +191,7 @@ public class AdminPropertyEditMenu extends Menu {
                 "&cDelete Property",
                 "&7Click to delete this property."
         );
-        inventory.setItem(23, deleteButton);
+        inventory.setItem(24, deleteButton);
 
         // Fill the rest of the inventory with filler glass
         setFillerGlass();
