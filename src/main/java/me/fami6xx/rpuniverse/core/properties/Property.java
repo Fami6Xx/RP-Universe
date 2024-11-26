@@ -263,6 +263,8 @@ public class Property {
 
     /**
      * Removes a lock from the property.
+     * <p>
+     * Also removes the lock from the LockHandler. Completely deleting it from the server.
      *
      * @param lock the lock to remove
      */
