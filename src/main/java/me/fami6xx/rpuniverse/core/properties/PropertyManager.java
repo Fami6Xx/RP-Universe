@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
+import me.fami6xx.rpuniverse.core.api.LockDeletedEvent;
+import me.fami6xx.rpuniverse.core.locks.Lock;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -256,6 +258,20 @@ public class PropertyManager implements Listener {
         if (property != null) {
             property.updateLastActive();
             saveProperty(property);
+        }
+    }
+
+    @EventHandler
+    public void onLockDeleted(LockDeletedEvent event) {
+        Lock lock = event.getLock();
+        Property[] properties = getAllProperties().toArray(new Property[0]);
+        for (Property property : properties) {
+            for (UUID lockUUID : property.getLocksUUID()) {
+                if (lockUUID.toString().equals(lock.getUUID().toString())){
+                    event.setCancelled(true);
+                    return;
+                }
+            }
         }
     }
 }
