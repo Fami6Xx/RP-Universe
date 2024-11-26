@@ -245,6 +245,38 @@ public class Property {
     }
 
     /**
+     * Adds a lock to the property.
+     * <p>
+     * Assuming that the lock is not already associated with the property.
+     * <p>
+     * Assuming you've already added the lock to LockHandler.
+     *
+     * @param lock the lock to add
+     */
+    public void addLock(Lock lock) {
+        locks.add(lock);
+        locksUUID.add(lock.getUUID());
+
+        lock.addOwner(owner);
+        trustedPlayers.forEach(lock::addOwner);
+    }
+
+    /**
+     * Removes a lock from the property.
+     *
+     * @param lock the lock to remove
+     */
+    public void removeLock(Lock lock) {
+        locks.remove(lock);
+        locksUUID.remove(lock.getUUID());
+
+        lock.removeOwner(owner);
+        trustedPlayers.forEach(lock::removeOwner);
+
+        RPUniverse.getInstance().getLockHandler().removeLock(lock);
+    }
+
+    /**
      * Gets the location of the hologram associated with the property.
      *
      * @return the hologram location
@@ -483,6 +515,6 @@ public class Property {
      * @return the associated locks
      */
     public List<Lock> getAssociatedLocks() {
-        return locks;
+        return new ArrayList<>(locks);
     }
 }
