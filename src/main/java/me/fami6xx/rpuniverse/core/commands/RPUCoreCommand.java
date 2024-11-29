@@ -8,11 +8,14 @@ import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import me.fami6xx.rpuniverse.core.properties.PropertyManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class RPUCoreCommand implements CommandExecutor {
     @Override
@@ -212,6 +215,20 @@ public class RPUCoreCommand implements CommandExecutor {
         data.setPeeLevel(0);
         data.setPoopLevel(0);
         data.setPlayerMode(PlayerMode.USER);
+
+        PropertyManager propertyManager = RPUniverse.getInstance().getPropertyManager();
+        propertyManager.getAllProperties().forEach(property -> {
+            if (property.getOwner().toString().equals(player.getUniqueId().toString())) {
+                property.setOwner(null);
+                property.setTrustedPlayers(new ArrayList<>());
+                propertyManager.saveProperty(property);
+            }
+
+            if (property.getTrustedPlayers().contains(player.getUniqueId())) {
+                property.removeTrustedPlayer(player.getUniqueId());
+                propertyManager.saveProperty(property);
+            }
+        });
 
         player.getInventory().clear();
         player.getEnderChest().clear();
