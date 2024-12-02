@@ -5,7 +5,7 @@
 # If you have any questions, please contact me on discord: https://discord.gg/SRzxwmBxk5
 
 # Config version (PLEASE DO NOT TOUCH THIS)
-configVersion: 3
+configVersion: 4
 
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 
@@ -88,6 +88,16 @@ basicNeeds:
     removedThirst: 2
     addedPoop: 4
     addedPee: 2
+
+# The settings for the chest limit
+# The chest limit function limits the chest amount of available columns in a chest
+# enabled: If true, the chest limit function is enabled
+# single-chest-rows: The amount of rows in a single chest
+# double-chest-rows: The amount of rows in a double chest
+chestLimit:
+    enabled: true
+    single-chest-rows: 1
+    double-chest-rows: 2
 
 # The settings for the balance
 # enableTracker: If true, the balance tracker is enabled
