@@ -367,7 +367,7 @@ public final class RPUniverse extends JavaPlugin {
     /**
      * Get the version from the API
      * @return The version
-     * @throws Exception
+     * @throws IOException This is thrown if the plugin fails to connect to the API
      */
     private String getVersionFromAPI() throws Exception {
         String urlString = "https://api.polymart.org/v1/getResourceInfoSimple/?resource_id=5845&key=version";
