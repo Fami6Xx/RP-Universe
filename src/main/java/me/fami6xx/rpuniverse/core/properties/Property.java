@@ -81,9 +81,9 @@ public class Property {
         Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationAdapter()).create();
         hologramLocation = gson.fromJson(hologramLocationData, Location.class);
 
-        List<Lock> locks = RPUniverse.getInstance().getLockHandler().getAllLocks();
-        locks.stream().filter(lock -> locksUUID.contains(lock.getUUID())).forEach(locks::add);
-        long count = locks.stream().filter(lock -> locksUUID.contains(lock.getUUID())).count();
+        List<Lock> allLocks = RPUniverse.getInstance().getLockHandler().getAllLocks();
+        allLocks.stream().filter(lock -> locksUUID.contains(lock.getUUID())).forEach(this.locks::add);
+        long count = this.locks.size();
         if (count != locksUUID.size()) {
             RPUniverse.getInstance().getLogger().severe("Property " + propertyId + " has invalid locks.");
         }
