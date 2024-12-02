@@ -253,7 +253,11 @@ public class LockHandler implements Listener {
                             Bukkit.getServer().getPluginManager().callEvent(new LockDeniedEvent(lock, player));
                             return;
                         } else {
-                            Bukkit.getServer().getPluginManager().callEvent(new LockOpenedEvent(lock, player));
+                            LockOpenedEvent lockOpenedEvent = new LockOpenedEvent(lock, player);
+                            Bukkit.getServer().getPluginManager().callEvent(lockOpenedEvent);
+                            if (lockOpenedEvent.isCancelled()) {
+                                event.setCancelled(true);
+                            }
                         }
                     } else if (!playerData.canOpenLock(lock)) {
                         event.setCancelled(true);
@@ -261,7 +265,11 @@ public class LockHandler implements Listener {
                         Bukkit.getServer().getPluginManager().callEvent(new LockDeniedEvent(lock, player));
                         return;
                     } else {
-                        Bukkit.getServer().getPluginManager().callEvent(new LockOpenedEvent(lock, player));
+                        LockOpenedEvent lockOpenedEvent = new LockOpenedEvent(lock, player);
+                        Bukkit.getServer().getPluginManager().callEvent(lockOpenedEvent);
+                        if (lockOpenedEvent.isCancelled()) {
+                            event.setCancelled(true);
+                        }
                     }
                 }
             }
