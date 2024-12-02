@@ -35,7 +35,7 @@ import org.bukkit.entity.Player;
  */
 public class Property {
     private final UUID propertyId;
-    private final transient List<Lock> locks = new ArrayList<>();
+    private transient List<Lock> locks = new ArrayList<>();
     private List<UUID> locksUUID;
     private JsonObject hologramLocationData;
     private transient Location hologramLocation;
@@ -82,6 +82,7 @@ public class Property {
         hologramLocation = gson.fromJson(hologramLocationData, Location.class);
 
         List<Lock> allLocks = RPUniverse.getInstance().getLockHandler().getAllLocks();
+        this.locks = new ArrayList<>();
         allLocks.stream().filter(lock -> locksUUID.contains(lock.getUUID())).forEach(this.locks::add);
         long count = this.locks.size();
         if (count != locksUUID.size()) {
