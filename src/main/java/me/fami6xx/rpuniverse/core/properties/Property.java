@@ -35,7 +35,7 @@ import org.bukkit.entity.Player;
  */
 public class Property {
     private final UUID propertyId;
-    private transient List<Lock> locks;
+    private final transient List<Lock> locks = new ArrayList<>();
     private List<UUID> locksUUID;
     private JsonObject hologramLocationData;
     private transient Location hologramLocation;
