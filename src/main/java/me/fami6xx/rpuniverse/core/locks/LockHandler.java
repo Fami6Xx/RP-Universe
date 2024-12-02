@@ -5,6 +5,8 @@ import eu.decentsoftware.holograms.api.holograms.Hologram;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.LockCreatedEvent;
 import me.fami6xx.rpuniverse.core.api.LockDeletedEvent;
+import me.fami6xx.rpuniverse.core.api.LockDeniedEvent;
+import me.fami6xx.rpuniverse.core.api.LockOpenedEvent;
 import me.fami6xx.rpuniverse.core.locks.commands.LocksCommand;
 import me.fami6xx.rpuniverse.core.locks.menus.AllLocksMenu;
 import me.fami6xx.rpuniverse.core.locks.menus.LockMenu;
@@ -12,6 +14,7 @@ import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -244,15 +247,21 @@ public class LockHandler implements Listener {
                             new LockMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), new AllLocksMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player)), lock).open();
                             event.setCancelled(true);
                             return;
-                        }else if(!playerData.canOpenLock(lock)) {
+                        } else if(!playerData.canOpenLock(lock)) {
                             event.setCancelled(true);
                             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().cannotOpenLockMessage);
+                            Bukkit.getServer().getPluginManager().callEvent(new LockDeniedEvent(lock, player));
                             return;
+                        } else {
+                            Bukkit.getServer().getPluginManager().callEvent(new LockOpenedEvent(lock, player));
                         }
                     } else if (!playerData.canOpenLock(lock)) {
                         event.setCancelled(true);
                         FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().cannotOpenLockMessage);
+                        Bukkit.getServer().getPluginManager().callEvent(new LockDeniedEvent(lock, player));
                         return;
+                    } else {
+                        Bukkit.getServer().getPluginManager().callEvent(new LockOpenedEvent(lock, player));
                     }
                 }
             }
