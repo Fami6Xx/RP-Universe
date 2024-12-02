@@ -5,6 +5,7 @@ import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
 import me.fami6xx.rpuniverse.core.basicneeds.commands.ConsumablesCommand;
 import me.fami6xx.rpuniverse.core.basicneeds.commands.PeeCommand;
 import me.fami6xx.rpuniverse.core.basicneeds.commands.PoopCommand;
+import me.fami6xx.rpuniverse.core.chestlimit.ChestLimitListener;
 import me.fami6xx.rpuniverse.core.commands.*;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
@@ -180,6 +181,11 @@ public final class RPUniverse extends JavaPlugin {
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new RPUExpansion(this).register();
             getLogger().info("PlaceholderAPI hooked!");
+        }
+
+        if (this.config.getBoolean("chestLimit.enabled")) {
+            getServer().getPluginManager().registerEvents(new ChestLimitListener(this), this);
+            getLogger().info("ChestLimit enabled!");
         }
 
         this.getCommand("rpuniverse").setExecutor(new RPUCoreCommand());
