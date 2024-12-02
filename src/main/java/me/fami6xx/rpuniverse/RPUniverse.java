@@ -83,26 +83,8 @@ public final class RPUniverse extends JavaPlugin {
                 saveDefaultConfig();
             }
 
-            YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getResource("config.yml")));
-            FileConfiguration config = getConfig();
-
-            boolean changesMade = false;
-
-            for (String key : defaultConfig.getKeys(true)) {
-                if (!config.isSet(key)) {
-                    config.set(key, defaultConfig.get(key));
-                    changesMade = true;
-                }
-            }
-
-            if (changesMade) {
-                try {
-                    config.save(configFile);
-                } catch (IOException e) {
-                    getLogger().severe("Failed to save config.yml: " + e.getMessage());
-                }
-            }
-            this.config = config;
+            this.reloadConfig();
+            this.config = this.getConfig();
         }
 
         int confVersion = config.getInt("configVersion", -1);
