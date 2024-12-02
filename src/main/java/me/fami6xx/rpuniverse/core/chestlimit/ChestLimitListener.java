@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.chestlimit;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.LockOpenedEvent;
 import me.fami6xx.rpuniverse.core.misc.persistentdatatypes.ItemStackArrayDataType;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -33,10 +34,9 @@ public class ChestLimitListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        if (event.getClickedBlock() == null) return;
-        Block block = event.getClickedBlock();
+    public void LockOpenedEvent(LockOpenedEvent event) {
+        if (!event.getLock().getLocation().isChunkLoaded()) throw new RuntimeException("Chunk is not loaded but an event of opening a lock was called");
+        Block block = event.getLock().getLocation().getBlock();
         if (block.getState() instanceof Chest) {
             if (chestLocks.containsKey(block)) {
                 Player otherPlayer = chestLocks.get(block);
