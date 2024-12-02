@@ -220,7 +220,7 @@ public class LockHandler implements Listener {
      * 
      * @param event The event to handle.
      */
-    @EventHandler
+    @EventHandler(priority = org.bukkit.event.EventPriority.HIGH)
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) {
             Block block = event.getClickedBlock();
@@ -262,7 +262,7 @@ public class LockHandler implements Listener {
 
     HashMap<UUID, Hologram> holograms = new HashMap<>();
     HashMap<UUID, Lock> lockMap = new HashMap<>();
-    @EventHandler
+    @EventHandler(priority = org.bukkit.event.EventPriority.LOW)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
