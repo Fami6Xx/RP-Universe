@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.block.Action;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,16 +17,19 @@ public class LockOpenedEvent extends Event implements Cancellable {
     private final Lock lock;
     private final Player player;
     private boolean cancelled = false;
+    private final Action action;
 
     /**
      * Constructs a new LockOpenedEvent.
      *
      * @param lock the lock that was opened
      * @param player the player who opened the lock
+     * @param action the action performed by the player
      */
-    public LockOpenedEvent(Lock lock, Player player) {
+    public LockOpenedEvent(Lock lock, Player player, Action action) {
         this.lock = lock;
         this.player = player;
+        this.action = action;
     }
 
     /**
@@ -44,6 +48,15 @@ public class LockOpenedEvent extends Event implements Cancellable {
      */
     public Player getPlayer() {
         return player;
+    }
+
+    /**
+     * Gets the action performed by the player.
+     *
+     * @return the action performed by the player
+     */
+    public Action getAction() {
+        return action;
     }
 
     /**
