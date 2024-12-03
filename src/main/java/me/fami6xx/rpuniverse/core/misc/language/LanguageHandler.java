@@ -354,7 +354,9 @@ public class LanguageHandler {
     public String rentExtensionInsufficientFundsMessage = "&cYou do not have enough money to extend the rent.";
     public String rentExtensionMaxDurationMessage = "&cYou cannot extend the rent further due to maximum rent duration.";
 
-
+    // Chest Limit
+    public String chestLimitMenuName = "&6RPU &7| &cChest";
+    public String chestLimitChestAlreadyInUse = "&cThis chest is already in use!";
 
     private final JavaPlugin plugin;
     private FileConfiguration languageConfig;

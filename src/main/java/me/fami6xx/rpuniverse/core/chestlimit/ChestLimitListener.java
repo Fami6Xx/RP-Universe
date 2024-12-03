@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.chestlimit;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.LockOpenedEvent;
 import me.fami6xx.rpuniverse.core.misc.persistentdatatypes.ItemStackArrayDataType;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -13,12 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +38,7 @@ public class ChestLimitListener implements Listener {
         Block block = event.getLock().getLocation().getBlock();
         if (block.getState() instanceof Chest) {
             if (chestLocks.containsKey(block)) {
-                Player otherPlayer = chestLocks.get(block);
-                event.getPlayer().sendMessage("Tuto chestku právě používá " + otherPlayer.getName());
+                FamiUtils.sendMessageWithPrefix(event.getPlayer(), RPUniverse.getLanguageHandler().chestLimitChestAlreadyInUse);
                 return;
             }
 
@@ -53,7 +51,7 @@ public class ChestLimitListener implements Listener {
                 size = RPUniverse.getInstance().getConfiguration().getInt("chestLimit.double-chest-rows") * 9;
             }
 
-            Inventory customInventory = Bukkit.createInventory(event.getPlayer(), size, "Chest Limit");
+            Inventory customInventory = Bukkit.createInventory(event.getPlayer(), size, FamiUtils.format(RPUniverse.getLanguageHandler().chestLimitMenuName));
 
             PersistentDataContainer dataContainer = ((TileState) chest).getPersistentDataContainer();
             ItemStack[] items = dataContainer.get(key, new ItemStackArrayDataType());
@@ -68,7 +66,7 @@ public class ChestLimitListener implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (!event.getView().getTitle().equals("Chest Limit")) return;
+        if (!event.getView().getTitle().equals(FamiUtils.format(RPUniverse.getLanguageHandler().chestLimitMenuName))) return;
 
         Player player = (Player) event.getPlayer();
         Block block = null;
