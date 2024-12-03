@@ -323,7 +323,7 @@ public class LockHandler implements Listener {
             direction.setY(0);
 
             Location hologramLocation = lock.getLocation().add(direction.multiply(-1.25));
-            hologramLocation.setY(lock.getLocation().getBlockY() + 2);
+            hologramLocation.setY(event.getPlayer().getEyeLocation().getY() + 0.5);
 
             if (existingHologram != null) {
                 if (lock.equals(lockMap.get(playerUUID))) {
