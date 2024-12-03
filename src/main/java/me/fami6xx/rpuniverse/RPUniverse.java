@@ -8,6 +8,7 @@ import me.fami6xx.rpuniverse.core.basicneeds.commands.PoopCommand;
 import me.fami6xx.rpuniverse.core.chestlimit.ChestLimitListener;
 import me.fami6xx.rpuniverse.core.commands.*;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
+import me.fami6xx.rpuniverse.core.inventorylimit.PlayerInventoryLimitListener;
 import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
 import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.JobsCommand;
@@ -190,6 +191,11 @@ public final class RPUniverse extends JavaPlugin {
 
         this.getCommand("rpuniverse").setExecutor(new RPUCoreCommand());
         this.getCommand("rpuniverse").setTabCompleter(new RPUCoreAutoComplete());
+
+        if (this.getConfig().getBoolean("inventoryLimit.enabled")) {
+            getServer().getPluginManager().registerEvents(new PlayerInventoryLimitListener(), this);
+            getLogger().info("InventoryLimit enabled!");
+        }
 
         if (config.getBoolean("balance.enableTracker")) {
             balanceChangeNotifier = new BalanceChangeNotifier(this);
