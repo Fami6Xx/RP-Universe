@@ -12,7 +12,7 @@ public abstract class PaginatedMenu extends Menu{
     protected int maxItemsPerPage = 28;
     protected int index = 0;
 
-    protected ItemStack BORDER_GLASS = makeColoredGlass(DyeColor.GRAY);
+    public final static ItemStack BORDER_GLASS = makeColoredGlass(DyeColor.GRAY);
 
     public PaginatedMenu(PlayerMenu menu){
         super(menu);

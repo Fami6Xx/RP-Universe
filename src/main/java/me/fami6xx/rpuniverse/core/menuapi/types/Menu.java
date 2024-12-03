@@ -103,7 +103,7 @@ public abstract class Menu implements InventoryHolder {
      * @param color the color of the glass pane.
      * @return the colored glass pane item.
      */
-    public ItemStack makeColoredGlass(DyeColor color){
+    public static ItemStack makeColoredGlass(DyeColor color){
         Material coloredGlassPane = Material.matchMaterial(color.name() + "_STAINED_GLASS_PANE");
         if (coloredGlassPane == null) {
             throw new IllegalArgumentException("Invalid color: " + color);
