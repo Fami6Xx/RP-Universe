@@ -38,8 +38,9 @@ import java.util.*;
 
 /**
  * The lock handler class
- * 
- * @author Fami6xx
+ * Handles the creation, management, and interaction with locks.
+ * Implements the Listener interface to handle various events.
+ *
  * @version 1.0
  */
 public class LockHandler implements Listener {
@@ -75,7 +76,7 @@ public class LockHandler implements Listener {
 
     /**
      * Create a lock at the specified location with the specified owners, job name, minimum working level, and shown material.
-     * 
+     *
      * @param location The location for the lock.
      * @param shownMaterial The material to show for the lock.
      * @param owners The owners of the lock.
@@ -130,7 +131,7 @@ public class LockHandler implements Listener {
 
     /**
      * Returns the lock located at the specified location.
-     * 
+     *
      * @param location The location for which to find the lock.
      * @return The lock at the given location or null if no lock exists.
      */
@@ -148,7 +149,7 @@ public class LockHandler implements Listener {
 
     /**
      * Returns a list of locks owned by the specified owner.
-     * 
+     *
      * @param owner The name of the owner for whom to find locks.
      * @return List of locks belonging to the specified owner.
      */
@@ -164,7 +165,7 @@ public class LockHandler implements Listener {
 
     /**
      * Returns a list of locks associated with a specific job.
-     * 
+     *
      * @param jobName The name of the job for which to find locks.
      * @return List of locks associated with the specified job.
      */
@@ -196,7 +197,7 @@ public class LockHandler implements Listener {
     /**
      * Returns a list of all locks managed by this handler.
      * This list is a copy of the internal list and can be modified without affecting the internal list.
-     * 
+     *
      * @return List of all locks.
      */
     public List<Lock> getAllLocks() {
@@ -220,7 +221,7 @@ public class LockHandler implements Listener {
 
     /**
      * Handles the player interact event.
-     * 
+     *
      * @param event The event to handle.
      */
     @EventHandler(priority = org.bukkit.event.EventPriority.HIGH)
@@ -276,9 +277,14 @@ public class LockHandler implements Listener {
         }
     }
 
-
     HashMap<UUID, Hologram> holograms = new HashMap<>();
     HashMap<UUID, Lock> lockMap = new HashMap<>();
+
+    /**
+     * Handles the player move event.
+     *
+     * @param event The event to handle.
+     */
     @EventHandler(priority = org.bukkit.event.EventPriority.LOW)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
@@ -349,6 +355,13 @@ public class LockHandler implements Listener {
         }
     }
 
+    /**
+     * Retrieves all blocks associated with a lock from a given block.
+     *
+     * @param block The block to check.
+     * @param type The material type of the block.
+     * @param blocksToCheck The list to add the blocks to.
+     */
     public static void getAllLockBlocksFromBlock(Block block, Material type, List<Block> blocksToCheck) {
         if (type.toString().contains("CHEST")) {
             if(!type.toString().contains("ENDER")) {
@@ -382,6 +395,31 @@ public class LockHandler implements Listener {
         }
     }
 
+    /**
+     * Checks if a block has any associated locks.
+     *
+     * @param block The block to check.
+     * @return true if the block has any locks, false otherwise.
+     */
+    public static boolean checkBlockForAnyLocks(Block block) {
+        Material type = block.getType();
+        List<Block> blocksToCheck = new ArrayList<>();
+        getAllLockBlocksFromBlock(block, type, blocksToCheck);
+
+        for (Block checkBlock : blocksToCheck) {
+            Lock lock = RPUniverse.getInstance().getLockHandler().getLockByLocation(checkBlock.getLocation());
+            if (lock != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks and deletes the hologram for a player if it exists.
+     *
+     * @param playerUUID The UUID of the player.
+     */
     private void checkHoloAndDelete(UUID playerUUID) {
         if(holograms.containsKey(playerUUID)) {
             holograms.get(playerUUID).delete();
@@ -390,6 +428,11 @@ public class LockHandler implements Listener {
         }
     }
 
+    /**
+     * Handles the block break event.
+     *
+     * @param event The event to handle.
+     */
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
