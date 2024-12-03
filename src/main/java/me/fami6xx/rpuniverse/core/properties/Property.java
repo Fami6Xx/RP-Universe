@@ -205,12 +205,11 @@ public class Property {
         return new String[] {
                 "&7&k|",
                 "&c&lProperty",
-                "&7&k|",
                 "&6Owner: &e" + (owner == null ? "None" : Bukkit.getServer().getOfflinePlayer(owner).getName()),
                 "&6Price: &e" + price + "&7$",
                 "&6Rentable: &e" + (rentable ? "Yes" : "No"),
-                "&7&k|",
-                "&cClick to edit"
+                "&cClick to edit",
+                "&7&k|"
         };
     }
 
