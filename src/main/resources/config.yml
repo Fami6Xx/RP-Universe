@@ -95,9 +95,15 @@ basicNeeds:
 # single-chest-rows: The amount of rows in a single chest
 # double-chest-rows: The amount of rows in a double chest
 chestLimit:
-    enabled: true
+    enabled: false
     single-chest-rows: 1
     double-chest-rows: 2
+
+# The settings for the inventory limit
+# The inventory limit function limits the amount of usable slots in inventory
+# enabled: If true, the inventory limit function is enabled
+inventoryLimit:
+    enabled: false
 
 # The settings for the balance
 # enableTracker: If true, the balance tracker is enabled
