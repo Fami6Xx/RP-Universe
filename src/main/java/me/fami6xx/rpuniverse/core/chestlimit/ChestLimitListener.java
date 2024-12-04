@@ -43,6 +43,7 @@ public class ChestLimitListener implements Listener {
         if (block.getState() instanceof Chest) {
             if (chestLocks.containsKey(block)) {
                 FamiUtils.sendMessageWithPrefix(event.getPlayer(), RPUniverse.getLanguageHandler().chestLimitChestAlreadyInUse);
+                event.setCancelled(true);
                 return;
             }
 
@@ -78,6 +79,7 @@ public class ChestLimitListener implements Listener {
         if (block.getState() instanceof Chest) {
             if (chestLocks.containsKey(block)) {
                 FamiUtils.sendMessageWithPrefix(event.getPlayer(), RPUniverse.getLanguageHandler().chestLimitChestAlreadyInUse);
+                event.setCancelled(true);
                 return;
             }
 
