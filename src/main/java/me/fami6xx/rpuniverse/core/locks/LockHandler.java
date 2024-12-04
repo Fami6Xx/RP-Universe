@@ -337,14 +337,14 @@ public class LockHandler implements Listener {
 
             Hologram hologram = DHAPI.createHologram(UUID.randomUUID().toString(), hologramLocation);
             hologram.setDefaultVisibleState(false);
-            DHAPI.addHologramLine(hologram, FamiUtils.format("&8&k&lLLL"));
+            DHAPI.addHologramLine(hologram, FamiUtils.format("&8&k&l|"));
             DHAPI.addHologramLine(hologram, FamiUtils.format("&c&lLocked"));
             DHAPI.addHologramLine(hologram, FamiUtils.format("&cOwners: &7" + lock.getOwnersAsString()));
             String jobName = lock.getJobName() == null ? "None" : lock.getJobName();
             DHAPI.addHologramLine(hologram, FamiUtils.format("&cJob: &7" + jobName));
             int minWorkingLevel = lock.getMinWorkingLevel() == 0 ? 0 : lock.getMinWorkingLevel();
             DHAPI.addHologramLine(hologram, FamiUtils.format("&cMin Working Level: &7" + minWorkingLevel));
-            DHAPI.addHologramLine(hologram, FamiUtils.format("&8&k&lLLL"));
+            DHAPI.addHologramLine(hologram, FamiUtils.format("&8&k&l|"));
             hologram.setShowPlayer(player);
             holograms.put(player.getUniqueId(), hologram);
             lockMap.put(player.getUniqueId(), lock);
