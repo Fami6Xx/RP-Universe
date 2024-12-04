@@ -344,6 +344,7 @@ public class LockHandler implements Listener {
             DHAPI.addHologramLine(hologram, FamiUtils.format("&cJob: &7" + jobName));
             int minWorkingLevel = lock.getMinWorkingLevel() == 0 ? 0 : lock.getMinWorkingLevel();
             DHAPI.addHologramLine(hologram, FamiUtils.format("&cMin Working Level: &7" + minWorkingLevel));
+            DHAPI.addHologramLine(hologram, FamiUtils.format("&7Shift Click to Edit"));
             DHAPI.addHologramLine(hologram, FamiUtils.format("&8&k&l|"));
             hologram.setShowPlayer(player);
             holograms.put(player.getUniqueId(), hologram);
