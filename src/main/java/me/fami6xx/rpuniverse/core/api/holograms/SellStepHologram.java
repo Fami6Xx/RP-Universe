@@ -24,6 +24,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public class SellStepHologram extends famiHologram implements Listener {
@@ -93,12 +94,17 @@ public class SellStepHologram extends famiHologram implements Listener {
         DHAPI.addHologramLine(page0, FamiUtils.format("&7" + sellStep.getName()));
         DHAPI.addHologramLine(page0, FamiUtils.format("&7" + sellStep.getDescription()));
         DHAPI.addHologramLine(page0, "");
+        DHAPI.addHologramLine(page0, sellStep.getItemToSell());
         DHAPI.addHologramLine(page0, FamiUtils.format(RPUniverse.getLanguageHandler().interactToSell));
 
         page0.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
             @Override
             public boolean execute(Player player, String... strings) {
                 if (!shouldShow(player)) return true;
+                if (player.hasMetadata("sellStepAmountToSell")) {
+                    player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().alreadySelling));
+                    return true;
+                }
 
                 // Check if player has items to sell
                 ItemStack itemToSell = sellStep.getItemToSell();
@@ -106,7 +112,7 @@ public class SellStepHologram extends famiHologram implements Listener {
 
                 int amountPlayerHas = countItems(player, itemToSell);
                 if (amountPlayerHas <= 0) {
-                    player.sendMessage(FamiUtils.formatWithPrefix("&cYou don't have any items to sell."));
+                    player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
                     return true;
                 }
 
@@ -167,7 +173,10 @@ public class SellStepHologram extends famiHologram implements Listener {
                         job.addMoneyToJobBank(jobShare);
                     }
 
-                    player.sendMessage(FamiUtils.formatWithPrefix("&7You sold " + amountSold + " items for $" + String.format("%.2f", playerShare)));
+                    HashMap<String, String> placeholders = new HashMap<>();
+                    placeholders.put("{amount}", String.valueOf(amountSold));
+                    placeholders.put("{price}", String.format("%.2f", playerShare));
+                    FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().sellSuccess, placeholders);
 
                     // Remove metadata
                     player.removeMetadata("sellStepAmountToSell", RPUniverse.getJavaPlugin());
