@@ -3,6 +3,8 @@ package me.fami6xx.rpuniverse.core.chestlimit;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.LockOpenedEvent;
 import me.fami6xx.rpuniverse.core.locks.LockHandler;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.persistentdatatypes.ItemStackArrayDataType;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
@@ -47,7 +49,12 @@ public class ChestLimitListener implements Listener {
                 return;
             }
 
-            if (event.getPlayer().isSneaking()) return;
+            if (event.getPlayer().isSneaking() && LockHandler.checkBlockForAnyLocks(block)) {
+                PlayerData playerData = RPUniverse.getPlayerData(event.getPlayer().getUniqueId().toString());
+                if (playerData != null) {
+                    if (playerData.getPlayerMode() == PlayerMode.ADMIN && event.getPlayer().isSneaking()) return;
+                }
+            }
 
             chestLocks.put(block, event.getPlayer());
 
@@ -83,7 +90,6 @@ public class ChestLimitListener implements Listener {
                 return;
             }
 
-            if (event.getPlayer().isSneaking()) return;
             if (LockHandler.checkBlockForAnyLocks(block)) return;
 
             chestLocks.put(block, event.getPlayer());
