@@ -175,7 +175,9 @@ public class SellStepHologram extends famiHologram implements Listener {
 
                     HashMap<String, String> placeholders = new HashMap<>();
                     placeholders.put("{amount}", String.valueOf(amountSold));
-                    placeholders.put("{price}", String.format("%.2f", playerShare));
+                    placeholders.put("{price}", String.format("%.2f", totalValue));
+                    placeholders.put("{playerShare}", String.format("%.2f", playerShare));
+                    placeholders.put("{jobShare}", String.format("%.2f", jobShare));
                     FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().sellSuccess, placeholders);
 
                     // Remove metadata
