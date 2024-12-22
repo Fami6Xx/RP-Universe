@@ -205,7 +205,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         page.addAction(clickType, new Action(new ActionType(UUID.randomUUID().toString()) {
             @Override
             public boolean execute(Player player, String... strings) {
-                PlayerData data = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
+                PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
                 if (data != null && data.getPlayerMode() == PlayerMode.ADMIN) {
                     new WorkingStepEditorMenu(
                             RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
