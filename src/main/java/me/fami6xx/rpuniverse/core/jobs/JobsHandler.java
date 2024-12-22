@@ -170,6 +170,8 @@ public class JobsHandler implements Listener {
     public void addJobType(JobType jobType){
         jobTypes.add(jobType);
 
+        RPUniverse.getInstance().getLogger().info("Registered job type: " + jobType.getName());
+
         jobs.forEach(job -> {
             if(job.getJobType() != null) return;
             if(job.getJobTypeName() == null) return;
