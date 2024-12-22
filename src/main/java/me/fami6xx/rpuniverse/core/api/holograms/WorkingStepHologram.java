@@ -4,7 +4,10 @@ import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.actions.Action;
 import eu.decentsoftware.holograms.api.actions.ActionType;
 import eu.decentsoftware.holograms.api.actions.ClickType;
+import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
+import eu.decentsoftware.holograms.api.holograms.enums.HologramLineType;
+import eu.decentsoftware.holograms.api.utils.items.HologramItem;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.WorkingStepLocationRemovedEvent;
 import me.fami6xx.rpuniverse.core.api.menus.WorkingStepEditorMenu;
@@ -19,6 +22,7 @@ import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import me.fami6xx.rpuniverse.core.misc.utils.ProgressBarString;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -99,6 +103,17 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         DHAPI.addHologramLine(page0, FamiUtils.format("&7" + step.getName()));
         DHAPI.addHologramLine(page0, FamiUtils.format("&7" + step.getDescription()));
         DHAPI.addHologramLine(page0, "");
+        // The code below is now not possible due to the items not rotating with the player's view
+//        HologramLine line = DHAPI.addHologramLine(page0, step.getItemNeeded() != null ? step.getItemNeeded() : new ItemStack(Material.BARRIER));
+//        line.setOffsetX(-0.75);
+//        line.setOffsetY(-0.3);
+//        line.setHeight(0);
+//        DHAPI.addHologramLine(page0, FamiUtils.format("&7" + step.getAmountOfItemNeeded() + "x &c»"));
+//        HologramLine line1 = DHAPI.addHologramLine(page0, step.getItemGiven() != null ? step.getItemGiven() : new ItemStack(Material.BARRIER));
+//        line1.setOffsetX(0.75);
+//        line1.setOffsetY(0.1);
+//        line1.setHeight(0);
+//        DHAPI.addHologramLine(page0, "");
         DHAPI.addHologramLine(page0, FamiUtils.format(RPUniverse.getLanguageHandler().interactToWork));
 
         if (!step.isInteractableFirstStage()) {
