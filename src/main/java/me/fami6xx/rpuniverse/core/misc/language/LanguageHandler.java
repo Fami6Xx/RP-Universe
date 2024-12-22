@@ -27,7 +27,7 @@ public class LanguageHandler {
     public String interactToWork = "&7Click me to work!";
     public String interactToSell = "&7Click me to sell!";
     public String processingSell = "&cProcessing sell...";
-    public String sellSuccess = "&cYou sold {amount}x items for {price}$ &8(&cYou got &a{playerShare}&c$ and job got &a{jobShare}&c$&8)";
+    public String sellSuccess = "&7You sold {amount}x items for &a{price}&7$ &8(&cYou got &a{playerShare}&c$ and job got &a{jobShare}&c$&8)";
     public String missingNeededItem = "&cYou are missing a needed item!";
     public String alreadySelling = "&cYou are already selling something!";
     public String clickGreenItemsToContinue = "&aClick green to continue";
