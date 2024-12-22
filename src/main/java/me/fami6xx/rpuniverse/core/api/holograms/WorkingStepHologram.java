@@ -177,17 +177,17 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                         double randomValue = random.nextDouble() * 100;
                         if (randomValue <= chance) {
                             // Drop the rare item
-                            baseLocation.getWorld().dropItem(baseLocation.clone().add(0, baseLocation.getY() / 2 * -1, 0), step.getRareItem().clone().asOne());
+                            baseLocation.getWorld().dropItem(baseLocation.clone().add(0, -1, 0), step.getRareItem().clone().asOne());
                         }else{
                             // Drop the regular items
                             for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
-                                baseLocation.getWorld().dropItem(baseLocation.clone().add(0, baseLocation.getY() / 2 * -1, 0), step.getItemGiven().clone().asOne());
+                                baseLocation.getWorld().dropItem(baseLocation.clone().add(0, -1, 0), step.getItemGiven().clone().asOne());
                             }
                         }
                     }else{
                         // Drop the regular items
                         for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
-                            baseLocation.getWorld().dropItem(baseLocation.clone().add(0, baseLocation.getY() / 2 * -1, 0), step.getItemGiven().clone().asOne());
+                            baseLocation.getWorld().dropItem(baseLocation.clone().add(0, -1, 0), step.getItemGiven().clone().asOne());
                         }
                     }
 
