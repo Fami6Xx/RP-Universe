@@ -7,6 +7,7 @@ import eu.decentsoftware.holograms.api.actions.ClickType;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.SellStepLocationRemovedEvent; // Ensure this event exists or adjust accordingly
+import me.fami6xx.rpuniverse.core.api.menus.SellStepEditorMenu;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
@@ -93,7 +94,6 @@ public class SellStepHologram extends famiHologram implements Listener {
         DHAPI.addHologramLine(page0, "");
         DHAPI.addHologramLine(page0, FamiUtils.format("&7" + sellStep.getName()));
         DHAPI.addHologramLine(page0, FamiUtils.format("&7" + sellStep.getDescription()));
-        DHAPI.addHologramLine(page0, "");
         DHAPI.addHologramLine(page0, sellStep.getItemToSell());
         DHAPI.addHologramLine(page0, FamiUtils.format(RPUniverse.getLanguageHandler().interactToSell));
 
@@ -130,6 +130,8 @@ public class SellStepHologram extends famiHologram implements Listener {
                 return true;
             }
         }, ""));
+
+        addAdminAction(ClickType.LEFT, page0);
 
         DHAPI.updateHologram(getHologram().getName());
         getHologram().getShowPlayers().forEach(uuid -> {
@@ -186,6 +188,22 @@ public class SellStepHologram extends famiHologram implements Listener {
                     recreatePages();
                 });
         progressBar.runTaskTimer(RPUniverse.getJavaPlugin(), 0L, 1L);
+    }
+
+    private void addAdminAction(ClickType clickType, HologramPage page) {
+        page.addAction(clickType, new Action(new ActionType(UUID.randomUUID().toString()) {
+            @Override
+            public boolean execute(Player player, String... strings) {
+                PlayerData data = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
+                if (data != null && data.getPlayerMode() == PlayerMode.ADMIN) {
+                    new SellStepEditorMenu(
+                            RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
+                            sellStep
+                    ).open();
+                }
+                return true;
+            }
+        }, ""));
     }
 
     private int countItems(Player player, ItemStack itemToCount) {

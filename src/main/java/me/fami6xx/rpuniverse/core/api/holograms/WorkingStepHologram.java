@@ -7,6 +7,7 @@ import eu.decentsoftware.holograms.api.actions.ClickType;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.WorkingStepLocationRemovedEvent;
+import me.fami6xx.rpuniverse.core.api.menus.WorkingStepEditorMenu;
 import me.fami6xx.rpuniverse.core.api.menus.WorkingStepInteractableMenu;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
@@ -121,6 +122,8 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                     return true;
                 }
             }, ""));
+
+            addAdminOpenAction(ClickType.LEFT, page0);
         } else {
             page0.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
                 @Override
@@ -145,6 +148,8 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                     return true;
                 }
             }, ""));
+
+            addAdminOpenAction(ClickType.LEFT, page0);
         }
 
         DHAPI.updateHologram(getHologram().getName());
@@ -194,6 +199,22 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                     recreatePages();
                 });
         progressBar.runTaskTimer(RPUniverse.getJavaPlugin(), 0L, 1L);
+    }
+
+    private void addAdminOpenAction(ClickType clickType, HologramPage page) {
+        page.addAction(clickType, new Action(new ActionType(UUID.randomUUID().toString()) {
+            @Override
+            public boolean execute(Player player, String... strings) {
+                PlayerData data = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
+                if (data != null && data.getPlayerMode() == PlayerMode.ADMIN) {
+                    new WorkingStepEditorMenu(
+                            RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
+                            step
+                    ).open();
+                }
+                return true;
+            }
+        }, ""));
     }
 
     public boolean removeItems(Player player, ItemStack itemToRemove, int amountToRemove) {
