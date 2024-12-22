@@ -171,22 +171,23 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         progressBar = new ProgressBarString("", step.getTimeForStep(),
                 () -> DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString())),
                 () -> {
+                    Location baseLocation = getBaseLocation().clone();
                     if (step.isDropRareItem() && step.getRareItem() != null) {
                         double chance = step.getPercentage();
                         double randomValue = random.nextDouble() * 100;
                         if (randomValue <= chance) {
                             // Drop the rare item
-                            getBaseLocation().getWorld().dropItem(getBaseLocation().add(0, getBaseLocation().getY() / 2 * -1, 0), step.getRareItem().clone().asOne());
+                            baseLocation.getWorld().dropItem(baseLocation.clone().add(0, baseLocation.getY() / 2 * -1, 0), step.getRareItem().clone().asOne());
                         }else{
                             // Drop the regular items
                             for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
-                                getBaseLocation().getWorld().dropItem(getBaseLocation().add(0, getBaseLocation().getY() / 2 * -1, 0), step.getItemGiven().clone().asOne());
+                                baseLocation.getWorld().dropItem(baseLocation.clone().add(0, baseLocation.getY() / 2 * -1, 0), step.getItemGiven().clone().asOne());
                             }
                         }
                     }else{
                         // Drop the regular items
                         for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
-                            getBaseLocation().getWorld().dropItem(getBaseLocation().add(0, getBaseLocation().getY() / 2 * -1, 0), step.getItemGiven().clone().asOne());
+                            baseLocation.getWorld().dropItem(baseLocation.clone().add(0, baseLocation.getY() / 2 * -1, 0), step.getItemGiven().clone().asOne());
                         }
                     }
 
