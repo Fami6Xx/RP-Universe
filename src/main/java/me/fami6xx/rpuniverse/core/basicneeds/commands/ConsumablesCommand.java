@@ -32,13 +32,13 @@ public class ConsumablesCommand implements CommandExecutor {
             }
         }else{
             if(config.getNeededModeToEdit() == PlayerMode.ADMIN) {
-                if (RPUniverse.getPlayerData(((Player) sender).getUniqueId().toString()).getPlayerMode() == config.getNeededModeToEdit()) {
+                if (RPUniverse.getPlayerData(((Player) sender).getUniqueId().toString()).getPlayerMode() != config.getNeededModeToEdit()) {
                     player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorYouAreNotInCorrectModeToUseThisCommandMessage));
                     return true;
                 }
             }else if (config.getNeededModeToEdit() == PlayerMode.MODERATOR) {
-                if (RPUniverse.getPlayerData(((Player) sender).getUniqueId().toString()).getPlayerMode() == config.getNeededModeToEdit() ||
-                        RPUniverse.getPlayerData(((Player) sender).getUniqueId().toString()).getPlayerMode() == PlayerMode.ADMIN) {
+                if (RPUniverse.getPlayerData(((Player) sender).getUniqueId().toString()).getPlayerMode() != config.getNeededModeToEdit() &&
+                        RPUniverse.getPlayerData(((Player) sender).getUniqueId().toString()).getPlayerMode() != PlayerMode.ADMIN) {
                     player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorYouAreNotInCorrectModeToUseThisCommandMessage));
                     return true;
                 }
