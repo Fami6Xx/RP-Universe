@@ -217,13 +217,17 @@ public class JobsHandler implements Listener {
     @EventHandler
     public void onWorkingStepLocationRemoved(WorkingStepLocationRemovedEvent event) {
         stepLocationHashMap.remove(event.getWorkingStep());
-        hologramHashMap.get(event.getLocation()).destroy();
+        if (hologramHashMap.containsKey(event.getLocation()) && hologramHashMap.get(event.getLocation()) != null) {
+            hologramHashMap.get(event.getLocation()).destroy();
+        }
         hologramHashMap.remove(event.getLocation());
     }
 
     @EventHandler
     public void onSellStepLocationRemoved(SellStepLocationRemovedEvent event) {
-        sellStepHologramHashMap.get(event.getSellStep()).destroy();
+        if (sellStepHologramHashMap.containsKey(event.getSellStep()) && sellStepHologramHashMap.get(event.getSellStep()) != null) {
+            sellStepHologramHashMap.get(event.getSellStep()).destroy();
+        }
         sellStepHologramHashMap.remove(event.getSellStep());
     }
 
