@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.misc;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
 import me.fami6xx.rpuniverse.core.jobs.Position;
 import me.fami6xx.rpuniverse.core.locks.Lock;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
@@ -70,7 +71,15 @@ public class PlayerData {
      * @param job The job to be added.
      */
     public void addJob(Job job){
+        if (job.isPlayerInJob(UUID.fromString(playerUUID))) return;
+        if (playerJobs.contains(job)) return;
+        if (!job.isJobReady().isEmpty()) {
+            RPUniverse.getInstance().getLogger().severe("The job " + job.getName() + " is not ready to be added to the player " + playerUUID + " because it is missing the default requirements!");
+            return;
+        }
+
         playerJobs.add(job);
+        job.addPlayerToJob(UUID.fromString(playerUUID));
         if(selectedPlayerJob == null) {
             selectedPlayerJob = job;
             RPUniverse.getInstance().getBossBarHandler().updateBossBar(bindedPlayer);
