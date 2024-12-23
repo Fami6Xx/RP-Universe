@@ -64,6 +64,8 @@ public class PlayerData {
 
     /**
      * Adds a job to the player's list of jobs.
+     * <p>
+     * This method does not check if the player is at maximum amount of jobs.
      *
      * @param job The job to be added.
      */
