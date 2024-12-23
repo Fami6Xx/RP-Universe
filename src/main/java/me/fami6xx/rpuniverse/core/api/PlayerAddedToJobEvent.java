@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.api;
 
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -13,6 +14,7 @@ public class PlayerAddedToJobEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final Job job;
+    private final Player player;
     private boolean cancelled = false;
 
     /**
@@ -20,8 +22,9 @@ public class PlayerAddedToJobEvent extends Event implements Cancellable {
      *
      * @param job the job to which the player was added
      */
-    public PlayerAddedToJobEvent(Job job) {
+    public PlayerAddedToJobEvent(Job job, Player player) {
         this.job = job;
+        this.player = player;
     }
 
     /**
@@ -71,5 +74,14 @@ public class PlayerAddedToJobEvent extends Event implements Cancellable {
      */
     public static HandlerList getHandlerList() {
         return HANDLERS;
+    }
+
+    /**
+     * Gets the player who was added to the job.
+     *
+     * @return the player
+     */
+    public Player getPlayer() {
+        return player;
     }
 }
