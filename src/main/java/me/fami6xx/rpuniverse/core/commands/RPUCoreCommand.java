@@ -159,8 +159,14 @@ public class RPUCoreCommand implements CommandExecutor {
                 FamiUtils.sendMessageWithPrefix(player, "&cPlayer is already in this job!");
                 return true;
             }
-            job.addPlayerToJob(target.getUniqueId());
-            FamiUtils.sendMessageWithPrefix(player, "&aJob added!");
+            if (!job.isJobReady().isEmpty()) {
+                FamiUtils.sendMessageWithPrefix(player, "&Job is not fully setup!");
+                return true;
+            }
+
+            PlayerData data = RPUniverse.getPlayerData(target.getUniqueId().toString());
+            data.addJob(job);
+            FamiUtils.sendMessageWithPrefix(player, "&aJob added! &8(&cCheck console if not&8)");
             return true;
         }
         if (args[0].equalsIgnoreCase("removejob")) {
@@ -190,9 +196,9 @@ public class RPUCoreCommand implements CommandExecutor {
     }
 
     public void showHelp(CommandSender sender) {
-        sender.sendMessage(FamiUtils.formatWithPrefix("&7&m--------------------------------"));
+        sender.sendMessage(FamiUtils.formatWithPrefix("&7&m                                "));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6&lRPUniverse &7- &fHelp"));
-        sender.sendMessage(FamiUtils.formatWithPrefix("&7&m--------------------------------"));
+        sender.sendMessage(FamiUtils.formatWithPrefix("&7&m                                "));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu &7- &fShow this help"));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu ck <Player> &7- &f Character kill a player"));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu addjob <Player> <Job name> &7- &fAdd a job to a player"));
