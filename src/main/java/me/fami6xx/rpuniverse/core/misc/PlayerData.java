@@ -1,6 +1,8 @@
 package me.fami6xx.rpuniverse.core.misc;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.PlayerAddedToJobEvent;
+import me.fami6xx.rpuniverse.core.api.PlayerRemovedFromJobEvent;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
@@ -78,6 +80,10 @@ public class PlayerData {
             return;
         }
 
+        PlayerAddedToJobEvent event = new PlayerAddedToJobEvent(job, this.bindedPlayer);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         playerJobs.add(job);
         job.addPlayerToJob(UUID.fromString(playerUUID));
         if(selectedPlayerJob == null) {
@@ -92,6 +98,10 @@ public class PlayerData {
      * @param job The job to be removed.
      */
     public void removeJob(Job job){
+        PlayerRemovedFromJobEvent event = new PlayerRemovedFromJobEvent(job, this.bindedPlayer);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         playerJobs.remove(job);
         if(selectedPlayerJob == job){
             if(!playerJobs.isEmpty()) selectedPlayerJob = playerJobs.get(0);
@@ -131,11 +141,13 @@ public class PlayerData {
 
     /**
      * Retrieves the list of jobs for the player data.
+     * <p>
+     * This method returns a new ArrayList to prevent the original list from being modified.
      *
      * @return the list of jobs for the player data
      */
     public List<Job> getPlayerJobs(){
-        return playerJobs;
+        return new ArrayList<>(playerJobs);
     }
 
     /**
