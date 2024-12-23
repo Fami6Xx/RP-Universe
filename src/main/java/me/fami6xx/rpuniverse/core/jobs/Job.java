@@ -683,6 +683,8 @@ public class Job {
                 return;
             }
         }
+
+        LOGGER.log(Level.SEVERE, "No default position found for job " + jobName + " even though player " + playerUUID + " was added to the job!");
     }
 
     /**
