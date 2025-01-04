@@ -15,6 +15,7 @@ import me.fami6xx.rpuniverse.core.api.menus.WorkingStepInteractableMenu;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.jobs.PossibleDrop;
 import me.fami6xx.rpuniverse.core.jobs.WorkingStep;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
@@ -30,8 +31,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorkingStepHologram extends famiHologram implements Listener {
     HoloAPI api = RPUniverse.getInstance().getHoloAPI();
@@ -192,22 +193,25 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                 () -> DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString())),
                 () -> {
                     Location baseLocation = getBaseLocation().clone();
-                    if (step.isDropRareItem() && step.getRareItem() != null) {
-                        double chance = step.getPercentage();
-                        double randomValue = random.nextDouble() * 100;
-                        if (randomValue <= chance) {
-                            // Drop the rare item
-                            baseLocation.getWorld().dropItem(baseLocation.clone().add(0, -1, 0), step.getRareItem().clone().asOne());
-                        }else{
-                            // Drop the regular items
-                            for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
-                                baseLocation.getWorld().dropItem(baseLocation.clone().add(0, -1, 0), step.getItemGiven().clone().asOne());
-                            }
-                        }
-                    }else{
-                        // Drop the regular items
-                        for (int i = 0; i < step.getAmountOfItemGiven(); i++) {
-                            baseLocation.getWorld().dropItem(baseLocation.clone().add(0, -1, 0), step.getItemGiven().clone().asOne());
+                    Location dropLocation = baseLocation.add(0, 1, 0);
+
+                    if (step.getPossibleDrops().isEmpty()) return;
+                    if (step.getPossibleDrops().get(0).getChance() <= 0) return;
+
+                    List<PossibleDrop> dropsSorted = new ArrayList<>(step.getPossibleDrops().stream()
+                             .sorted((drop1, drop2) -> Double.compare(drop2.getChance(), drop1.getChance()))
+                             .toList());
+
+                    Collections.reverse(dropsSorted);
+
+                    double random = Math.random() * 100;
+                    double chance = 0;
+
+                    for (PossibleDrop drop : dropsSorted) {
+                        chance += drop.getChance();
+                        if (random <= chance) {
+                            dropLocation.getWorld().dropItem(dropLocation, drop.getItem());
+                            break;
                         }
                     }
 
