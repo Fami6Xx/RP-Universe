@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
  */
 public class PossibleDrop {
     private final ItemStack item;
-    private final double chance; // 0.0 to 100.0
+    private double chance; // 0.0 to 100.0
 
     /**
      * Creates a new PossibleDrop with the specified item and chance.
@@ -40,5 +40,19 @@ public class PossibleDrop {
      */
     public double getChance() {
         return chance;
+    }
+
+    /**
+     * Sets the chance that this item will drop.
+     * <p>
+     * Values outside the range 0.0 to 100.0 will throw an IllegalArgumentException.
+     *
+     * @param chance The probability (0.0 to 100.0) that the item will drop.
+     */
+    public void setChance(double chance) {
+        if (chance < 0.0 || chance > 100.0) {
+            throw new IllegalArgumentException("Chance must be between 0 and 100.");
+        }
+        this.chance = chance;
     }
 }
