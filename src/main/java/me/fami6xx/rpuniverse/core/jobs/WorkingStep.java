@@ -449,13 +449,13 @@ public class WorkingStep {
     }
 
     /**
-     * Gets the list of all possible drops (Immutable) for this WorkingStep.
+     * Gets the list of all possible drops for this WorkingStep.
      *
-     * @return The list of all possible drops (Immutable) for this WorkingStep.
+     * @return The list of all possible drops for this WorkingStep.
      */
     @Nonnull
     public List<PossibleDrop> getPossibleDrops() {
-        return new ArrayList<>(possibleDrops);
+        return possibleDrops;
     }
 
     /**
