@@ -1,6 +1,5 @@
 package me.fami6xx.rpuniverse.core.api.menus;
 
-import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.PossibleDrop;
 import me.fami6xx.rpuniverse.core.jobs.WorkingStep;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
@@ -15,9 +14,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A paginated menu to show and edit possible drops from a WorkingStep.
@@ -33,7 +32,11 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
 
     @Override
     public String getMenuName() {
-        return ChatColor.DARK_GREEN + "Possible Drops Editor";
+        AtomicReference<Double> chance = new AtomicReference<>((double) 0);
+        workingStep.getPossibleDrops().forEach(drop -> {
+            chance.set(chance.get() + drop.getChance());
+        });
+        return FamiUtils.formatWithPrefix("&7Editing Drops") + " &8(&f" + chance.get() + "%&8)";
     }
 
     @Override
@@ -47,7 +50,7 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
         ItemStack item = drop.getItem().clone(); // Clone to keep the original intact
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ChatColor.GREEN + "Drop: " + ChatColor.YELLOW + item.getType().toString());
+            meta.setDisplayName(ChatColor.GREEN + "Drop: " + ChatColor.YELLOW + meta.getDisplayName());
             List<String> lore = new ArrayList<>();
             lore.add(ChatColor.GRAY + "Chance: " + ChatColor.WHITE + drop.getChance() + "%");
             lore.add(ChatColor.GRAY + " ");
