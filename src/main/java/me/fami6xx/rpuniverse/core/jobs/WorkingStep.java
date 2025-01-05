@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.jobs;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -9,6 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -182,10 +184,18 @@ public class WorkingStep {
             List<?> rawPossibleDrops = yaml.getList("possibleDrops");
             if (rawPossibleDrops != null) {
                 for (Object obj : rawPossibleDrops) {
-                    if (obj instanceof YamlConfiguration) {
-                        YamlConfiguration dropConfig = (YamlConfiguration) obj;
-                        ItemStack dropItem = dropConfig.getItemStack("item");
-                        double chance = dropConfig.getDouble("chance", 0.0);
+                    if (obj instanceof Map<?, ?>) {
+                        Map<String, Object> dropMap = (Map<String, Object>) obj;
+
+                        // Create a YamlConfiguration in memory
+                        YamlConfiguration dropConfig = new YamlConfiguration();
+                        // Put the map under a subsection, e.g. "root"
+                        dropConfig.createSection("root", dropMap);
+                        ConfigurationSection section = dropConfig.getConfigurationSection("root");
+
+                        ItemStack dropItem = section.getItemStack("item");
+                        double chance = section.getDouble("chance", 0.0);
+
                         if (dropItem != null) {
                             possibleDrops.add(new PossibleDrop(dropItem, chance));
                         }

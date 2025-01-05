@@ -70,6 +70,15 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
             return;
         }
 
+        int slot = e.getSlot();
+
+        // If user clicked on the "Add New Drop" in slot 45:
+        if (slot == 45) {
+            e.setCancelled(true);
+            addNewDropFlow(player);
+            return;
+        }
+
         // If the user clicked on an actual drop slot (not border).
         int clickedSlot = e.getSlot();
         int clickedIndex = getSlotIndex(clickedSlot);
@@ -128,22 +137,6 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
         });
         ItemStack infoItem = FamiUtils.makeItem(Material.BOOKSHELF, "&7&lInfo", "&7Total chance: &f" + chance.get() + "%");
         super.inventory.setItem(4, infoItem);
-    }
-
-    @Override
-    public void handleMenu(InventoryClickEvent e) {
-        super.handleMenu(e);
-        // The parent handleMenu will call handlePaginatedMenu(e) afterwards
-        // for non-border items. But we can still check border items here:
-
-        int slot = e.getSlot();
-        Player player = (Player) e.getWhoClicked();
-
-        // If user clicked on the "Add New Drop" in slot 45:
-        if (slot == 45) {
-            e.setCancelled(true);
-            addNewDropFlow(player);
-        }
     }
 
     private void addNewDropFlow(Player player) {
