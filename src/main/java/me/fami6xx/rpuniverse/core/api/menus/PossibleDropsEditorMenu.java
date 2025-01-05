@@ -126,7 +126,7 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
         workingStep.getPossibleDrops().forEach(drop -> {
             chance.set(chance.get() + drop.getChance());
         });
-        ItemStack infoItem = FamiUtils.makeItem(Material.BOOKSHELF, "&7Info", "&7Total chance: &f" + chance.get() + "%");
+        ItemStack infoItem = FamiUtils.makeItem(Material.BOOKSHELF, "&7&lInfo", "&7Total chance: &f" + chance.get() + "%");
         super.inventory.setItem(4, infoItem);
     }
 
@@ -139,7 +139,7 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
         int slot = e.getSlot();
         Player player = (Player) e.getWhoClicked();
 
-        // If user clicked on the "Add New Drop" in slot 52:
+        // If user clicked on the "Add New Drop" in slot 45:
         if (slot == 45) {
             e.setCancelled(true);
             addNewDropFlow(player);
