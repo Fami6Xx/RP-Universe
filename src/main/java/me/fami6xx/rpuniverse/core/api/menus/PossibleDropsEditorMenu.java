@@ -24,8 +24,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
 
     private final WorkingStep workingStep;
-
-    // Todo: The title is not good for showing the percentage, make an item to show the percentage
+    
+    // Todo: after restart, items are not saved
 
     public PossibleDropsEditorMenu(PlayerMenu menu, WorkingStep workingStep) {
         super(menu);
@@ -34,11 +34,7 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
 
     @Override
     public String getMenuName() {
-        AtomicReference<Double> chance = new AtomicReference<>((double) 0);
-        workingStep.getPossibleDrops().forEach(drop -> {
-            chance.set(chance.get() + drop.getChance());
-        });
-        return FamiUtils.formatWithPrefix("&7Editing Drops " + "&8(&f" + chance.get() + "%&8)");
+        return FamiUtils.formatWithPrefix("&cEditing Drops");
     }
 
     @Override
@@ -115,7 +111,7 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
     @Override
     public void addAdditionalItems() {
         // Here you can add items to the border, e.g., an “Add New Drop” button
-        ItemStack addNewDrop = new ItemStack(Material.EMERALD);
+        ItemStack addNewDrop = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta meta = addNewDrop.getItemMeta();
         meta.setDisplayName(ChatColor.GREEN + "Add New Drop");
         List<String> lore = new ArrayList<>();
@@ -124,7 +120,14 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
         addNewDrop.setItemMeta(meta);
 
         // We'll place it in slot 52 (which is typically part of the border).
-        super.inventory.setItem(52, addNewDrop);
+        super.inventory.setItem(45, addNewDrop);
+
+        AtomicReference<Double> chance = new AtomicReference<>((double) 0);
+        workingStep.getPossibleDrops().forEach(drop -> {
+            chance.set(chance.get() + drop.getChance());
+        });
+        ItemStack infoItem = FamiUtils.makeItem(Material.BOOKSHELF, "&7Info", "&7Total chance: &f" + chance.get() + "%");
+        super.inventory.setItem(4, infoItem);
     }
 
     @Override
