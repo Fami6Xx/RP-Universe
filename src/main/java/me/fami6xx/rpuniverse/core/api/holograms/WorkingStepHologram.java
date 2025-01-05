@@ -195,8 +195,14 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                     Location baseLocation = getBaseLocation().clone();
                     Location dropLocation = baseLocation.add(0, -1, 0);
 
-                    if (step.getPossibleDrops().isEmpty()) return;
-                    if (step.getPossibleDrops().get(0).getChance() <= 0) return;
+                    if (step.getPossibleDrops().isEmpty()) {
+                        recreatePages();
+                        return;
+                    }
+                    if (step.getPossibleDrops().get(0).getChance() <= 0) {
+                        recreatePages();
+                        return;
+                    }
 
                     List<PossibleDrop> dropsSorted = new ArrayList<>(step.getPossibleDrops().stream()
                              .sorted((drop1, drop2) -> Double.compare(drop2.getChance(), drop1.getChance()))
