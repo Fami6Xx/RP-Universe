@@ -25,6 +25,8 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
 
     private final WorkingStep workingStep;
 
+    // Todo: The title is not good for showing the percentage, make an item to show the percentage
+
     public PossibleDropsEditorMenu(PlayerMenu menu, WorkingStep workingStep) {
         super(menu);
         this.workingStep = workingStep;
