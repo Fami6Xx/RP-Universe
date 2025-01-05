@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
 
     private final WorkingStep workingStep;
-    
+
     // Todo: after restart, items are not saved
 
     public PossibleDropsEditorMenu(PlayerMenu menu, WorkingStep workingStep) {
@@ -119,7 +119,7 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
         meta.setLore(lore);
         addNewDrop.setItemMeta(meta);
 
-        // We'll place it in slot 52 (which is typically part of the border).
+        // We'll place it in slot 45 (which is typically part of the border).
         super.inventory.setItem(45, addNewDrop);
 
         AtomicReference<Double> chance = new AtomicReference<>((double) 0);
@@ -140,7 +140,7 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
         Player player = (Player) e.getWhoClicked();
 
         // If user clicked on the "Add New Drop" in slot 52:
-        if (slot == 52) {
+        if (slot == 45) {
             e.setCancelled(true);
             addNewDropFlow(player);
         }
