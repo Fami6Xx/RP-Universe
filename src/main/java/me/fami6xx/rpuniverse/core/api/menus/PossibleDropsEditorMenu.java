@@ -52,7 +52,7 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
         ItemStack item = drop.getItem().clone(); // Clone to keep the original intact
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ChatColor.GREEN + "Drop: " + ChatColor.YELLOW + meta.getDisplayName());
+            meta.setDisplayName(ChatColor.GREEN + "Drop: " + ChatColor.YELLOW + (!meta.getDisplayName().isEmpty() ? meta.getDisplayName() : item.getType().name()));
             List<String> lore = new ArrayList<>();
             lore.add(ChatColor.GRAY + "Chance: " + ChatColor.WHITE + drop.getChance() + "%");
             lore.add(ChatColor.GRAY + " ");
