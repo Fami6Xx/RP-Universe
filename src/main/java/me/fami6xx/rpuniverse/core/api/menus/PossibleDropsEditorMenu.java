@@ -36,7 +36,7 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
         workingStep.getPossibleDrops().forEach(drop -> {
             chance.set(chance.get() + drop.getChance());
         });
-        return FamiUtils.formatWithPrefix("&7Editing Drops") + " &8(&f" + chance.get() + "%&8)";
+        return FamiUtils.formatWithPrefix("&7Editing Drops " + "&8(&f" + chance.get() + "%&8)");
     }
 
     @Override
