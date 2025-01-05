@@ -193,7 +193,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                 () -> DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString())),
                 () -> {
                     Location baseLocation = getBaseLocation().clone();
-                    Location dropLocation = baseLocation.add(0, 1, 0);
+                    Location dropLocation = baseLocation.add(0, -1, 0);
 
                     if (step.getPossibleDrops().isEmpty()) return;
                     if (step.getPossibleDrops().get(0).getChance() <= 0) return;
