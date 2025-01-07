@@ -263,6 +263,6 @@ public class SellStepEditorMenu extends Menu {
 
     @Override
     public List<MenuTag> getMenuTags() {
-        return new ArrayList<>();
+        return List.of(MenuTag.ADMIN);
     }
 }

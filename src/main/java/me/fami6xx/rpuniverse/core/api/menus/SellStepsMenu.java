@@ -115,6 +115,6 @@ public class SellStepsMenu extends EasyPaginatedMenu {
 
     @Override
     public List<MenuTag> getMenuTags() {
-        return new ArrayList<>();
+        return List.of(MenuTag.ADMIN);
     }
 }
