@@ -25,8 +25,6 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
 
     private final WorkingStep workingStep;
 
-    // Todo: after restart, items are not saved
-
     public PossibleDropsEditorMenu(PlayerMenu menu, WorkingStep workingStep) {
         super(menu);
         this.workingStep = workingStep;
