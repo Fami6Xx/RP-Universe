@@ -23,7 +23,7 @@ public class ItemStackAdapter implements JsonSerializer<ItemStack>, JsonDeserial
         try {
             return new JsonPrimitive(itemStackToBase64(itemStack));
         } catch (IOException e) {
-
+            e.printStackTrace();
             return JsonNull.INSTANCE;
         }
     }
