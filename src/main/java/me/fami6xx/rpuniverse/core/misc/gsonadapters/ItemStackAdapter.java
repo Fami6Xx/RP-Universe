@@ -37,7 +37,6 @@ public class ItemStackAdapter implements JsonSerializer<ItemStack>, JsonDeserial
         try {
             return itemStackFromBase64(json.getAsString());
         } catch (Exception e) {
-            // In real code, handle or log the exception
             e.printStackTrace();
             return null;
         }

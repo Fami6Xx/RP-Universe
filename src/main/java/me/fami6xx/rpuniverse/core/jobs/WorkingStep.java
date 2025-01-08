@@ -1,6 +1,11 @@
 package me.fami6xx.rpuniverse.core.jobs;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
+import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,6 +26,10 @@ import java.util.logging.Logger;
  */
 public class WorkingStep {
     private static final Logger LOGGER = RPUniverse.getInstance().getLogger();
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(Location.class, new LocationAdapter())
+            .registerTypeAdapter(ItemStack.class, new ItemStackAdapter())
+            .create();
 
     private UUID uuid = UUID.randomUUID();
     private UUID jobUUID;
@@ -257,6 +266,14 @@ public class WorkingStep {
         yaml.set("possibleDrops", serializedDrops);
 
         return yaml.saveToString();
+    }
+
+    public JsonObject toJsonObject() {
+        return GSON.toJsonTree(this).getAsJsonObject();
+    }
+
+    public static WorkingStep fromJsonObject(JsonObject jsonObject) {
+        return GSON.fromJson(jsonObject, WorkingStep.class);
     }
 
     /**
