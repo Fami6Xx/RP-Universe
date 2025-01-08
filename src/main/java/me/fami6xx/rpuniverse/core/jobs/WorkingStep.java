@@ -1,8 +1,7 @@
 package me.fami6xx.rpuniverse.core.jobs;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import com.google.gson.annotations.SerializedName;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
@@ -10,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.json.simple.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,14 +33,20 @@ public class WorkingStep {
 
     private UUID uuid = UUID.randomUUID();
     private UUID jobUUID;
-    private List<Location> workingLocations;
+    private transient List<Location> workingLocations = new ArrayList<>();
+    @SerializedName("workingLocations")
+    private List<JsonObject> workingLocationsJson = new ArrayList<>();
     private int timeForStep; // In ticks
 
     // Optional item requirement
-    private ItemStack itemNeeded;   // Can be null
+    private transient ItemStack itemNeeded; // Can be null
+    @SerializedName("itemNeeded")
+    private JsonElement itemNeededJson;
     private int amountOfItemNeeded; // Can be 0
 
-    private List<PossibleDrop> possibleDrops = new ArrayList<>();
+    private transient List<PossibleDrop> possibleDrops = new ArrayList<>();
+    @SerializedName("possibleDrops")
+    private List<JsonObject> possibleDropsJson = new ArrayList<>();
 
     private int neededPermissionLevel; // Must be more than zero
     private boolean interactableFirstStage = false;
@@ -268,13 +274,78 @@ public class WorkingStep {
         return yaml.saveToString();
     }
 
+    /**
+     * Converts this WorkingStep to a JSON object representation.
+     *
+     * @return A JSON object representing this WorkingStep.
+     */
     public JsonObject toJsonObject() {
+        workingLocationsJson = new ArrayList<>();
+        possibleDropsJson = new ArrayList<>();
+        itemNeededJson = null;
+
+        if (this.workingLocations != null) {
+            for (Location location : this.workingLocations) {
+                workingLocationsJson.add(GSON.toJsonTree(location, Location.class).getAsJsonObject());
+            }
+        }
+
+        if (this.itemNeeded != null) {
+            itemNeededJson = GSON.toJsonTree(this.itemNeeded, ItemStack.class);
+        }
+
+        if (this.possibleDrops != null) {
+            for (PossibleDrop drop : this.possibleDrops) {
+                JsonObject dropJson = new JsonObject();
+                dropJson.addProperty("chance", drop.getChance());
+                dropJson.add("item", GSON.toJsonTree(drop.getItem(), ItemStack.class));
+                possibleDropsJson.add(dropJson);
+            }
+        }
         return GSON.toJsonTree(this).getAsJsonObject();
     }
 
+    /**
+     * Converts a JSON object representation of a WorkingStep into an actual WorkingStep object.
+     *
+     * @param jsonObject The JSON object representation of the WorkingStep.
+     * @return The WorkingStep object created from the JSON object.
+     */
     public static WorkingStep fromJsonObject(JsonObject jsonObject) {
-        return GSON.fromJson(jsonObject, WorkingStep.class);
+        WorkingStep step = GSON.fromJson(jsonObject, WorkingStep.class);
+
+        if (step.workingLocationsJson != null) {
+            step.workingLocations = new ArrayList<>();
+            for (JsonObject locJson : step.workingLocationsJson) {
+                Location location = GSON.fromJson(locJson, Location.class);
+                step.workingLocations.add(location);
+            }
+        } else {
+            step.workingLocations = new ArrayList<>();
+        }
+
+        if (step.itemNeededJson != null) {
+            step.itemNeeded = GSON.fromJson(step.itemNeededJson, ItemStack.class);
+        } else {
+            step.itemNeeded = null;
+        }
+
+        if (step.possibleDropsJson != null) {
+            step.possibleDrops = new ArrayList<>();
+            for (JsonObject dropJson : step.possibleDropsJson) {
+                double chance = dropJson.get("chance").getAsDouble();
+                JsonPrimitive itemJson = dropJson.getAsJsonPrimitive("item");
+
+                ItemStack dropItem = GSON.fromJson(itemJson, ItemStack.class);
+                step.possibleDrops.add(new PossibleDrop(dropItem, chance));
+            }
+        } else {
+            step.possibleDrops = new ArrayList<>();
+        }
+
+        return step;
     }
+
 
     /**
      * Gets the UUID of the job that this working step belongs to.
