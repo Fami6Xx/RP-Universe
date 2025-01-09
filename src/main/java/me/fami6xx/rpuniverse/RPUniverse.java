@@ -25,6 +25,7 @@ import me.fami6xx.rpuniverse.core.misc.papi.RPUExpansion;
 import me.fami6xx.rpuniverse.core.misc.utils.NickHider;
 import me.fami6xx.rpuniverse.core.properties.PropertyManager;
 import me.fami6xx.rpuniverse.core.properties.commands.PropertiesCommand;
+import me.fami6xx.rpuniverse.core.regions.RegionManager;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -139,6 +140,8 @@ public final class RPUniverse extends JavaPlugin {
 
         this.propertyManager = new PropertyManager(this);
 
+        RegionManager.getInstance().init();
+
         this.getCommand("me").setExecutor(new MeCommand());
         this.getCommand("do").setExecutor(new DoCommand());
         this.getCommand("try").setExecutor(new TryCommand());
@@ -209,6 +212,7 @@ public final class RPUniverse extends JavaPlugin {
     @Override
     public void onDisable() {
         try {
+            RegionManager.getInstance().saveAllRegions();
             this.menuManager.disable();
             HandlerList.unregisterAll(this);
             this.jobsHandler.shutdown();

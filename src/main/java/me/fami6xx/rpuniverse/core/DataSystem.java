@@ -5,6 +5,7 @@ import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.datahandlers.IDataHandler;
 import me.fami6xx.rpuniverse.core.misc.datahandlers.JSONDataHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import me.fami6xx.rpuniverse.core.regions.RegionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
@@ -260,6 +261,8 @@ public class DataSystem implements Listener {
             dataHandler.saveJobData(job.getJobUUID().toString(), job);
         });
         RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(dataHandler::saveLockData);
+        RegionManager.getInstance().saveAllRegions();
+        RPUniverse.getInstance().getPropertyManager().saveProperties();
     }
 
     /**
