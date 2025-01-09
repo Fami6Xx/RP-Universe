@@ -1,10 +1,12 @@
 package me.fami6xx.rpuniverse.core.regions;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.google.gson.*;
 import me.fami6xx.rpuniverse.RPUniverse;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.util.*;
@@ -21,11 +23,15 @@ public class RegionManager {
     // Where we store all regions in memory
     private final Map<UUID, Region> regions = new HashMap<>();
 
+    // Which players are currently viewing which regions:
+    // Player UUID -> set of Region UUIDs
+    private final Map<UUID, Set<UUID>> viewingRegions = new HashMap<>();
+
     // File where we'll save and load region data
     private final File regionFile;
 
-    // We'll still use Gson, but do corners manually since they're transient
     private final Gson gson;
+    private BukkitTask showTask;
 
     private RegionManager() {
         File dataFolder = RPUniverse.getInstance().getDataFolder();
@@ -89,9 +95,21 @@ public class RegionManager {
                 regions.put(region.getRegionId(), region);
             }
 
+            startShowingTask();
+
             RPUniverse.getInstance().getLogger().info("Loaded " + regions.size() + " region(s) from regions.json.");
         } catch (Exception e) {
             RPUniverse.getInstance().getLogger().log(Level.SEVERE, "Failed to load regions.json!", e);
+        }
+    }
+
+    /**
+     * Saves all regions and cancels the repeating particle task.
+     */
+    public void shutdown() {
+        saveAllRegions();
+        if (showTask != null) {
+            showTask.cancel();
         }
     }
 
@@ -199,6 +217,106 @@ public class RegionManager {
             }
         }
         return inRegions;
+    }
+
+    /**
+     * Shows region boundaries to a player (repeats via the scheduled task).
+     */
+    public void showRegion(Player player, Region region) {
+        if (player == null || region == null) return;
+        viewingRegions.putIfAbsent(player.getUniqueId(), new HashSet<>());
+        viewingRegions.get(player.getUniqueId()).add(region.getRegionId());
+    }
+
+    /**
+     * Hides region boundaries (particles) for a player.
+     */
+    public void hideRegion(Player player, Region region) {
+        if (player == null || region == null) return;
+        if (viewingRegions.containsKey(player.getUniqueId())) {
+            viewingRegions.get(player.getUniqueId()).remove(region.getRegionId());
+        }
+    }
+
+    /**
+     * Checks if the player is currently showing a given region.
+     */
+    public boolean isShowingRegion(Player player, Region region) {
+        if (player == null || region == null) return false;
+        Set<UUID> set = viewingRegions.get(player.getUniqueId());
+        if (set == null) return false;
+        return set.contains(region.getRegionId());
+    }
+
+    /**
+     * Starts a repeating task that draws all "shown" regions for each player.
+     * You can change the period to 5, 10, or 20 ticks, depending on desired frequency.
+     */
+    private void startShowingTask() {
+        showTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    Set<UUID> regionIds = viewingRegions.get(player.getUniqueId());
+                    if (regionIds == null || regionIds.isEmpty()) {
+                        continue;
+                    }
+                    // For each region the player is viewing, draw its bounding box
+                    for (UUID regionId : regionIds) {
+                        Region region = regions.get(regionId);
+                        if (region != null && region.getCorner1() != null && region.getCorner2() != null) {
+                            drawRegionBoundingBox(player, region);
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(RPUniverse.getInstance(), 0L, 10L); // draws every 10 ticks
+    }
+
+    /**
+     * Draws a bounding box for the specified region using REDSTONE particles.
+     * You can adapt color, increments, etc.
+     */
+    private void drawRegionBoundingBox(Player player, Region region) {
+        World world = region.getCorner1().getWorld();
+        if (world == null || !world.equals(player.getWorld())) {
+            return; // Only show if player is in same world, or else it won't be visible
+        }
+
+        Location min = region.getMinCorner();
+        Location max = region.getMaxCorner();
+
+        double minX = Math.min(min.getBlockX(), max.getBlockX());
+        double minY = Math.min(min.getBlockY(), max.getBlockY());
+        double minZ = Math.min(min.getBlockZ(), max.getBlockZ());
+        double maxX = Math.max(min.getBlockX(), max.getBlockX()) + 1;
+        double maxY = Math.max(min.getBlockY(), max.getBlockY()) + 1;
+        double maxZ = Math.max(max.getBlockZ(), max.getBlockZ()) + 1;
+
+        double step = 0.25;
+        for (double x = minX; x <= maxX; x += step) {
+            for (double y = minY; y <= maxY; y += step) {
+                for (double z = minZ; z <= maxZ; z += step) {
+                    boolean edge = (
+                            (x == minX || x == maxX) && (y == minY || y == maxY)
+                    ) || (
+                            (x == minX || x == maxX) && (z == minZ || z == maxZ)
+                    ) || (
+                            (y == minY || y == maxY) && (z == minZ || z == maxZ)
+                    );
+
+                    if (edge) {
+                        Location newLoc = new Location(world, x, y, z);
+                        new ParticleBuilder(Particle.REDSTONE)
+                                .color(Color.BLACK)
+                                .count(0)
+                                .receivers(player)
+                                .location(newLoc)
+                                .spawn();
+                    }
+                }
+            }
+        }
     }
 
     /**

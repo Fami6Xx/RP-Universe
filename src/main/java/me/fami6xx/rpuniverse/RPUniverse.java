@@ -212,7 +212,7 @@ public final class RPUniverse extends JavaPlugin {
     @Override
     public void onDisable() {
         try {
-            RegionManager.getInstance().saveAllRegions();
+            RegionManager.getInstance().shutdown();
             this.menuManager.disable();
             HandlerList.unregisterAll(this);
             this.jobsHandler.shutdown();

@@ -13,6 +13,7 @@ import me.fami6xx.rpuniverse.core.regions.Region;
 import me.fami6xx.rpuniverse.core.regions.RegionManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -207,6 +208,15 @@ public class RPUCoreCommand implements CommandExecutor {
             case "delete":
                 deleteRegion(player, args);
                 break;
+            case "show":
+                showRegionParticles(player, args);
+                break;
+            case "hide":
+                hideRegionParticles(player, args);
+                break;
+            case "tp":
+                teleportToRegion(player, args);
+                break;
             default:
                 FamiUtils.sendMessageWithPrefix(player, "&cUnknown region subcommand. Use &f/rpu region &cfor help.");
                 break;
@@ -303,6 +313,9 @@ public class RPUCoreCommand implements CommandExecutor {
         FamiUtils.sendMessage(player, "&a/rpu region create <name> &7- Create a region with your selected corners");
         FamiUtils.sendMessage(player, "&a/rpu region list &7- List all regions");
         FamiUtils.sendMessage(player, "&a/rpu region delete <name> &7- Delete a region by name");
+        FamiUtils.sendMessage(player, "&a/rpu region show <name> &7- Show region boundaries with particles");
+        FamiUtils.sendMessage(player, "&a/rpu region hide <name> &7- Hide region boundaries");
+        FamiUtils.sendMessage(player, "&a/rpu region tp <name> &7- Teleport to region center");
     }
 
     private void resetData(Player player) {
@@ -361,5 +374,78 @@ public class RPUCoreCommand implements CommandExecutor {
             }
         });
         RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().remove(player.getUniqueId());
+    }
+
+    private void showRegionParticles(Player player, String[] args) {
+        if (args.length < 3) {
+            FamiUtils.sendMessageWithPrefix(player, "&cUsage: /rpu region show <name>");
+            return;
+        }
+        String name = args[2];
+        Region region = RegionManager.getInstance().getRegionByName(name);
+        if (region == null) {
+            FamiUtils.sendMessageWithPrefix(player, "&cRegion not found: " + name);
+            return;
+        }
+        if (RegionManager.getInstance().isShowingRegion(player, region)) {
+            FamiUtils.sendMessageWithPrefix(player,
+                    "&cYou are already showing this region's boundaries!");
+            return;
+        }
+        RegionManager.getInstance().showRegion(player, region);
+        FamiUtils.sendMessageWithPrefix(player,
+                "&aShowing region &e" + region.getName() + "&a with particles.");
+    }
+
+    private void hideRegionParticles(Player player, String[] args) {
+        if (args.length < 3) {
+            FamiUtils.sendMessageWithPrefix(player, "&cUsage: /rpu region hide <name>");
+            return;
+        }
+        String name = args[2];
+        Region region = RegionManager.getInstance().getRegionByName(name);
+        if (region == null) {
+            FamiUtils.sendMessageWithPrefix(player, "&cRegion not found: " + name);
+            return;
+        }
+        if (!RegionManager.getInstance().isShowingRegion(player, region)) {
+            FamiUtils.sendMessageWithPrefix(player,
+                    "&cYou are not currently showing that region!");
+            return;
+        }
+        RegionManager.getInstance().hideRegion(player, region);
+        FamiUtils.sendMessageWithPrefix(player,
+                "&aRegion &e" + region.getName() + "&a is now hidden.");
+    }
+
+    private void teleportToRegion(Player player, String[] args) {
+        if (args.length < 3) {
+            FamiUtils.sendMessageWithPrefix(player, "&cUsage: /rpu region tp <name>");
+            return;
+        }
+        String name = args[2];
+        Region region = RegionManager.getInstance().getRegionByName(name);
+        if (region == null) {
+            FamiUtils.sendMessageWithPrefix(player, "&cRegion not found: " + name);
+            return;
+        }
+        if (region.getCorner1() == null || region.getCorner2() == null) {
+            FamiUtils.sendMessageWithPrefix(player, "&cRegion corners invalid. Cannot teleport.");
+            return;
+        }
+
+        Location min = region.getMinCorner();
+        Location max = region.getMaxCorner();
+        World w = min.getWorld();
+        if (w == null) {
+            FamiUtils.sendMessageWithPrefix(player, "&cRegion's world is invalid. Cannot teleport.");
+            return;
+        }
+        double centerX = (min.getX() + max.getX()) / 2.0;
+        double centerY = (min.getY() + max.getY()) / 2.0;
+        double centerZ = (min.getZ() + max.getZ()) / 2.0;
+        Location center = new Location(w, centerX, centerY, centerZ);
+        player.teleport(center);
+        FamiUtils.sendMessageWithPrefix(player, "&aTeleported to center of region &e" + region.getName() + "&a!");
     }
 }

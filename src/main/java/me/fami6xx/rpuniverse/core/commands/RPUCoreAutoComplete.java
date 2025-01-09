@@ -20,14 +20,8 @@ import java.util.stream.Collectors;
 public class RPUCoreAutoComplete implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        // Only handle /rpu command
-        if (!command.getName().equalsIgnoreCase("rpu")) {
-            return null;
-        }
-
         if (args.length == 1) {
-            List<String> mainCommands = Arrays.asList("ck", "addjob", "removejob", "region");
-            return filterStartingWith(args[0], mainCommands);
+            return Arrays.asList("ck", "addjob", "removejob", "region");
         }
 
         if (args.length >= 2) {
@@ -75,7 +69,7 @@ public class RPUCoreAutoComplete implements TabCompleter {
     }
 
     private List<String> handleRegionAutoComplete(String[] args) {
-        List<String> regionSubCommands = Arrays.asList("pos1", "pos2", "create", "list", "delete");
+        List<String> regionSubCommands = Arrays.asList("pos1", "pos2", "create", "list", "delete", "show", "hide", "tp");
         if (args.length == 2) {
             return filterStartingWith(args[1], regionSubCommands);
         }
@@ -83,9 +77,12 @@ public class RPUCoreAutoComplete implements TabCompleter {
             String subCommand = args[1].toLowerCase();
             switch (subCommand) {
                 case "create":
+                case "tp":
+                case "hide":
+                case "show":
                 case "delete":
                     // Suggest region names based on context
-                    if (subCommand.equals("delete")) {
+                    if (subCommand.equals("delete") || subCommand.equals("tp") || subCommand.equals("hide") || subCommand.equals("show")) {
                         return RegionManager.getInstance().getAllRegions().stream()
                                 .map(Region::getName)
                                 .filter(name -> name.toLowerCase().startsWith(args[2].toLowerCase()))
