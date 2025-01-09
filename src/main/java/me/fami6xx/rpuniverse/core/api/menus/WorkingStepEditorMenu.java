@@ -190,7 +190,7 @@ public class WorkingStepEditorMenu extends Menu {
                 "Manage Items Needed",
                 "Click to view or add needed items."));
 
-        inventory.setItem(24, createMenuItem(Material.CHEST,
+        inventory.setItem(24, createMenuItem(Material.ENDER_CHEST,
                 "Manage Possible Drops",
                 "Click to edit the possible drops."));
 
