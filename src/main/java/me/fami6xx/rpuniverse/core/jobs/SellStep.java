@@ -28,8 +28,8 @@ public class SellStep {
 
     private UUID uuid = UUID.randomUUID();
     private UUID jobUUID;
-    private Location location;
-    private ItemStack itemToSell;
+    private transient Location location;
+    private transient ItemStack itemToSell;
     private double itemValue; // The value of the item
     private int timeToSell; // In ticks
     private int maxSellAmount;
