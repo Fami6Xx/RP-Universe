@@ -28,7 +28,7 @@ public class WorkingStepNeededItemsMenu extends EasyPaginatedMenu {
      */
     @Override
     public String getMenuName() {
-        return FamiUtils.format("&aNeeded Items");
+        return FamiUtils.formatWithPrefix("&aNeeded Items");
     }
 
     /**
@@ -67,13 +67,32 @@ public class WorkingStepNeededItemsMenu extends EasyPaginatedMenu {
         if (e.getCurrentItem().getType() == Material.STONE_BUTTON) return;
 
         int slot = e.getSlot();
+
+        if (slot == 45) {
+            ItemStack handItem = e.getWhoClicked().getInventory().getItemInMainHand();
+            if (handItem == null || handItem.getType() == Material.AIR) {
+                e.getWhoClicked().sendMessage(FamiUtils.formatWithPrefix("&cYou must hold an item in your hand to add it."));
+                return;
+            }
+            NeededItem newNeededItem = new NeededItem(handItem.clone().asOne(), 1);
+            workingStep.addNeededItem(newNeededItem);
+            super.open();
+            return;
+        }
+
         int indexClicked = getClickedItemIndex(slot);
         if (indexClicked < 0 || indexClicked >= workingStep.getNeededItems().size()) return;
 
         NeededItem clickedNeededItem = workingStep.getNeededItems().get(indexClicked);
 
         if (e.isShiftClick()) {
-            clickedNeededItem.setAmount(clickedNeededItem.getAmount() + 1);
+            if (e.isLeftClick()) {
+                clickedNeededItem.setAmount(clickedNeededItem.getAmount() + 1);
+            } else if (e.isRightClick()) {
+                if (clickedNeededItem.getAmount() > 1) {
+                    clickedNeededItem.setAmount(clickedNeededItem.getAmount() - 1);
+                }
+            }
         } else {
             workingStep.removeNeededItem(clickedNeededItem);
         }
@@ -85,7 +104,7 @@ public class WorkingStepNeededItemsMenu extends EasyPaginatedMenu {
      */
     @Override
     public void addAdditionalItems() {
-        inventory.setItem(52, makeAddItemButton());
+        inventory.setItem(45, makeAddItemButton());
     }
 
     /**
@@ -108,28 +127,6 @@ public class WorkingStepNeededItemsMenu extends EasyPaginatedMenu {
      */
     private int getClickedItemIndex(int slot) {
         return getSlotIndex(slot);
-    }
-
-    /**
-     * Handles menu clicks (border, add item, etc).
-     */
-    @Override
-    public void handleMenu(InventoryClickEvent e) {
-        super.handleMenu(e);
-        if (e.isCancelled()) return;
-        e.setCancelled(true);
-
-        if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
-        if (e.getSlot() == 52) {
-            ItemStack handItem = e.getWhoClicked().getInventory().getItemInMainHand();
-            if (handItem == null || handItem.getType() == Material.AIR) {
-                e.getWhoClicked().sendMessage(FamiUtils.formatWithPrefix("&cYou must hold an item in your hand to add it."));
-                return;
-            }
-            NeededItem newNeededItem = new NeededItem(handItem.clone(), 1);
-            workingStep.addNeededItem(newNeededItem);
-            super.open();
-        }
     }
 
     @Override
