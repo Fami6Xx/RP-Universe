@@ -1,6 +1,11 @@
 package me.fami6xx.rpuniverse.core.jobs;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
+import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,6 +21,10 @@ import java.util.logging.Logger;
  */
 public class SellStep {
     private static final Logger LOGGER = RPUniverse.getInstance().getLogger();
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(Location.class, new LocationAdapter())
+            .registerTypeAdapter(ItemStack.class, new ItemStackAdapter())
+            .create();
 
     private UUID uuid = UUID.randomUUID();
     private UUID jobUUID;
@@ -216,6 +225,46 @@ public class SellStep {
         yaml.set("name", name);
         yaml.set("description", description);
         return yaml.saveToString();
+    }
+
+    /**
+     * Converts this SellStep to a JSON object (similar to {@link WorkingStep#toJsonObject()}).
+     *
+     * @return A {@link JsonObject} representing this SellStep.
+     */
+    public JsonObject toJsonObject() {
+        JsonObject root = GSON.toJsonTree(this).getAsJsonObject();
+
+        // Overwrite 'location' field in JSON with the properly adapted location
+        if (this.location != null) {
+            root.add("location", GSON.toJsonTree(this.location, Location.class));
+        }
+
+        // Overwrite 'itemToSell' field in JSON with the properly adapted item
+        if (this.itemToSell != null) {
+            root.add("itemToSell", GSON.toJsonTree(this.itemToSell, ItemStack.class));
+        }
+
+        return root;
+    }
+
+    /**
+     * Creates a SellStep from its JSON object (similar to {@link WorkingStep#fromJsonObject(JsonObject)}).
+     *
+     * @param jsonObject The JSON representation of a SellStep.
+     * @return A new {@link SellStep} instance populated from the JSON data.
+     */
+    public static SellStep fromJsonObject(JsonObject jsonObject) {
+        SellStep step = GSON.fromJson(jsonObject, SellStep.class);
+
+        if (jsonObject.has("location")) {
+            step.location = GSON.fromJson(jsonObject.get("location"), Location.class);
+        }
+        if (jsonObject.has("itemToSell")) {
+            step.itemToSell = GSON.fromJson(jsonObject.get("itemToSell"), ItemStack.class);
+        }
+
+        return step;
     }
 
     /**
