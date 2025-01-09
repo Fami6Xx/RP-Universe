@@ -87,64 +87,137 @@ public class SellStep {
         this.description = description;
     }
 
-    // Getters and Setters
-
+    /**
+     * Gets the UUID of this SellStep.
+     *
+     * @return The UUID of this SellStep.
+     */
     public UUID getUuid() {
         return uuid;
     }
 
+    /**
+     * Gets the UUID of the job this SellStep belongs to.
+     *
+     * @return The UUID of the job.
+     */
     public UUID getJobUUID() {
         return jobUUID;
     }
 
+    /**
+     * Sets the UUID of the job this SellStep belongs to.
+     *
+     * @param jobUUID The new UUID of the job.
+     */
     public void setJobUUID(@Nonnull UUID jobUUID) {
         this.jobUUID = jobUUID;
     }
 
+    /**
+     * Gets the location where the sell step is performed.
+     *
+     * @return The location of the sell step.
+     */
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Sets the location where the sell step is performed.
+     *
+     * @param location The new location of the sell step.
+     */
     public void setLocation(@Nonnull Location location) {
         this.location = location;
     }
 
+    /**
+     * Gets the item that players can sell.
+     *
+     * @return The item to sell.
+     */
     public ItemStack getItemToSell() {
         return itemToSell;
     }
 
+    /**
+     * Sets the item that players can sell.
+     *
+     * @param itemToSell The new item to sell.
+     */
     public void setItemToSell(@Nonnull ItemStack itemToSell) {
         this.itemToSell = itemToSell;
     }
 
+    /**
+     * Gets the value of the item (per unit).
+     *
+     * @return The value of the item.
+     */
     public double getItemValue() {
         return itemValue;
     }
 
+    /**
+     * Sets the value of the item (per unit).
+     *
+     * @param itemValue The new value of the item.
+     */
     public void setItemValue(double itemValue) {
         this.itemValue = itemValue;
     }
 
+    /**
+     * Gets the time it takes to sell the item (in ticks).
+     *
+     * @return The time to sell the item.
+     */
     public int getTimeToSell() {
         return timeToSell;
     }
 
+    /**
+     * Sets the time it takes to sell the item (in ticks).
+     *
+     * @param timeToSell The new time to sell the item.
+     */
     public void setTimeToSell(int timeToSell) {
         this.timeToSell = timeToSell;
     }
 
+    /**
+     * Gets the maximum number of items a player can sell at once.
+     *
+     * @return The maximum sell amount.
+     */
     public int getMaxSellAmount() {
         return maxSellAmount;
     }
 
+    /**
+     * Sets the maximum number of items a player can sell at once.
+     *
+     * @param maxSellAmount The new maximum sell amount.
+     */
     public void setMaxSellAmount(int maxSellAmount) {
         this.maxSellAmount = maxSellAmount;
     }
 
+    /**
+     * Gets the percentage of the sale price that goes to the player.
+     *
+     * @return The player percentage.
+     */
     public double getPlayerPercentage() {
         return playerPercentage;
     }
 
+    /**
+     * Sets the percentage of the sale price that goes to the player.
+     *
+     * @param playerPercentage The new player percentage.
+     */
     public void setPlayerPercentage(double playerPercentage) {
         if (playerPercentage < 0.0 || playerPercentage > 100.0) {
             throw new IllegalArgumentException("Player percentage must be between 0 and 100.");
@@ -152,10 +225,20 @@ public class SellStep {
         this.playerPercentage = playerPercentage;
     }
 
+    /**
+     * Gets the percentage of the sale price that goes to the job.
+     *
+     * @return The job percentage.
+     */
     public double getJobPercentage() {
         return jobPercentage;
     }
 
+    /**
+     * Sets the percentage of the sale price that goes to the job.
+     *
+     * @param jobPercentage The new job percentage.
+     */
     public void setJobPercentage(double jobPercentage) {
         if (jobPercentage < 0.0 || jobPercentage > 100.0) {
             throw new IllegalArgumentException("Job percentage must be between 0 and 100.");
@@ -163,18 +246,38 @@ public class SellStep {
         this.jobPercentage = jobPercentage;
     }
 
+    /**
+     * Gets the name of the sell step.
+     *
+     * @return The name of the sell step.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name of the sell step.
+     *
+     * @param name The new name of the sell step.
+     */
     public void setName(@Nonnull String name) {
         this.name = name;
     }
 
+    /**
+     * Gets the description of the sell step.
+     *
+     * @return The description of the sell step.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Sets the description of the sell step.
+     *
+     * @param description The new description of the sell step.
+     */
     public void setDescription(@Nonnull String description) {
         this.description = description;
     }
@@ -210,6 +313,11 @@ public class SellStep {
         }
     }
 
+    /**
+     * Converts this SellStep to a YAML string representation.
+     *
+     * @return A YAML string representing this SellStep.
+     */
     @Override
     public String toString() {
         YamlConfiguration yaml = new YamlConfiguration();
@@ -228,7 +336,7 @@ public class SellStep {
     }
 
     /**
-     * Converts this SellStep to a JSON object (similar to {@link WorkingStep#toJsonObject()}).
+     * Converts this SellStep to a JSON object.
      *
      * @return A {@link JsonObject} representing this SellStep.
      */
@@ -249,7 +357,7 @@ public class SellStep {
     }
 
     /**
-     * Creates a SellStep from its JSON object (similar to {@link WorkingStep#fromJsonObject(JsonObject)}).
+     * Creates a SellStep from its JSON object.
      *
      * @param jsonObject The JSON representation of a SellStep.
      * @return A new {@link SellStep} instance populated from the JSON data.
