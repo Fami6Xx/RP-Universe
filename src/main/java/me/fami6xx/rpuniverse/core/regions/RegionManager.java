@@ -121,7 +121,6 @@ public class RegionManager {
 
         try (Writer writer = new FileWriter(regionFile)) {
             gson.toJson(array, writer);
-            RPUniverse.getInstance().getLogger().info("Saved " + regions.size() + " region(s) to regions.json.");
         } catch (IOException e) {
             RPUniverse.getInstance().getLogger().log(Level.SEVERE, "Failed to save regions.json!", e);
         }
