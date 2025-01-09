@@ -45,6 +45,7 @@ public class RPUCoreAutoComplete implements TabCompleter {
                         if (mainArg.equals("addjob")) {
                             return jobs.stream()
                                     .filter(job -> !data.getPlayerJobs().contains(job))
+                                    .filter(job -> job.isJobReady().isEmpty())
                                     .map(Job::getName)
                                     .filter(name -> name.toLowerCase().startsWith(args[2].toLowerCase()))
                                     .collect(Collectors.toList());
