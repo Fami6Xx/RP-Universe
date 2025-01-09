@@ -9,95 +9,30 @@ import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import me.fami6xx.rpuniverse.core.properties.PropertyManager;
+import me.fami6xx.rpuniverse.core.regions.Region;
+import me.fami6xx.rpuniverse.core.regions.RegionManager;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class RPUCoreCommand implements CommandExecutor {
+
+    // Region command maps
+    private final HashMap<UUID, Location> pos1Map = new HashMap<>();
+    private final HashMap<UUID, Location> pos2Map = new HashMap<>();
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        // Handle non-player senders
         if (!(sender instanceof Player)) {
-            if (args.length == 0) {
-                showHelp(sender);
-                return true;
-            }
-            if (args[0].equalsIgnoreCase("ck")) {
-                if (args.length < 2) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cUsage: /rpu ck <Player>"));
-                    return true;
-                }
-                Player target = sender.getServer().getPlayer(args[1]);
-                if (target == null) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer not found!"));
-                    return true;
-                }
-                BeforeCharacterKilledEvent event = new BeforeCharacterKilledEvent(target, null, RPUniverse.getInstance().getDataSystem().getPlayerData(target.getUniqueId()));
-                RPUniverse.getInstance().getServer().getPluginManager().callEvent(event);
-
-                if (event.isCancelled()) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cCharacter kill cancelled!"));
-                    return true;
-                }
-
-                // Resetting player data
-                resetData(target);
-
-                CharacterKilledEvent killedEvent = new CharacterKilledEvent(target, null, RPUniverse.getInstance().getDataSystem().getPlayerData(target.getUniqueId()));
-                RPUniverse.getInstance().getServer().getPluginManager().callEvent(killedEvent);
-
-                sender.sendMessage(FamiUtils.formatWithPrefix("&aCharacter killed!"));
-                return true;
-            }
-            if (args[0].equalsIgnoreCase("addjob")) {
-                if (args.length < 3) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cUsage: /rpu addjob <Player> <Job name>"));
-                    return true;
-                }
-                Player target = sender.getServer().getPlayer(args[1]);
-                if (target == null) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer not found!"));
-                    return true;
-                }
-                Job job = RPUniverse.getInstance().getJobsHandler().getJobByName(args[2]);
-                if (job == null) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cJob not found!"));
-                    return true;
-                }
-                if (job.isPlayerInJob(target.getUniqueId())) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer is already in this job!"));
-                    return true;
-                }
-                job.addPlayerToJob(target.getUniqueId());
-                sender.sendMessage(FamiUtils.formatWithPrefix("&aJob added!"));
-                return true;
-            }
-            if (args[0].equalsIgnoreCase("removejob")) {
-                if (args.length < 3) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cUsage: /rpu removejob <Player> <Job name>"));
-                    return true;
-                }
-                Player target = sender.getServer().getPlayer(args[1]);
-                if (target == null) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer not found!"));
-                    return true;
-                }
-                Job job = RPUniverse.getInstance().getJobsHandler().getJobByName(args[2]);
-                if (job == null) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cJob not found!"));
-                    return true;
-                }
-                if (!job.isPlayerInJob(target.getUniqueId())) {
-                    sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer is not in this job!"));
-                    return true;
-                }
-                job.removePlayerFromJob(target.getUniqueId());
-                sender.sendMessage(FamiUtils.formatWithPrefix("&aJob removed!"));
-                return true;
-            }
+            handleConsoleCommands(sender, args);
             return true;
         }
 
@@ -112,87 +47,242 @@ public class RPUCoreCommand implements CommandExecutor {
             showHelp(player);
             return true;
         }
-        if (args[0].equalsIgnoreCase("ck")) {
-            if (args.length < 2) {
-                FamiUtils.sendMessageWithPrefix(player, "&cUsage: /rpu ck <Player>");
-                return true;
-            }
-            Player target = player.getServer().getPlayer(args[1]);
-            if (target == null) {
-                FamiUtils.sendMessageWithPrefix(player, "&cPlayer not found!");
-                return true;
-            }
 
-            BeforeCharacterKilledEvent event = new BeforeCharacterKilledEvent(target, player, RPUniverse.getInstance().getDataSystem().getPlayerData(target.getUniqueId()));
-            RPUniverse.getInstance().getServer().getPluginManager().callEvent(event);
+        String mainArg = args[0].toLowerCase();
 
-            if (event.isCancelled()) {
-                FamiUtils.sendMessageWithPrefix(player, "&cCharacter kill cancelled!");
-                return true;
-            }
-
-            // Resetting player data
-            resetData(target);
-
-            CharacterKilledEvent killedEvent = new CharacterKilledEvent(target, player, RPUniverse.getInstance().getDataSystem().getPlayerData(target.getUniqueId()));
-            RPUniverse.getInstance().getServer().getPluginManager().callEvent(killedEvent);
-
-            FamiUtils.sendMessageWithPrefix(player, "&aCharacter killed!");
-            return true;
+        switch (mainArg) {
+            case "ck":
+                handleCharacterKill(player, args);
+                break;
+            case "addjob":
+                handleAddJob(player, args);
+                break;
+            case "removejob":
+                handleRemoveJob(player, args);
+                break;
+            case "region":
+                handleRegionCommand(player, args);
+                break;
+            default:
+                FamiUtils.sendMessageWithPrefix(player, "&cUnknown subcommand. Use &f/rpu &cfor help.");
+                break;
         }
-        if (args[0].equalsIgnoreCase("addjob")) {
-            if (args.length < 3) {
-                FamiUtils.sendMessageWithPrefix(player, "&cUsage: /rpu addjob <Player> <Job name>");
-                return true;
-            }
-            Player target = player.getServer().getPlayer(args[1]);
-            if (target == null) {
-                FamiUtils.sendMessageWithPrefix(player, "&cPlayer not found!");
-                return true;
-            }
-            Job job = RPUniverse.getInstance().getJobsHandler().getJobByName(args[2]);
-            if (job == null) {
-                FamiUtils.sendMessageWithPrefix(player, "&cJob not found!");
-                return true;
-            }
-            if (job.isPlayerInJob(target.getUniqueId())) {
-                FamiUtils.sendMessageWithPrefix(player, "&cPlayer is already in this job!");
-                return true;
-            }
-            if (!job.isJobReady().isEmpty()) {
-                FamiUtils.sendMessageWithPrefix(player, "&Job is not fully setup!");
-                return true;
-            }
 
-            PlayerData data = RPUniverse.getPlayerData(target.getUniqueId().toString());
-            data.addJob(job);
+        return true;
+    }
+
+    private void handleConsoleCommands(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            showHelp(sender);
+            return;
+        }
+
+        String mainArg = args[0].toLowerCase();
+
+        switch (mainArg) {
+            case "ck":
+                handleCharacterKill(sender, args);
+                break;
+            case "addjob":
+                handleAddJob(sender, args);
+                break;
+            case "removejob":
+                handleRemoveJob(sender, args);
+                break;
+            default:
+                sender.sendMessage(FamiUtils.formatWithPrefix("&cUnknown or unsupported subcommand for console."));
+                break;
+        }
+    }
+
+    private void handleCharacterKill(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cUsage: /rpu ck <Player>"));
+            return;
+        }
+        Player target = sender.getServer().getPlayer(args[1]);
+        if (target == null) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer not found!"));
+            return;
+        }
+
+        BeforeCharacterKilledEvent event = new BeforeCharacterKilledEvent(target, (sender instanceof Player) ? (Player) sender : null, RPUniverse.getInstance().getDataSystem().getPlayerData(target.getUniqueId()));
+        RPUniverse.getInstance().getServer().getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cCharacter kill cancelled!"));
+            return;
+        }
+
+        // Resetting player data
+        resetData(target);
+
+        CharacterKilledEvent killedEvent = new CharacterKilledEvent(target, (sender instanceof Player) ? (Player) sender : null, RPUniverse.getInstance().getDataSystem().getPlayerData(target.getUniqueId()));
+        RPUniverse.getInstance().getServer().getPluginManager().callEvent(killedEvent);
+
+        sender.sendMessage(FamiUtils.formatWithPrefix("&aCharacter killed!"));
+    }
+
+    private void handleAddJob(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cUsage: /rpu addjob <Player> <Job name>"));
+            return;
+        }
+        Player target = sender.getServer().getPlayer(args[1]);
+        if (target == null) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer not found!"));
+            return;
+        }
+        Job job = RPUniverse.getInstance().getJobsHandler().getJobByName(args[2]);
+        if (job == null) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cJob not found!"));
+            return;
+        }
+        if (job.isPlayerInJob(target.getUniqueId())) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer is already in this job!"));
+            return;
+        }
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            job.addPlayerToJob(target.getUniqueId());
             FamiUtils.sendMessageWithPrefix(player, "&aJob added! &8(&cCheck console if not&8)");
-            return true;
+        } else {
+            // Console handling
+            job.addPlayerToJob(target.getUniqueId());
+            sender.sendMessage(FamiUtils.formatWithPrefix("&aJob added!"));
         }
-        if (args[0].equalsIgnoreCase("removejob")) {
-            if (args.length < 3) {
-                FamiUtils.sendMessageWithPrefix(player, "&cUsage: /rpu removejob <Player> <Job name>");
-                return true;
-            }
-            Player target = player.getServer().getPlayer(args[1]);
-            if (target == null) {
-                FamiUtils.sendMessageWithPrefix(player, "&cPlayer not found!");
-                return true;
-            }
-            Job job = RPUniverse.getInstance().getJobsHandler().getJobByName(args[2]);
-            if (job == null) {
-                FamiUtils.sendMessageWithPrefix(player, "&cJob not found!");
-                return true;
-            }
-            if (!job.isPlayerInJob(target.getUniqueId())) {
-                FamiUtils.sendMessageWithPrefix(player, "&cPlayer is not in this job!");
-                return true;
-            }
+    }
+
+    private void handleRemoveJob(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cUsage: /rpu removejob <Player> <Job name>"));
+            return;
+        }
+        Player target = sender.getServer().getPlayer(args[1]);
+        if (target == null) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer not found!"));
+            return;
+        }
+        Job job = RPUniverse.getInstance().getJobsHandler().getJobByName(args[2]);
+        if (job == null) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cJob not found!"));
+            return;
+        }
+        if (!job.isPlayerInJob(target.getUniqueId())) {
+            sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer is not in this job!"));
+            return;
+        }
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
             job.removePlayerFromJob(target.getUniqueId());
             FamiUtils.sendMessageWithPrefix(player, "&aJob removed!");
-            return true;
+        } else {
+            // Console handling
+            job.removePlayerFromJob(target.getUniqueId());
+            sender.sendMessage(FamiUtils.formatWithPrefix("&aJob removed!"));
         }
-        return true;
+    }
+
+    private void handleRegionCommand(Player player, String[] args) {
+        if (args.length < 2) {
+            showRegionHelp(player);
+            return;
+        }
+
+        String subCommand = args[1].toLowerCase();
+
+        switch (subCommand) {
+            case "pos1":
+                setRegionPos1(player);
+                break;
+            case "pos2":
+                setRegionPos2(player);
+                break;
+            case "create":
+                createRegion(player, args);
+                break;
+            case "list":
+                listRegions(player);
+                break;
+            case "delete":
+                deleteRegion(player, args);
+                break;
+            default:
+                FamiUtils.sendMessageWithPrefix(player, "&cUnknown region subcommand. Use &f/rpu region &cfor help.");
+                break;
+        }
+    }
+
+    private void setRegionPos1(Player player) {
+        Location loc = player.getLocation();
+        pos1Map.put(player.getUniqueId(), loc);
+        FamiUtils.sendMessageWithPrefix(player, "&aFirst position set: &7" +
+                loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+    }
+
+    private void setRegionPos2(Player player) {
+        Location loc = player.getLocation();
+        pos2Map.put(player.getUniqueId(), loc);
+        FamiUtils.sendMessageWithPrefix(player, "&aSecond position set: &7" +
+                loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+    }
+
+    private void createRegion(Player player, String[] args) {
+        if (args.length < 3) {
+            FamiUtils.sendMessageWithPrefix(player, "&cPlease provide a region name: /rpu region create <name>");
+            return;
+        }
+        String regionName = args[2];
+
+        Location corner1 = pos1Map.get(player.getUniqueId());
+        Location corner2 = pos2Map.get(player.getUniqueId());
+
+        if (corner1 == null || corner2 == null) {
+            FamiUtils.sendMessageWithPrefix(player, "&cYou must set both pos1 and pos2 first!");
+            return;
+        }
+
+        // Check if region with the same name exists
+        if (RegionManager.getInstance().getRegionByName(regionName) != null) {
+            FamiUtils.sendMessageWithPrefix(player, "&cA region with that name already exists!");
+            return;
+        }
+
+        // Create region
+        Region newRegion = RegionManager.getInstance().createRegion(regionName, corner1, corner2);
+        FamiUtils.sendMessageWithPrefix(player, "&aRegion &e" + regionName + "&a created with ID: &e" + newRegion.getRegionId());
+    }
+
+    private void listRegions(Player player) {
+        Collection<Region> allRegions = RegionManager.getInstance().getAllRegions();
+        if (allRegions.isEmpty()) {
+            FamiUtils.sendMessageWithPrefix(player, "&eNo regions exist yet.");
+            return;
+        }
+        FamiUtils.sendMessageWithPrefix(player, "&aExisting Regions:");
+        for (Region region : allRegions) {
+            FamiUtils.sendMessage(player,
+                    "&7- &e" + region.getName() + " &7(ID: " + region.getRegionId() + ")");
+        }
+    }
+
+    private void deleteRegion(Player player, String[] args) {
+        if (args.length < 3) {
+            FamiUtils.sendMessageWithPrefix(player, "&cUsage: /rpu region delete <name>");
+            return;
+        }
+        String name = args[2];
+        Region r = RegionManager.getInstance().getRegionByName(name);
+        if (r == null) {
+            FamiUtils.sendMessageWithPrefix(player, "&cRegion not found: " + name);
+            return;
+        }
+        boolean removed = RegionManager.getInstance().deleteRegion(r.getRegionId());
+        if (removed) {
+            FamiUtils.sendMessageWithPrefix(player, "&aRegion &e" + name + " &ahas been removed. &7(ID: " + r.getRegionId() + ")");
+        } else {
+            FamiUtils.sendMessageWithPrefix(player, "&cFailed to remove region: " + name);
+        }
     }
 
     public void showHelp(CommandSender sender) {
@@ -200,9 +290,19 @@ public class RPUCoreCommand implements CommandExecutor {
         sender.sendMessage(FamiUtils.formatWithPrefix("&6&lRPUniverse &7- &fHelp"));
         sender.sendMessage(FamiUtils.formatWithPrefix("&7&m                                "));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu &7- &fShow this help"));
-        sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu ck <Player> &7- &f Character kill a player"));
+        sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu ck <Player> &7- &fCharacter kill a player"));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu addjob <Player> <Job name> &7- &fAdd a job to a player"));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu removejob <Player> <Job name> &7- &fRemove a job from a player"));
+        sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu region <subcommand> &7- &fManage regions"));
+    }
+
+    private void showRegionHelp(Player player) {
+        FamiUtils.sendMessageWithPrefix(player, "&aRegion Command Help:");
+        FamiUtils.sendMessage(player, "&a/rpu region pos1 &7- Set your first selection point");
+        FamiUtils.sendMessage(player, "&a/rpu region pos2 &7- Set your second selection point");
+        FamiUtils.sendMessage(player, "&a/rpu region create <name> &7- Create a region with your selected corners");
+        FamiUtils.sendMessage(player, "&a/rpu region list &7- List all regions");
+        FamiUtils.sendMessage(player, "&a/rpu region delete <name> &7- Delete a region by name");
     }
 
     private void resetData(Player player) {
@@ -224,7 +324,7 @@ public class RPUCoreCommand implements CommandExecutor {
 
         PropertyManager propertyManager = RPUniverse.getInstance().getPropertyManager();
         propertyManager.getAllProperties().forEach(property -> {
-            if (property.getOwner().toString().equals(player.getUniqueId().toString())) {
+            if (property.getOwner() != null && property.getOwner().equals(player.getUniqueId())) {
                 property.setOwner(null);
                 property.setTrustedPlayers(new ArrayList<>());
                 propertyManager.saveProperty(property);
