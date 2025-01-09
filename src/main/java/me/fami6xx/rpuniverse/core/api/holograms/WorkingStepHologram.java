@@ -4,9 +4,7 @@ import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.actions.Action;
 import eu.decentsoftware.holograms.api.actions.ActionType;
 import eu.decentsoftware.holograms.api.actions.ClickType;
-import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
-import eu.decentsoftware.holograms.api.holograms.enums.HologramLineType;
 import eu.decentsoftware.holograms.api.utils.items.HologramItem;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.WorkingStepLocationRemovedEvent;
@@ -17,6 +15,7 @@ import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.jobs.PossibleDrop;
 import me.fami6xx.rpuniverse.core.jobs.WorkingStep;
+import me.fami6xx.rpuniverse.core.jobs.WorkingStep.NeededItem;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
@@ -35,17 +34,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class WorkingStepHologram extends famiHologram implements Listener {
-    HoloAPI api = RPUniverse.getInstance().getHoloAPI();
+    private final HoloAPI api = RPUniverse.getInstance().getHoloAPI();
     private ProgressBarString progressBar;
-    private final static Random random = new Random();
+    private static final Random random = new Random();
 
-    WorkingStep step;
-    Job job;
+    private final WorkingStep step;
+    private final Job job;
 
     public WorkingStepHologram(WorkingStep step, Location location, Job job) {
-        super(
-                DHAPI.createHologram(UUID.randomUUID().toString(), location)
-        );
+        super(DHAPI.createHologram(UUID.randomUUID().toString(), location));
 
         this.step = step;
         this.job = job;
@@ -55,9 +52,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
 
         recreatePages();
 
-        api.getVisibilityHandler().queue.add(
-                () -> api.getVisibilityHandler().addToList(getUUID(), this)
-        );
+        api.getVisibilityHandler().queue.add(() -> api.getVisibilityHandler().addToList(getUUID(), this));
         Bukkit.getPluginManager().registerEvents(this, RPUniverse.getJavaPlugin());
     }
 
@@ -98,82 +93,95 @@ public class WorkingStepHologram extends famiHologram implements Listener {
             DHAPI.removeHologramPage(getHologram(), i);
         }
         getHologram().updateAll();
+
         HologramPage page0 = DHAPI.addHologramPage(getHologram());
         DHAPI.addHologramLine(page0, FamiUtils.format("&c&l" + job.getName()));
         DHAPI.addHologramLine(page0, "");
         DHAPI.addHologramLine(page0, FamiUtils.format("&7" + step.getName()));
         DHAPI.addHologramLine(page0, FamiUtils.format("&7" + step.getDescription()));
         DHAPI.addHologramLine(page0, "");
-        // The code below is now not possible due to the items not rotating with the player's view
-//        HologramLine line = DHAPI.addHologramLine(page0, step.getItemNeeded() != null ? step.getItemNeeded() : new ItemStack(Material.BARRIER));
-//        line.setOffsetX(-0.75);
-//        line.setOffsetY(-0.3);
-//        line.setHeight(0);
-//        DHAPI.addHologramLine(page0, FamiUtils.format("&7" + step.getAmountOfItemNeeded() + "x &c»"));
-//        HologramLine line1 = DHAPI.addHologramLine(page0, step.getItemGiven() != null ? step.getItemGiven() : new ItemStack(Material.BARRIER));
-//        line1.setOffsetX(0.75);
-//        line1.setOffsetY(0.1);
-//        line1.setHeight(0);
-//        DHAPI.addHologramLine(page0, "");
         DHAPI.addHologramLine(page0, FamiUtils.format(RPUniverse.getLanguageHandler().interactToWork));
 
         if (!step.isInteractableFirstStage()) {
-            page0.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
-                @Override
-                public boolean execute(Player player, String... strings) {
-                    // Check working step conditions
-                    if(!shouldShow(player)) return true;
-                    if (step.getItemNeeded() != null && !player.getInventory().containsAtLeast(step.getItemNeeded(), step.getAmountOfItemNeeded())) {
-                        player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
-                        return true;
-                    }
+            page0.addAction(ClickType.RIGHT, new Action(
+                    new ActionType(UUID.randomUUID().toString()) {
+                        @Override
+                        public boolean execute(Player player, String... strings) {
+                            if (!shouldShow(player)) return true;
 
-                    // Remove the needed amount of item
-                    if (step.getItemNeeded() != null)
-                        removeItems(player, step.getItemNeeded(), step.getAmountOfItemNeeded());
+                            List<NeededItem> missingItems = new ArrayList<>();
+                            // Check if player has all needed items
+                            for (NeededItem neededItem : step.getNeededItems()) {
+                                if (!player.getInventory().containsAtLeast(neededItem.getItem(), neededItem.getAmount())) {
+                                    missingItems.add(neededItem);
+                                }
+                            }
 
-                    // Start working
-                    setSecondStage();
+                            if (!missingItems.isEmpty()) {
+                                player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
+                                player.sendMessage(FamiUtils.format("&7" + missingItems.stream()
+                                        .map(neededItem -> " - " + neededItem.getAmount() + "x " + (neededItem.getItem().hasItemMeta() && neededItem.getItem().getItemMeta().hasDisplayName() ? neededItem.getItem().getItemMeta().getDisplayName() : neededItem.getItem().getType().name()))
+                                        .collect(Collectors.joining("\n"))));
+                                return true;
+                            }
 
-                    return true;
-                }
-            }, ""));
+                            // Remove needed items
+                            for (NeededItem neededItem : step.getNeededItems()) {
+                                removeItems(player, neededItem.getItem(), neededItem.getAmount());
+                            }
+                            setSecondStage();
+                            return true;
+                        }
+                    }, ""
+            ));
 
             addAdminOpenAction(ClickType.LEFT, page0);
         } else {
-            page0.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
-                @Override
-                public boolean execute(Player player, String... strings) {
-                    // Check working step conditions
-                    if(!shouldShow(player)) return true;
-                    if (step.getItemNeeded() != null && !player.getInventory().containsAtLeast(step.getItemNeeded(), step.getAmountOfItemNeeded())) {
-                        player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
-                        return true;
-                    }
+            page0.addAction(ClickType.RIGHT, new Action(
+                    new ActionType(UUID.randomUUID().toString()) {
+                        @Override
+                        public boolean execute(Player player, String... strings) {
+                            if (!shouldShow(player)) return true;
 
-                    // Remove the needed amount of item
-                    if (step.getItemNeeded() != null)
-                        removeItems(player, step.getItemNeeded(), step.getAmountOfItemNeeded());
+                            List<NeededItem> missingItems = new ArrayList<>();
+                            // Check if player has all needed items
+                            for (NeededItem neededItem : step.getNeededItems()) {
+                                if (!player.getInventory().containsAtLeast(neededItem.getItem(), neededItem.getAmount())) {
+                                    missingItems.add(neededItem);
+                                }
+                            }
 
-                    // Start working
-                    new WorkingStepInteractableMenu(
-                            RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
-                            () -> setSecondStage()
-                    ).open();
+                            if (!missingItems.isEmpty()) {
+                                player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
+                                player.sendMessage(FamiUtils.format("&7" + missingItems.stream()
+                                        .map(neededItem -> " - " + neededItem.getAmount() + "x " + (neededItem.getItem().hasItemMeta() && neededItem.getItem().getItemMeta().hasDisplayName() ? neededItem.getItem().getItemMeta().getDisplayName() : neededItem.getItem().getType().name()))
+                                        .collect(Collectors.joining("\n"))));
+                                return true;
+                            }
 
-                    return true;
-                }
-            }, ""));
+                            // Remove needed items
+                            for (NeededItem neededItem : step.getNeededItems()) {
+                                removeItems(player, neededItem.getItem(), neededItem.getAmount());
+                            }
+                            // Open the interactable menu
+                            new WorkingStepInteractableMenu(
+                                    RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
+                                    () -> setSecondStage()
+                            ).open();
+                            return true;
+                        }
+                    }, ""
+            ));
 
             addAdminOpenAction(ClickType.LEFT, page0);
         }
 
         DHAPI.updateHologram(getHologram().getName());
-        getHologram().getShowPlayers().forEach(player -> {
-            Player player1 = Bukkit.getPlayer(player);
-            if (player1 != null) {
-                if (shouldShow(player1)) {
-                    getHologram().showClickableEntities(player1);
+        getHologram().getShowPlayers().forEach(playerUuid -> {
+            Player p = Bukkit.getPlayer(playerUuid);
+            if (p != null) {
+                if (shouldShow(p)) {
+                    getHologram().showClickableEntities(p);
                 }
             }
         });
@@ -182,6 +190,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
     private void setSecondStage() {
         getHologram().hideClickableEntitiesAll();
         DHAPI.removeHologramPage(getHologram(), 0);
+
         HologramPage page1 = DHAPI.addHologramPage(getHologram());
         DHAPI.addHologramLine(page1, FamiUtils.format("&c&l" + job.getName()));
         DHAPI.addHologramLine(page1, "");
@@ -189,11 +198,13 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         DHAPI.addHologramLine(page1, "");
         DHAPI.addHologramLine(page1, FamiUtils.format("&7" + step.getWorkingStepBeingDoneMessage()));
         DHAPI.addHologramLine(page1, "");
-        progressBar = new ProgressBarString("", step.getTimeForStep(),
+
+        progressBar = new ProgressBarString(
+                "",
+                step.getTimeForStep(),
                 () -> DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString())),
                 () -> {
-                    Location baseLocation = getBaseLocation().clone();
-                    Location dropLocation = baseLocation.add(0, -1, 0);
+                    Location dropLocation = getBaseLocation().clone().add(0, -1, 0);
 
                     if (step.getPossibleDrops().isEmpty()) {
                         recreatePages();
@@ -204,103 +215,95 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                         return;
                     }
 
-                    List<PossibleDrop> dropsSorted = new ArrayList<>(step.getPossibleDrops().stream()
-                             .sorted((drop1, drop2) -> Double.compare(drop2.getChance(), drop1.getChance()))
-                             .toList());
-
+                    List<PossibleDrop> dropsSorted = new ArrayList<>(
+                            step.getPossibleDrops()
+                                    .stream()
+                                    .sorted((d1, d2) -> Double.compare(d2.getChance(), d1.getChance()))
+                                    .toList()
+                    );
                     Collections.reverse(dropsSorted);
 
-                    double random = Math.random() * 100;
-                    double chance = 0;
-
+                    double randomVal = Math.random() * 100;
+                    double cumulativeChance = 0;
                     for (PossibleDrop drop : dropsSorted) {
-                        chance += drop.getChance();
-                        if (random <= chance) {
+                        cumulativeChance += drop.getChance();
+                        if (randomVal <= cumulativeChance) {
                             dropLocation.getWorld().dropItem(dropLocation, drop.getItem());
                             break;
                         }
                     }
-
                     recreatePages();
-                });
+                }
+        );
         progressBar.runTaskTimer(RPUniverse.getJavaPlugin(), 0L, 1L);
     }
 
     private void addAdminOpenAction(ClickType clickType, HologramPage page) {
-        page.addAction(clickType, new Action(new ActionType(UUID.randomUUID().toString()) {
-            @Override
-            public boolean execute(Player player, String... strings) {
-                PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
-                if (data != null && data.getPlayerMode() == PlayerMode.ADMIN) {
-                    new WorkingStepEditorMenu(
-                            RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
-                            step
-                    ).open();
-                }
-                return true;
-            }
-        }, ""));
+        page.addAction(clickType, new Action(
+                new ActionType(UUID.randomUUID().toString()) {
+                    @Override
+                    public boolean execute(Player player, String... strings) {
+                        PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
+                        if (data != null && data.getPlayerMode() == PlayerMode.ADMIN) {
+                            new WorkingStepEditorMenu(
+                                    RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
+                                    step
+                            ).open();
+                        }
+                        return true;
+                    }
+                }, ""
+        ));
     }
 
     public boolean removeItems(Player player, ItemStack itemToRemove, int amountToRemove) {
         Inventory inventory = player.getInventory();
         int amountRemaining = amountToRemove;
 
-        // Create a clone of the item to remove to avoid modifying the original ItemStack
         ItemStack itemClone = itemToRemove.clone();
-        itemClone.setAmount(1); // Set amount to 1 for comparison purposes
+        itemClone.setAmount(1);
 
-        // Iterate over the inventory contents
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack currentItem = inventory.getItem(i);
-
             if (currentItem == null || !currentItem.isSimilar(itemClone)) {
                 continue;
             }
-
             int currentAmount = currentItem.getAmount();
 
             if (currentAmount <= amountRemaining) {
-                // Remove the entire stack
                 inventory.setItem(i, null);
                 amountRemaining -= currentAmount;
             } else {
-                // Remove part of the stack
                 currentItem.setAmount(currentAmount - amountRemaining);
                 inventory.setItem(i, currentItem);
                 amountRemaining = 0;
             }
-
-            // Break out of the loop if we've removed enough items
             if (amountRemaining <= 0) {
                 break;
             }
         }
-
         return amountRemaining <= 0;
     }
-
 
     @Override
     public boolean shouldShow(Player player) {
         boolean shouldShow = false;
-
         PlayerData data = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
+
         if (data != null) {
             if (data.getSelectedPlayerJob() != null && data.getSelectedPlayerJob().equals(job)) {
                 if (data.getSelectedPlayerJob().getPlayerPosition(player.getUniqueId()) == null) {
                     data.setSelectedPlayerJob(null);
-                    return false;
-                }else if (data.getSelectedPlayerJob().getPlayerPosition(player.getUniqueId()).isBoss()) {
+                } else if (data.getSelectedPlayerJob().getPlayerPosition(player.getUniqueId()).isBoss()) {
                     shouldShow = true;
-                }else if (data.getSelectedPlayerJob().getPlayerPosition(player.getUniqueId()).getWorkingStepPermissionLevel() >= step.getNeededPermissionLevel()) {
+                } else if (data.getSelectedPlayerJob().getPlayerPosition(player.getUniqueId())
+                        .getWorkingStepPermissionLevel() >= step.getNeededPermissionLevel()) {
                     shouldShow = true;
                 }
-            }else if (data.getPlayerMode() == PlayerMode.ADMIN) {
+            } else if (data.getPlayerMode() == PlayerMode.ADMIN) {
                 shouldShow = true;
             }
         }
-
         return shouldShow;
     }
 }

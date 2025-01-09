@@ -13,17 +13,10 @@ import org.json.simple.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * A working step is a step that the player must do to (optionally) consume certain items
- * and then have a chance to receive one or more drops defined in {@link PossibleDrop}.
- */
 public class WorkingStep {
     private static final Logger LOGGER = RPUniverse.getInstance().getLogger();
     private static final Gson GSON = new GsonBuilder()
@@ -36,46 +29,28 @@ public class WorkingStep {
     private transient List<Location> workingLocations = new ArrayList<>();
     @SerializedName("workingLocations")
     private List<JsonObject> workingLocationsJson = new ArrayList<>();
-    private int timeForStep; // In ticks
+    private int timeForStep;
 
-    // Optional item requirement
-    private transient ItemStack itemNeeded; // Can be null
-    @SerializedName("itemNeeded")
-    private JsonElement itemNeededJson;
-    private int amountOfItemNeeded; // Can be 0
+    private transient List<NeededItem> neededItems = new ArrayList<>();
+    @SerializedName("neededItems")
+    private List<JsonObject> neededItemsJson = new ArrayList<>();
 
     private transient List<PossibleDrop> possibleDrops = new ArrayList<>();
     @SerializedName("possibleDrops")
     private List<JsonObject> possibleDropsJson = new ArrayList<>();
 
-    private int neededPermissionLevel; // Must be more than zero
+    private int neededPermissionLevel;
     private boolean interactableFirstStage = false;
-
     private String name;
     private String description;
     private String workingStepBeingDoneMessage;
 
     /**
-     * A working step is a step that the player must do to receive items. The player may optionally
-     * need a specific item in his inventory to do the step, and the resulting drops and drop chances
-     * are defined in {@link #possibleDrops}.
-     *
-     * @param workingLocations            The location(s) where the player must be to do the step.
-     * @param timeForStep                 The time in ticks that the player must remain at the location.
-     * @param itemNeeded                  The item that the player must have in their inventory (may be null).
-     * @param amountOfItemNeeded          The amount of the above item that the player must have (may be 0).
-     * @param neededPermissionLevel       The permission level required to do the step.
-     * @param name                        The name of this working step.
-     * @param description                 A short description of the working step.
-     * @param workingStepBeingDoneMessage The message displayed while the working step is being done.
-     * @param jobUUID                     The UUID of the job that this working step belongs to.
-     * @param interactableFirstStage      Whether the first stage is interactable.
-     * @param possibleDrops               A list of possible drops (each with an item and a chance).
+     * Creates a WorkingStep.
      */
     public WorkingStep(@Nonnull List<Location> workingLocations,
                        int timeForStep,
-                       @Nullable ItemStack itemNeeded,
-                       int amountOfItemNeeded,
+                       @Nonnull List<NeededItem> neededItems,
                        int neededPermissionLevel,
                        @Nonnull String name,
                        @Nonnull String description,
@@ -85,8 +60,7 @@ public class WorkingStep {
                        @Nonnull List<PossibleDrop> possibleDrops) {
         this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
-        this.itemNeeded = itemNeeded;
-        this.amountOfItemNeeded = amountOfItemNeeded;
+        this.neededItems = neededItems;
         this.neededPermissionLevel = neededPermissionLevel;
         this.name = name;
         this.description = description;
@@ -96,13 +70,9 @@ public class WorkingStep {
         this.possibleDrops = possibleDrops;
     }
 
-    /**
-     * Private constructor used for deserialization.
-     */
     private WorkingStep(@Nonnull List<Location> workingLocations,
                         int timeForStep,
-                        @Nullable ItemStack itemNeeded,
-                        int amountOfItemNeeded,
+                        @Nonnull List<NeededItem> neededItems,
                         int neededPermissionLevel,
                         @Nonnull UUID uuid,
                         @Nonnull String name,
@@ -113,8 +83,7 @@ public class WorkingStep {
                         @Nonnull List<PossibleDrop> possibleDrops) {
         this.workingLocations = workingLocations;
         this.timeForStep = timeForStep;
-        this.itemNeeded = itemNeeded;
-        this.amountOfItemNeeded = amountOfItemNeeded;
+        this.neededItems = neededItems;
         this.neededPermissionLevel = neededPermissionLevel;
         this.uuid = uuid;
         this.name = name;
@@ -126,45 +95,7 @@ public class WorkingStep {
     }
 
     /**
-     * A working step that requires no item to begin (itemNeeded = null).
-     *
-     * @param workingLocations            The location(s) where the player must be to do the step.
-     * @param timeForStep                 The time in ticks that the player must remain at the location.
-     * @param neededPermissionLevel       The permission level required to do the step.
-     * @param name                        The name of this working step.
-     * @param description                 A short description of the working step.
-     * @param workingStepBeingDoneMessage The message displayed while the working step is being done.
-     * @param jobUUID                     The UUID of the job that this working step belongs to.
-     * @param interactableFirstStage      Whether the first stage is interactable.
-     * @param possibleDrops               A list of possible drops (each with an item and a chance).
-     */
-    public WorkingStep(@Nonnull List<Location> workingLocations,
-                       int timeForStep,
-                       int neededPermissionLevel,
-                       @Nonnull String name,
-                       @Nonnull String description,
-                       @Nonnull String workingStepBeingDoneMessage,
-                       @Nonnull UUID jobUUID,
-                       boolean interactableFirstStage,
-                       @Nonnull List<PossibleDrop> possibleDrops) {
-        this(workingLocations,
-                timeForStep,
-                null,
-                0,
-                neededPermissionLevel,
-                name,
-                description,
-                workingStepBeingDoneMessage,
-                jobUUID,
-                interactableFirstStage,
-                possibleDrops);
-    }
-
-    /**
-     * Converts a string representation of a WorkingStep object into an actual WorkingStep object.
-     *
-     * @param s The string representation of the WorkingStep object (YAML).
-     * @return The WorkingStep object created from the string representation, or null if an error occurs.
+     * Builds a WorkingStep from a YAML string.
      */
     public static WorkingStep fromString(String s) {
         try {
@@ -185,26 +116,37 @@ public class WorkingStep {
             }
 
             int timeForStep = yaml.getInt("timeForStep");
-            ItemStack itemNeeded = yaml.getItemStack("itemNeeded");
-            int amountOfItemNeeded = yaml.getInt("amountOfItemNeeded", 0);
-
             int neededPermissionLevel = yaml.getInt("neededPermissionLevel");
             String name = yaml.getString("name");
             String description = yaml.getString("description");
             String workingStepBeingDoneMessage = yaml.getString("workingStepBeingDoneMessage");
             boolean interactableFirstStage = yaml.getBoolean("interactableFirstStage", false);
 
-            // Reconstruct possibleDrops
+            List<NeededItem> neededItems = new ArrayList<>();
+            List<?> rawNeededItems = yaml.getList("neededItems");
+            if (rawNeededItems != null) {
+                for (Object obj : rawNeededItems) {
+                    if (obj instanceof Map<?, ?>) {
+                        Map<String, Object> niMap = (Map<String, Object>) obj;
+                        YamlConfiguration niConfig = new YamlConfiguration();
+                        niConfig.createSection("root", niMap);
+                        ConfigurationSection section = niConfig.getConfigurationSection("root");
+                        ItemStack niItem = section.getItemStack("item");
+                        int amount = section.getInt("amount", 0);
+                        if (niItem != null) {
+                            neededItems.add(new NeededItem(niItem, amount));
+                        }
+                    }
+                }
+            }
+
             List<PossibleDrop> possibleDrops = new ArrayList<>();
             List<?> rawPossibleDrops = yaml.getList("possibleDrops");
             if (rawPossibleDrops != null) {
                 for (Object obj : rawPossibleDrops) {
                     if (obj instanceof Map<?, ?>) {
                         Map<String, Object> dropMap = (Map<String, Object>) obj;
-
-                        // Create a YamlConfiguration in memory
                         YamlConfiguration dropConfig = new YamlConfiguration();
-                        // Put the map under a subsection, e.g. "root"
                         dropConfig.createSection("root", dropMap);
                         ConfigurationSection section = dropConfig.getConfigurationSection("root");
 
@@ -221,8 +163,7 @@ public class WorkingStep {
             return new WorkingStep(
                     workingLocations,
                     timeForStep,
-                    itemNeeded,
-                    amountOfItemNeeded,
+                    neededItems,
                     neededPermissionLevel,
                     uuid,
                     name,
@@ -233,16 +174,13 @@ public class WorkingStep {
                     possibleDrops
             );
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An error occurred while parsing WorkingStep object from string {\n"
-                    + s + "\n}, with error: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "An error occurred while parsing WorkingStep from string: " + e.getMessage());
             return null;
         }
     }
 
     /**
-     * Converts this WorkingStep to a YAML string representation.
-     *
-     * @return A YAML string representing this WorkingStep.
+     * Converts this WorkingStep to a YAML string.
      */
     @Override
     public String toString() {
@@ -251,17 +189,21 @@ public class WorkingStep {
         yaml.set("jobUUID", jobUUID.toString());
         yaml.set("workingLocations", workingLocations);
         yaml.set("timeForStep", timeForStep);
-        if (itemNeeded != null) {
-            yaml.set("itemNeeded", itemNeeded);
-        }
-        yaml.set("amountOfItemNeeded", amountOfItemNeeded);
         yaml.set("neededPermissionLevel", neededPermissionLevel);
         yaml.set("name", name);
         yaml.set("description", description);
         yaml.set("workingStepBeingDoneMessage", workingStepBeingDoneMessage);
         yaml.set("interactableFirstStage", interactableFirstStage);
 
-        // Serialize possibleDrops
+        List<YamlConfiguration> serializedNeededItems = new ArrayList<>();
+        for (NeededItem ni : neededItems) {
+            YamlConfiguration niConfig = new YamlConfiguration();
+            niConfig.set("item", ni.getItem());
+            niConfig.set("amount", ni.getAmount());
+            serializedNeededItems.add(niConfig);
+        }
+        yaml.set("neededItems", serializedNeededItems);
+
         List<YamlConfiguration> serializedDrops = new ArrayList<>();
         for (PossibleDrop drop : possibleDrops) {
             YamlConfiguration dropConfig = new YamlConfiguration();
@@ -275,23 +217,17 @@ public class WorkingStep {
     }
 
     /**
-     * Converts this WorkingStep to a JSON object representation.
-     *
-     * @return A JSON object representing this WorkingStep.
+     * Converts this WorkingStep to a JSON object.
      */
     public JsonObject toJsonObject() {
         workingLocationsJson = new ArrayList<>();
         possibleDropsJson = new ArrayList<>();
-        itemNeededJson = null;
+        neededItemsJson = new ArrayList<>();
 
         if (this.workingLocations != null) {
             for (Location location : this.workingLocations) {
                 workingLocationsJson.add(GSON.toJsonTree(location, Location.class).getAsJsonObject());
             }
-        }
-
-        if (this.itemNeeded != null) {
-            itemNeededJson = GSON.toJsonTree(this.itemNeeded, ItemStack.class);
         }
 
         if (this.possibleDrops != null) {
@@ -302,14 +238,21 @@ public class WorkingStep {
                 possibleDropsJson.add(dropJson);
             }
         }
+
+        if (this.neededItems != null) {
+            for (NeededItem ni : this.neededItems) {
+                JsonObject niJson = new JsonObject();
+                niJson.addProperty("amount", ni.getAmount());
+                niJson.add("item", GSON.toJsonTree(ni.getItem(), ItemStack.class));
+                neededItemsJson.add(niJson);
+            }
+        }
+
         return GSON.toJsonTree(this).getAsJsonObject();
     }
 
     /**
-     * Converts a JSON object representation of a WorkingStep into an actual WorkingStep object.
-     *
-     * @param jsonObject The JSON object representation of the WorkingStep.
-     * @return The WorkingStep object created from the JSON object.
+     * Converts a JSON object to a WorkingStep.
      */
     public static WorkingStep fromJsonObject(JsonObject jsonObject) {
         WorkingStep step = GSON.fromJson(jsonObject, WorkingStep.class);
@@ -324,244 +267,237 @@ public class WorkingStep {
             step.workingLocations = new ArrayList<>();
         }
 
-        if (step.itemNeededJson != null) {
-            step.itemNeeded = GSON.fromJson(step.itemNeededJson, ItemStack.class);
-        } else {
-            step.itemNeeded = null;
-        }
-
         if (step.possibleDropsJson != null) {
             step.possibleDrops = new ArrayList<>();
             for (JsonObject dropJson : step.possibleDropsJson) {
                 double chance = dropJson.get("chance").getAsDouble();
-                JsonPrimitive itemJson = dropJson.getAsJsonPrimitive("item");
-
-                ItemStack dropItem = GSON.fromJson(itemJson, ItemStack.class);
+                JsonElement itemElement = dropJson.get("item");
+                ItemStack dropItem = GSON.fromJson(itemElement, ItemStack.class);
                 step.possibleDrops.add(new PossibleDrop(dropItem, chance));
             }
         } else {
             step.possibleDrops = new ArrayList<>();
         }
 
+        if (step.neededItemsJson != null) {
+            step.neededItems = new ArrayList<>();
+            for (JsonObject niJson : step.neededItemsJson) {
+                int amount = niJson.get("amount").getAsInt();
+                JsonElement itemElement = niJson.get("item");
+                ItemStack niItem = GSON.fromJson(itemElement, ItemStack.class);
+                step.neededItems.add(new NeededItem(niItem, amount));
+            }
+        } else {
+            step.neededItems = new ArrayList<>();
+        }
+
         return step;
     }
 
-
     /**
-     * Gets the UUID of the job that this working step belongs to.
-     *
-     * @return The UUID of the job.
+     * Gets job UUID.
      */
     public UUID getJobUUID() {
         return jobUUID;
     }
 
     /**
-     * Gets the name of this working step.
-     *
-     * @return The name of the working step.
+     * Gets name.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Sets the name of this working step.
-     *
-     * @param name The new name of the working step.
+     * Sets name.
      */
     public void setName(@Nonnull String name) {
         this.name = name;
     }
 
     /**
-     * Gets the description of this working step.
-     *
-     * @return The description of the working step.
+     * Gets description.
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * Sets the description of this working step.
-     *
-     * @param description The new description of the working step.
+     * Sets description.
      */
     public void setDescription(@Nonnull String description) {
         this.description = description;
     }
 
     /**
-     * Gets the message displayed while the working step is being done.
-     *
-     * @return The message displayed while the working step is being done.
+     * Gets working step being done message.
      */
     public String getWorkingStepBeingDoneMessage() {
         return workingStepBeingDoneMessage;
     }
 
     /**
-     * Sets the message displayed while the working step is being done.
-     *
-     * @param workingStepBeingDoneMessage The new message displayed while the working step is being done.
+     * Sets working step being done message.
      */
     public void setWorkingStepBeingDoneMessage(@Nonnull String workingStepBeingDoneMessage) {
         this.workingStepBeingDoneMessage = workingStepBeingDoneMessage;
     }
 
     /**
-     * Gets the permission level required to do the step.
-     *
-     * @return The permission level required to do the step.
+     * Gets needed permission level.
      */
     public int getNeededPermissionLevel() {
         return neededPermissionLevel;
     }
 
     /**
-     * Sets the permission level required to do the step.
-     *
-     * @param neededPermissionLevel The new permission level required to do the step.
+     * Sets needed permission level.
      */
     public void setNeededPermissionLevel(int neededPermissionLevel) {
         this.neededPermissionLevel = neededPermissionLevel;
     }
 
     /**
-     * Gets the location(s) where the player must be to do the step.
-     *
-     * @return The location(s) where the player must be to do the step.
+     * Gets working locations.
      */
     public List<Location> getWorkingLocations() {
         return workingLocations;
     }
 
     /**
-     * Sets the location(s) where the player must be to do the step.
-     *
-     * @param workingLocations The new location(s) where the player must be to do the step.
+     * Sets working locations.
      */
     public void setWorkingLocations(@Nonnull List<Location> workingLocations) {
         this.workingLocations = workingLocations;
     }
 
     /**
-     * Adds a location where the player must be to do the step.
-     *
-     * @param location The new location where the player must be to do the step.
+     * Adds working location.
      */
     public void addWorkingLocation(@Nonnull Location location) {
         this.workingLocations.add(location);
     }
 
     /**
-     * Removes a location where the player must be to do the step.
-     *
-     * @param location The location to remove.
+     * Removes working location.
      */
     public void removeWorkingLocation(@Nonnull Location location) {
         this.workingLocations.remove(location);
     }
 
     /**
-     * Gets the time in ticks that the player must remain at the location.
-     *
-     * @return The time in ticks that the player must remain at the location.
+     * Gets time for step.
      */
     public int getTimeForStep() {
         return timeForStep;
     }
 
     /**
-     * Sets the time in ticks that the player must remain at the location.
-     *
-     * @param timeForStep The new time in ticks that the player must remain at the location.
+     * Sets time for step.
      */
     public void setTimeForStep(int timeForStep) {
         this.timeForStep = timeForStep;
     }
 
     /**
-     * Gets the item that the player must have in their inventory.
-     *
-     * @return The item that the player must have in their inventory, or null if no item is needed.
-     */
-    @Nullable
-    public ItemStack getItemNeeded() {
-        return itemNeeded;
-    }
-
-    /**
-     * Sets the item that the player must have in their inventory.
-     *
-     * @param itemNeeded The new item that the player must have in their inventory.
-     */
-    public void setItemNeeded(@Nullable ItemStack itemNeeded) {
-        this.itemNeeded = itemNeeded;
-    }
-
-    /**
-     * Gets the amount of the item that the player must have.
-     *
-     * @return The amount of the item that the player must have.
-     */
-    public int getAmountOfItemNeeded() {
-        return amountOfItemNeeded;
-    }
-
-    /**
-     * Sets the amount of the item that the player must have.
-     *
-     * @param amountOfItemNeeded The new amount of the item that the player must have.
-     */
-    public void setAmountOfItemNeeded(int amountOfItemNeeded) {
-        this.amountOfItemNeeded = amountOfItemNeeded;
-    }
-
-    /**
-     * Checks if the first stage is interactable.
-     *
-     * @return true if the first stage is interactable, false otherwise.
+     * Checks if first stage is interactable.
      */
     public boolean isInteractableFirstStage() {
         return interactableFirstStage;
     }
 
     /**
-     * Sets whether the first stage is interactable.
-     *
-     * @param interactableFirstStage true if the first stage is interactable, false otherwise.
+     * Sets first stage interactable.
      */
     public void setInteractableFirstStage(boolean interactableFirstStage) {
         this.interactableFirstStage = interactableFirstStage;
     }
 
     /**
-     * Gets the internal UUID of this WorkingStep.
-     *
-     * @return The internal UUID of this WorkingStep.
+     * Gets the internal UUID.
      */
     public UUID getUuid() {
         return uuid;
     }
 
     /**
-     * Gets the list of all possible drops for this WorkingStep.
-     *
-     * @return The list of all possible drops for this WorkingStep.
+     * Gets possible drops.
      */
-    @Nonnull
     public List<PossibleDrop> getPossibleDrops() {
         return possibleDrops;
     }
 
     /**
-     * Sets the list of all possible drops for this WorkingStep.
-     *
-     * @param possibleDrops A list of {@link PossibleDrop} objects, each representing an item and its drop chance.
+     * Sets possible drops.
      */
     public void setPossibleDrops(@Nonnull List<PossibleDrop> possibleDrops) {
         this.possibleDrops = possibleDrops;
+    }
+
+    /**
+     * Gets needed items.
+     */
+    public List<NeededItem> getNeededItems() {
+        return neededItems;
+    }
+
+    /**
+     * Sets needed items.
+     */
+    public void setNeededItems(@Nonnull List<NeededItem> neededItems) {
+        this.neededItems = neededItems;
+    }
+
+    /**
+     * Adds needed item.
+     */
+    public void addNeededItem(@Nonnull NeededItem neededItem) {
+        this.neededItems.add(neededItem);
+    }
+
+    /**
+     * Removes needed item.
+     */
+    public void removeNeededItem(@Nonnull NeededItem neededItem) {
+        this.neededItems.remove(neededItem);
+    }
+
+    public static class NeededItem {
+        private transient ItemStack item;
+        private int amount;
+        private JsonElement itemJson;
+
+        public NeededItem(@Nonnull ItemStack item, int amount) {
+            this.item = item;
+            this.amount = amount;
+        }
+
+        /**
+         * Gets item.
+         */
+        public ItemStack getItem() {
+            return item;
+        }
+
+        /**
+         * Sets item.
+         */
+        public void setItem(ItemStack item) {
+            this.item = item;
+        }
+
+        /**
+         * Gets amount.
+         */
+        public int getAmount() {
+            return amount;
+        }
+
+        /**
+         * Sets amount.
+         */
+        public void setAmount(int amount) {
+            this.amount = amount;
+        }
     }
 }

@@ -1,9 +1,9 @@
 package me.fami6xx.rpuniverse.core.api.menus;
 
+import me.fami6xx.rpuniverse.core.jobs.WorkingStep;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
-import me.fami6xx.rpuniverse.core.jobs.WorkingStep;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,19 +24,28 @@ public class WorkingStepEditorMenu extends Menu {
         this.workingStep = workingStep;
     }
 
+    /**
+     * Gets menu name.
+     */
     @Override
     public String getMenuName() {
         return FamiUtils.formatWithPrefix(ChatColor.GREEN + "Edit Working Step");
     }
 
+    /**
+     * Gets slots.
+     */
     @Override
     public int getSlots() {
-        return 54; // Full double chest size for more space
+        return 54;
     }
 
+    /**
+     * Handles menu.
+     */
     @Override
     public void handleMenu(InventoryClickEvent e) {
-        e.setCancelled(true); // Prevent taking items
+        e.setCancelled(true);
 
         ItemStack clicked = e.getCurrentItem();
         if (clicked == null || clicked.getType() == Material.AIR) return;
@@ -76,7 +85,6 @@ public class WorkingStepEditorMenu extends Menu {
                 break;
 
             case "Edit Working Locations":
-                // Opens another menu that handles working locations
                 WorkingLocationsMenu locationsMenu = new WorkingLocationsMenu(playerMenu, workingStep);
                 locationsMenu.open();
                 break;
@@ -96,46 +104,9 @@ public class WorkingStepEditorMenu extends Menu {
                 player.closeInventory();
                 break;
 
-            case "Edit Item Needed":
-                player.sendMessage(FamiUtils.formatWithPrefix("&7Please select an item in your hand to set as the needed item, then type 'complete'."));
-                playerMenu.setPendingAction((input) -> {
-                    if (input.equalsIgnoreCase("complete")) {
-                        ItemStack item = player.getInventory().getItemInMainHand();
-                        if (item.getType() == Material.AIR) {
-                            workingStep.setItemNeeded(null);
-                            player.sendMessage(FamiUtils.formatWithPrefix("&7Item needed updated to nothing."));
-                        } else {
-                            workingStep.setItemNeeded(item);
-                            player.sendMessage(FamiUtils.formatWithPrefix("&7Item needed updated to " + item.getType().name() + "."));
-                        }
-                        this.open();
-                        return;
-                    }
-                    Material material = Material.matchMaterial(input.toUpperCase());
-                    if (material != null) {
-                        workingStep.setItemNeeded(new ItemStack(material));
-                        player.sendMessage(FamiUtils.formatWithPrefix("&7Item needed updated to " + material.name() + "."));
-                        this.open();
-                    } else {
-                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid material."));
-                    }
-                });
-                player.closeInventory();
-                break;
-
-            case "Edit Amount of Item Needed":
-                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new amount of the item needed."));
-                playerMenu.setPendingAction((input) -> {
-                    try {
-                        int newAmount = Integer.parseInt(input);
-                        workingStep.setAmountOfItemNeeded(newAmount);
-                        player.sendMessage(FamiUtils.formatWithPrefix("&7Amount of item needed updated to " + newAmount + "."));
-                        this.open();
-                    } catch (NumberFormatException ex) {
-                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid number format."));
-                    }
-                });
-                player.closeInventory();
+            case "Manage Items Needed":
+                WorkingStepNeededItemsMenu neededItemsMenu = new WorkingStepNeededItemsMenu(playerMenu, workingStep);
+                neededItemsMenu.open();
                 break;
 
             case "Manage Possible Drops":
@@ -180,16 +151,17 @@ public class WorkingStepEditorMenu extends Menu {
                 break;
 
             default:
-                // Do nothing if the displayName doesn't match our known items.
                 break;
         }
     }
 
+    /**
+     * Sets menu items.
+     */
     @Override
     public void setMenuItems() {
         inventory.clear();
 
-        // Display current values in lore
         inventory.setItem(10, createMenuItem(Material.NAME_TAG,
                 "Edit Name",
                 "Current: " + workingStep.getName(),
@@ -214,33 +186,24 @@ public class WorkingStepEditorMenu extends Menu {
                 "Current: " + workingStep.getTimeForStep() + " ticks",
                 "Click to set the time required for this step."));
 
-        inventory.setItem(22, createMenuItem(Material.EMERALD,
-                "Edit Item Needed",
-                "Current: " + (workingStep.getItemNeeded() != null
-                        ? workingStep.getItemNeeded().getType().name()
-                        : "None"),
-                "Click to set the required item."));
+        inventory.setItem(22, createMenuItem(Material.CHEST,
+                "Manage Items Needed",
+                "Click to view or add needed items."));
 
-        inventory.setItem(24, createMenuItem(Material.NETHER_STAR,
-                "Edit Amount of Item Needed",
-                "Current: " + workingStep.getAmountOfItemNeeded(),
-                "Click to set the amount of the required item."));
+        inventory.setItem(24, createMenuItem(Material.CHEST,
+                "Manage Possible Drops",
+                "Click to edit the possible drops."));
 
         inventory.setItem(28, createMenuItem(Material.LEVER,
                 "Toggle Interactable First Stage",
                 "Current: " + workingStep.isInteractableFirstStage(),
                 "Click to toggle interactable first stage."));
 
-        inventory.setItem(30, createMenuItem(Material.CHEST,
-                "Manage Possible Drops",
-                "Click to edit the possible drops."));
-
         inventory.setItem(34, createMenuItem(Material.EXPERIENCE_BOTTLE,
                 "Edit Needed Permission Level",
                 "Current: " + workingStep.getNeededPermissionLevel(),
                 "Click to set the required permission level."));
 
-        // Save/Cancel
         inventory.setItem(48, createMenuItem(Material.LIME_WOOL,
                 "Save and Close",
                 "Click to save changes and close the menu."));
@@ -267,6 +230,9 @@ public class WorkingStepEditorMenu extends Menu {
         return item;
     }
 
+    /**
+     * Gets menu tags.
+     */
     @Override
     public List<MenuTag> getMenuTags() {
         return List.of(MenuTag.ADMIN);
