@@ -132,7 +132,7 @@ public final class RPUniverse extends JavaPlugin {
                 getLogger().warning("Your version of RPUniverse is outdated! Please update to the latest version.");
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            getLogger().severe("Failed to check for updates! Please check your internet connection.");
         }
 
         this.lockHandler = new LockHandler();
