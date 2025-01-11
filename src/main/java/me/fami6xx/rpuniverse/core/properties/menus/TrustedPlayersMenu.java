@@ -22,6 +22,8 @@ public class TrustedPlayersMenu extends EasyPaginatedMenu {
 
     private final Property property;
 
+    // ToDo: Make it localizable
+
     /**
      * Constructs a new TrustedPlayersMenu.
      *
@@ -35,7 +37,7 @@ public class TrustedPlayersMenu extends EasyPaginatedMenu {
 
     @Override
     public String getMenuName() {
-        return FamiUtils.format("&6Trusted Players");
+        return FamiUtils.formatWithPrefix("&6Trusted Players");
     }
 
     @Override

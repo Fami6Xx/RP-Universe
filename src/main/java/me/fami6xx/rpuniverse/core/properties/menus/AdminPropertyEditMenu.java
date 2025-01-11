@@ -37,7 +37,7 @@ public class AdminPropertyEditMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return FamiUtils.format("&cEdit Property: &7" + property.getHologramLocation().getBlockX() + ", " + property.getHologramLocation().getBlockY() + ", " + property.getHologramLocation().getBlockZ());
+        return FamiUtils.formatWithPrefix("&cEdit Property: &7" + property.getHologramLocation().getBlockX() + ", " + property.getHologramLocation().getBlockY() + ", " + property.getHologramLocation().getBlockZ());
     }
 
     @Override
