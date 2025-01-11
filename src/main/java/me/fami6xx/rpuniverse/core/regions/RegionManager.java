@@ -3,8 +3,14 @@ package me.fami6xx.rpuniverse.core.regions;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.google.gson.*;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.RegionBlockBreakEvent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -16,7 +22,7 @@ import java.util.logging.Level;
  * Manages all regions in memory and provides save/load functionality via manual JSON
  * (including corner1 and corner2). Also provides a method to get all regions containing a location.
  */
-public class RegionManager {
+public class RegionManager implements Listener {
 
     private static RegionManager instance;
 
@@ -96,6 +102,8 @@ public class RegionManager {
             }
 
             startShowingTask();
+
+            Bukkit.getPluginManager().registerEvents(this, RPUniverse.getInstance());
 
             RPUniverse.getInstance().getLogger().info("Loaded " + regions.size() + " region(s) from regions.json.");
         } catch (Exception e) {
@@ -363,5 +371,22 @@ public class RegionManager {
         float pitch = obj.has("pitch") ? obj.get("pitch").getAsFloat() : 0.0f;
 
         return new Location(w, x, y, z, yaw, pitch);
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        UUID playerId = e.getPlayer().getUniqueId();
+        viewingRegions.remove(playerId);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onBlockBreakEvent(BlockBreakEvent e) {
+        Location loc = e.getBlock().getLocation();
+        List<Region> inRegions = getRegionsContainingLocation(loc);
+        if (inRegions.isEmpty()) {
+            return;
+        }
+
+        Bukkit.getPluginManager().callEvent(new RegionBlockBreakEvent(inRegions, e));
     }
 }

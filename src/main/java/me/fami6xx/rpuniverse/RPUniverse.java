@@ -214,7 +214,6 @@ public final class RPUniverse extends JavaPlugin {
         try {
             RegionManager.getInstance().shutdown();
             this.menuManager.disable();
-            HandlerList.unregisterAll(this);
             this.jobsHandler.shutdown();
             this.holoAPI.disable();
             this.createJobStarter.stop();
@@ -226,6 +225,7 @@ public final class RPUniverse extends JavaPlugin {
             if (balanceChangeNotifier != null)
                 balanceChangeNotifier.cancel();
             this.dataSystem.shutdown();
+            HandlerList.unregisterAll(this);
         } catch (Exception ignored) {
         }
         isServerReload = true;
