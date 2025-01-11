@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.commands;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.BeforeCharacterKilledEvent;
 import me.fami6xx.rpuniverse.core.api.CharacterKilledEvent;
+import me.fami6xx.rpuniverse.core.api.RegionDeletedEvent;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
@@ -12,6 +13,7 @@ import me.fami6xx.rpuniverse.core.properties.PropertyManager;
 import me.fami6xx.rpuniverse.core.regions.Region;
 import me.fami6xx.rpuniverse.core.regions.RegionManager;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -289,6 +291,7 @@ public class RPUCoreCommand implements CommandExecutor {
         }
         boolean removed = RegionManager.getInstance().deleteRegion(r.getRegionId());
         if (removed) {
+            Bukkit.getPluginManager().callEvent(new RegionDeletedEvent(r));
             FamiUtils.sendMessageWithPrefix(player, "&aRegion &e" + name + " &ahas been removed. &7(ID: " + r.getRegionId() + ")");
         } else {
             FamiUtils.sendMessageWithPrefix(player, "&cFailed to remove region: " + name);
