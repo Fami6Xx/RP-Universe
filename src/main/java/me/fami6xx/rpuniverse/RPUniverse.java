@@ -130,7 +130,7 @@ public final class RPUniverse extends JavaPlugin {
 
         try {
             if(!compareVersions()){
-                getLogger().severe("Your version of RPUniverse is outdated! Please update to the latest version.");
+                getLogger().warning("Your version of RPUniverse is outdated! Please update to the latest version.");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
