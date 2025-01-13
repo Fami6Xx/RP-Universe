@@ -132,7 +132,7 @@ public class Property {
         StaticHologram hologram = new StaticHologram(hologramLocation, false, RPUniverse.getInstance().getConfiguration().getDouble("jobs.menuRange"), false) {
             @Override
             public boolean shouldShow(Player player) {
-                if (player == null) return true;
+                if (player == null) return false;
                 PlayerData playerData = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
                 if (playerData.getPlayerMode() == PlayerMode.ADMIN) {
                     if (getHologram() == null) return true;
@@ -151,7 +151,7 @@ public class Property {
                 if (owner == null) return true;
                 if (player.getUniqueId().toString().equals(owner.toString())) return true;
 
-                return true;
+                return false;
             }
 
             @Override
