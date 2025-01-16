@@ -54,9 +54,9 @@ public class LanguageHandler {
 
 
     // JOBS MENUS
-    public String allJobsMenuName = "&6RPUniverse &7| &cAll Jobs";
+    public String allJobsMenuName = "&6RPU &7| &cAll Jobs";
     public String allJobsMenuJobName = "&e{jobName}";
-    public String jobAdminMenuName = "&6RPUniverse &7| &c{jobName}";
+    public String jobAdminMenuName = "&6RPU &7| &c{jobName}";
     public String jobAdminMenuInformationItemDisplayName = "&cInformation";
     public String jobAdminMenuInformationItemLore = "&7Is job ready? &c{jobReady}&r~&7Job type: &c{jobType}~&7Job bank: &c{jobBank}~&r~&7Click to view more information in chat";
     public String jobAdminMenuRenameItemDisplayName = "&cRename";
@@ -77,7 +77,7 @@ public class LanguageHandler {
     public String jobAdminMenuRemoveItemLore = "&7Click to remove the job";
     public String jobAdminMenuSettingsItemDisplayName = "&cJob settings";
     public String jobAdminMenuSettingsItemLore = "&7Click to view / edit job settings";
-    public String jobBankActionsMenuName = "&6RPUniverse &7| &cJob Bank Actions";
+    public String jobBankActionsMenuName = "&6RPU &7| &cJob Bank Actions";
     public String jobBankActionsMenuAddMoneyItemDisplayName = "&cAdd Money";
     public String jobBankActionsMenuAddMoneyItemLore = "&7Click to add money to the job bank";
     public String jobBankActionsMenuRemoveMoneyItemDisplayName = "&cRemove Money";
@@ -91,7 +91,7 @@ public class LanguageHandler {
     public String jobBankActionsMenuRemoveMoneySuccessMessage = "&cYou removed money from the job bank!";
     public String jobBankActionsMenuRemoveMoneyErrorMessage = "&cYou can't remove this amount of money from the job bank!";
     public String jobBankActionsMenuRemoveMoneyNoPermissionMessage = "&cYou don't have permission to remove money from the job bank!";
-    public String jobAllPositionsMenuName = "&6RPUniverse &7| &c All positions";
+    public String jobAllPositionsMenuName = "&6RPU &7| &c All positions";
     public String jobAllPositionsMenuAddPositionItemDisplayName = "&cCreate Position";
     public String jobAllPositionsMenuAddPositionItemLore = "&7Click to start the process of creating a position";
     public String jobAllPositionsMenuMovePositionsItemDisplayName = "&cMove Positions";
@@ -100,7 +100,7 @@ public class LanguageHandler {
     public String jobAllPositionsMenuCannotEditPositionMessage = "&cYou cannot edit this position!";
     public String jobAllPositionsMenuPositionItemDisplayName = "&e{positionName}";
     public String jobAllPositionsMenuPositionItemLore = "&7Salary: &6{positionSalary}~&7Is boss? &6{positionIsBoss}~&7Click to view details";
-    public String jobPositionMenuName = "&6RPUniverse &7| &c{positionName}";
+    public String jobPositionMenuName = "&6RPU &7| &c{positionName}";
     public String jobPositionMenuRenameDisplayName = "&cRename";
     public String jobPositionMenuRenameLore = "&7Click to rename the position";
     public String jobPositionMenuRenameMessage = "&7Type the new name of the position in chat.";
@@ -119,7 +119,7 @@ public class LanguageHandler {
     public String jobPositionMenuIsDefaultLore = "&7Current: &6{isDefault}~&7Click to change if the position is a default position";
     public String jobPositionMenuDeleteDisplayName = "&cDelete";
     public String jobPositionMenuDeleteLore = "&7Click to delete the position";
-    public String jobBossLocationMenuName = "&6RPUniverse &7| &cBoss Location";
+    public String jobBossLocationMenuName = "&6RPU &7| &cBoss Location";
     public String jobBossLocationMenuChangeLocationItemDisplayName = "&cChange Location";
     public String jobBossLocationMenuChangeLocationItemLore = "&7Click to change the location of the boss menu";
     public String jobBossLocationMenuChangeLocationMessage = "&cYou changed the location of the boss menu!";
@@ -127,18 +127,18 @@ public class LanguageHandler {
     public String jobBossLocationMenuTeleportToBossMenuItemDisplayName = "&cTeleport to Boss Menu";
     public String jobBossLocationMenuTeleportToBossMenuItemLore = "&7Click to teleport to the boss menu";
     public String jobBossLocationMenuTeleportToBossMenuMessage = "&cYou teleported to the boss menu!";
-    public String jobAllPlayersMenuName = "&6RPUniverse &7| &cAll Players";
+    public String jobAllPlayersMenuName = "&6RPU &7| &cAll Players";
     public String jobAllPlayersMenuPlayerItemDisplayName = "&e{playerName}";
     public String jobAllPlayersMenuPlayerItemLore = "&7Position: &c{positionName}~&7Salary: &c{salary}~&7Online: &c{isOnline}~&7Click to view details";
     public String jobAllPlayersMenuAddPlayerItemDisplayName = "&cAdd Player";
     public String jobAllPlayersMenuAddPlayerItemLore = "&7Click to add a player to the job";
     public String errorJobNotReadyMessage = "&cThis job is not ready!";
     public String jobAllPlayersMenuAddPlayerNoAvailablePlayersMessage = "&cThere are no available players to add to the job!";
-    public String jobSelectPlayerToAddMenuName = "&6RPUniverse &7| &cSelect Player";
+    public String jobSelectPlayerToAddMenuName = "&6RPU &7| &cSelect Player";
     public String jobSelectPlayerToAddMenuPlayerItemDisplayName = "&e{playerName}";
     public String jobSelectPlayerToAddMenuPlayerItemLore = "&7Click to add this player to the job";
     public String jobSelectPlayerToAddMenuPlayerAddedMessage = "&cYou added the player to the job!";
-    public String jobPlayerMenuName = "&6RPUniverse &7| &c{playerName}";
+    public String jobPlayerMenuName = "&6RPU &7| &c{playerName}";
     public String jobPlayerMenuPositionDisplayName = "&cPosition";
     public String jobPlayerMenuPositionLore = "&7Current: &6{positionName}~&7Click to change the position";
     public String jobPlayerMenuKickDisplayName = "&cKick";
@@ -146,18 +146,18 @@ public class LanguageHandler {
     public String jobPlayerMenuKickMessage = "&cYou kicked the player from the job!";
     public String jobPlayerMenuCannotKickMessage = "&cYou cannot kick this player!";
     public String jobPlayerMenuCannotChangePositionMessage = "&cYou cannot change the position of this player!";
-    public String jobSelectPositionMenuName = "&6RPUniverse &7| &cSelect Position";
+    public String jobSelectPositionMenuName = "&6RPU &7| &cSelect Position";
     public String jobSelectPositionMenuPositionItemDisplayName = "&e{positionName}";
     public String jobSelectPositionMenuPositionItemLore = "&7Salary: &6{positionSalary}~&7Click to select this position";
     public String jobSelectPositionMenuSelectPositionMessage = "&cYou selected the position!";
-    public String jobBossMenuName = "&6RPUniverse &7| &cJob Boss Menu";
+    public String jobBossMenuName = "&6RPU &7| &cJob Boss Menu";
     public String jobMenuJobTypeBossItemDisplayName = "&cJob Type Boss Menu";
     public String jobMenuJobTypeBossItemLore = "&7Click to open the boss menu for your job type";
 
 
     // BASIC NEEDS
     public String errorBasicNeedsDisabledMessage = "&cBasic needs are disabled!";
-    public String allConsumablesMenuName = "&6RPUniverse &7| &cAll Consumables";
+    public String allConsumablesMenuName = "&6RPU &7| &cAll Consumables";
     public String allConsumableMenuAddItemDisplayName = "&cAdd Consumable";
     public String allConsumableMenuAddItemLore = "&7Click to add a consumable";
     public String allConsumableMenuAddItemMessage = "&7Hold the item you want to be added as consumable in your hand and type &cadd&7 or &ccancel&7 to cancel.";
@@ -166,7 +166,7 @@ public class LanguageHandler {
     public String allConsumableMenuAddItemMessageSuccess = "&cYou added the item as consumable!";
     public String allConsumableMenuInfoDisplayName = "&cInformation";
     public String allConsumableMenuInfoLore = "&7Click an consumable to edit it.";
-    public String editConsumableMenuName = "&6RPUniverse &7| &cEdit Consumable";
+    public String editConsumableMenuName = "&6RPU &7| &cEdit Consumable";
     public String editConsumableMenuPoopItemDisplayName = "&cPoop";
     public String editConsumableMenuPoopItemLore = "&7Current value: &c{value}~&7Click to edit the poop consumable";
     public String editConsumableMenuPeeItemDisplayName = "&cPee";
@@ -269,7 +269,7 @@ public class LanguageHandler {
     public String switchJobCommandErrorAlreadyInJob = "&cYou are already in this job!";
 
     // LOCKS
-    public String allLocksMenuName = "&6RPUniverse &7| &cAll Locks";
+    public String allLocksMenuName = "&6RPU &7| &cAll Locks";
     public String allLocksMenuCreateLockDisplayName = "&aCreate New Lock";
     public String allLocksMenuCreateLockLore = "&7Click to create a new lock.";
     public String allLocksMenuSearchDisplayName = "&aSearch";
@@ -280,14 +280,14 @@ public class LanguageHandler {
     public String createLockPrompt = "&eClick the block you want to lock.";
     public String lockCreationSuccess = "&aLock has been successfully created.";
     public String invalidLockItem = "&cThis item cannot be locked.";
-    public String createLockSelectTypeMenuName = "&6RPUniverse &7| &cSelect type of lock";
+    public String createLockSelectTypeMenuName = "&6RPU &7| &cSelect type of lock";
     public String createLockSelectTypeMenuJobLockDisplayName = "&aJob Lock";
     public String createLockSelectTypeMenuJobLockLore = "&7Lock this block for a specific job.";
     public String createLockSelectTypeMenuPlayerLockDisplayName = "&dPlayer Lock";
     public String createLockSelectTypeMenuPlayerLockLore = "&7Lock this block for a specific player or a specific set of players.";
     public String createLockSelectTypeMenuUnopenableDisplayName = "&cUnopenable";
     public String createLockSelectTypeMenuUnopenableLore = "&7Lock this block so that no one can open it.";
-    public String createLockSelectJobMenuName = "&6RPUniverse &7| &cSelect Job";
+    public String createLockSelectJobMenuName = "&6RPU &7| &cSelect Job";
     public String createLockTypeMinimalWorkingLevel = "&7Type in chat the minimal working level to open this door.";
     public String createLockCanceled = "&cYou cancelled the lock creation!";
     public String createLockTypePlayerNames = "&7Type in chat the player names separated by a comma (,) for whom the lock will apply.";
@@ -313,7 +313,7 @@ public class LanguageHandler {
     public String propertyRentableHologram = "&7&k|~&c&lProperty~&7&k|~&7This property is available for rent!~&7Click to open menu!";
     public String propertyOwnerHologram = "&7&k|~&c&lProperty~&7&k|~&7This is your property!~&7Click to open menu!";
 
-    public String buyPropertyMenuName = "&6RPUniverse &7| &cPurchase Property";
+    public String buyPropertyMenuName = "&6RPU &7| &cPurchase Property";
     public String buyPropertyMenuConfirmPurchaseItemDisplayName = "&aConfirm Purchase";
     public String buyPropertyMenuConfirmPurchaseItemLore = "&7Price: &e{price}~&7Click to confirm the purchase.";
     public String buyPropertyMenuCancelItemDisplayName = "&cCancel";
@@ -322,7 +322,7 @@ public class LanguageHandler {
     public String errorYouDoNotHaveEnoughMoneyToPurchasePropertyMessage = "&cYou do not have enough money to purchase this property!";
 
     // Rent Property Menu Strings
-    public String rentPropertyMenuName = "&6RPUniverse &7| &cRent Property";
+    public String rentPropertyMenuName = "&6RPU &7| &cRent Property";
     public String rentPropertyMenuDurationItemDisplayName = "&eRent for {duration}";
     public String rentPropertyMenuDurationItemLore = "&7Price: &e{price}~&7Click to select {duration}.";
     public String rentPropertyMenuConfirmRentItemDisplayName = "&aConfirm Rent";
@@ -334,20 +334,22 @@ public class LanguageHandler {
     public String rentPropertyMenuDurations = "1 Day:1~7 Days:7~30 Days:30";
 
     // Manage Property Menu Strings
-    public String managePropertyMenuName = "&6RPUniverse &7| &cManage Property";
+    public String managePropertyMenuName = "&6RPU &7| &cManage Property";
     public String managePropertyMenuTrustedPlayersItemDisplayName = "&eManage Trusted Players";
     public String managePropertyMenuTrustedPlayersItemLore = "&7Add or remove trusted players.~&7Click to manage.";
     public String managePropertyMenuPropertyDetailsItemDisplayName = "&eProperty Details";
     public String managePropertyMenuPropertyDetailsItemLore = "&7View property information.";
+    public String managePropertySellItemDisplayName = "&eSell Property";
+    public String managePropertySellItemLore = "&7Sell your property for &e{sellPercentage}%&7 of the price.~&7The amount money you will get: &a{sellAmount}&7$~&7Click to sell.";
     public String managePropertyMenuCloseItemDisplayName = "&cClose";
     public String managePropertyMenuCloseItemLore = "&7Click to close the menu.";
 
     // Property Details Menu Strings
-    public String propertyDetailsMenuName = "&6RPUniverse &7| &cProperty Details";
+    public String propertyDetailsMenuName = "&6RPU &7| &cProperty Details";
     public String propertyDetailsMenuBackItemDisplayName = "&cBack";
     public String propertyDetailsMenuBackItemLore = "&7Click to go back.";
     public String propertyDetailsMenuDetailsItemDisplayName = "&eProperty Details";
-    public String propertyDetailsMenuDetailsItemLore = "&7Owner: &e{owner}~&7Price: &e{price}~&7Rentable: &e{rentable}~&7Rent Start: &e{rentStart}~&7Rent Duration: &e{rentDuration} days";
+    public String propertyDetailsMenuDetailsItemLore = "&7Owner: &e{owner}~&7Price: &e{price}~&7Rentable: &e{rentable}~&7Rent Start: &e{rentStart}~&7Rent Duration: &e{rentDuration} days~&7Rent End: &e{rentEnd}";
     public String managePropertyMenuExtendRentItemDisplayName = "&eExtend Rent";
     public String managePropertyMenuExtendRentItemLore = "&7Extend your rent by 1 day.~&7Cost: &e{price}~&7Click to extend.";
 
