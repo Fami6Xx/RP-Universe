@@ -396,6 +396,48 @@ public class Property {
     }
 
     /**
+     * Sells the property, giving the owner a percentage of the price back.
+     * @param percentageBack the percentage of the price to give back (0.0 - 1.0)
+     */
+    public void sellProperty(double percentageBack) {
+        if (owner == null) return;
+        Player player = Bukkit.getPlayer(owner);
+        if (player == null) return;
+
+        RPUniverse.getInstance().getEconomy().depositPlayer(player, calculateSellAmount(percentageBack));
+        setOwner(null);
+    }
+
+    /**
+     * Calculates how much the player would get if they sold the property right now.
+     *
+     * @param percentageBack the percentage of the (price or rent-remaining-value) to give back (0.0 - 1.0)
+     * @return the amount the player would receive
+     */
+    public double calculateSellAmount(double percentageBack) {
+        // If not rentable, it’s simply the (price * percentageBack).
+        if (!rentable) {
+            return price * percentageBack;
+        }
+
+        // If rentable, calculate how many days remain in the rent period.
+        // rentStart + rentDuration = the timestamp at which renting fully expires
+        long timeRemainingMs = (rentStart + rentDuration) - System.currentTimeMillis();
+
+        // If the rent has already expired, there's no remaining time-based value.
+        if (timeRemainingMs <= 0) {
+            return 0.0;
+        }
+
+        // Convert milliseconds to days (double for partial day calculations).
+        double timeRemainingDays = timeRemainingMs / 86_400_000D; // 1000*60*60*24
+
+        // Deposit is price * timeRemainingInDays * percentageBack
+        return price * timeRemainingDays * percentageBack;
+    }
+
+
+    /**
      * Gets the list of trusted players for the property.
      *
      * @return the list of trusted players

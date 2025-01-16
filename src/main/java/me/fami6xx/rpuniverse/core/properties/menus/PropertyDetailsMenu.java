@@ -56,10 +56,12 @@ public class PropertyDetailsMenu extends Menu {
 
         if (property.getOwner() != null && property.getRentStart() > 0) {
             placeholders.put("{rentStart}", dateFormat.format(new Date(property.getRentStart())));
-            placeholders.put("{rentDuration}", String.valueOf(property.getRentDuration() / (24 * 60 * 60 * 1000L)));
+            placeholders.put("{rentDuration}", String.valueOf(((property.getRentStart() + property.getRentDuration()) - System.currentTimeMillis()) / (24 * 60 * 60 * 1000L)));
+            placeholders.put("{rentEnd}", dateFormat.format(new Date(property.getRentStart() + property.getRentDuration())));
         } else {
             placeholders.put("{rentStart}", "N/A");
             placeholders.put("{rentDuration}", "N/A");
+            placeholders.put("{rentEnd}", "N/A");
         }
 
         String[] loreLines = RPUniverse.getLanguageHandler().propertyDetailsMenuDetailsItemLore.split("~");
