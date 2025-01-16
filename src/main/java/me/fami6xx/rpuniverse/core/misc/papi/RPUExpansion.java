@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.misc.papi;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
+import me.fami6xx.rpuniverse.core.misc.VersionInfo;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ public class RPUExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0.0";
+        return VersionInfo.getVersion();
     }
 
     @Override
