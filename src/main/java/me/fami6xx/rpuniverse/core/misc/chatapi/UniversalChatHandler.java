@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.misc.chatapi;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.PlayerLocalChatEvent;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
@@ -70,7 +71,12 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
 
             String formattedMessage = FamiUtils.replaceAndFormat(localOOCMessage, replace);
 
-            FamiUtils.sendMessageInRange(e.getPlayer(), formattedMessage, range);
+            PlayerLocalChatEvent localChatEvent = new PlayerLocalChatEvent(e.getPlayer(), formattedMessage);
+            Bukkit.getPluginManager().callEvent(localChatEvent);
+            if(localChatEvent.isCancelled()) return;
+            String finalFormattedMessage = FamiUtils.format(localChatEvent.getMassage());
+
+            FamiUtils.sendMessageInRange(e.getPlayer(), finalFormattedMessage, range);
             boolean shouldSendToConsole = false;
             try{
                 shouldSendToConsole = RPUniverse.getInstance().getConfiguration().getBoolean("general.logLocalToConsole");
