@@ -17,10 +17,12 @@ import java.util.List;
 
 public class LanguageFieldEditorMenu extends Menu {
     private final LanguageField languageField;
+    private final Menu previousMenu;
 
-    public LanguageFieldEditorMenu(PlayerMenu menu, LanguageField languageField) {
+    public LanguageFieldEditorMenu(PlayerMenu menu, LanguageField languageField, Menu previousMenu) {
         super(menu);
         this.languageField = languageField;
+        this.previousMenu = previousMenu;
     }
 
     @Override
@@ -49,6 +51,11 @@ public class LanguageFieldEditorMenu extends Menu {
         // If "Close", just close
         if (displayName.equals(FamiUtils.format("&cClose"))) {
             p.closeInventory();
+            return;
+        }
+
+        if (displayName.equals(FamiUtils.format("&cBack"))){
+            previousMenu.open();
             return;
         }
 
@@ -103,7 +110,7 @@ public class LanguageFieldEditorMenu extends Menu {
         new BukkitRunnable() {
             @Override
             public void run() {
-                new LanguageFieldEditorMenu(playerMenu, languageField).open();
+                new LanguageFieldEditorMenu(playerMenu, languageField, previousMenu).open();
             }
         }.runTaskLater(RPUniverse.getInstance(), 2L);
     }
@@ -143,7 +150,12 @@ public class LanguageFieldEditorMenu extends Menu {
 
         // If multiLine, add "Add new line" button
         if (multiLine) {
-            inv.setItem(52, FamiUtils.makeItem(Material.EMERALD_BLOCK, "&aAdd New Line", "&7Click to add a new line."));
+            inv.setItem(51, FamiUtils.makeItem(Material.EMERALD_BLOCK, "&aAdd New Line", "&7Click to add a new line."));
+        }
+
+        // Add "Back" item
+        if (previousMenu != null) {
+            inv.setItem(52, FamiUtils.makeItem(Material.ARROW, "&cBack", "&7Click to go back."));
         }
 
         // Add "Close" item

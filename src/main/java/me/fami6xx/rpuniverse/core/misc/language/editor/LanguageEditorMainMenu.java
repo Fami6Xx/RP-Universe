@@ -1,6 +1,5 @@
 package me.fami6xx.rpuniverse.core.misc.language.editor;
 
-import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
@@ -46,7 +45,7 @@ public class LanguageEditorMainMenu extends EasyPaginatedMenu {
         LanguageField lf = allFields.get(index);
 
         // We'll show the lines if multiLine, otherwise single line
-        List<String> lines = lf.getSplitLines(); // If multiLine==false, this is always 1 line
+        List<String> lines = new ArrayList<>(lf.getSplitLines());; // If multiLine==false, this is always 1 line
         if (lines.isEmpty()) {
             lines.add("&7(No value)");
         }
@@ -71,10 +70,11 @@ public class LanguageEditorMainMenu extends EasyPaginatedMenu {
     public void handlePaginatedMenu(InventoryClickEvent e) {
         if (e.getCurrentItem() == null || !e.getCurrentItem().hasItemMeta()) return;
         int idx = getSlotIndex(e.getSlot());
+        idx = idx + (page * 28); // Adjust for page
         if (idx < 0 || idx >= allFields.size()) return;
 
         LanguageField lf = allFields.get(idx);
-        new LanguageFieldEditorMenu(playerMenu, lf).open();
+        new LanguageFieldEditorMenu(playerMenu, lf, this).open();
     }
 
     @Override
