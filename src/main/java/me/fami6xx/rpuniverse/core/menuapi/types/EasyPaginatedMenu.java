@@ -57,6 +57,7 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
         if(e.getCurrentItem().getType().equals(Material.BARRIER)
                 && name.equalsIgnoreCase(closeName)){
             p.closeInventory();
+            return;
         }else if(e.getCurrentItem().getType().equals(Material.STONE_BUTTON)){
             if(name.equalsIgnoreCase(previousName)){
                 if(page == 0){
@@ -65,6 +66,7 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
                     page--;
                     super.open();
                 }
+                return;
             }else if(name.equalsIgnoreCase(nextName)){
                 if(index + 1 < getCollectionSize()){
                     page++;
@@ -72,6 +74,7 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
                 }else{
                     p.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().errorMenuAlreadyOnLastPage));
                 }
+                return;
             }
         }
 
