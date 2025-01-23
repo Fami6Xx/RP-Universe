@@ -68,6 +68,7 @@ public class RPUCoreCommand implements CommandExecutor {
                 handleRegionCommand(player, args);
                 break;
             case "languages":
+                FamiUtils.sendMessageWithPrefix(player, "&cAfter editing language fields, you must restart the server to apply changes.");
                 new LanguageEditorMainMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player)).open();
                 break;
             default:
