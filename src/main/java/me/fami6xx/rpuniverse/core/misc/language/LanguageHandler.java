@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 public class LanguageHandler {
@@ -15,7 +16,6 @@ public class LanguageHandler {
     public String errorYouAlreadyHaveSomethingToType = "&cYou already have something to type, type that thing first.";
     public String errorYouAreNotInUserMode = "&cYou are not in user mode!";
     public String errorYouDontHaveAnyJob = "&cYou don't have any job!";
-    public String errorYouDontHaveAnyMoreJobs = "&cYou don't have any more jobs!";
     public String errorYesOrNoMessage = "&cYou can only type yes or no!";
     public String cancelActivityMessage = "&7Type &ccancel &7to cancel.";
     public String cancelSuccessful = "&cCancelled!";
@@ -424,5 +424,17 @@ public class LanguageHandler {
             plugin.getLogger().severe("Failed to create languages.yml file!");
             plugin.getPluginLoader().disablePlugin(plugin);
         }
+    }
+
+    protected void saveLanguageFile() {
+        try {
+            languageConfig.save(new File(plugin.getDataFolder(), "languages.yml"));
+        } catch (IOException e) {
+            plugin.getLogger().severe("Could not save languages.yml!");
+        }
+    }
+
+    protected FileConfiguration getLanguageConfig() {
+        return languageConfig;
     }
 }
