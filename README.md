@@ -1,5 +1,5 @@
 # RP Universe - Minecraft Role-Playing Control Plugin
-[![](https://jitpack.io/v/Fami6Xx/RP-Universe.svg)](https://jitpack.io/#Fami6Xx/RP-Universe)
+[![](https://jitpack.io/v/Fami6Xx/RP-Universe.svg)](https://jitpack.io/#Fami6Xx/RP-Universe) ---- [JavaDocs](https://jitpack.io/com/github/Fami6Xx/RP-Universe/latest/javadoc/)
 ## Introduction
 RP Universe is a revolutionary Minecraft plugin, designed to control an entire game server and bring the concept of role-playing (RP) into the world of Minecraft. Given the growing interest in RP in games, this plugin represents not only a challenge at the national level but also globally.
 
