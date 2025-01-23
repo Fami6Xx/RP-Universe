@@ -66,20 +66,20 @@ public class LanguageFieldEditorMenu extends Menu {
         // Add New Line (only if multiLine)
         if (displayName.equals(FamiUtils.format("&aAdd New Line"))) {
             if (!multiLine) {
-                p.sendMessage(FamiUtils.format("&cThis field is not multi-line!"));
+                p.sendMessage(FamiUtils.formatWithPrefix("&cThis field is not multi-line!"));
                 return;
             }
             p.closeInventory();
-            p.sendMessage(FamiUtils.format("&7Type the new line in chat. Use 'cancel' to cancel."));
+            p.sendMessage(FamiUtils.formatWithPrefix("&7Type the new line in chat. Use 'cancel' to cancel."));
             playerMenu.setPendingAction(input -> {
                 if (input.equalsIgnoreCase("cancel")) {
-                    p.sendMessage(FamiUtils.format("&cCancelled adding new line."));
+                    p.sendMessage(FamiUtils.formatWithPrefix("&cCancelled adding new line."));
                 } else {
                     lines.add(input);
                     languageField.setLines(lines);
                     // Persist
                     LanguageFieldsManager.setLanguageFieldValue(languageField, languageField.getValue());
-                    p.sendMessage(FamiUtils.format("&aNew line added!"));
+                    p.sendMessage(FamiUtils.formatWithPrefix("&aNew line added!"));
                 }
                 reopenEditorMenu(p);
             });
@@ -90,16 +90,16 @@ public class LanguageFieldEditorMenu extends Menu {
         if (clickedSlot < lines.size()) {
             String oldLine = lines.get(clickedSlot);
             p.closeInventory();
-            p.sendMessage(FamiUtils.format("&7Editing line: &c" + oldLine));
+            p.sendMessage(FamiUtils.formatWithPrefix("&7Editing line: &c" + oldLine));
             p.sendMessage(FamiUtils.format("&7Type the new text in chat, or 'cancel' to cancel."));
             playerMenu.setPendingAction(input -> {
                 if (input.equalsIgnoreCase("cancel")) {
-                    p.sendMessage(FamiUtils.format("&cCancelled editing line."));
+                    p.sendMessage(FamiUtils.formatWithPrefix("&cCancelled editing line."));
                 } else {
                     lines.set(clickedSlot, input);
                     languageField.setLines(lines);
                     LanguageFieldsManager.setLanguageFieldValue(languageField, languageField.getValue());
-                    p.sendMessage(FamiUtils.format("&aLine updated!"));
+                    p.sendMessage(FamiUtils.formatWithPrefix("&aLine updated!"));
                 }
                 reopenEditorMenu(p);
             });
@@ -137,15 +137,16 @@ public class LanguageFieldEditorMenu extends Menu {
         // Show placeholders in bottom row
         List<String> placeholders = languageField.getPlaceholders();
         if (!placeholders.isEmpty()) {
-            int startIndex = 45; // or wherever you'd like
-            for (int i = 0; i < placeholders.size() && (startIndex + i) < inv.getSize(); i++) {
-                String ph = placeholders.get(i);
-                inv.setItem(startIndex + i, FamiUtils.makeItem(
-                        Material.NAME_TAG,
-                        "&bPlaceholder",
-                        "&7" + ph
-                ));
+            List<String> lore = new ArrayList<>();
+            lore.add("&7Placeholders:");
+            for (String ph : placeholders) {
+                lore.add("&8- &f" + ph);
             }
+            inv.setItem(45, FamiUtils.makeItem(
+                    Material.NAME_TAG,
+                    "&bPlaceholders",
+                    lore.toArray(new String[0])
+            ));
         }
 
         // If multiLine, add "Add new line" button
