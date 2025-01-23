@@ -60,7 +60,7 @@ public class LanguageFieldEditorMenu extends Menu {
         }
 
         boolean multiLine = languageField.isMultiLine();
-        List<String> lines = languageField.getSplitLines();
+        List<String> lines = new ArrayList<>(languageField.getSplitLines());
         int clickedSlot = e.getSlot();
 
         // Add New Line (only if multiLine)
