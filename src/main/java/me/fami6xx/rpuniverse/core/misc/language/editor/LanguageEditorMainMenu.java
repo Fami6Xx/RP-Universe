@@ -59,6 +59,9 @@ public class LanguageEditorMainMenu extends EasyPaginatedMenu {
             }
         }
 
+        lines.add(0, "&7 ");
+        lines.add(1, "&7Current text:");
+
         return FamiUtils.makeItem(
                 Material.PAPER,
                 "&e" + lf.getFieldName(),
@@ -69,13 +72,64 @@ public class LanguageEditorMainMenu extends EasyPaginatedMenu {
     @Override
     public void handlePaginatedMenu(InventoryClickEvent e) {
         if (e.getCurrentItem() == null || !e.getCurrentItem().hasItemMeta()) return;
-        int idx = getSlotIndex(e.getSlot());
-        idx = idx + (page * 28); // Adjust for page
-        if (idx < 0 || idx >= allFields.size()) return;
 
+        // The slot the user clicked
+        int clickedSlot = e.getSlot();
+
+        // Exactly the same border slots used in setMenuItems()
+        Integer[] borderSlots = {
+                0,1,2,3,4,5,6,7,8,9,
+                17,18,
+                26,27,
+                35,36,
+                44,45,46,47,48,49,50,51,52,53
+        };
+        List<Integer> borderSlotsList = new ArrayList<>(List.of(borderSlots));
+
+        // If they clicked a border slot, just ignore
+        if (borderSlotsList.contains(clickedSlot)) {
+            return;
+        }
+
+        // Build the “non‐border” slot list in the exact order items are placed
+        List<Integer> itemSlots = new ArrayList<>();
+        int slotPointer = 10;  // Start from slot 10
+        for (int i = 0; i < getMaxItemsPerPage() && slotPointer < 54; i++) {
+            // Skip border slots
+            while (borderSlotsList.contains(slotPointer)) {
+                slotPointer++;
+                if (slotPointer >= 54) {
+                    break;
+                }
+            }
+            if (slotPointer >= 54) {
+                break;
+            }
+            itemSlots.add(slotPointer);
+            slotPointer++;
+        }
+
+        // Figure out which item index on this *page* they clicked
+        int relativeIndex = itemSlots.indexOf(clickedSlot);
+        if (relativeIndex == -1) {
+            // That means they clicked something not in our itemSlots array,
+            // so it’s probably border or out of range
+            return;
+        }
+
+        // Now the final index in the full collection = page offset + relative index
+        int idx = (page * getMaxItemsPerPage()) + relativeIndex;
+
+        // Safety checks
+        if (idx < 0 || idx >= allFields.size()) {
+            return;
+        }
+
+        // Finally, open the editor for that field
         LanguageField lf = allFields.get(idx);
         new LanguageFieldEditorMenu(playerMenu, lf, this).open();
     }
+
 
     @Override
     public void addAdditionalItems() {}
