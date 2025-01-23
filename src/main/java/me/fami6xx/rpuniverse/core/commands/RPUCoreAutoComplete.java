@@ -21,7 +21,7 @@ public class RPUCoreAutoComplete implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("ck", "addjob", "removejob", "region");
+            return Arrays.asList("ck", "addjob", "removejob", "region", "languages");
         }
 
         if (args.length >= 2) {

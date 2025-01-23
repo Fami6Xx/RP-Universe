@@ -8,6 +8,7 @@ import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
+import me.fami6xx.rpuniverse.core.misc.language.editor.LanguageEditorMainMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import me.fami6xx.rpuniverse.core.properties.PropertyManager;
 import me.fami6xx.rpuniverse.core.regions.Region;
@@ -65,6 +66,9 @@ public class RPUCoreCommand implements CommandExecutor {
                 break;
             case "region":
                 handleRegionCommand(player, args);
+                break;
+            case "languages":
+                new LanguageEditorMainMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player)).open();
                 break;
             default:
                 FamiUtils.sendMessageWithPrefix(player, "&cUnknown subcommand. Use &f/rpu &cfor help.");
@@ -307,6 +311,7 @@ public class RPUCoreCommand implements CommandExecutor {
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu addjob <Player> <Job name> &7- &fAdd a job to a player"));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu removejob <Player> <Job name> &7- &fRemove a job from a player"));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu region <subcommand> &7- &fManage regions"));
+        sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu languages &7- &fOpen the language editor"));
     }
 
     private void showRegionHelp(Player player) {
