@@ -71,24 +71,30 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
 
             String formattedMessage = FamiUtils.replaceAndFormat(localOOCMessage, replace);
 
-            PlayerLocalChatEvent localChatEvent = new PlayerLocalChatEvent(e.getPlayer(), formattedMessage);
-            Bukkit.getPluginManager().callEvent(localChatEvent);
-            if(localChatEvent.isCancelled()) return;
-            String finalFormattedMessage = FamiUtils.format(localChatEvent.getMassage());
+            int finalRange = range;
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    PlayerLocalChatEvent localChatEvent = new PlayerLocalChatEvent(e.getPlayer(), formattedMessage);
+                    Bukkit.getPluginManager().callEvent(localChatEvent);
+                    if(localChatEvent.isCancelled()) return;
+                    String finalFormattedMessage = FamiUtils.format(localChatEvent.getMassage());
 
-            FamiUtils.sendMessageInRange(e.getPlayer(), finalFormattedMessage, range);
-            boolean shouldSendToConsole = false;
-            try{
-                shouldSendToConsole = RPUniverse.getInstance().getConfiguration().getBoolean("general.logLocalToConsole");
-            }catch (Exception exc){
-                replace.put("{value}", "general.logLocalToConsole");
-                RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
-                return;
-            }
+                    FamiUtils.sendMessageInRange(e.getPlayer(), finalFormattedMessage, finalRange);
+                    boolean shouldSendToConsole = false;
+                    try{
+                        shouldSendToConsole = RPUniverse.getInstance().getConfiguration().getBoolean("general.logLocalToConsole");
+                    }catch (Exception exc){
+                        replace.put("{value}", "general.logLocalToConsole");
+                        RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
+                        return;
+                    }
 
-            if(shouldSendToConsole){
-                RPUniverse.getInstance().getLogger().info("Local OOC " + e.getPlayer().getName() + ": " + e.getMessage());
-            }
+                    if(shouldSendToConsole){
+                        RPUniverse.getInstance().getLogger().info("Local OOC " + e.getPlayer().getName() + ": " + e.getMessage());
+                    }
+                }
+            }.runTask(RPUniverse.getInstance());
         }
     }
 
