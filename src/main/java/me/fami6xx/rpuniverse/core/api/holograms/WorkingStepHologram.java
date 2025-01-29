@@ -226,8 +226,11 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         HologramPage depletedPage = DHAPI.addHologramPage(getHologram());
         DHAPI.addHologramLine(depletedPage, FamiUtils.format("&c&l" + job.getName()));
         DHAPI.addHologramLine(depletedPage, "");
-        DHAPI.addHologramLine(depletedPage, FamiUtils.format("&7This location is depleted!"));
-        DHAPI.addHologramLine(depletedPage, FamiUtils.format("&7It will replenish soon..."));
+        String depletedMessage = RPUniverse.getLanguageHandler().workingStepDepletedMessage;
+        String[] depletedMessageSplit = depletedMessage.split("~");
+        for (String line : depletedMessageSplit) {
+            DHAPI.addHologramLine(depletedPage, FamiUtils.format(line));
+        }
 
         DHAPI.updateHologram(getHologram().getName());
     }

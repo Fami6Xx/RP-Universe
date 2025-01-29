@@ -362,6 +362,9 @@ public class LanguageHandler {
     public String chestLimitMenuName = "&6RPU &7| &cChest";
     public String chestLimitChestAlreadyInUse = "&cThis chest is already in use!";
 
+    // WorkingStep depleted
+    public String workingStepDepletedMessage = "&7This location is depleted!~&7It will replenish soon...";
+
     private final JavaPlugin plugin;
     private FileConfiguration languageConfig;
 
