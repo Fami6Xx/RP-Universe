@@ -144,15 +144,16 @@ public class WorkingStepEditorMenu extends Menu {
                 break;
 
             case "Edit Depletion Chance":
-                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the depletion chance (e.g., 0.5 for 50%)."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the depletion chance (e.g., 50 for 50%)."));
                 playerMenu.setPendingAction((input) -> {
                     try {
                         double newChance = Double.parseDouble(input);
                         // If we set a chance, we set amount to -1 to enforce the "only one can be active" rule.
+                        newChance = newChance / 100;
                         workingStep.setDepletionChance(newChance);
                         workingStep.setDepletionAmount(-1);
-                        player.sendMessage(FamiUtils.formatWithPrefix("&7Depletion chance set to " + newChance +
-                                "."));
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Depletion chance set to " + newChance * 100 +
+                                "%."));
                         this.open();
                     } catch (NumberFormatException ex) {
                         player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid number format for chance."));
@@ -180,7 +181,7 @@ public class WorkingStepEditorMenu extends Menu {
                 break;
 
             case "Edit Replenish Time":
-                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new replenish time in milliseconds."));
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new replenish time in seconds."));
                 playerMenu.setPendingAction((input) -> {
                     try {
                         int newTime = Integer.parseInt(input);
@@ -263,7 +264,7 @@ public class WorkingStepEditorMenu extends Menu {
 
         inventory.setItem(39, createMenuItem(Material.POTION,
                 "Edit Depletion Chance",
-                "Current: " + workingStep.getDepletionChance(),
+                "Current: " + workingStep.getDepletionChance() * 100 + "%",
                 "If set, amount is forced to -1. (Disabled)"));
 
         inventory.setItem(41, createMenuItem(Material.STONE,
