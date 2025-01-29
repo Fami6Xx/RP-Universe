@@ -45,6 +45,11 @@ public class WorkingStep {
     private String description;
     private String workingStepBeingDoneMessage;
 
+    private boolean allowDepletion = false;
+    private int depletionAmount = 50;
+    private int replenishTimeTicks = 300*20;
+    private double depletionChance = 0.5;
+
     /**
      * Creates a WorkingStep.
      */
@@ -460,6 +465,62 @@ public class WorkingStep {
      */
     public void removeNeededItem(@Nonnull NeededItem neededItem) {
         this.neededItems.remove(neededItem);
+    }
+
+    /**
+     * Gets depletion chance.
+     */
+    public double getDepletionChance() {
+        return depletionChance;
+    }
+
+    /**
+     * Sets depletion chance.
+     */
+    public void setDepletionChance(double depletionChance) {
+        this.depletionChance = depletionChance;
+    }
+
+    /**
+     * Gets depletion amount.
+     */
+    public int getDepletionAmount() {
+        return depletionAmount;
+    }
+
+    /**
+     * Sets depletion amount.
+     */
+    public void setDepletionAmount(int depletionAmount) {
+        this.depletionAmount = depletionAmount;
+    }
+
+    /**
+     * Checks if depletion is allowed.
+     */
+    public boolean isAllowDepletion() {
+        return allowDepletion;
+    }
+
+    /**
+     * Sets if depletion is allowed.
+     */
+    public void setAllowDepletion(boolean allowDepletion) {
+        this.allowDepletion = allowDepletion;
+    }
+
+    /**
+     * Gets replenish time ticks.
+     */
+    public int getReplenishTimeTicks() {
+        return replenishTimeTicks;
+    }
+
+    /**
+     * Sets replenish time ticks.
+     */
+    public void setReplenishTimeTicks(int replenishTimeTicks) {
+        this.replenishTimeTicks = replenishTimeTicks;
     }
 
     public static class NeededItem {

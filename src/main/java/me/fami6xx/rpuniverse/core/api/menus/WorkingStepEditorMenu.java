@@ -24,25 +24,16 @@ public class WorkingStepEditorMenu extends Menu {
         this.workingStep = workingStep;
     }
 
-    /**
-     * Gets menu name.
-     */
     @Override
     public String getMenuName() {
         return FamiUtils.formatWithPrefix(ChatColor.GREEN + "Edit Working Step");
     }
 
-    /**
-     * Gets slots.
-     */
     @Override
     public int getSlots() {
         return 54;
     }
 
-    /**
-     * Handles menu.
-     */
     @Override
     public void handleMenu(InventoryClickEvent e) {
         e.setCancelled(true);
@@ -54,6 +45,7 @@ public class WorkingStepEditorMenu extends Menu {
         String displayName = ChatColor.stripColor(clicked.getItemMeta().getDisplayName());
 
         switch (displayName) {
+
             case "Edit Name":
                 player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new name for the working step."));
                 playerMenu.setPendingAction((input) -> {
@@ -140,6 +132,68 @@ public class WorkingStepEditorMenu extends Menu {
                 this.open();
                 break;
 
+            case "Toggle Depletion":
+                boolean allowDep = workingStep.isAllowDepletion();
+                workingStep.setAllowDepletion(!allowDep);
+                if(!allowDep) {
+                    workingStep.setDepletionAmount(-1);
+                    workingStep.setDepletionChance(-1);
+                }
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Allow Depletion set to " + !allowDep + "."));
+                this.open();
+                break;
+
+            case "Edit Depletion Chance":
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the depletion chance (e.g., 0.5 for 50%)."));
+                playerMenu.setPendingAction((input) -> {
+                    try {
+                        double newChance = Double.parseDouble(input);
+                        // If we set a chance, we set amount to -1 to enforce the "only one can be active" rule.
+                        workingStep.setDepletionChance(newChance);
+                        workingStep.setDepletionAmount(-1);
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Depletion chance set to " + newChance +
+                                "."));
+                        this.open();
+                    } catch (NumberFormatException ex) {
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid number format for chance."));
+                    }
+                });
+                player.closeInventory();
+                break;
+
+            case "Edit Depletion Amount":
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the depletion amount (integer)."));
+                playerMenu.setPendingAction((input) -> {
+                    try {
+                        int newAmount = Integer.parseInt(input);
+                        // If we set an amount, we set chance to -1 to enforce the "only one can be active" rule.
+                        workingStep.setDepletionAmount(newAmount);
+                        workingStep.setDepletionChance(-1);
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Depletion amount set to " + newAmount +
+                                "."));
+                        this.open();
+                    } catch (NumberFormatException ex) {
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid number format for amount."));
+                    }
+                });
+                player.closeInventory();
+                break;
+
+            case "Edit Replenish Time":
+                player.sendMessage(FamiUtils.formatWithPrefix("&7Please enter the new replenish time in milliseconds."));
+                playerMenu.setPendingAction((input) -> {
+                    try {
+                        int newTime = Integer.parseInt(input);
+                        workingStep.setReplenishTimeTicks(newTime*20);
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Replenish time set to " + newTime + " s."));
+                        this.open();
+                    } catch (NumberFormatException ex) {
+                        player.sendMessage(FamiUtils.formatWithPrefix("&7Invalid number format."));
+                    }
+                });
+                player.closeInventory();
+                break;
+
             case "Save and Close":
                 player.sendMessage(FamiUtils.formatWithPrefix("&7Working step saved successfully."));
                 player.closeInventory();
@@ -151,13 +205,11 @@ public class WorkingStepEditorMenu extends Menu {
                 break;
 
             default:
+                // Do nothing
                 break;
         }
     }
 
-    /**
-     * Sets menu items.
-     */
     @Override
     public void setMenuItems() {
         inventory.clear();
@@ -204,6 +256,26 @@ public class WorkingStepEditorMenu extends Menu {
                 "Current: " + workingStep.getNeededPermissionLevel(),
                 "Click to set the required permission level."));
 
+        inventory.setItem(38, createMenuItem(Material.IRON_ORE,
+                "Toggle Depletion",
+                "Current: " + workingStep.isAllowDepletion(),
+                "Click to enable/disable depletion."));
+
+        inventory.setItem(39, createMenuItem(Material.POTION,
+                "Edit Depletion Chance",
+                "Current: " + workingStep.getDepletionChance(),
+                "If set, amount is forced to -1. (Disabled)"));
+
+        inventory.setItem(41, createMenuItem(Material.STONE,
+                "Edit Depletion Amount",
+                "Current: " + workingStep.getDepletionAmount(),
+                "If set, chance is forced to -1. (Disabled)"));
+
+        inventory.setItem(42, createMenuItem(Material.CLOCK,
+                "Edit Replenish Time",
+                "Current: " + workingStep.getReplenishTimeTicks()/20 + " seconds",
+                "Time until location is restored."));
+
         inventory.setItem(48, createMenuItem(Material.LIME_WOOL,
                 "Save and Close",
                 "Click to save changes and close the menu."));
@@ -230,9 +302,6 @@ public class WorkingStepEditorMenu extends Menu {
         return item;
     }
 
-    /**
-     * Gets menu tags.
-     */
     @Override
     public List<MenuTag> getMenuTags() {
         return List.of(MenuTag.ADMIN);

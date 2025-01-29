@@ -34,9 +34,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class WorkingStepHologram extends famiHologram implements Listener {
+
     private final HoloAPI api = RPUniverse.getInstance().getHoloAPI();
     private ProgressBarString progressBar;
     private static final Random random = new Random();
+
+    /**
+     * If you’re using a fixed depletionAmount, each location can be used “X” times.
+     * We'll track usage left in this static map.
+     * Key = location of the hologram, Value = how many uses remain.
+     */
+    private static final Map<Location,Integer> depletionUsageMap = new HashMap<>();
 
     private final WorkingStep step;
     private final Job job;
@@ -54,6 +62,11 @@ public class WorkingStepHologram extends famiHologram implements Listener {
 
         api.getVisibilityHandler().queue.add(() -> api.getVisibilityHandler().addToList(getUUID(), this));
         Bukkit.getPluginManager().registerEvents(this, RPUniverse.getJavaPlugin());
+
+        // Initialize usage map if needed
+        if (step.isAllowDepletion() && step.getDepletionAmount() >= 0) {
+            depletionUsageMap.putIfAbsent(location, step.getDepletionAmount());
+        }
     }
 
     @Override
@@ -65,6 +78,8 @@ public class WorkingStepHologram extends famiHologram implements Listener {
     @EventHandler
     public void WorkingStepLocationRemovedEvent(WorkingStepLocationRemovedEvent event) {
         if (event.getLocation().equals(getBaseLocation()) && event.getWorkingStep() == step) {
+            // Clean up from the depletion map when the location is removed entirely
+            depletionUsageMap.remove(getBaseLocation());
             destroy();
         }
     }
@@ -80,19 +95,26 @@ public class WorkingStepHologram extends famiHologram implements Listener {
     }
 
     public void recreatePages() {
+        // Cancel any running progress bar if we are re-displaying pages
         if (progressBar != null) {
             progressBar.cancel();
         }
+
+        // If location is currently depleted, don't reset to normal pages
+        if (isLocationDepleted()) {
+            setDepletedStage();
+            return;
+        }
+
+        // Otherwise, go to the normal (first) stage
         setFirstStage();
     }
 
+    /**
+     * The initial stage displayed on the hologram.
+     */
     private void setFirstStage() {
-        getHologram().updateAll();
-        int size = getHologram().getPages().size();
-        for (int i = 0; i < size; i++) {
-            DHAPI.removeHologramPage(getHologram(), i);
-        }
-        getHologram().updateAll();
+        removePages(); // remove old pages, if any
 
         HologramPage page0 = DHAPI.addHologramPage(getHologram());
         DHAPI.addHologramLine(page0, FamiUtils.format("&c&l" + job.getName()));
@@ -103,97 +125,68 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         DHAPI.addHologramLine(page0, FamiUtils.format(RPUniverse.getLanguageHandler().interactToWork));
 
         if (!step.isInteractableFirstStage()) {
-            page0.addAction(ClickType.RIGHT, new Action(
-                    new ActionType(UUID.randomUUID().toString()) {
-                        @Override
-                        public boolean execute(Player player, String... strings) {
-                            if (!shouldShow(player)) return true;
+            // Normal usage, no separate menu
+            page0.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
+                @Override
+                public boolean execute(Player player, String... strings) {
+                    if (!shouldShow(player)) return true;
 
-                            List<NeededItem> missingItems = new ArrayList<>();
-                            // Check if player has all needed items
-                            for (NeededItem neededItem : step.getNeededItems()) {
-                                if (!player.getInventory().containsAtLeast(neededItem.getItem(), neededItem.getAmount())) {
-                                    missingItems.add(neededItem);
-                                }
-                            }
+                    List<NeededItem> missingItems = findMissingItems(player);
+                    if (!missingItems.isEmpty()) {
+                        sendMissingItemsMessage(player, missingItems);
+                        return true;
+                    }
+                    // Remove needed items from player
+                    for (NeededItem neededItem : step.getNeededItems()) {
+                        removeItems(player, neededItem.getItem(), neededItem.getAmount());
+                    }
 
-                            if (!missingItems.isEmpty()) {
-                                player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
-                                player.sendMessage(FamiUtils.format("&7" + missingItems.stream()
-                                        .map(neededItem -> " - " + neededItem.getAmount() + "x " + (neededItem.getItem().hasItemMeta() && neededItem.getItem().getItemMeta().hasDisplayName() ? neededItem.getItem().getItemMeta().getDisplayName() : neededItem.getItem().getType().name()))
-                                        .collect(Collectors.joining("\n"))));
-                                return true;
-                            }
-
-                            // Remove needed items
-                            for (NeededItem neededItem : step.getNeededItems()) {
-                                removeItems(player, neededItem.getItem(), neededItem.getAmount());
-                            }
-                            setSecondStage();
-                            return true;
-                        }
-                    }, ""
-            ));
-
+                    setSecondStage();
+                    return true;
+                }
+            }, ""));
             addAdminOpenAction(ClickType.LEFT, page0);
         } else {
-            page0.addAction(ClickType.RIGHT, new Action(
-                    new ActionType(UUID.randomUUID().toString()) {
-                        @Override
-                        public boolean execute(Player player, String... strings) {
-                            if (!shouldShow(player)) return true;
+            // Interactable menu stage
+            page0.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
+                @Override
+                public boolean execute(Player player, String... strings) {
+                    if (!shouldShow(player)) return true;
 
-                            List<NeededItem> missingItems = new ArrayList<>();
-                            // Check if player has all needed items
-                            for (NeededItem neededItem : step.getNeededItems()) {
-                                if (!player.getInventory().containsAtLeast(neededItem.getItem(), neededItem.getAmount())) {
-                                    missingItems.add(neededItem);
-                                }
-                            }
-
-                            if (!missingItems.isEmpty()) {
-                                player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
-                                player.sendMessage(FamiUtils.format("&7" + missingItems.stream()
-                                        .map(neededItem -> " - " + neededItem.getAmount() + "x " + (neededItem.getItem().hasItemMeta() && neededItem.getItem().getItemMeta().hasDisplayName() ? neededItem.getItem().getItemMeta().getDisplayName() : neededItem.getItem().getType().name()))
-                                        .collect(Collectors.joining("\n"))));
-                                return true;
-                            }
-
-                            // Remove needed items
-                            for (NeededItem neededItem : step.getNeededItems()) {
-                                removeItems(player, neededItem.getItem(), neededItem.getAmount());
-                            }
-                            // Open the interactable menu
-                            new WorkingStepInteractableMenu(
-                                    RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
-                                    () -> setSecondStage()
-                            ).open();
-                            return true;
-                        }
-                    }, ""
-            ));
-
+                    List<NeededItem> missingItems = findMissingItems(player);
+                    if (!missingItems.isEmpty()) {
+                        sendMissingItemsMessage(player, missingItems);
+                        return true;
+                    }
+                    // Remove needed items
+                    for (NeededItem neededItem : step.getNeededItems()) {
+                        removeItems(player, neededItem.getItem(), neededItem.getAmount());
+                    }
+                    // Open the interactable menu
+                    new WorkingStepInteractableMenu(
+                            RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
+                            () -> setSecondStage()
+                    ).open();
+                    return true;
+                }
+            }, ""));
             addAdminOpenAction(ClickType.LEFT, page0);
         }
 
         DHAPI.updateHologram(getHologram().getName());
-        getHologram().getShowPlayers().forEach(playerUuid -> {
-            Player p = Bukkit.getPlayer(playerUuid);
-            if (p != null) {
-                if (shouldShow(p)) {
-                    getHologram().showClickableEntities(p);
-                }
-            }
-        });
+        showHologramToEligiblePlayers();
     }
 
+    /**
+     * The second stage is the "working step in progress" stage.
+     */
     private void setSecondStage() {
-        getHologram().hideClickableEntitiesAll();
-        DHAPI.removeHologramPage(getHologram(), 0);
+        removePages();
 
         HologramPage page1 = DHAPI.addHologramPage(getHologram());
         DHAPI.addHologramLine(page1, FamiUtils.format("&c&l" + job.getName()));
         DHAPI.addHologramLine(page1, "");
+        // lines 2,3 intentionally empty so we can update line 2 with progress bar
         DHAPI.addHologramLine(page1, "");
         DHAPI.addHologramLine(page1, "");
         DHAPI.addHologramLine(page1, FamiUtils.format("&7" + step.getWorkingStepBeingDoneMessage()));
@@ -202,40 +195,186 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         progressBar = new ProgressBarString(
                 "",
                 step.getTimeForStep(),
+                // Called each tick to update the progress bar
                 () -> DHAPI.setHologramLine(page1, 2, FamiUtils.format(progressBar.getString())),
+                // Called when the progress completes
                 () -> {
+                    // 1) Drop logic
                     Location dropLocation = getBaseLocation().clone().add(0, -1, 0);
+                    performPossibleDrop(dropLocation);
 
-                    if (step.getPossibleDrops().isEmpty()) {
-                        recreatePages();
+                    // 2) Now handle depletion
+                    boolean justDepleted = checkAndHandleDepletion();
+                    if (justDepleted) {
+                        // If we depleted the location, show the "depleted" stage
                         return;
                     }
-                    if (step.getPossibleDrops().get(0).getChance() <= 0) {
-                        recreatePages();
-                        return;
-                    }
 
-                    List<PossibleDrop> dropsSorted = new ArrayList<>(
-                            step.getPossibleDrops()
-                                    .stream()
-                                    .sorted((d1, d2) -> Double.compare(d2.getChance(), d1.getChance()))
-                                    .toList()
-                    );
-                    Collections.reverse(dropsSorted);
-
-                    double randomVal = Math.random() * 100;
-                    double cumulativeChance = 0;
-                    for (PossibleDrop drop : dropsSorted) {
-                        cumulativeChance += drop.getChance();
-                        if (randomVal <= cumulativeChance) {
-                            dropLocation.getWorld().dropItem(dropLocation, drop.getItem());
-                            break;
-                        }
-                    }
+                    // 3) If not depleted, reset to first stage
                     recreatePages();
                 }
         );
         progressBar.runTaskTimer(RPUniverse.getJavaPlugin(), 0L, 1L);
+    }
+
+    /**
+     * If the location is depleted, show a "depleted" hologram page.
+     */
+    private void setDepletedStage() {
+        removePages();
+
+        HologramPage depletedPage = DHAPI.addHologramPage(getHologram());
+        DHAPI.addHologramLine(depletedPage, FamiUtils.format("&c&l" + job.getName()));
+        DHAPI.addHologramLine(depletedPage, "");
+        DHAPI.addHologramLine(depletedPage, FamiUtils.format("&7This location is depleted!"));
+        DHAPI.addHologramLine(depletedPage, FamiUtils.format("&7It will replenish soon..."));
+
+        DHAPI.updateHologram(getHologram().getName());
+    }
+
+    /**
+     * Removes all pages from this hologram.
+     */
+    private void removePages() {
+        getHologram().hideClickableEntitiesAll();
+        int size = getHologram().getPages().size();
+        for (int i = 0; i < size; i++) {
+            DHAPI.removeHologramPage(getHologram(), i);
+        }
+        getHologram().updateAll();
+    }
+
+    /**
+     * Called at the end of the second stage to see if we should deplete the location,
+     * and if so, schedule a replenish.
+     *
+     * @return true if the location was just depleted, false otherwise.
+     */
+    private boolean checkAndHandleDepletion() {
+        // If depletion is not enabled, do nothing
+        if (!step.isAllowDepletion()) {
+            return false;
+        }
+
+        // CHANCE-BASED Depletion
+        if (step.getDepletionChance() >= 0) {
+            double rng = random.nextDouble(); // 0.0 to 1.0
+            if (rng <= step.getDepletionChance()) {
+                // Deplete the location
+                setDepletedStage();
+                scheduleReplenish();
+                return true;
+            }
+        }
+        // AMOUNT-BASED Depletion
+        else if (step.getDepletionAmount() >= 0) {
+            int usageLeft = depletionUsageMap.getOrDefault(getBaseLocation(), step.getDepletionAmount());
+            usageLeft--;
+            depletionUsageMap.put(getBaseLocation(), usageLeft);
+
+            if (usageLeft <= 0) {
+                setDepletedStage();
+                scheduleReplenish();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Schedules the location to replenish after 'replenishTimeMilliseconds'.
+     */
+    private void scheduleReplenish() {
+        long ticks = step.getReplenishTimeTicks();
+        Bukkit.getScheduler().runTaskLater(RPUniverse.getJavaPlugin(), () -> {
+            // Clear usage for this location so it's restored
+            depletionUsageMap.remove(getBaseLocation());
+            recreatePages();
+        }, ticks);
+    }
+
+    /**
+     * Checks if this location is currently depleted:
+     *  - For chance-based depletion, we only track it as "depleted" if it’s within the replenish window.
+     *  - For amount-based depletion, we see if usage is at 0 or below.
+     */
+    private boolean isLocationDepleted() {
+        // If not allowing depletion, never "depleted"
+        if (!step.isAllowDepletion()) {
+            return false;
+        }
+
+        // If chance-based (>=0), we do not store usage. If it was depleted, we'd see no usage in the map,
+        // but we do forcibly set a "depleted" stage until scheduleReplenish() is done.
+        // We'll detect that by checking if usage was forced to some special value, or we can see if
+        // the location is still in depletionUsageMap with a negative usage.
+        // Easiest approach: For chance-based, the moment we get depleted, we put usageLeft=0:
+        if (step.getDepletionChance() >= 0) {
+            // If it's not in the map, or not "0", it's not depleted yet
+            // We'll store usage=0 for "depleted" while we wait.
+            Integer usage = depletionUsageMap.get(getBaseLocation());
+            return usage != null && usage <= 0;
+        }
+
+        // If amount-based
+        if (step.getDepletionAmount() >= 0) {
+            Integer usage = depletionUsageMap.get(getBaseLocation());
+            // If usage left is 0 or below => it’s depleted
+            return usage != null && usage <= 0;
+        }
+
+        return false;
+    }
+
+    /**
+     * Does the random drop logic at the end of the second stage.
+     */
+    private void performPossibleDrop(Location dropLocation) {
+        // If no possible drops, just return
+        if (step.getPossibleDrops().isEmpty()) {
+            return;
+        }
+        // For safety, if the first drop chance is <= 0, do nothing
+        if (step.getPossibleDrops().get(0).getChance() <= 0) {
+            return;
+        }
+        // Sort them from the highest chance to the lowest chance
+        List<PossibleDrop> dropsSorted = new ArrayList<>(step.getPossibleDrops());
+        dropsSorted.sort((d1, d2) -> Double.compare(d2.getChance(), d1.getChance()));
+
+        double randomVal = Math.random() * 100; // 0 - 100
+        double cumulativeChance = 0;
+        for (PossibleDrop drop : dropsSorted) {
+            cumulativeChance += drop.getChance();
+            if (randomVal <= cumulativeChance) {
+                dropLocation.getWorld().dropItem(dropLocation, drop.getItem());
+                break;
+            }
+        }
+    }
+
+    /**
+     * Finds if the player lacks any required items for this step.
+     */
+    private List<NeededItem> findMissingItems(Player player) {
+        List<NeededItem> missing = new ArrayList<>();
+        for (NeededItem neededItem : step.getNeededItems()) {
+            if (!player.getInventory().containsAtLeast(neededItem.getItem(), neededItem.getAmount())) {
+                missing.add(neededItem);
+            }
+        }
+        return missing;
+    }
+
+    private void sendMissingItemsMessage(Player player, List<NeededItem> missingItems) {
+        player.sendMessage(FamiUtils.formatWithPrefix(RPUniverse.getLanguageHandler().missingNeededItem));
+        player.sendMessage(FamiUtils.format("&7" +
+                missingItems.stream()
+                        .map(neededItem -> " - " + neededItem.getAmount() + "x " +
+                                (neededItem.getItem().hasItemMeta() && neededItem.getItem().getItemMeta().hasDisplayName()
+                                        ? neededItem.getItem().getItemMeta().getDisplayName()
+                                        : neededItem.getItem().getType().name()))
+                        .collect(Collectors.joining("\n"))));
     }
 
     private void addAdminOpenAction(ClickType clickType, HologramPage page) {
@@ -256,6 +395,9 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         ));
     }
 
+    /**
+     * Removes the specified number of matching items from the player's inventory.
+     */
     public boolean removeItems(Player player, ItemStack itemToRemove, int amountToRemove) {
         Inventory inventory = player.getInventory();
         int amountRemaining = amountToRemove;
@@ -305,5 +447,17 @@ public class WorkingStepHologram extends famiHologram implements Listener {
             }
         }
         return shouldShow;
+    }
+
+    /**
+     * Shows clickable holograms only to players who should see them.
+     */
+    private void showHologramToEligiblePlayers() {
+        getHologram().getShowPlayers().forEach(playerUuid -> {
+            Player p = Bukkit.getPlayer(playerUuid);
+            if (p != null && shouldShow(p)) {
+                getHologram().showClickableEntities(p);
+            }
+        });
     }
 }
