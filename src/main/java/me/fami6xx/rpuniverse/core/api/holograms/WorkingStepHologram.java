@@ -232,6 +232,8 @@ public class WorkingStepHologram extends famiHologram implements Listener {
             DHAPI.addHologramLine(depletedPage, FamiUtils.format(line));
         }
 
+        addAdminOpenAction(ClickType.LEFT, depletedPage);
+
         DHAPI.updateHologram(getHologram().getName());
     }
 
