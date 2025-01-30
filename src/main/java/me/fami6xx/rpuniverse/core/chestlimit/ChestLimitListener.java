@@ -42,6 +42,7 @@ public class ChestLimitListener implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if (!event.getLock().getLocation().isChunkLoaded()) throw new RuntimeException("Chunk is not loaded but an event of opening a lock was called");
         Block block = event.getLock().getLocation().getBlock();
+        Block clickedBlock = event.getLock().getLocation().getBlock();
         if (block.getState() instanceof Chest) {
             if (chestLocks.containsKey(block)) {
                 FamiUtils.sendMessageWithPrefix(event.getPlayer(), RPUniverse.getLanguageHandler().chestLimitChestAlreadyInUse);
@@ -56,9 +57,20 @@ public class ChestLimitListener implements Listener {
                 }
             }
 
-            chestLocks.put(block, event.getPlayer());
+            Chest chestState = (Chest) clickedBlock.getState();
+            if (chestState.getInventory().getHolder() instanceof DoubleChest) {
+                // Move everything over to the “main” chest block
+                DoubleChest doubleChest = (DoubleChest) chestState.getInventory().getHolder();
+                Chest left = (Chest) doubleChest.getLeftSide();
 
-            Chest chest = (Chest) block.getState();
+                // Use that left side as the official Chest/Block
+                chestState = left;
+                clickedBlock = left.getBlock();  // <-- Update the block you store in the map
+            }
+
+            chestLocks.put(clickedBlock, event.getPlayer());
+
+            Chest chest = (Chest) clickedBlock.getState();
 
             int size = RPUniverse.getInstance().getConfiguration().getInt("chestLimit.single-chest-rows") * 9;
             if (chest.getInventory().getHolder() instanceof DoubleChest) {
@@ -83,6 +95,7 @@ public class ChestLimitListener implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if (!event.getClickedBlock().getLocation().isChunkLoaded()) throw new RuntimeException("Chunk is not loaded but an event of opening a lock was called");
         Block block = event.getClickedBlock();
+        Block clickedBlock = event.getClickedBlock();
         if (block.getState() instanceof Chest) {
             if (chestLocks.containsKey(block)) {
                 FamiUtils.sendMessageWithPrefix(event.getPlayer(), RPUniverse.getLanguageHandler().chestLimitChestAlreadyInUse);
@@ -94,7 +107,16 @@ public class ChestLimitListener implements Listener {
 
             chestLocks.put(block, event.getPlayer());
 
-            Chest chest = (Chest) block.getState();
+            Chest chest = (Chest) clickedBlock.getState();
+            if (chest.getInventory().getHolder() instanceof DoubleChest) {
+                // Move everything over to the “main” chest block
+                DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
+                Chest left = (Chest) doubleChest.getLeftSide();
+
+                // Use that left side as the official Chest/Block
+                chest = left;
+                clickedBlock = left.getBlock();  // <-- Update the block you store in the map
+            }
 
             int size = RPUniverse.getInstance().getConfiguration().getInt("chestLimit.single-chest-rows") * 9;
             if (chest.getInventory().getHolder() instanceof DoubleChest) {
