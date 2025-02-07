@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Shows a paginated list of all LanguageFields.
- * Only some will be multi-line (the ones whose default contained '~').
+ * Both core language fields and addon translations are included.
  */
 public class LanguageEditorMainMenu extends EasyPaginatedMenu {
 
@@ -22,6 +22,7 @@ public class LanguageEditorMainMenu extends EasyPaginatedMenu {
 
     public LanguageEditorMainMenu(PlayerMenu menu) {
         super(menu);
+        // Get the combined list of language fields (core + addon)
         this.allFields = LanguageFieldsManager.getAllLanguageFields();
     }
 
@@ -44,13 +45,13 @@ public class LanguageEditorMainMenu extends EasyPaginatedMenu {
     public ItemStack getItemFromIndex(int index) {
         LanguageField lf = allFields.get(index);
 
-        // We'll show the lines if multiLine, otherwise single line
-        List<String> lines = new ArrayList<>(lf.getSplitLines());; // If multiLine==false, this is always 1 line
+        // We'll show the lines if multiLine, otherwise single line.
+        List<String> lines = new ArrayList<>(lf.getSplitLines());
         if (lines.isEmpty()) {
             lines.add("&7(No value)");
         }
 
-        // Show placeholders if any
+        // Append placeholders if any.
         if (!lf.getPlaceholders().isEmpty()) {
             lines.add("&7 ");
             lines.add("&7Placeholders:");
@@ -58,13 +59,14 @@ public class LanguageEditorMainMenu extends EasyPaginatedMenu {
                 lines.add("&8- &f" + ph);
             }
         }
-
+        // Add header info.
         lines.add(0, "&7 ");
         lines.add(1, "&7Current text:");
-
+        // Optionally indicate the type of field.
+        String type = (lf.getReflectionField() == null) ? "&7[Addon]" : "&7[Core]";
         return FamiUtils.makeItem(
                 Material.PAPER,
-                "&e" + lf.getFieldName(),
+                "&e" + lf.getFieldName() + " " + type,
                 lines.toArray(new String[0])
         );
     }
@@ -86,16 +88,16 @@ public class LanguageEditorMainMenu extends EasyPaginatedMenu {
         };
         List<Integer> borderSlotsList = new ArrayList<>(List.of(borderSlots));
 
-        // If they clicked a border slot, just ignore
+        // If they clicked a border slot, ignore.
         if (borderSlotsList.contains(clickedSlot)) {
             return;
         }
 
-        // Build the “non‐border” slot list in the exact order items are placed
+        // Build the “non‐border” slot list in the exact order items are placed.
         List<Integer> itemSlots = new ArrayList<>();
-        int slotPointer = 10;  // Start from slot 10
+        int slotPointer = 10;  // Start from slot 10.
         for (int i = 0; i < getMaxItemsPerPage() && slotPointer < 54; i++) {
-            // Skip border slots
+            // Skip border slots.
             while (borderSlotsList.contains(slotPointer)) {
                 slotPointer++;
                 if (slotPointer >= 54) {
@@ -109,27 +111,22 @@ public class LanguageEditorMainMenu extends EasyPaginatedMenu {
             slotPointer++;
         }
 
-        // Figure out which item index on this *page* they clicked
+        // Figure out which item index on this page was clicked.
         int relativeIndex = itemSlots.indexOf(clickedSlot);
         if (relativeIndex == -1) {
-            // That means they clicked something not in our itemSlots array,
-            // so it’s probably border or out of range
             return;
         }
 
-        // Now the final index in the full collection = page offset + relative index
+        // Final index in the full collection.
         int idx = (page * getMaxItemsPerPage()) + relativeIndex;
-
-        // Safety checks
         if (idx < 0 || idx >= allFields.size()) {
             return;
         }
 
-        // Finally, open the editor for that field
+        // Open the editor for the selected field.
         LanguageField lf = allFields.get(idx);
         new LanguageFieldEditorMenu(playerMenu, lf, this).open();
     }
-
 
     @Override
     public void addAdditionalItems() {}

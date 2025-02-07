@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.misc.language;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -7,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 
 public class LanguageHandler {
     // GENERAL MESSAGES
@@ -51,7 +53,6 @@ public class LanguageHandler {
     public String errorMenuAlreadyOnFirstPage = "&cYou are already on the first page!";
     public String generalMenuBackItemDisplayName = "&cBack";
     public String generalMenuBackItemLore = "&7Click to go back";
-
 
     // JOBS MENUS
     public String allJobsMenuName = "&6RPU &7| &cAll Jobs";
@@ -154,7 +155,6 @@ public class LanguageHandler {
     public String jobMenuJobTypeBossItemDisplayName = "&cJob Type Boss Menu";
     public String jobMenuJobTypeBossItemLore = "&7Click to open the boss menu for your job type";
 
-
     // BASIC NEEDS
     public String errorBasicNeedsDisabledMessage = "&cBasic needs are disabled!";
     public String allConsumablesMenuName = "&6RPU &7| &cAll Consumables";
@@ -187,8 +187,6 @@ public class LanguageHandler {
     public String successPeeMessage = "&cYou are peeing!";
     public String peeDocHologramMessage = "Peeing";
 
-
-
     // CREATE JOB COMMAND MESSAGES
     public String errorYouAreAlreadyCreatingAJobMessage = "&cYou are already creating a job!";
     public String errorJobNameTooLongMessage = "&cThe job name is too long!";
@@ -198,10 +196,8 @@ public class LanguageHandler {
     public String createJobCommandBossMenuLocationMessage = "&7Go to the location you want the boss menu to be and type &chere&7.";
     public String createJobCommandJobCreatedMessage = "&7Job created! You can now edit it in the /jobs menu.";
 
-
     // GLOBAL AND LOCAL OOC
     public String errorGlobalOOCUsage = "&cUsage: /globalooc <message>";
-
 
     // ME COMMAND MESSAGES
     public String errorMeCommandUsage = "&cUsage: /me <message>";
@@ -246,7 +242,6 @@ public class LanguageHandler {
     public String modModeEnabledMessage = "&cEnabled mod mode!";
     public String modModeErrorPlayerNotFoundMessage = "&cPlayer not found!";
     public String modesErrorCannotChangeModeMessage = "&cYou cannot change the mode of this player!";
-
 
     // ADMIN MODE MESSAGES
     public String adminModeDisabledMessage = "&cDisabled admin mode!";
@@ -365,6 +360,12 @@ public class LanguageHandler {
     // WorkingStep depleted
     public String workingStepDepletedMessage = "&7This location is depleted!~&7It will replenish soon...";
 
+    // -------------------------------
+    // ADDON TRANSLATIONS (for external addons)
+    // -------------------------------
+    // This internal map holds addon translations that are registered via the AbstractAddonLanguage.
+    private final HashMap<String, String> addonTranslations = new HashMap<>();
+
     private final JavaPlugin plugin;
     private FileConfiguration languageConfig;
 
@@ -378,7 +379,7 @@ public class LanguageHandler {
             File languageFile = new File(plugin.getDataFolder(), "languages.yml");
             if (!languageFile.exists()) {
                 boolean result = languageFile.createNewFile();
-                if(!result){
+                if (!result) {
                     plugin.getLogger().severe("Failed to create languages.yml file!");
                     plugin.getPluginLoader().disablePlugin(plugin);
                     return;
@@ -389,6 +390,7 @@ public class LanguageHandler {
             languageConfig = YamlConfiguration.loadConfiguration(languageFile);
             boolean modified = false;
 
+            // Load all declared String fields of LanguageHandler (core translations)
             for (Field field : this.getClass().getDeclaredFields()) {
                 if (field.getType() != String.class) continue;
 
@@ -405,6 +407,14 @@ public class LanguageHandler {
                 }
             }
 
+            // Load addon translations from section "addonTranslations"
+            if (languageConfig.contains("addonTranslations")) {
+                ConfigurationSection addonSection = languageConfig.getConfigurationSection("addonTranslations");
+                for (String key : addonSection.getKeys(false)) {
+                    addonTranslations.put(key, addonSection.getString(key));
+                }
+            }
+
             if (modified) {
                 languageConfig.save(languageFile);
             }
@@ -418,10 +428,11 @@ public class LanguageHandler {
         try {
             languageConfig = new YamlConfiguration();
             for (Field field : this.getClass().getDeclaredFields()) {
-                if(field.getType() != String.class) continue;
-
+                if (field.getType() != String.class) continue;
                 languageConfig.set(field.getName(), field.get(this));
             }
+            // Create an empty section for addon translations
+            languageConfig.createSection("addonTranslations");
             languageConfig.save(languageFile);
         } catch (Exception e) {
             plugin.getLogger().severe("Failed to create languages.yml file!");
@@ -431,6 +442,10 @@ public class LanguageHandler {
 
     protected void saveLanguageFile() {
         try {
+            // Update addon translations in config
+            for (String key : addonTranslations.keySet()) {
+                languageConfig.set("addonTranslations." + key, addonTranslations.get(key));
+            }
             languageConfig.save(new File(plugin.getDataFolder(), "languages.yml"));
         } catch (IOException e) {
             plugin.getLogger().severe("Could not save languages.yml!");
@@ -439,5 +454,38 @@ public class LanguageHandler {
 
     protected FileConfiguration getLanguageConfig() {
         return languageConfig;
+    }
+
+    /**
+     * Adds (or registers) an addon translation.
+     * If an override exists in the config, it will be used instead of the provided default.
+     */
+    public void addAddonTranslation(String key, String defaultValue) {
+        String configKey = "addonTranslations." + key;
+        if (languageConfig.isSet(configKey)) {
+            String value = languageConfig.getString(configKey);
+            addonTranslations.put(key, value);
+        } else {
+            addonTranslations.put(key, defaultValue);
+            languageConfig.set(configKey, defaultValue);
+            saveLanguageFile();
+        }
+    }
+
+    public String getAddonTranslation(String key) {
+        return addonTranslations.getOrDefault(key, key);
+    }
+
+    public void setAddonTranslation(String key, String value) {
+        addonTranslations.put(key, value);
+        languageConfig.set("addonTranslations." + key, value);
+        saveLanguageFile();
+    }
+
+    /**
+     * Getter for the addon translations map.
+     */
+    public HashMap<String, String> getAddonTranslations() {
+        return addonTranslations;
     }
 }

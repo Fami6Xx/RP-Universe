@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 /**
  * Represents one language field in LanguageHandler:
- * - fieldName is the actual Java field name
+ * - fieldName is the actual Java field name or the addon key.
  * - value is the current text (possibly multi-line)
  * - multiLine = true if and only if the field's *default* value contained '~'
  * - placeholders is a list of placeholders found in the text, e.g. {player}, {jobName}, etc.
@@ -33,11 +33,24 @@ public class LanguageField {
     // Regex to find {anything} in the string
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{([^}]+)}");
 
+    /**
+     * Constructor for core language fields (backed by a reflection Field).
+     */
     public LanguageField(Field reflectionField, String fieldName, String currentValue, boolean multiLine) {
         this.reflectionField = reflectionField;
         this.fieldName = fieldName;
         this.multiLine = multiLine;
         // This setter also refreshes placeholders
+        setValue(currentValue);
+    }
+
+    /**
+     * Alternative constructor for addon language fields (no reflection field).
+     */
+    public LanguageField(String fieldName, String currentValue, boolean multiLine) {
+        this.reflectionField = null;
+        this.fieldName = fieldName;
+        this.multiLine = multiLine;
         setValue(currentValue);
     }
 
@@ -113,7 +126,7 @@ public class LanguageField {
         List<String> found = new ArrayList<>();
         Matcher matcher = PLACEHOLDER_PATTERN.matcher(text);
         while (matcher.find()) {
-            // e.g. {player}, {price}, ...
+            // e.g. {player}, {price}, etc.
             found.add(matcher.group());
         }
         return found;

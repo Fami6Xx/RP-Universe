@@ -27,7 +27,9 @@ public class LanguageFieldEditorMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return FamiUtils.format("&6Edit Field: &e" + languageField.getFieldName());
+        // Optionally include an indicator whether this is a core or an addon field.
+        String type = (languageField.getReflectionField() == null) ? "&7[Addon]" : "&7[Core]";
+        return FamiUtils.format("&6Edit Field: &e" + languageField.getFieldName() + " " + type);
     }
 
     @Override
@@ -54,12 +56,13 @@ public class LanguageFieldEditorMenu extends Menu {
             return;
         }
 
-        if (displayName.equals(FamiUtils.format("&cBack"))){
+        if (displayName.equals(FamiUtils.format("&cBack"))) {
             previousMenu.open();
             return;
         }
 
         boolean multiLine = languageField.isMultiLine();
+        // Ensure we never work with a null value – our setter always turns null into empty string.
         List<String> lines = new ArrayList<>(languageField.getSplitLines());
         int clickedSlot = e.getSlot();
 
@@ -77,7 +80,7 @@ public class LanguageFieldEditorMenu extends Menu {
                 } else {
                     lines.add(input);
                     languageField.setLines(lines);
-                    // Persist
+                    // Persist – languageField.getValue() is guaranteed not to be null
                     LanguageFieldsManager.setLanguageFieldValue(languageField, languageField.getValue());
                     p.sendMessage(FamiUtils.formatWithPrefix("&aNew line added!"));
                 }
@@ -86,7 +89,7 @@ public class LanguageFieldEditorMenu extends Menu {
             return;
         }
 
-        // If user clicked on one of the lines (they start at slot=0)
+        // If user clicked on one of the lines (they start at slot 0)
         if (clickedSlot < lines.size()) {
             String oldLine = lines.get(clickedSlot);
             p.closeInventory();
@@ -117,7 +120,7 @@ public class LanguageFieldEditorMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        // Fill entire inventory
+        // Fill entire inventory with filler glass.
         setFillerGlass();
         Inventory inv = getInventory();
 
@@ -134,7 +137,7 @@ public class LanguageFieldEditorMenu extends Menu {
             ));
         }
 
-        // Show placeholders in bottom row
+        // Show placeholders in the bottom row if available.
         List<String> placeholders = languageField.getPlaceholders();
         if (!placeholders.isEmpty()) {
             List<String> lore = new ArrayList<>();
@@ -149,17 +152,17 @@ public class LanguageFieldEditorMenu extends Menu {
             ));
         }
 
-        // If multiLine, add "Add new line" button
+        // If multiLine, add "Add new line" button.
         if (multiLine) {
             inv.setItem(51, FamiUtils.makeItem(Material.EMERALD_BLOCK, "&aAdd New Line", "&7Click to add a new line."));
         }
 
-        // Add "Back" item
+        // Add "Back" item if a previous menu exists.
         if (previousMenu != null) {
             inv.setItem(52, FamiUtils.makeItem(Material.ARROW, "&cBack", "&7Click to go back."));
         }
 
-        // Add "Close" item
+        // Add "Close" item.
         inv.setItem(53, FamiUtils.makeItem(Material.BARRIER, "&cClose", "&7Click to close this editor."));
     }
 }
