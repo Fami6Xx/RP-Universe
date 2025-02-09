@@ -12,6 +12,7 @@ import me.fami6xx.rpuniverse.core.inventorylimit.PlayerInventoryLimitListener;
 import me.fami6xx.rpuniverse.core.jobs.JobsHandler;
 import me.fami6xx.rpuniverse.core.jobs.commands.createJob.CreateJobStarter;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.JobsCommand;
+import me.fami6xx.rpuniverse.core.jobs.types.basic.BasicJobType;
 import me.fami6xx.rpuniverse.core.locks.LockHandler;
 import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
@@ -204,6 +205,8 @@ public final class RPUniverse extends JavaPlugin {
             getServer().getPluginManager().registerEvents(balanceChangeNotifier, this);
             balanceChangeNotifier.runTaskTimer(this, 0, config.getLong("balance.check-interval"));
         }
+
+        getJobsHandler().addJobType(new BasicJobType());
 
         getLogger().info("RPUniverse enabled!");
     }
