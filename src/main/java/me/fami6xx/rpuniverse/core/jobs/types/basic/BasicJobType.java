@@ -25,6 +25,10 @@ public class BasicJobType implements JobType {
         this.data = new BasicJobTypeData();
     }
 
+    public BasicJobType() {
+        this.job = null;
+    }
+
     @Override
     public String getName() {
         return "Basic";
