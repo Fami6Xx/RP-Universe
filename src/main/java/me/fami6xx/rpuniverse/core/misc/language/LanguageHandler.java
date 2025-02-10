@@ -474,19 +474,28 @@ public class LanguageHandler {
 
     /**
      * Adds (or registers) an addon translation.
-     * If an override exists in the config, it will be used instead of the provided default.
+     * If an override exists in the config but is empty, it will be replaced
+     * with the provided default.
      */
     public void addAddonTranslation(String key, String defaultValue) {
         String configKey = "addonTranslations." + key;
         if (languageConfig.isSet(configKey)) {
             String value = languageConfig.getString(configKey);
-            addonTranslations.put(key, value);
+            // If the existing value is null or empty (after trimming), override it.
+            if (value == null || value.trim().isEmpty()) {
+                addonTranslations.put(key, defaultValue);
+                languageConfig.set(configKey, defaultValue);
+                saveLanguageFile();
+            } else {
+                addonTranslations.put(key, value);
+            }
         } else {
             addonTranslations.put(key, defaultValue);
             languageConfig.set(configKey, defaultValue);
             saveLanguageFile();
         }
     }
+
 
     public String getAddonTranslation(String key) {
         return addonTranslations.getOrDefault(key, key);
