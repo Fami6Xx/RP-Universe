@@ -360,10 +360,6 @@ public class LanguageHandler {
     // WorkingStep depleted
     public String workingStepDepletedMessage = "&7This location is depleted!~&7It will replenish soon...";
 
-    // -------------------------------
-    // ADDON TRANSLATIONS (for external addons)
-    // -------------------------------
-    // This internal map holds addon translations that are registered via the AbstractAddonLanguage.
     private final HashMap<String, String> addonTranslations = new HashMap<>();
 
     private final JavaPlugin plugin;
@@ -390,10 +386,9 @@ public class LanguageHandler {
             languageConfig = YamlConfiguration.loadConfiguration(languageFile);
             boolean modified = false;
 
-            // Load all declared String fields of LanguageHandler (core translations)
+            // Load core language fields (using reflection)
             for (Field field : this.getClass().getDeclaredFields()) {
                 if (field.getType() != String.class) continue;
-
                 String fieldName = field.getName();
                 if (!languageConfig.isSet(fieldName)) {
                     plugin.getLogger().warning("Missing field in languages.yml: " + fieldName + ". Adding default value.");
@@ -407,20 +402,39 @@ public class LanguageHandler {
                 }
             }
 
-            // Load addon translations from section "addonTranslations"
+            // Load addon translations from the configuration and flatten nested sections.
             if (languageConfig.contains("addonTranslations")) {
                 ConfigurationSection addonSection = languageConfig.getConfigurationSection("addonTranslations");
-                for (String key : addonSection.getKeys(false)) {
-                    addonTranslations.put(key, addonSection.getString(key));
-                }
+                flattenSection(addonSection, "");
             }
 
             if (modified) {
                 languageConfig.save(languageFile);
             }
         } catch (Exception e) {
-            plugin.getLogger().severe("Failed to load languages.yml file!");
+            plugin.getLogger().severe("Failed to load languages.yml file! " + e.getMessage());
+            e.printStackTrace();
             plugin.getPluginLoader().disablePlugin(plugin);
+        }
+    }
+
+    /**
+     * Recursively flattens the given section and adds keys to addonTranslations.
+     * For example, if the section contains a nested key structure:
+     *   addon:
+     *     FarmerLanguage:
+     *       notAllowedBreakingCrop: "..."
+     *
+     * then the flattened key will be "addon.FarmerLanguage.notAllowedBreakingCrop".
+     */
+    private void flattenSection(ConfigurationSection section, String prefix) {
+        for (String key : section.getKeys(false)) {
+            Object value = section.get(key);
+            if (value instanceof ConfigurationSection) {
+                flattenSection(section.getConfigurationSection(key), prefix + key + ".");
+            } else {
+                addonTranslations.put(prefix + key, String.valueOf(value));
+            }
         }
     }
 
@@ -435,20 +449,22 @@ public class LanguageHandler {
             languageConfig.createSection("addonTranslations");
             languageConfig.save(languageFile);
         } catch (Exception e) {
-            plugin.getLogger().severe("Failed to create languages.yml file!");
+            plugin.getLogger().severe("Failed to create languages.yml file! " + e.getMessage());
+            e.printStackTrace();
             plugin.getPluginLoader().disablePlugin(plugin);
         }
     }
 
     protected void saveLanguageFile() {
         try {
-            // Update addon translations in config
+            // Update addon translations in config using the flat keys.
             for (String key : addonTranslations.keySet()) {
                 languageConfig.set("addonTranslations." + key, addonTranslations.get(key));
             }
             languageConfig.save(new File(plugin.getDataFolder(), "languages.yml"));
         } catch (IOException e) {
-            plugin.getLogger().severe("Could not save languages.yml!");
+            plugin.getLogger().severe("Could not save languages.yml! " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

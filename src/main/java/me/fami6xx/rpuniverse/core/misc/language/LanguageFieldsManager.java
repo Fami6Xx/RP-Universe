@@ -56,6 +56,9 @@ public class LanguageFieldsManager {
             String key = entry.getKey();
             String value = entry.getValue();
             boolean multiLine = (value != null && value.contains("~"));
+
+
+
             fields.add(new LanguageField(key, value, multiLine));
         }
         return fields;
