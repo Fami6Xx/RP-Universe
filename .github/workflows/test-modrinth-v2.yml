@@ -60,8 +60,9 @@ jobs:
           
           expanded_versions=()
           
+          # Process each line from the input.
           while IFS= read -r version || [ -n "$version" ]; do
-              version=$(echo "$version" | xargs)
+              version=$(echo "$version" | xargs)  # trim whitespace
               if [ -z "$version" ]; then continue; fi
               if [[ "$version" =~ ^[0-9]+\.[0-9]+\.x$ ]]; then
                   base="${version%.x}"
@@ -78,9 +79,20 @@ jobs:
               fi
           done <<< "$INPUT_VERSIONS"
           
+          # Remove duplicates and sort.
           unique_versions=($(printf "%s\n" "${expanded_versions[@]}" | sort -u))
-          # Generate a compact JSON array.
-          json=$(printf '%s\n' "${unique_versions[@]}" | jq -R . | jq -s -c .)
+          echo "Unique expanded versions: ${unique_versions[*]}"
+          
+          # Filter out incomplete versions (e.g. "1.16" without patch)
+          filtered_versions=()
+          for v in "${unique_versions[@]}"; do
+              if [[ "$v" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                  filtered_versions+=("$v")
+              fi
+          done
+          
+          # Convert the filtered array to a compact JSON array.
+          json=$(printf '%s\n' "${filtered_versions[@]}" | jq -R . | jq -s -c .)
           echo "Expanded game versions: $json"
           echo "::set-output name=game_versions::$json"
 
@@ -91,7 +103,6 @@ jobs:
           VERSION: ${{ github.event.release.tag_name || github.event.inputs.version }}
           TITLE: ${{ github.event.release.name || github.event.inputs.title }}
           CHANGELOG: ${{ github.event.release.body || github.event.inputs.message }}
-          # Use the expanded versions from the previous step.
           GAME_VERSIONS: ${{ steps.expand_versions.outputs.game_versions }}
         run: |
           ARTIFACT="staging/RPUniverse.jar"
@@ -100,6 +111,7 @@ jobs:
           fi
 
           echo "Generating metadata..."
+          # Pass the GAME_VERSIONS JSON as a string and then parse it with fromjson.
           jq -n --arg name "$TITLE" \
                 --arg version_number "$VERSION" \
                 --arg changelog "$CHANGELOG" \
@@ -118,7 +130,6 @@ jobs:
                    file_parts: ["file"],
                    primary_file: "file"
                 }' > metadata.json
-
 
           echo "Uploading version to Modrinth..."
           curl -X POST \
