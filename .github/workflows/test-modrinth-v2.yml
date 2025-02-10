@@ -51,28 +51,21 @@ jobs:
       - name: Expand wildcard game versions
         id: expand_versions
         run: |
-          # Get the input game versions from workflow_dispatch.
-          # They should be provided as a newline-separated string.
           echo "Input game versions:"
           echo "${{ github.event.inputs.game_versions }}"
           INPUT_VERSIONS="${{ github.event.inputs.game_versions }}"
           
-          # Fetch Mojang's version manifest.
           echo "Fetching Mojang versions manifest..."
           manifest=$(curl -s https://launchermeta.mojang.com/mc/game/version_manifest.json)
           
-          # Initialize an array to hold expanded versions.
           expanded_versions=()
           
-          # Read each line from the input.
           while IFS= read -r version || [ -n "$version" ]; do
-              version=$(echo "$version" | xargs)  # trim any surrounding whitespace
+              version=$(echo "$version" | xargs)
               if [ -z "$version" ]; then continue; fi
-              # If the version matches the wildcard pattern, expand it.
               if [[ "$version" =~ ^[0-9]+\.[0-9]+\.x$ ]]; then
                   base="${version%.x}"
                   echo "Expanding wildcard version '$version' (base '$base')..."
-                  # Use jq to select release versions matching the base.
                   specific=$(echo "$manifest" | jq -r --arg base "$base" '
                     .versions[] | select(.type=="release") | .id |
                     select(. == $base or startswith($base + "."))
@@ -85,10 +78,9 @@ jobs:
               fi
           done <<< "$INPUT_VERSIONS"
           
-          # Remove duplicate versions (optional) and sort.
           unique_versions=($(printf "%s\n" "${expanded_versions[@]}" | sort -u))
-          # Convert the array to a JSON array.
-          json=$(printf '%s\n' "${unique_versions[@]}" | jq -R . | jq -s .)
+          # Generate a compact JSON array.
+          json=$(printf '%s\n' "${unique_versions[@]}" | jq -R . | jq -s -c .)
           echo "Expanded game versions: $json"
           echo "::set-output name=game_versions::$json"
 
