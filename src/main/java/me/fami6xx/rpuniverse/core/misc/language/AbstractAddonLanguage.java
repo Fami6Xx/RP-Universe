@@ -32,7 +32,6 @@ public abstract class AbstractAddonLanguage {
 
                     // Get the default value from the subclass code
                     String defaultValue = (String) field.get(this);
-                    System.out.println("Def: " + defaultValue);
                     if (defaultValue == null) {
                         defaultValue = "";
                     }
@@ -46,11 +45,9 @@ public abstract class AbstractAddonLanguage {
                         } else {
                             field.set(this, loadedValue);
                         }
-                        System.out.println("already contains: " + key + " = " + loadedValue);
                     } else {
                         languageHandler.addAddonTranslation(key, defaultValue);
                         field.set(this, defaultValue);
-                        System.out.println("added: " + key + " = " + defaultValue);
                     }
                 } catch (IllegalAccessException e) {
                     RPUniverse.getInstance().getLogger().severe(
