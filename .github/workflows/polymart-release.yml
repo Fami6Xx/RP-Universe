@@ -39,18 +39,21 @@ jobs:
         env:
           POLYMART_API_KEY: ${{ secrets.POLYMART_API_KEY }}
           POLYMART_RESOURCE_ID: ${{ secrets.POLYMART_RESOURCE_ID }}
-          # Use release metadata from GitHub
+          # The original release tag (e.g. "v1.2.3")
           RELEASE_VERSION: ${{ github.event.release.tag_name }}
           RELEASE_TITLE: ${{ github.event.release.name }}
           RELEASE_MESSAGE: ${{ github.event.release.body }}
         run: |
+          # Remove the leading 'v' if present (e.g. convert "v1.2.3" to "1.2.3")
+          CLEAN_VERSION=${RELEASE_VERSION#v}
+          echo "Using version ${CLEAN_VERSION} for Polymart update..."
           # Pick the first non-shaded JAR from the staging directory
           FILE=$(ls staging/*.jar | head -n 1)
-          echo "Uploading ${FILE} to Polymart as version ${RELEASE_VERSION}..."
+          echo "Uploading ${FILE} to Polymart as version ${CLEAN_VERSION}..."
           curl -X POST https://api.polymart.org/v1/postUpdate \
             -F "api_key=${POLYMART_API_KEY}" \
             -F "resource_id=${POLYMART_RESOURCE_ID}" \
-            -F "version=${RELEASE_VERSION}" \
+            -F "version=${CLEAN_VERSION}" \
             -F "title=${RELEASE_TITLE}" \
             -F "message=${RELEASE_MESSAGE}" \
             -F "beta=0" \
