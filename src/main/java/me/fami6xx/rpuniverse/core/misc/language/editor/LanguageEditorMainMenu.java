@@ -64,9 +64,15 @@ public class LanguageEditorMainMenu extends EasyPaginatedMenu {
         lines.add(1, "&7Current text:");
         // Optionally indicate the type of field.
         String type = (lf.getReflectionField() == null) ? "&7[Addon]" : "&7[Core]";
+
+        String name = lf.getFieldName();
+        if (name.contains(".")) {
+            name = name.substring(name.lastIndexOf(".") + 1);
+        }
+
         return FamiUtils.makeItem(
                 Material.PAPER,
-                "&e" + lf.getFieldName() + " " + type,
+                "&e" + name + " " + type,
                 lines.toArray(new String[0])
         );
     }
