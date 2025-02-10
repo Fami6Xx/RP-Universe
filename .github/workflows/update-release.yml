@@ -36,16 +36,24 @@ jobs:
 
       - name: Prepare artifact for upload
         run: |
-          mkdir staging
-          echo "Copying non-shaded JAR files..."
-          for file in target/*.jar; do
-            if [[ "$file" != *-shaded* ]]; then
-              echo "Copying $file"
-              cp "$file" staging
-            else
-              echo "Skipping $file (shaded file)"
-            fi
-          done
+          mkdir -p staging
+          echo "Searching for valid artifact..."
+          FILE=$(find target -maxdepth 1 -type f -name "RPUniverse-*.jar" ! -name "*original*" ! -name "*javadoc*" | head -n 1)
+          if [ -z "$FILE" ]; then
+            echo "No valid artifact found!" && exit 1
+          fi
+          echo "Copying $FILE to staging/RPUniverse.jar"
+          cp "$FILE" staging/RPUniverse.jar
+
+      - name: Identify artifact
+        id: artifact
+        run: |
+          ARTIFACT="staging/RPUniverse.jar"
+          if [ ! -f "$ARTIFACT" ]; then
+            echo "Artifact file $ARTIFACT not found!" && exit 1
+          fi
+          echo "Found artifact: $ARTIFACT"
+          echo "file=$ARTIFACT" >> $GITHUB_OUTPUT
 
       - name: Post update to Polymart
         env:
