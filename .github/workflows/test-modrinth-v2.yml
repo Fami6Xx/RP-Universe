@@ -1,0 +1,87 @@
+name: Test modrinth upload
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. v1.2.3 or 1.2.3)'
+        required: true
+      title:
+        description: 'Release title'
+        required: true
+      message:
+        description: 'Release message'
+        required: true
+
+jobs:
+  build-and-upload:
+    # Run if not a release event (workflow_dispatch) or if release.prerelease is false.
+    if: ${{ github.event_name != 'release' || github.event.release.prerelease == false }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Prepare artifact for upload
+        run: |
+          mkdir -p staging
+          echo "Searching for valid artifact..."
+          FILE=$(find target -maxdepth 1 -type f -name "RPUniverse-*.jar" ! -name "*original*" ! -name "*javadoc*" | head -n 1)
+          if [ -z "$FILE" ]; then
+            echo "No valid artifact found!" && exit 1
+          fi
+          echo "Copying $FILE to staging/RPUniverse.jar"
+          cp "$FILE" staging/RPUniverse.jar
+
+      - name: Upload to Modrinth via API
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          MODRINTH_PROJECT_ID: ${{ secrets.MODRINTH_PROJECT_ID }}
+          VERSION: ${{ github.event.release.tag_name || github.event.inputs.version }}
+          TITLE: ${{ github.event.release.name || github.event.inputs.title }}
+          CHANGELOG: ${{ github.event.release.body || github.event.inputs.message }}
+        run: |
+          ARTIFACT="staging/RPUniverse.jar"
+          if [ ! -f "$ARTIFACT" ]; then
+            echo "Artifact file $ARTIFACT not found!" && exit 1
+          fi
+
+          echo "Generating metadata..."
+          # Using jq to generate the JSON metadata for the version.
+          jq -n --arg name "$TITLE" \
+                --arg version_number "$VERSION" \
+                --arg changelog "$CHANGELOG" \
+                --arg project_id "$MODRINTH_PROJECT_ID" \
+                '{
+                  name: $name,
+                  version_number: $version_number,
+                  changelog: $changelog,
+                  game_versions: ["1.14.x", "1.15.x", "1.16.x", "1.17.x", "1.18.x", "1.19.x", "1.20.x", "1.21.x"],
+                  version_type: "release",
+                  loaders: ["paper", "purpur"],
+                  featured: true,
+                  status: "listed",
+                  project_id: $project_id,
+                  file_parts: ["file"],
+                  primary_file: "file"
+                }' > metadata.json
+
+          echo "Uploading version to Modrinth..."
+          curl -X POST \
+            -H "Authorization: $MODRINTH_TOKEN" \
+            -H "User-Agent: GitHubActions" \
+            -F "data=@metadata.json;type=application/json" \
+            -F "file=@$ARTIFACT;type=application/java-archive" \
+            https://staging-api.modrinth.com/version
