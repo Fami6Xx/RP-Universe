@@ -112,20 +112,21 @@ jobs:
                 --arg version_number "$VERSION" \
                 --arg changelog "$CHANGELOG" \
                 --arg project_id "$MODRINTH_PROJECT_ID" \
-                --argjson game_versions "$GAME_VERSIONS" \
+                --arg game_versions "$GAME_VERSIONS" \
                 '{
-                  name: $name,
-                  version_number: $version_number,
-                  changelog: ($changelog | select(. != "")),
-                  game_versions: $game_versions,
-                  version_type: "release",
-                  loaders: ["paper", "purpur"],
-                  featured: true,
-                  status: "listed",
-                  project_id: $project_id,
-                  file_parts: ["file"],
-                  primary_file: "file"
+                   name: $name,
+                   version_number: $version_number,
+                   changelog: ($changelog | select(. != "")),
+                   game_versions: ($game_versions | fromjson),
+                   version_type: "release",
+                   loaders: ["paper", "purpur"],
+                   featured: true,
+                   status: "listed",
+                   project_id: $project_id,
+                   file_parts: ["file"],
+                   primary_file: "file"
                 }' > metadata.json
+
 
           echo "Uploading version to Modrinth..."
           curl -X POST \
