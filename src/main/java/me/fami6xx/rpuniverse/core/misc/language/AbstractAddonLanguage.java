@@ -11,8 +11,8 @@ import java.util.Map;
  * Upon initialization it uses reflection to iterate over all String fields
  * of the concrete subclass. It checks if the LanguageHandler already has translations
  * for each field (using the key format addon.<SimpleClassName>.<fieldName>).
- * If a translation exists, it sets the field to that value.
- * Otherwise, it registers the default value from the code.
+ * If a translation exists and is non‑blank, it sets the field to that value.
+ * Otherwise, it registers and uses the default value from the code.
  * Finally, the instance is registered in a static registry so that updates can be
  * pushed back into the addon instance.
  */
@@ -31,20 +31,30 @@ public abstract class AbstractAddonLanguage {
                 try {
                     // Create a key in the format: addon.<SimpleClassName>.<fieldName>
                     String key = "addon." + this.getClass().getSimpleName() + "." + field.getName();
+
+                    // Get the default value from code (if null, default to empty string)
+                    String defaultValue = (String) field.get(this);
+                    if (defaultValue == null) {
+                        defaultValue = "";
+                    }
+
                     if (languageHandler.getAddonTranslations().containsKey(key)) {
-                        // Translation already exists: load it.
                         String loadedValue = languageHandler.getAddonTranslation(key);
-                        field.set(this, loadedValue);
-                    } else {
-                        // No translation exists: register the default.
-                        String defaultValue = (String) field.get(this);
-                        if (defaultValue == null) {
-                            defaultValue = "";
+                        // If the loaded value is blank, use the default.
+                        if (loadedValue == null || loadedValue.trim().isEmpty()) {
+                            languageHandler.addAddonTranslation(key, defaultValue);
+                            field.set(this, defaultValue);
+                        } else {
+                            field.set(this, loadedValue);
                         }
+                    } else {
                         languageHandler.addAddonTranslation(key, defaultValue);
                         field.set(this, defaultValue);
                     }
                 } catch (IllegalAccessException e) {
+                    RPUniverse.getInstance().getLogger().severe(
+                            "Error processing addon language field '" + field.getName() +
+                                    "' in " + this.getClass().getSimpleName() + ": " + e.getMessage());
                     e.printStackTrace();
                 }
             }
