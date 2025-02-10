@@ -61,7 +61,7 @@ jobs:
         with:
           api-domain: "staging-api.modrinth.com"
           token: ${{ secrets.MODRINTH_TOKEN }}
-          project: ${{ secrets.MODRINTH_PROJECT_ID }}
+          project: "MtNjQXtV"
           name: ${{ github.event.release.name || github.event.inputs.title }}
           version: ${{ github.event.release.tag_name || github.event.inputs.version }}
           changelog: ${{ github.event.release.body || github.event.inputs.message }}
