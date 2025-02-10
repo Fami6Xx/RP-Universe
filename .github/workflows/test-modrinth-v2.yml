@@ -1,4 +1,4 @@
-name: Test modrinth upload
+name: Test modrinth upload v2
 
 on:
   release:
@@ -14,10 +14,13 @@ on:
       message:
         description: 'Release message'
         required: true
+      game_versions:
+        description: 'Game versions (one per line). Use wildcards (e.g. "1.16.x") to have them expanded to specific versions.'
+        required: true
 
 jobs:
   build-and-upload:
-    # Run if not a release event (workflow_dispatch) or if release.prerelease is false.
+    # Run if not a release event or if the release is not a prerelease.
     if: ${{ github.event_name != 'release' || github.event.release.prerelease == false }}
     runs-on: ubuntu-latest
     steps:
@@ -45,6 +48,50 @@ jobs:
           echo "Copying $FILE to staging/RPUniverse.jar"
           cp "$FILE" staging/RPUniverse.jar
 
+      - name: Expand wildcard game versions
+        id: expand_versions
+        run: |
+          # Get the input game versions from workflow_dispatch.
+          # They should be provided as a newline-separated string.
+          echo "Input game versions:"
+          echo "${{ github.event.inputs.game_versions }}"
+          INPUT_VERSIONS="${{ github.event.inputs.game_versions }}"
+          
+          # Fetch Mojang's version manifest.
+          echo "Fetching Mojang versions manifest..."
+          manifest=$(curl -s https://launchermeta.mojang.com/mc/game/version_manifest.json)
+          
+          # Initialize an array to hold expanded versions.
+          expanded_versions=()
+          
+          # Read each line from the input.
+          while IFS= read -r version || [ -n "$version" ]; do
+              version=$(echo "$version" | xargs)  # trim any surrounding whitespace
+              if [ -z "$version" ]; then continue; fi
+              # If the version matches the wildcard pattern, expand it.
+              if [[ "$version" =~ ^[0-9]+\.[0-9]+\.x$ ]]; then
+                  base="${version%.x}"
+                  echo "Expanding wildcard version '$version' (base '$base')..."
+                  # Use jq to select release versions matching the base.
+                  specific=$(echo "$manifest" | jq -r --arg base "$base" '
+                    .versions[] | select(.type=="release") | .id |
+                    select(. == $base or startswith($base + "."))
+                  ')
+                  for s in $specific; do
+                      expanded_versions+=("$s")
+                  done
+              else
+                  expanded_versions+=("$version")
+              fi
+          done <<< "$INPUT_VERSIONS"
+          
+          # Remove duplicate versions (optional) and sort.
+          unique_versions=($(printf "%s\n" "${expanded_versions[@]}" | sort -u))
+          # Convert the array to a JSON array.
+          json=$(printf '%s\n' "${unique_versions[@]}" | jq -R . | jq -s .)
+          echo "Expanded game versions: $json"
+          echo "::set-output name=game_versions::$json"
+
       - name: Upload to Modrinth via API
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
@@ -52,6 +99,8 @@ jobs:
           VERSION: ${{ github.event.release.tag_name || github.event.inputs.version }}
           TITLE: ${{ github.event.release.name || github.event.inputs.title }}
           CHANGELOG: ${{ github.event.release.body || github.event.inputs.message }}
+          # Use the expanded versions from the previous step.
+          GAME_VERSIONS: ${{ steps.expand_versions.outputs.game_versions }}
         run: |
           ARTIFACT="staging/RPUniverse.jar"
           if [ ! -f "$ARTIFACT" ]; then
@@ -59,16 +108,16 @@ jobs:
           fi
 
           echo "Generating metadata..."
-          # Using jq to generate the JSON metadata for the version.
           jq -n --arg name "$TITLE" \
                 --arg version_number "$VERSION" \
                 --arg changelog "$CHANGELOG" \
                 --arg project_id "$MODRINTH_PROJECT_ID" \
+                --argjson game_versions "$GAME_VERSIONS" \
                 '{
                   name: $name,
                   version_number: $version_number,
-                  changelog: $changelog,
-                  game_versions: ["1.14.x", "1.15.x", "1.16.x", "1.17.x", "1.18.x", "1.19.x", "1.20.x", "1.21.x"],
+                  changelog: ($changelog | select(. != "")),
+                  game_versions: $game_versions,
                   version_type: "release",
                   loaders: ["paper", "purpur"],
                   featured: true,
