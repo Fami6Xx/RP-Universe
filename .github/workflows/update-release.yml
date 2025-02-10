@@ -16,7 +16,7 @@ on:
         required: true
 
 jobs:
-  build-and-upload:
+  Build-And-Upload-To-Polymart:
     # Run if not a release event (workflow_dispatch) or if release.prerelease is false.
     if: ${{ github.event_name != 'release' || github.event.release.prerelease == false }}
     runs-on: ubuntu-latest
@@ -71,12 +71,55 @@ jobs:
             -F "beta=0" \
             -F "snapshot=0" \
             -F "file=@${FILE}"
-            
+
+  Build-And-Upload-To-Modrinth:
+    # Run if not a release event (workflow_dispatch) or if release.prerelease is false.
+    if: ${{ github.event_name != 'release' || github.event.release.prerelease == false }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Clean up
+        run: mvn clean
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Prepare artifact for upload
+        run: |
+          mkdir -p staging
+          echo "Searching for valid artifact..."
+          FILE=$(find target -maxdepth 1 -type f -name "RPUniverse-*.jar" ! -name "*original*" ! -name "*javadoc*" | head -n 1)
+          if [ -z "$FILE" ]; then
+            echo "No valid artifact found!" && exit 1
+          fi
+          echo "Copying $FILE to staging/RPUniverse.jar"
+          cp "$FILE" staging/RPUniverse.jar
+
+      - name: Identify artifact
+        id: artifact
+        run: |
+          ARTIFACT="staging/RPUniverse.jar"
+          if [ ! -f "$ARTIFACT" ]; then
+            echo "Artifact file $ARTIFACT not found!" && exit 1
+          fi
+          echo "Found artifact: $ARTIFACT"
+          echo "file=$ARTIFACT" >> $GITHUB_OUTPUT
+  
+
       - name: Publish to Modrinth
         uses: cloudnode-pro/modrinth-publish@2.0.0
         with:
           token: ${{ secrets.MODRINTH_TOKEN }}
-          project: ${{ secrets.MODRINTH_PROJECT_ID }}
+          project: "MtNjQXtV"
           name: ${{ github.event.release.name || github.event.inputs.title }}
           version: ${{ github.event.release.tag_name || github.event.inputs.version }}
           changelog: ${{ github.event.release.body || github.event.inputs.message }}
@@ -92,4 +135,4 @@ jobs:
             1.19.x
             1.20.x
             1.21.x
-          files: ${{ steps.artifact.outputs.file }}
+          files: '["staging/RPUniverse.jar"]'
