@@ -3,11 +3,12 @@ name: Build and Update Polymart Release
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   build-and-upload:
-    # Only run for stable (non-prerelease) releases.
-    if: ${{ github.event.release.prerelease == false }}
+    # Only run on a release event if it's not a prerelease.
+    if: ${{ github.event_name != 'release' || github.event.release.prerelease == false }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -35,14 +36,15 @@ jobs:
               echo "Skipping $file (shaded file)"
             fi
           done
+
       - name: Post update to Polymart
         env:
           POLYMART_API_KEY: ${{ secrets.POLYMART_API_KEY }}
           POLYMART_RESOURCE_ID: ${{ secrets.POLYMART_RESOURCE_ID }}
           # The original release tag (e.g. "v1.2.3")
-          RELEASE_VERSION: ${{ github.event.release.tag_name }}
-          RELEASE_TITLE: ${{ github.event.release.name }}
-          RELEASE_MESSAGE: ${{ github.event.release.body }}
+          RELEASE_VERSION: ${{ github.event.release.tag_name || github.ref }}
+          RELEASE_TITLE: ${{ github.event.release.name || 'Release' }}
+          RELEASE_MESSAGE: ${{ github.event.release.body || 'No message provided' }}
         run: |
           # Remove the leading 'v' if present (e.g. convert "v1.2.3" to "1.2.3")
           CLEAN_VERSION=${RELEASE_VERSION#v}
