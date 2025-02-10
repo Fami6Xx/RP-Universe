@@ -51,7 +51,7 @@ public class BasicAdminMenu extends Menu {
     @Override
     public void setMenuItems() {
         inventory.setItem(12, FamiUtils.makeItem(Material.ANVIL, "&6Working Steps", "&7Set the working steps for reworking the item"));
-        inventory.setItem(14, FamiUtils.makeItem(Material.GOLD_NUGGET, "&6Sell step", "&7Set the locations where you can sell the final item"));
+        inventory.setItem(14, FamiUtils.makeItem(Material.GOLD_NUGGET, "&6Sell Steps", "&7Set the locations where you can sell the final item"));
 
         setFillerGlass();
     }
