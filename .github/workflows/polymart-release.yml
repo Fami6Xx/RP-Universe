@@ -4,10 +4,20 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. v1.2.3 or 1.2.3)'
+        required: true
+      title:
+        description: 'Release title'
+        required: true
+      message:
+        description: 'Release message'
+        required: true
 
 jobs:
   build-and-upload:
-    # Only run on a release event if it's not a prerelease.
+    # Run if not a release event (workflow_dispatch) or if release.prerelease is false.
     if: ${{ github.event_name != 'release' || github.event.release.prerelease == false }}
     runs-on: ubuntu-latest
     steps:
@@ -41,12 +51,12 @@ jobs:
         env:
           POLYMART_API_KEY: ${{ secrets.POLYMART_API_KEY }}
           POLYMART_RESOURCE_ID: ${{ secrets.POLYMART_RESOURCE_ID }}
-          # The original release tag (e.g. "v1.2.3")
-          RELEASE_VERSION: ${{ github.event.release.tag_name || github.ref }}
-          RELEASE_TITLE: ${{ github.event.release.name || 'Release' }}
-          RELEASE_MESSAGE: ${{ github.event.release.body || 'No message provided' }}
+          # Use release event values if available; otherwise use manual inputs.
+          RELEASE_VERSION: ${{ github.event.release.tag_name || github.event.inputs.version }}
+          RELEASE_TITLE: ${{ github.event.release.name || github.event.inputs.title }}
+          RELEASE_MESSAGE: ${{ github.event.release.body || github.event.inputs.message }}
         run: |
-          # Remove the leading 'v' if present (e.g. convert "v1.2.3" to "1.2.3")
+          # Remove leading 'v' if present (e.g. "v1.2.3" -> "1.2.3")
           CLEAN_VERSION=${RELEASE_VERSION#v}
           echo "Using version ${CLEAN_VERSION} for Polymart update..."
           # Pick the first non-shaded JAR from the staging directory
