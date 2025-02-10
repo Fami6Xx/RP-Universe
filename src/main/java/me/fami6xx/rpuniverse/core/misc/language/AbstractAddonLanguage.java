@@ -1,28 +1,26 @@
 package me.fami6xx.rpuniverse.core.misc.language;
 
 import me.fami6xx.rpuniverse.RPUniverse;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Abstract class for addon language sections.
- * Upon initialization it uses reflection to iterate over all String fields
- * of the concrete subclass. It checks if the LanguageHandler already has translations
- * for each field (using the key format addon.<SimpleClassName>.<fieldName>).
- * If a translation exists and is non‑blank, it sets the field to that value.
- * Otherwise, it registers and uses the default value from the code.
- * Finally, the instance is registered in a static registry so that updates can be
- * pushed back into the addon instance.
- */
 public abstract class AbstractAddonLanguage {
 
     // Registry for addon language instances (one per addon class)
     private static final Map<String, AbstractAddonLanguage> REGISTERED_ADDON_LANGUAGES = new HashMap<>();
 
+    // Empty constructor
     public AbstractAddonLanguage() {
-        // Get the live LanguageHandler instance (for example via a singleton)
+        // Do not perform reflection-based initialization here!
+    }
+
+    /**
+     * Call this method from your subclass constructor (after default field initialization)
+     * to update language values.
+     */
+    protected void initLanguage() {
+        // Get the live LanguageHandler instance
         LanguageHandler languageHandler = RPUniverse.getLanguageHandler();
         Field[] fields = this.getClass().getDeclaredFields();
         for (Field field : fields) {
@@ -32,8 +30,9 @@ public abstract class AbstractAddonLanguage {
                     // Create a key in the format: addon.<SimpleClassName>.<fieldName>
                     String key = "addon." + this.getClass().getSimpleName() + "." + field.getName();
 
-                    // Get the default value from code (if null, default to empty string)
+                    // Get the default value from the subclass code
                     String defaultValue = (String) field.get(this);
+                    System.out.println("Def: " + defaultValue);
                     if (defaultValue == null) {
                         defaultValue = "";
                     }
@@ -47,15 +46,16 @@ public abstract class AbstractAddonLanguage {
                         } else {
                             field.set(this, loadedValue);
                         }
+                        System.out.println("already contains: " + key + " = " + loadedValue);
                     } else {
                         languageHandler.addAddonTranslation(key, defaultValue);
                         field.set(this, defaultValue);
+                        System.out.println("added: " + key + " = " + defaultValue);
                     }
                 } catch (IllegalAccessException e) {
                     RPUniverse.getInstance().getLogger().severe(
                             "Error processing addon language field '" + field.getName() +
                                     "' in " + this.getClass().getSimpleName() + ": " + e.getMessage());
-                    e.printStackTrace();
                 }
             }
         }
@@ -68,5 +68,21 @@ public abstract class AbstractAddonLanguage {
      */
     public static AbstractAddonLanguage getAddonLanguage(String simpleClassName) {
         return REGISTERED_ADDON_LANGUAGES.get(simpleClassName);
+    }
+
+    /**
+     * Creates a new instance of the given addon language class.
+     * @param clazz The class of the addon language to create.
+     * @return The new instance.
+     * @param <T> The type of the addon language.
+     */
+    public static <T extends AbstractAddonLanguage> T create(Class<T> clazz) {
+        try {
+            T instance = clazz.getDeclaredConstructor().newInstance();
+            instance.initLanguage();
+            return instance;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not create language instance for " + clazz.getSimpleName(), e);
+        }
     }
 }
