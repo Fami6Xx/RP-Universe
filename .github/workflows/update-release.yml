@@ -1,4 +1,4 @@
-name: Build and Update Polymart Release
+name: Build and Update Polymart + Modrinth Release
 
 on:
   release:
@@ -71,3 +71,25 @@ jobs:
             -F "beta=0" \
             -F "snapshot=0" \
             -F "file=@${FILE}"
+            
+      - name: Publish to Modrinth
+        uses: cloudnode-pro/modrinth-publish@2.0.0
+        with:
+          token: ${{ secrets.MODRINTH_TOKEN }}
+          project: ${{ secrets.MODRINTH_PROJECT_ID }}
+          name: ${{ github.event.release.name || github.event.inputs.title }}
+          version: ${{ github.event.release.tag_name || github.event.inputs.version }}
+          changelog: ${{ github.event.release.body || github.event.inputs.message }}
+          loaders: |-
+            paper
+            purpur
+          game-versions: |-
+            1.14.x
+            1.15.x
+            1.16.x
+            1.17.x
+            1.18.x
+            1.19.x
+            1.20.x
+            1.21.x
+          files: ${{ steps.artifact.outputs.file }}
