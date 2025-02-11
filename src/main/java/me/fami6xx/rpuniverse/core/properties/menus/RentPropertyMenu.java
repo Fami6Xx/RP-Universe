@@ -96,7 +96,15 @@ public class RentPropertyMenu extends Menu {
                 }
                 break;
             case EMERALD_BLOCK:
-                // Handle rent confirmation
+                // Handle rent confirmation with maximum duration enforcement
+                long requestedDurationMs = selectedDuration * 24 * 60 * 60 * 1000L;
+                long maxDurationMs = property.getRentMaximumDuration();
+                if (maxDurationMs > 0 && requestedDurationMs > maxDurationMs) {
+                    long maxDays = maxDurationMs / (24 * 60 * 60 * 1000L);
+                    player.sendMessage(FamiUtils.formatWithPrefix("You cannot rent for more than " + maxDays + " days."));
+                    return;
+                }
+
                 double price = totalPrice;
                 if (RPUniverse.getInstance().getEconomy().has(player, price)) {
                     RPUniverse.getInstance().getEconomy().withdrawPlayer(player, price);
@@ -131,6 +139,11 @@ public class RentPropertyMenu extends Menu {
         for (int i = 0; i < durationOptions.size(); i++) {
             if (i >= slots.length) break; // Avoid IndexOutOfBoundsException
             DurationOption option = durationOptions.get(i);
+            long requestedDurationMs = option.days * 24 * 60 * 60 * 1000L;
+            long maxDurationMs = property.getRentMaximumDuration();
+            if (maxDurationMs > 0 && requestedDurationMs > maxDurationMs) {
+                continue; // Skip this duration option
+            }
             placeholders.put("{price}", String.valueOf(property.getPrice() * option.days));
             placeholders.put("{duration}", option.displayName);
             List<String> loreList = Arrays.stream(durationLore).map(s -> FamiUtils.replace(s, placeholders)).toList();
