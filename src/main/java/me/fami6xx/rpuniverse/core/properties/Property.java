@@ -257,7 +257,8 @@ public class Property {
         locks.add(lock);
         locksUUID.add(lock.getUUID());
 
-        lock.addOwner(owner);
+        if (owner != null)
+            lock.addOwner(owner);
         trustedPlayers.forEach(lock::addOwner);
     }
 
@@ -272,7 +273,8 @@ public class Property {
         locks.remove(lock);
         locksUUID.remove(lock.getUUID());
 
-        lock.removeOwner(owner);
+        if (owner != null)
+            lock.removeOwner(owner);
         trustedPlayers.forEach(lock::removeOwner);
 
         RPUniverse.getInstance().getLockHandler().removeLock(lock);
