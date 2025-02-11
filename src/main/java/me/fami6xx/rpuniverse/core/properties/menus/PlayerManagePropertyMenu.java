@@ -96,6 +96,9 @@ public class PlayerManagePropertyMenu extends Menu {
                 // 2. Perform the sell
                 property.sellProperty(SELL_PERCENTAGE);
 
+                // Format the amount to 2 decimal places
+                amountToDeposit = Math.round(amountToDeposit * 100.0) / 100.0;
+
                 // 3. Notify the player
                 player.sendMessage(FamiUtils.formatWithPrefix("&aYou have sold your property for &e"
                         + amountToDeposit + "&e$&a!"));
