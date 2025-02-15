@@ -277,9 +277,6 @@ public class LockHandler implements Listener {
         }
     }
 
-    HashMap<UUID, Hologram> holograms = new HashMap<>();
-    HashMap<UUID, Lock> lockMap = new HashMap<>();
-
     /**
      * Handles the player move event.
      * <p>
@@ -452,19 +449,6 @@ public class LockHandler implements Listener {
             }
         }
         return false;
-    }
-
-    /**
-     * Checks and deletes the hologram for a player if it exists.
-     *
-     * @param playerUUID The UUID of the player.
-     */
-    private void checkHoloAndDelete(UUID playerUUID) {
-        if(holograms.containsKey(playerUUID)) {
-            holograms.get(playerUUID).delete();
-            holograms.remove(playerUUID);
-            lockMap.remove(playerUUID);
-        }
     }
 
     /**
