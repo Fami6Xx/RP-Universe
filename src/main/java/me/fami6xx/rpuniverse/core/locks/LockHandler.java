@@ -30,7 +30,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -277,6 +280,10 @@ public class LockHandler implements Listener {
         }
     }
 
+    // Add these fields to your LockHandler class
+    private final Map<UUID, BukkitTask> particleTasks = new HashMap<>();
+    private final Map<UUID, Lock> particleLockMap = new HashMap<>();
+
     /**
      * Handles the player move event.
      * <p>
@@ -292,28 +299,103 @@ public class LockHandler implements Listener {
 
         // Only process for ADMIN mode.
         if (playerData.getPlayerMode() != PlayerMode.ADMIN) {
+            cancelParticleTask(player.getUniqueId());
             return;
         }
 
         // Get the block the player is targeting (up to 8 blocks away)
-        Block block = player.getTargetBlockExact(8);
-        if (block == null || block.getType() == Material.AIR) {
+        Block targetBlock = player.getTargetBlockExact(8);
+        if (targetBlock == null || targetBlock.getType() == Material.AIR) {
+            cancelParticleTask(player.getUniqueId());
             return;
         }
 
         List<Block> blocksToCheck = new ArrayList<>();
-        getAllLockBlocksFromBlock(block, block.getType(), blocksToCheck);
-
+        getAllLockBlocksFromBlock(targetBlock, targetBlock.getType(), blocksToCheck);
+        Lock foundLock = null;
         for (Block checkBlock : blocksToCheck) {
             Lock lock = getLockByLocation(checkBlock.getLocation());
             if (lock != null) {
-                spawnLockParticles(lock, player);
+                foundLock = lock;
                 break;
             }
         }
+
+        if (foundLock == null) {
+            cancelParticleTask(player.getUniqueId());
+            return;
+        }
+
+        UUID uuid = player.getUniqueId();
+        // If a particle task is already running for this player, check if it's for the same lock.
+        if (particleTasks.containsKey(uuid)) {
+            Lock currentLock = particleLockMap.get(uuid);
+            if (currentLock != null && currentLock.equals(foundLock)) {
+                // Already displaying particles for this lock.
+                return;
+            } else {
+                // The lock has changed; cancel the old task.
+                cancelParticleTask(uuid);
+            }
+        }
+
+        // Store the current lock and start a repeating task to spawn particles.
+        particleLockMap.put(uuid, foundLock);
+        Lock finalFoundLock = foundLock;
+        BukkitTask task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                // First, check if the player is still online.
+                if (!player.isOnline()) {
+                    cancelParticleTask(uuid);
+                    return;
+                }
+
+                // Re-check the player's target block.
+                Block newTarget = player.getTargetBlockExact(8);
+                if (newTarget == null || newTarget.getType() == Material.AIR) {
+                    cancelParticleTask(uuid);
+                    return;
+                }
+                List<Block> newBlocksToCheck = new ArrayList<>();
+                getAllLockBlocksFromBlock(newTarget, newTarget.getType(), newBlocksToCheck);
+                boolean stillLooking = false;
+                for (Block b : newBlocksToCheck) {
+                    if (finalFoundLock.equals(getLockByLocation(b.getLocation()))) {
+                        stillLooking = true;
+                        break;
+                    }
+                }
+                if (!stillLooking) {
+                    cancelParticleTask(uuid);
+                    return;
+                }
+                // Spawn the particle outline for the locked block.
+                spawnLockParticles(finalFoundLock, player);
+            }
+        }.runTaskTimer(RPUniverse.getInstance(), 0, 5);
+
+        particleTasks.put(uuid, task);
     }
 
+    /**
+     * Handles the player disconnect event.
+     * <p>
+     * This method cancels the particle task for the player when they disconnect.
+     * @param event The event to handle.
+     */
+    @EventHandler
+    public void onPlayerDisconnect(PlayerQuitEvent event) {
+        cancelParticleTask(event.getPlayer().getUniqueId());
+    }
 
+    private void cancelParticleTask(UUID uuid) {
+        if (particleTasks.containsKey(uuid)) {
+            particleTasks.get(uuid).cancel();
+            particleTasks.remove(uuid);
+            particleLockMap.remove(uuid);
+        }
+    }
 
     private void spawnLockParticles(Lock lock, Player player) {
         // Get the list of blocks that make up this lock
