@@ -154,6 +154,23 @@ public class PropertyManager implements Listener {
     }
 
     /**
+     * Gets a property by its lock.
+     *
+     * @param lock the lock of the property
+     * @return the property with the specified lock, or null if not found
+     */
+    public Property getPropertyByLock(Lock lock) {
+        for (Property property : properties.values()) {
+            for (UUID lockUUID : property.getLocksUUID()) {
+                if (lockUUID.toString().equals(lock.getUUID().toString())){
+                    return property;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Gets all properties.
      *
      * @return a collection of all properties
