@@ -585,6 +585,10 @@ public class PlayerData {
             return true;
         }
 
+        if (RPUniverse.getInstance().getPropertyManager().isExplorableByLock(lock)) {
+            return true;
+        }
+
         if (lock.getOwners() != null && lock.getOwners().contains(playerUUID.toString())) {
             return true;
         }
