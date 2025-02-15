@@ -171,6 +171,23 @@ public class PropertyManager implements Listener {
     }
 
     /**
+     * Checks if a property is explorable by a lock.
+     *
+     * @param lock the lock to check
+     * @return true if the property is explorable by the lock, false otherwise
+     */
+    public boolean isExplorableByLock(Lock lock) {
+        for (Property property : properties.values()) {
+            for (UUID lockUUID : property.getLocksUUID()) {
+                if (lockUUID.toString().equals(lock.getUUID().toString())){
+                    return property.isAvailable();
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Gets all properties.
      *
      * @return a collection of all properties
