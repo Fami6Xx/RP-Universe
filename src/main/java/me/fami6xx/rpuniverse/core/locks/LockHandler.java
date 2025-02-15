@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.locks;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import me.fami6xx.rpuniverse.RPUniverse;
@@ -14,9 +15,7 @@ import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -25,6 +24,7 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -282,79 +282,117 @@ public class LockHandler implements Listener {
 
     /**
      * Handles the player move event.
+     * <p>
+     * This method is used to display particles around a locked block when the player is in ADMIN mode.
      *
      * @param event The event to handle.
      */
-    @EventHandler(priority = org.bukkit.event.EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
         if (playerData == null) return;
+
+        // Only process for ADMIN mode.
         if (playerData.getPlayerMode() != PlayerMode.ADMIN) {
-            checkHoloAndDelete(player.getUniqueId());
-            return;
-        }
-        Block block = player.getTargetBlock(8);
-        if (block == null) {
-            checkHoloAndDelete(player.getUniqueId());
             return;
         }
 
-        Material type = block.getType();
+        // Get the block the player is targeting (up to 8 blocks away)
+        Block block = player.getTargetBlockExact(8);
+        if (block == null || block.getType() == Material.AIR) {
+            return;
+        }
+
         List<Block> blocksToCheck = new ArrayList<>();
-
-        if(type == Material.AIR) {
-            checkHoloAndDelete(player.getUniqueId());
-            return;
-        }
-
-        getAllLockBlocksFromBlock(block, type, blocksToCheck);
-
-        boolean found = false;
+        getAllLockBlocksFromBlock(block, block.getType(), blocksToCheck);
 
         for (Block checkBlock : blocksToCheck) {
             Lock lock = getLockByLocation(checkBlock.getLocation());
-            if (lock == null) continue;
-            found = true;
-
-            UUID playerUUID = player.getUniqueId();
-            Hologram existingHologram = holograms.get(playerUUID);
-            Vector direction = player.getLocation().getDirection().normalize();
-            direction.setY(0);
-
-            Location hologramLocation = lock.getLocation().add(direction.multiply(-1.25));
-            hologramLocation.setY(event.getPlayer().getEyeLocation().getY() + 0.5);
-
-            if (existingHologram != null) {
-                if (lock.equals(lockMap.get(playerUUID))) {
-                    DHAPI.moveHologram(existingHologram, hologramLocation);
-                    continue;
-                } else {
-                    existingHologram.delete();
-                    holograms.remove(playerUUID);
-                }
+            if (lock != null) {
+                spawnLockParticles(lock, player);
+                break;
             }
-
-            Hologram hologram = DHAPI.createHologram(UUID.randomUUID().toString(), hologramLocation);
-            hologram.setDefaultVisibleState(false);
-            DHAPI.addHologramLine(hologram, FamiUtils.format("&8&k&l|"));
-            DHAPI.addHologramLine(hologram, FamiUtils.format("&c&lLocked"));
-            DHAPI.addHologramLine(hologram, FamiUtils.format("&cOwners: &7" + lock.getOwnersAsString()));
-            String jobName = lock.getJobName() == null ? "None" : lock.getJobName();
-            DHAPI.addHologramLine(hologram, FamiUtils.format("&cJob: &7" + jobName));
-            int minWorkingLevel = lock.getMinWorkingLevel() == 0 ? 0 : lock.getMinWorkingLevel();
-            DHAPI.addHologramLine(hologram, FamiUtils.format("&cMin Working Level: &7" + minWorkingLevel));
-            DHAPI.addHologramLine(hologram, FamiUtils.format("&7Shift Click to Edit"));
-            DHAPI.addHologramLine(hologram, FamiUtils.format("&8&k&l|"));
-            hologram.setShowPlayer(player);
-            holograms.put(player.getUniqueId(), hologram);
-            lockMap.put(player.getUniqueId(), lock);
-        }
-
-        if (!found) {
-            checkHoloAndDelete(player.getUniqueId());
         }
     }
+
+
+
+    private void spawnLockParticles(Lock lock, Player player) {
+        // Get the list of blocks that make up this lock
+        List<Block> lockBlocks = new ArrayList<>();
+        // Using your helper to fill in lockBlocks – this should include both blocks for a door.
+        LockHandler.getAllLockBlocksFromBlock(lock.getLocation().getBlock(), lock.getLocation().getBlock().getType(), lockBlocks);
+
+        float increment = 0.25f;
+        World world = lock.getLocation().getWorld();
+
+        if (lockBlocks.size() == 1) {
+            Block singleBlock = lockBlocks.get(0);
+            Location blockLoc = singleBlock.getLocation();
+            double minX = blockLoc.getBlockX();
+            double minY = blockLoc.getBlockY();
+            double minZ = blockLoc.getBlockZ();
+            double maxX = minX + 1;
+            double maxY = minY + 1;
+            double maxZ = minZ + 1;
+
+            for (double x = minX; x <= maxX; x += increment) {
+                for (double y = minY; y <= maxY; y += increment) {
+                    for (double z = minZ; z <= maxZ; z += increment) {
+                        // Only spawn particles along the “edges”
+                        boolean edge = ((x == minX || x == maxX) && (y == minY || y == maxY))
+                                || ((x == minX || x == maxX) && (z == minZ || z == maxZ))
+                                || ((y == minY || y == maxY) && (z == minZ || z == maxZ));
+
+                        if (edge) {
+                            Location particleLoc = new Location(world, x, y, z);
+                            new ParticleBuilder(Particle.REDSTONE)
+                                    .color(Color.NAVY)
+                                    .count(0)
+                                    .receivers(player)
+                                    .location(particleLoc)
+                                    .spawn();
+                        }
+                    }
+                }
+            }
+        } else if (lockBlocks.size() == 2) {
+            // For a door or a two-block lock, determine the overall bounding box.
+            Block block1 = lockBlocks.get(0);
+            Block block2 = lockBlocks.get(1);
+            Location loc1 = block1.getLocation();
+            Location loc2 = block2.getLocation();
+
+            double minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
+            double minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
+            double minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
+            double maxX = Math.max(loc1.getBlockX(), loc2.getBlockX()) + 1;
+            double maxY = Math.max(loc1.getBlockY(), loc2.getBlockY()) + 1;
+            double maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ()) + 1;
+
+            for (double x = minX; x <= maxX; x += increment) {
+                for (double y = minY; y <= maxY; y += increment) {
+                    for (double z = minZ; z <= maxZ; z += increment) {
+                        boolean edge = ((x == minX || x == maxX) && (y == minY || y == maxY))
+                                || ((x == minX || x == maxX) && (z == minZ || z == maxZ))
+                                || ((y == minY || y == maxY) && (z == minZ || z == maxZ));
+
+                        if (edge) {
+                            Location particleLoc = new Location(world, x, y, z);
+                            new ParticleBuilder(Particle.REDSTONE)
+                                    .color(Color.NAVY)
+                                    .count(0)
+                                    .receivers(player)
+                                    .location(particleLoc)
+                                    .spawn();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * Retrieves all blocks associated with a lock from a given block.
