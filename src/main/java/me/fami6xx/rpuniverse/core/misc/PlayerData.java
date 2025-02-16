@@ -585,8 +585,14 @@ public class PlayerData {
             return true;
         }
 
+        boolean accessibleProperty = false;
+        try {
+            accessibleProperty = RPUniverse.getInstance().getConfiguration().getBoolean("properties.unlockedByDefault");
+        } catch (Exception e) {
+            RPUniverse.getInstance().getLogger().severe("Error when checking config for: properties.unlockedByDefault");
+        }
         if (RPUniverse.getInstance().getPropertyManager().isExplorableByLock(lock)) {
-            return true;
+            return accessibleProperty;
         }
 
         if (lock.getOwners() != null && lock.getOwners().contains(playerUUID.toString())) {
