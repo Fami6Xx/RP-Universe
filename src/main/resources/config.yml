@@ -66,6 +66,11 @@ data:
     completeSaveInterval: 600
     selectedSaveMethod: json
 
+# The settings for properties
+# unlockedByDefault: If true, the properties are unlocked by default (Accessible when not bought / rented)
+properties:
+    unlockedByDefault: false
+
 # The settings for the basic needs
 # enabled: If true, the basic needs are enabled
 # sendToActionBar: If true, the basic needs are sent to the action bar
