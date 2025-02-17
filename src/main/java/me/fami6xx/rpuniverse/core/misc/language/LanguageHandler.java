@@ -55,9 +55,7 @@ public class LanguageHandler {
     public String generalMenuBackItemLore = "&7Click to go back";
 
     // JOBS MENUS
-    public String allJobsMenuName = "&6RPU &7| &cAll Jobs";
     public String allJobsMenuJobName = "&e{jobName}";
-    public String jobAdminMenuName = "&6RPU &7| &c{jobName}";
     public String jobAdminMenuInformationItemDisplayName = "&cInformation";
     public String jobAdminMenuInformationItemLore = "&7Is job ready? &c{jobReady}&r~&7Job type: &c{jobType}~&7Job bank: &c{jobBank}~&r~&7Click to view more information in chat";
     public String jobAdminMenuRenameItemDisplayName = "&cRename";
@@ -66,18 +64,8 @@ public class LanguageHandler {
     public String jobMenuJobBankItemLore = "&7Click to add / remove money from the job bank";
     public String jobMenuPositionItemDisplayName = "&cPositions";
     public String jobMenuPositionItemLore = "&7Click to add / modify / remove positions";
-    public String jobAdminMenuBossItemDisplayName = "&cBoss Menu";
-    public String jobAdminMenuBossItemLore = "&7Click to port to boss menu or change location";
-    public String jobAdminMenuJobTypeItemDisplayName = "&cJob Type";
-    public String jobAdminMenuJobTypeItemLore = "&7Click to change job type";
     public String jobMenuAllPlayersItemDisplayName = "&cAll Players";
     public String jobMenuAllPlayersItemLore = "&7Click to view all players with this job";
-    public String jobAdminMenuJobTypeAdminItemDisplayName = "&cJob Type Admin";
-    public String jobAdminMenuJobTypeAdminItemLore = "&7Click to open admin job type menu";
-    public String jobAdminMenuRemoveItemDisplayName = "&cRemove";
-    public String jobAdminMenuRemoveItemLore = "&7Click to remove the job";
-    public String jobAdminMenuSettingsItemDisplayName = "&cJob settings";
-    public String jobAdminMenuSettingsItemLore = "&7Click to view / edit job settings";
     public String jobBankActionsMenuName = "&6RPU &7| &cJob Bank Actions";
     public String jobBankActionsMenuAddMoneyItemDisplayName = "&cAdd Money";
     public String jobBankActionsMenuAddMoneyItemLore = "&7Click to add money to the job bank";

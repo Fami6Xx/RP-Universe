@@ -25,9 +25,7 @@ public class AllJobsMenu extends EasyPaginatedMenu {
 
     @Override
     public ItemStack getItemFromIndex(int index) {
-        HashMap<String, String> placeholders = new HashMap<>();
-        placeholders.put("{jobName}", jobs.get(index).getName());
-        return FamiUtils.makeItem(Material.BEACON, FamiUtils.replace(RPUniverse.getLanguageHandler().allJobsMenuJobName, placeholders));
+        return FamiUtils.makeItem(Material.BOOK, "&6" + jobs.get(index).getName(), "&7Click to edit");
     }
 
     @Override
@@ -38,11 +36,7 @@ public class AllJobsMenu extends EasyPaginatedMenu {
     @Override
     public void handlePaginatedMenu(InventoryClickEvent e) {
         jobs.stream()
-                .filter(job1 -> {
-                    HashMap<String, String> placeholders = new HashMap<>();
-                    placeholders.put("{jobName}", job1.getName());
-                    return e.getCurrentItem().getItemMeta().getDisplayName().equals(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().allJobsMenuJobName, placeholders));
-                })
+                .filter(job1 -> e.getCurrentItem().getItemMeta().getDisplayName().equals(FamiUtils.format("&6" + job1.getName())))
                 .findFirst()
                 .ifPresent(job -> new JobAdminMenu(playerMenu, job).open());
 
@@ -63,6 +57,6 @@ public class AllJobsMenu extends EasyPaginatedMenu {
 
     @Override
     public String getMenuName() {
-        return FamiUtils.format(RPUniverse.getLanguageHandler().allJobsMenuName);
+        return FamiUtils.formatWithPrefix("&6All Jobs");
     }
 }

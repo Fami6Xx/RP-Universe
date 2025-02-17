@@ -30,9 +30,7 @@ public class JobAdminMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        HashMap<String, String> placeholders = new HashMap<>();
-        placeholders.put("{jobName}", job.getName());
-        return FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().jobAdminMenuName, placeholders);
+        return FamiUtils.formatWithPrefix("&6Admin Menu for &e" + job.getName());
     }
 
     @Override
@@ -158,13 +156,13 @@ public class JobAdminMenu extends Menu {
         this.inventory.setItem(19, FamiUtils.makeItem(Material.NAME_TAG, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRenameItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRenameItemLore)));
         this.inventory.setItem(20, FamiUtils.makeItem(Material.GOLD_INGOT, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuJobBankItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuJobBankItemLore)));
         this.inventory.setItem(21, FamiUtils.makeItem(Material.BEACON, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuPositionItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuPositionItemLore)));
-        this.inventory.setItem(22, FamiUtils.makeItem(Material.ENDER_PEARL, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuBossItemLore)));
-        this.inventory.setItem(23, FamiUtils.makeItem(Material.BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeItemLore)));
+        this.inventory.setItem(22, FamiUtils.makeItem(Material.ENDER_PEARL, FamiUtils.format("&cBoss Menu"), FamiUtils.format("&7Edit boss menu settings")));
+        this.inventory.setItem(23, FamiUtils.makeItem(Material.BOOK, FamiUtils.format("&cJob Type Select"), FamiUtils.format("&7Select a job type for this job")));
         this.inventory.setItem(24, FamiUtils.makeItem(Material.PLAYER_HEAD, FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobMenuAllPlayersItemLore)));
-        this.inventory.setItem(25, FamiUtils.makeItem(Material.IRON_SWORD, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuSettingsItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuSettingsItemLore)));
+        this.inventory.setItem(25, FamiUtils.makeItem(Material.IRON_SWORD, FamiUtils.format("&cJob Settings"), FamiUtils.format("&7Edit job settings")));
         if(job.getJobType() != null && job.getJobType().hasAdminMenu())
-            this.inventory.setItem(31, FamiUtils.makeItem(Material.WRITABLE_BOOK, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuJobTypeAdminItemLore)));
-        this.inventory.setItem(44, FamiUtils.makeItem(Material.BARRIER, FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemDisplayName), FamiUtils.format(RPUniverse.getLanguageHandler().jobAdminMenuRemoveItemLore)));
+            this.inventory.setItem(31, FamiUtils.makeItem(Material.WRITABLE_BOOK, FamiUtils.format("&cJob Type Admin Menu"), FamiUtils.format("&7Open the admin menu for the job type")));
+        this.inventory.setItem(44, FamiUtils.makeItem(Material.BARRIER, FamiUtils.format("&4REMOVE"), FamiUtils.format("&7Remove this job"), "&c&lWARNING: &cThis action is irreversible!"));
         setFillerGlass();
     }
 
