@@ -212,6 +212,7 @@ public final class RPUniverse extends JavaPlugin {
 
         int pluginId = 25314;
         metrics = new Metrics(this, pluginId);
+        getLogger().info("Metrics enabled!");
 
         getLogger().info("RPUniverse enabled!");
     }
