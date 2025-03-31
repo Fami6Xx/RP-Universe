@@ -210,7 +210,7 @@ public final class RPUniverse extends JavaPlugin {
 
         getJobsHandler().addJobType(new BasicJobType());
 
-        int pluginId = 1234;
+        int pluginId = 25314;
         metrics = new Metrics(this, pluginId);
 
         getLogger().info("RPUniverse enabled!");
