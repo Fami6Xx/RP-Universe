@@ -29,6 +29,7 @@ import me.fami6xx.rpuniverse.core.properties.commands.PropertiesCommand;
 import me.fami6xx.rpuniverse.core.regions.RegionManager;
 import net.milkbowl.vault.economy.Economy;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -66,6 +67,7 @@ public final class RPUniverse extends JavaPlugin {
 
     private FileConfiguration config;
     private Economy econ;
+    private Metrics metrics;
 
     private boolean isServerReload = false;
 
@@ -208,6 +210,9 @@ public final class RPUniverse extends JavaPlugin {
 
         getJobsHandler().addJobType(new BasicJobType());
 
+        int pluginId = 1234;
+        metrics = new Metrics(this, pluginId);
+
         getLogger().info("RPUniverse enabled!");
     }
 
@@ -228,6 +233,7 @@ public final class RPUniverse extends JavaPlugin {
                 balanceChangeNotifier.cancel();
             this.dataSystem.shutdown();
             HandlerList.unregisterAll(this);
+            metrics.shutdown();
         } catch (Exception ignored) {
         }
         isServerReload = true;
