@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.commands;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.FollowingHologram;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -78,7 +79,7 @@ public class StatusCommand implements CommandExecutor {
             return true;
         }
 
-        System.out.println("Unknown command: " + command.getName());
+        ErrorHandler.warning("Unknown command: " + command.getName());
         return true;
     }
 }

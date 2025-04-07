@@ -1,5 +1,6 @@
 package me.fami6xx.rpuniverse.core.misc.language;
 
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -364,7 +365,7 @@ public class LanguageHandler {
             if (!languageFile.exists()) {
                 boolean result = languageFile.createNewFile();
                 if (!result) {
-                    plugin.getLogger().severe("Failed to create languages.yml file!");
+                    ErrorHandler.severe("Failed to create languages.yml file!");
                     plugin.getPluginLoader().disablePlugin(plugin);
                     return;
                 }
@@ -379,7 +380,7 @@ public class LanguageHandler {
                 if (field.getType() != String.class) continue;
                 String fieldName = field.getName();
                 if (!languageConfig.isSet(fieldName)) {
-                    plugin.getLogger().warning("Missing field in languages.yml: " + fieldName + ". Adding default value.");
+                    ErrorHandler.warning("Missing field in languages.yml: " + fieldName + ". Adding default value.");
                     languageConfig.set(fieldName, field.get(this));
                     modified = true;
                 } else {
@@ -400,7 +401,7 @@ public class LanguageHandler {
                 languageConfig.save(languageFile);
             }
         } catch (Exception e) {
-            plugin.getLogger().severe("Failed to load languages.yml file! " + e.getMessage());
+            ErrorHandler.severe("Failed to load languages.yml file! " + e.getMessage());
             e.printStackTrace();
             plugin.getPluginLoader().disablePlugin(plugin);
         }
@@ -437,7 +438,7 @@ public class LanguageHandler {
             languageConfig.createSection("addonTranslations");
             languageConfig.save(languageFile);
         } catch (Exception e) {
-            plugin.getLogger().severe("Failed to create languages.yml file! " + e.getMessage());
+            ErrorHandler.severe("Failed to create languages.yml file! " + e.getMessage());
             e.printStackTrace();
             plugin.getPluginLoader().disablePlugin(plugin);
         }
@@ -451,7 +452,7 @@ public class LanguageHandler {
             }
             languageConfig.save(new File(plugin.getDataFolder(), "languages.yml"));
         } catch (IOException e) {
-            plugin.getLogger().severe("Could not save languages.yml! " + e.getMessage());
+            ErrorHandler.severe("Could not save languages.yml! " + e.getMessage());
             e.printStackTrace();
         }
     }

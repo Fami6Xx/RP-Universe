@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.commands;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -27,13 +28,13 @@ public class AdminModeCommand implements CommandExecutor {
             if(data.getPlayerMode() == PlayerMode.ADMIN) {
                 data.setPlayerMode(PlayerMode.USER);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().adminModeDisabledMessage);
-                RPUniverse.getInstance().getLogger().info("Admin mode disabled for " + player.getName());
+                ErrorHandler.info("Admin mode disabled for " + player.getName());
             }
 
             else if(data.getPlayerMode() == PlayerMode.USER || data.getPlayerMode() == PlayerMode.MODERATOR) {
                 data.setPlayerMode(PlayerMode.ADMIN);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().adminModeEnabledMessage);
-                RPUniverse.getInstance().getLogger().info("Admin mode enabled for " + player.getName());
+                ErrorHandler.info("Admin mode enabled for " + player.getName());
             }
 
             return true;
@@ -46,26 +47,26 @@ public class AdminModeCommand implements CommandExecutor {
             if(data.getPlayerMode() == PlayerMode.ADMIN) {
                 data.setPlayerMode(PlayerMode.USER);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().adminModeDisabledMessage);
-                RPUniverse.getInstance().getLogger().info("Admin mode disabled for " + player.getName());
+                ErrorHandler.info("Admin mode disabled for " + player.getName());
             }
 
             else if(data.getPlayerMode() == PlayerMode.USER || data.getPlayerMode() == PlayerMode.MODERATOR) {
                 if(!player.hasPermission("rpu.adminmode")){
-                    RPUniverse.getInstance().getLogger().info("Player " + player.getName() + " tried to enable admin mode without permission");
+                    ErrorHandler.info("Player " + player.getName() + " tried to enable admin mode without permission");
                     FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorYouDontHavePermissionToUseThisCommandMessage);
                     return true;
                 }
 
                 data.setPlayerMode(PlayerMode.ADMIN);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().adminModeEnabledMessage);
-                RPUniverse.getInstance().getLogger().info("Admin mode enabled for " + player.getName());
+                ErrorHandler.info("Admin mode enabled for " + player.getName());
             }
 
             return true;
         }
 
         if(!player.hasPermission("rpu.adminmode")){
-            RPUniverse.getInstance().getLogger().info("Player " + player.getName() + " tried to enable admin mode without permission");
+            ErrorHandler.info("Player " + player.getName() + " tried to enable admin mode without permission");
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().errorYouDontHavePermissionToUseThisCommandMessage);
             return true;
         }
@@ -80,14 +81,14 @@ public class AdminModeCommand implements CommandExecutor {
 
         if(targetData.getPlayerMode() == PlayerMode.ADMIN) {
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().modesErrorCannotChangeModeMessage);
-            RPUniverse.getInstance().getLogger().info("Player " + player.getName() + " tried to change admin mode of " + target.getName());
+            ErrorHandler.info("Player " + player.getName() + " tried to change admin mode of " + target.getName());
         }
 
         else if(targetData.getPlayerMode() == PlayerMode.USER || targetData.getPlayerMode() == PlayerMode.MODERATOR) {
             targetData.setPlayerMode(PlayerMode.ADMIN);
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().adminModeEnabledMessage);
             FamiUtils.sendMessageWithPrefix(target, RPUniverse.getLanguageHandler().adminModeEnabledMessage);
-            RPUniverse.getInstance().getLogger().info("Admin mode enabled for " + target.getName());
+            ErrorHandler.info("Admin mode enabled for " + target.getName());
         }
 
         return true;

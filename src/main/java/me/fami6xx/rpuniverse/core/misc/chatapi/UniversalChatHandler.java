@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.misc.chatapi;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.PlayerLocalChatEvent;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -58,14 +59,14 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
                 localOOCMessage = RPUniverse.getInstance().getConfiguration().getString("general.localOOCFormat");
             }catch (Exception exc){
                 replace.put("{value}", "general.localOOCFormat");
-                RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
+                ErrorHandler.severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
                 return;
             }
             try{
                 range = RPUniverse.getInstance().getConfiguration().getInt("general.localOOCRange");
             }catch (Exception exc){
                 replace.put("{value}", "general.localOOCRange");
-                RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
+                ErrorHandler.severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
                 return;
             }
 
@@ -86,12 +87,12 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
                         shouldSendToConsole = RPUniverse.getInstance().getConfiguration().getBoolean("general.logLocalToConsole");
                     }catch (Exception exc){
                         replace.put("{value}", "general.logLocalToConsole");
-                        RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
+                        ErrorHandler.severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
                         return;
                     }
 
                     if(shouldSendToConsole){
-                        RPUniverse.getInstance().getLogger().info("Local OOC " + e.getPlayer().getName() + ": " + e.getMessage());
+                        ErrorHandler.info("Local OOC " + e.getPlayer().getName() + ": " + e.getMessage());
                     }
                 }
             }.runTask(RPUniverse.getInstance());
@@ -140,7 +141,7 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
             globalOOCMessage = RPUniverse.getInstance().getConfiguration().getString("general.globalOOCFormat");
         }catch (Exception exc){
             replace.put("{value}", "general.globalOOCFormat");
-            RPUniverse.getInstance().getLogger().severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
+            ErrorHandler.severe(FamiUtils.replaceAndFormat(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
             return true;
         }
 

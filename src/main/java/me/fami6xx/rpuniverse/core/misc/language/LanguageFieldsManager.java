@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.misc.language;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.misc.language.editor.LanguageField;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
@@ -45,7 +46,7 @@ public class LanguageFieldsManager {
                     boolean multiLine = (defaultValue != null && defaultValue.contains("~"));
                     fields.add(new LanguageField(field, field.getName(), currentValue, multiLine));
                 } catch (IllegalAccessException e) {
-                    RPUniverse.getInstance().getLogger().severe(
+                    ErrorHandler.severe(
                             "Error accessing core language field '" + field.getName() + "': " + e.getMessage());
                 }
             }
@@ -79,7 +80,7 @@ public class LanguageFieldsManager {
                 // Update the live core language field.
                 field.set(lh, newValue);
             } catch (IllegalAccessException e) {
-                RPUniverse.getInstance().getLogger().severe(
+                ErrorHandler.severe(
                         "Error updating core language field '" + field.getName() + "': " + e.getMessage());
                 e.printStackTrace();
             }
@@ -103,12 +104,12 @@ public class LanguageFieldsManager {
                         addonField.setAccessible(true);
                         addonField.set(addonInstance, newValue);
                     } catch (NoSuchFieldException | IllegalAccessException ex) {
-                        RPUniverse.getInstance().getLogger().severe(
+                        ErrorHandler.severe(
                                 "Error updating addon language field '" + fieldName + "' in " + simpleClassName +
                                         ": " + ex.getMessage());
                     }
                 } else {
-                    RPUniverse.getInstance().getLogger().severe(
+                    ErrorHandler.severe(
                             "No addon language instance registered for: " + simpleClassName);
                 }
             }
@@ -123,7 +124,7 @@ public class LanguageFieldsManager {
         try {
             lh.getLanguageConfig().save(file);
         } catch (IOException e) {
-            RPUniverse.getInstance().getLogger().severe("Error saving languages.yml: " + e.getMessage());
+            ErrorHandler.severe("Error saving languages.yml: " + e.getMessage());
         }
     }
 }

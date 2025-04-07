@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.commands;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -27,20 +28,20 @@ public class ModModeCommand implements CommandExecutor {
             if(data.getPlayerMode() == PlayerMode.MODERATOR) {
                 data.setPlayerMode(PlayerMode.USER);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().modModeDisabledMessage);
-                RPUniverse.getInstance().getLogger().info("Moderator mode disabled for " + player.getName());
+                ErrorHandler.info("Moderator mode disabled for " + player.getName());
             }
 
             else if(data.getPlayerMode() == PlayerMode.USER) {
                 data.setPlayerMode(PlayerMode.MODERATOR);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().modModeEnabledMessage);
-                RPUniverse.getInstance().getLogger().info("Moderator mode enabled for " + player.getName());
+                ErrorHandler.info("Moderator mode enabled for " + player.getName());
             }
 
             else if(data.getPlayerMode() == PlayerMode.ADMIN) {
                 data.setPlayerMode(PlayerMode.MODERATOR);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().adminModeDisabledMessage);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().modModeEnabledMessage);
-                RPUniverse.getInstance().getLogger().info("Moderator mode enabled for " + player.getName());
+                ErrorHandler.info("Moderator mode enabled for " + player.getName());
             }
 
             return true;
@@ -52,7 +53,7 @@ public class ModModeCommand implements CommandExecutor {
             if(data.getPlayerMode() == PlayerMode.MODERATOR) {
                 data.setPlayerMode(PlayerMode.USER);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().modModeDisabledMessage);
-                RPUniverse.getInstance().getLogger().info("Moderator mode disabled for " + player.getName());
+                ErrorHandler.info("Moderator mode disabled for " + player.getName());
             }
 
             else if(data.getPlayerMode() == PlayerMode.USER) {
@@ -63,14 +64,14 @@ public class ModModeCommand implements CommandExecutor {
 
                 data.setPlayerMode(PlayerMode.MODERATOR);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().modModeEnabledMessage);
-                RPUniverse.getInstance().getLogger().info("Moderator mode enabled for " + player.getName());
+                ErrorHandler.info("Moderator mode enabled for " + player.getName());
             }
 
             else if(data.getPlayerMode() == PlayerMode.ADMIN) {
                 data.setPlayerMode(PlayerMode.MODERATOR);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().adminModeDisabledMessage);
                 FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().modModeEnabledMessage);
-                RPUniverse.getInstance().getLogger().info("Moderator mode enabled for " + player.getName());
+                ErrorHandler.info("Moderator mode enabled for " + player.getName());
             }
 
             return true;
@@ -93,19 +94,19 @@ public class ModModeCommand implements CommandExecutor {
             targetData.setPlayerMode(PlayerMode.USER);
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().modModeDisabledMessage);
             FamiUtils.sendMessageWithPrefix(target, RPUniverse.getLanguageHandler().modModeDisabledMessage);
-            RPUniverse.getInstance().getLogger().info("Moderator mode disabled for " + target.getName());
+            ErrorHandler.info("Moderator mode disabled for " + target.getName());
         }
 
         else if(targetData.getPlayerMode() == PlayerMode.USER) {
             targetData.setPlayerMode(PlayerMode.MODERATOR);
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().modModeEnabledMessage);
             FamiUtils.sendMessageWithPrefix(target, RPUniverse.getLanguageHandler().modModeEnabledMessage);
-            RPUniverse.getInstance().getLogger().info("Moderator mode enabled for " + target.getName());
+            ErrorHandler.info("Moderator mode enabled for " + target.getName());
         }
 
         else if(targetData.getPlayerMode() == PlayerMode.ADMIN) {
             FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().modesErrorCannotChangeModeMessage);
-            RPUniverse.getInstance().getLogger().info("Player " + player.getName() + " tried to change the mode of " + target.getName() + " but failed.");
+            ErrorHandler.info("Player " + player.getName() + " tried to change the mode of " + target.getName() + " but failed.");
             return true;
         }
 
