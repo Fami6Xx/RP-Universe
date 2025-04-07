@@ -20,7 +20,7 @@ import java.util.Map;
 public class ConfigMigrator {
 
     // The current config version
-    private static final int CURRENT_CONFIG_VERSION = 5;
+    private static final int CURRENT_CONFIG_VERSION = 6;
 
     // Map of migration handlers for each version
     private static final Map<Integer, MigrationHandler> migrationHandlers = new HashMap<>();
@@ -28,6 +28,7 @@ public class ConfigMigrator {
     static {
         // Register migration handlers for each version
         migrationHandlers.put(4, ConfigMigrator::migrateFromV4ToV5);
+        migrationHandlers.put(5, ConfigMigrator::migrateFromV5ToV6);
     }
 
     /**
@@ -156,6 +157,32 @@ public class ConfigMigrator {
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Error during migration from v4 to v5", e);
+            return false;
+        }
+    }
+
+    /**
+     * Migrates configuration from version 5 to version 6.
+     * 
+     * @param config The configuration to migrate
+     * @return true if migration was successful, false otherwise
+     */
+    private static boolean migrateFromV5ToV6(FileConfiguration config) {
+        try {
+            // Add new sections and fields introduced in version 6
+
+            // Add regionVisualization section if it doesn't exist
+            if (!config.contains("regionVisualization")) {
+                config.createSection("regionVisualization");
+                config.set("regionVisualization.step", 0.5);
+                config.set("regionVisualization.maxRenderDistance", 50);
+                config.set("regionVisualization.edgeOnly", true);
+                config.set("regionVisualization.particleColor", "BLACK");
+            }
+
+            return true;
+        } catch (Exception e) {
+            ErrorHandler.severe("Error during migration from v5 to v6", e);
             return false;
         }
     }

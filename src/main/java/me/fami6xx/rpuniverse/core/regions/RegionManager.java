@@ -4,7 +4,9 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.google.gson.*;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.RegionBlockBreakEvent;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import org.bukkit.*;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,7 +18,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * Manages all regions in memory and provides save/load functionality via manual JSON
@@ -38,6 +39,12 @@ public class RegionManager implements Listener {
 
     private final Gson gson;
     private BukkitTask showTask;
+
+    // Region visualization settings from config
+    private double visualizationStep = 0.5;
+    private int maxRenderDistance = 50;
+    private boolean edgeOnly = true;
+    private Color particleColor = Color.BLACK;
 
     private RegionManager() {
         File dataFolder = RPUniverse.getInstance().getDataFolder();
@@ -67,15 +74,20 @@ public class RegionManager implements Listener {
      * Load all regions from file (if any), manually parsing corner1 and corner2.
      */
     public void init() {
+        // Load visualization settings from config
+        loadVisualizationSettings();
+
         if (!regionFile.exists()) {
-            RPUniverse.getInstance().getLogger().info("No regions.json found; starting with an empty region list.");
+            ErrorHandler.info("No regions.json found; starting with an empty region list.");
+            startShowingTask(); // Still start the task even with no regions
+            Bukkit.getPluginManager().registerEvents(this, RPUniverse.getInstance());
             return;
         }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(regionFile))) {
             JsonElement root = JsonParser.parseReader(reader);
             if (!root.isJsonArray()) {
-                RPUniverse.getInstance().getLogger().warning("regions.json is not a JSON array! Skipping load.");
+                ErrorHandler.warning("regions.json is not a JSON array! Skipping load.");
                 return;
             }
 
@@ -105,9 +117,37 @@ public class RegionManager implements Listener {
 
             Bukkit.getPluginManager().registerEvents(this, RPUniverse.getInstance());
 
-            RPUniverse.getInstance().getLogger().info("Loaded " + regions.size() + " region(s) from regions.json.");
+            ErrorHandler.info("Loaded " + regions.size() + " region(s) from regions.json.");
         } catch (Exception e) {
-            RPUniverse.getInstance().getLogger().log(Level.SEVERE, "Failed to load regions.json!", e);
+            ErrorHandler.severe("Failed to load regions.json!", e);
+        }
+    }
+
+    /**
+     * Loads region visualization settings from the configuration.
+     */
+    private void loadVisualizationSettings() {
+        FileConfiguration config = RPUniverse.getInstance().getConfig();
+
+        if (config.contains("regionVisualization")) {
+            visualizationStep = config.getDouble("regionVisualization.step", 0.5);
+            maxRenderDistance = config.getInt("regionVisualization.maxRenderDistance", 50);
+            edgeOnly = config.getBoolean("regionVisualization.edgeOnly", true);
+
+            String colorName = config.getString("regionVisualization.particleColor", "BLACK");
+            try {
+                // Try to parse the color name to a Color object
+                java.lang.reflect.Field field = Color.class.getField(colorName);
+                particleColor = (Color) field.get(null);
+            } catch (Exception e) {
+                ErrorHandler.warning("Invalid particle color: " + colorName + ". Using BLACK instead.");
+                particleColor = Color.BLACK;
+            }
+
+            ErrorHandler.debug("Loaded region visualization settings: step=" + visualizationStep +
+                             ", maxRenderDistance=" + maxRenderDistance + 
+                             ", edgeOnly=" + edgeOnly + 
+                             ", particleColor=" + colorName);
         }
     }
 
@@ -148,7 +188,7 @@ public class RegionManager implements Listener {
         try (Writer writer = new FileWriter(regionFile)) {
             gson.toJson(array, writer);
         } catch (IOException e) {
-            RPUniverse.getInstance().getLogger().log(Level.SEVERE, "Failed to save regions.json!", e);
+            ErrorHandler.severe("Failed to save regions.json!", e);
         }
     }
 
@@ -282,8 +322,8 @@ public class RegionManager implements Listener {
     }
 
     /**
-     * Draws a bounding box for the specified region using REDSTONE particles.
-     * You can adapt color, increments, etc.
+     * Draws a bounding box for the specified region using particles.
+     * Optimized with distance-based rendering and configuration options.
      */
     private void drawRegionBoundingBox(Player player, Region region) {
         World world = region.getCorner1().getWorld();
@@ -291,8 +331,23 @@ public class RegionManager implements Listener {
             return; // Only show if player is in same world, or else it won't be visible
         }
 
+        // Get the center of the region for distance calculation
         Location min = region.getMinCorner();
         Location max = region.getMaxCorner();
+        Location center = new Location(
+            world,
+            (min.getX() + max.getX()) / 2,
+            (min.getY() + max.getY()) / 2,
+            (min.getZ() + max.getZ()) / 2
+        );
+
+        // Check if player is within render distance (if maxRenderDistance > 0)
+        if (maxRenderDistance > 0) {
+            double distance = player.getLocation().distance(center);
+            if (distance > maxRenderDistance) {
+                return; // Skip rendering if player is too far away
+            }
+        }
 
         double minX = Math.min(min.getBlockX(), max.getBlockX());
         double minY = Math.min(min.getBlockY(), max.getBlockY());
@@ -301,29 +356,74 @@ public class RegionManager implements Listener {
         double maxY = Math.max(min.getBlockY(), max.getBlockY()) + 1;
         double maxZ = Math.max(min.getBlockZ(), max.getBlockZ()) + 1;
 
-        double step = 0.25;
-        for (double x = minX; x <= maxX; x += step) {
-            for (double y = minY; y <= maxY; y += step) {
-                for (double z = minZ; z <= maxZ; z += step) {
-                    boolean edge = (
-                            (x == minX || x == maxX) && (y == minY || y == maxY)
-                    ) || (
-                            (x == minX || x == maxX) && (z == minZ || z == maxZ)
-                    ) || (
-                            (y == minY || y == maxY) && (z == minZ || z == maxZ)
-                    );
+        if (edgeOnly) {
+            // Draw only the 12 edges of the bounding box using the drawLine helper method
+            // Bottom face edges (4)
+            drawLine(player, world, minX, minY, minZ, maxX, minY, minZ);
+            drawLine(player, world, maxX, minY, minZ, maxX, minY, maxZ);
+            drawLine(player, world, maxX, minY, maxZ, minX, minY, maxZ);
+            drawLine(player, world, minX, minY, maxZ, minX, minY, minZ);
 
-                    if (edge) {
-                        Location newLoc = new Location(world, x, y, z);
-                        new ParticleBuilder(Particle.REDSTONE)
-                                .color(Color.BLACK)
+            // Top face edges (4)
+            drawLine(player, world, minX, maxY, minZ, maxX, maxY, minZ);
+            drawLine(player, world, maxX, maxY, minZ, maxX, maxY, maxZ);
+            drawLine(player, world, maxX, maxY, maxZ, minX, maxY, maxZ);
+            drawLine(player, world, minX, maxY, maxZ, minX, maxY, minZ);
+
+            // Vertical edges (4)
+            drawLine(player, world, minX, minY, minZ, minX, maxY, minZ);
+            drawLine(player, world, maxX, minY, minZ, maxX, maxY, minZ);
+            drawLine(player, world, maxX, minY, maxZ, maxX, maxY, maxZ);
+            drawLine(player, world, minX, minY, maxZ, minX, maxY, maxZ);
+        } else {
+            // Draw the entire bounding box (including faces)
+            // Use a step size based on the visualization step setting
+            for (double x = minX; x <= maxX; x += visualizationStep) {
+                for (double y = minY; y <= maxY; y += visualizationStep) {
+                    for (double z = minZ; z <= maxZ; z += visualizationStep) {
+                        // Only draw particles on the surface of the box
+                        boolean onSurface = (
+                            Math.abs(x - minX) < 0.01 || Math.abs(x - maxX) < 0.01 ||
+                            Math.abs(y - minY) < 0.01 || Math.abs(y - maxY) < 0.01 ||
+                            Math.abs(z - minZ) < 0.01 || Math.abs(z - maxZ) < 0.01
+                        );
+
+                        if (onSurface) {
+                            Location loc = new Location(world, x, y, z);
+                            new ParticleBuilder(Particle.REDSTONE)
+                                .color(particleColor)
                                 .count(0)
                                 .receivers(player)
-                                .location(newLoc)
+                                .location(loc)
                                 .spawn();
+                        }
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Helper method to draw a line of particles between two points.
+     * Used for optimized edge rendering.
+     */
+    private void drawLine(Player player, World world, double x1, double y1, double z1, double x2, double y2, double z2) {
+        double distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2));
+        int points = Math.max(2, (int) (distance / visualizationStep));
+
+        for (int i = 0; i < points; i++) {
+            double ratio = (double) i / (points - 1);
+            double x = x1 + (x2 - x1) * ratio;
+            double y = y1 + (y2 - y1) * ratio;
+            double z = z1 + (z2 - z1) * ratio;
+
+            Location loc = new Location(world, x, y, z);
+            new ParticleBuilder(Particle.REDSTONE)
+                    .color(particleColor)
+                    .count(0)
+                    .receivers(player)
+                    .location(loc)
+                    .spawn();
         }
     }
 

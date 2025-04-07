@@ -14,7 +14,7 @@
 
 # Config version (PLEASE DO NOT TOUCH THIS)
 # This is used for automatic configuration migration between versions
-configVersion: 5
+configVersion: 6
 
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 
@@ -133,6 +133,17 @@ balance:
 # This is useful for troubleshooting issues with the plugin
 debug:
     enabled: false
+
+# The settings for region visualization
+# step: The step size for particles (smaller = more particles, higher quality but more resource intensive)
+# maxRenderDistance: Maximum distance in blocks to render region particles (0 = unlimited)
+# edgeOnly: If true, only the edges of regions will be shown (corners and edges)
+# particleColor: The color of the particles (BLACK, BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW)
+regionVisualization:
+    step: 0.5
+    maxRenderDistance: 50
+    edgeOnly: true
+    particleColor: BLACK
 
 # Module settings
 # This section contains settings for all modules
