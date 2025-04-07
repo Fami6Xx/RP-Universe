@@ -34,14 +34,14 @@ public class PaymentModule extends AbstractModule {
         try {
             // Check if the module is enabled in the configuration
             if (!getConfigBoolean("enabled", true)) {
-                ErrorHandler.info("PaymentModule is disabled in configuration");
+                ErrorHandler.debug("PaymentModule is disabled in configuration");
                 return false;
             }
             
             // Register commands
             getPlugin().getCommand("pay").setExecutor(new PayCommand(this));
             
-            ErrorHandler.info("PaymentModule enabled");
+            ErrorHandler.debug("PaymentModule enabled");
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Failed to enable PaymentModule", e);
@@ -52,7 +52,7 @@ public class PaymentModule extends AbstractModule {
     @Override
     public boolean disable() {
         try {
-            ErrorHandler.info("PaymentModule disabled");
+            ErrorHandler.debug("PaymentModule disabled");
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Failed to disable PaymentModule", e);

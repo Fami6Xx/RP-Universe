@@ -38,7 +38,7 @@ public class BasicNeedsModule extends AbstractModule {
         try {
             // Check if the module is enabled in the configuration
             if (!getConfigBoolean("enabled", true)) {
-                ErrorHandler.info("BasicNeedsModule is disabled in configuration");
+                ErrorHandler.debug("BasicNeedsModule is disabled in configuration");
                 return false;
             }
             
@@ -50,7 +50,7 @@ public class BasicNeedsModule extends AbstractModule {
             getPlugin().getCommand("poop").setExecutor(new PoopCommand());
             getPlugin().getCommand("pee").setExecutor(new PeeCommand());
             
-            ErrorHandler.info("BasicNeedsModule enabled");
+            ErrorHandler.debug("BasicNeedsModule enabled");
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Failed to enable BasicNeedsModule", e);
@@ -65,7 +65,7 @@ public class BasicNeedsModule extends AbstractModule {
                 handler.shutdown();
             }
             
-            ErrorHandler.info("BasicNeedsModule disabled");
+            ErrorHandler.debug("BasicNeedsModule disabled");
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Failed to disable BasicNeedsModule", e);

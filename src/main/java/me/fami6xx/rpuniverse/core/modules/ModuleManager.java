@@ -124,7 +124,7 @@ public class ModuleManager {
             }
             
             module.setEnabled(true);
-            ErrorHandler.info("Enabled module: " + module.getName());
+            ErrorHandler.debug("Enabled module: " + module.getName());
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Error enabling module: " + module.getName(), e);
@@ -168,7 +168,7 @@ public class ModuleManager {
             }
             
             module.setEnabled(false);
-            ErrorHandler.info("Disabled module: " + module.getName());
+            ErrorHandler.debug("Disabled module: " + module.getName());
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Error disabling module: " + module.getName(), e);
