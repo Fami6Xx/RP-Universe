@@ -29,7 +29,7 @@ This document contains a comprehensive list of actionable improvement tasks for 
 
 ## Code Quality Improvements
 
-[ ] Fix potential bugs
+[x] Fix potential bugs
    - Fix incorrect maxZ calculation in RegionManager.drawRegionBoundingBox (line 302)
    - Fix potential null pointer exceptions in DataSystem.getPlayerData
    - Review and fix exception handling (replace empty catch blocks)
@@ -56,7 +56,7 @@ This document contains a comprehensive list of actionable improvement tasks for 
 
 ## Performance Improvements
 
-[ ] Optimize region visualization
+[x] Optimize region visualization
    - Refactor the triple-nested loop in RegionManager.drawRegionBoundingBox
    - Implement distance-based rendering to reduce particle count
    - Add configuration options for visualization quality
