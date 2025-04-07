@@ -2,7 +2,7 @@
 
 [![](https://jitpack.io/v/Fami6Xx/RP-Universe.svg)](https://jitpack.io/#Fami6Xx/RP-Universe)
 [![JavaDocs](https://img.shields.io/badge/JavaDocs-Latest-blue)](https://jitpack.io/com/github/Fami6Xx/RP-Universe/latest/javadoc/)
-[![Version](https://img.shields.io/badge/Version-1.4.3-green)](https://polymart.org/resource/rpuniverse-minecraft-roleplay.5845)
+[![Version](https://img.shields.io/badge/Version-1.4.5-green)](https://polymart.org/resource/rpuniverse-minecraft-roleplay.5845)
 
 ## Introduction
 
