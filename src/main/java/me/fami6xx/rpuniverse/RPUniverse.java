@@ -25,6 +25,7 @@ import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import me.fami6xx.rpuniverse.core.misc.papi.RPUExpansion;
 import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.NickHider;
+import me.fami6xx.rpuniverse.core.modules.ModuleManager;
 import me.fami6xx.rpuniverse.core.properties.PropertyManager;
 import me.fami6xx.rpuniverse.core.properties.commands.PropertiesCommand;
 import me.fami6xx.rpuniverse.core.regions.RegionManager;
@@ -65,6 +66,7 @@ public final class RPUniverse extends JavaPlugin {
     private LockHandler lockHandler;
     private BalanceChangeNotifier balanceChangeNotifier;
     private PropertyManager propertyManager;
+    private ModuleManager moduleManager;
 
     private FileConfiguration config;
     private Economy econ;
@@ -110,6 +112,14 @@ public final class RPUniverse extends JavaPlugin {
         }else{
             ErrorHandler.info("Economy plugin hooked!");
         }
+
+        // Initialize the module manager
+        this.moduleManager = new ModuleManager(this);
+        ErrorHandler.info("Module manager initialized");
+
+        // Register modules
+        moduleManager.registerModule(new me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsModule());
+        ErrorHandler.debug("Registered BasicNeedsModule");
 
         languageHandler = new LanguageHandler(this);
         dataSystem = new DataSystem();
@@ -179,11 +189,7 @@ public final class RPUniverse extends JavaPlugin {
         this.bossBarHandler = new BossBarHandler();
         this.actionBarHandler = new ActionBarHandler();
 
-        try{
-            this.basicNeedsHandler = new BasicNeedsHandler();
-            this.basicNeedsHandler.initialize(this);
-        } catch (Exception ignored){}
-        this.getCommand("consumables").setExecutor(new ConsumablesCommand());
+        // BasicNeeds is now handled by the BasicNeedsModule
 
         if (getConfiguration().getBoolean("general.hideNicknames")) {
             this.nickHider = new NickHider();
@@ -230,6 +236,9 @@ public final class RPUniverse extends JavaPlugin {
         metrics = new Metrics(this, pluginId);
         ErrorHandler.info("Metrics enabled!");
 
+        // Initialize modules
+        moduleManager.initializeModules();
+
         ErrorHandler.info("RPUniverse enabled!");
     }
 
@@ -252,8 +261,7 @@ public final class RPUniverse extends JavaPlugin {
             ErrorHandler.debug("Stopping CreateJobStarter");
             this.createJobStarter.stop();
 
-            ErrorHandler.debug("Shutting down BasicNeedsHandler");
-            this.basicNeedsHandler.shutdown();
+            // BasicNeeds is now handled by the BasicNeedsModule
 
             if (nickHider != null) {
                 ErrorHandler.debug("Shutting down NickHider");
@@ -279,6 +287,11 @@ public final class RPUniverse extends JavaPlugin {
 
             ErrorHandler.debug("Shutting down Metrics");
             metrics.shutdown();
+
+            ErrorHandler.debug("Shutting down ModuleManager");
+            if (moduleManager != null) {
+                moduleManager.shutdownModules();
+            }
 
             ErrorHandler.info("RPUniverse disabled successfully");
         } catch (Exception e) {
@@ -431,10 +444,21 @@ public final class RPUniverse extends JavaPlugin {
 
     /**
      * Get the BasicNeedsHandler
-     * @return The BasicNeedsHandler
+     * @return The BasicNeedsHandler, or null if the module is not enabled
      */
     public BasicNeedsHandler getBasicNeedsHandler() {
-        return basicNeedsHandler;
+        if (moduleManager == null) {
+            return null;
+        }
+
+        me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsModule module = 
+            (me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsModule) moduleManager.getModule("BasicNeeds");
+
+        if (module == null || !module.isEnabled()) {
+            return null;
+        }
+
+        return module.getHandler();
     }
 
     /**
@@ -489,5 +513,13 @@ public final class RPUniverse extends JavaPlugin {
      */
     public PropertyManager getPropertyManager() {
         return propertyManager;
+    }
+
+    /**
+     * Gets the ModuleManager instance
+     * @return The ModuleManager instance
+     */
+    public ModuleManager getModuleManager() {
+        return moduleManager;
     }
 }

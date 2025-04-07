@@ -124,3 +124,13 @@ balance:
 # This is useful for troubleshooting issues with the plugin
 debug:
     enabled: false
+
+# Module settings
+# This section contains settings for all modules
+# Each module can be enabled or disabled individually
+modules:
+    # BasicNeeds module settings
+    # This module provides basic needs functionality like hunger, thirst, poop, and pee
+    BasicNeeds:
+        # enabled: If true, the module is enabled
+        enabled: true
