@@ -21,6 +21,7 @@ import me.fami6xx.rpuniverse.core.misc.balance.BalanceChangeNotifier;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.BossBarHandler;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
+import me.fami6xx.rpuniverse.core.misc.config.ConfigManager;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import me.fami6xx.rpuniverse.core.misc.papi.RPUExpansion;
 import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
@@ -68,6 +69,7 @@ public final class RPUniverse extends JavaPlugin {
     private PropertyManager propertyManager;
     private ModuleManager moduleManager;
 
+    private ConfigManager configManager;
     private FileConfiguration config;
     private Economy econ;
     private Metrics metrics;
@@ -80,27 +82,16 @@ public final class RPUniverse extends JavaPlugin {
             ErrorHandler.severe("We suspect you used /reload, RPUniverse does not support this and any issues reported after reloading will be ignored!");
         }
 
-        if (!getDataFolder().exists()) {
-            getDataFolder().mkdir();
-            this.saveDefaultConfig();
-            this.reloadConfig();
-            config = this.getConfig();
-        } else {
-            File configFile = new File(getDataFolder(), "config.yml");
-            if (!configFile.exists()) {
-                saveDefaultConfig();
-            }
-
-            this.reloadConfig();
-            this.config = this.getConfig();
-        }
-
-        int confVersion = config.getInt("configVersion", -1);
-        if (confVersion != 4) {
-            ErrorHandler.severe("Your config is outdated! Please delete it and restart the server to generate a new one.");
+        // Initialize the config manager
+        this.configManager = new ConfigManager(this);
+        if (!configManager.loadConfig()) {
+            ErrorHandler.severe("Failed to load configuration. Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        // Set the config reference for backward compatibility
+        this.config = configManager.getConfig();
 
         // Initialize the error handler
         ErrorHandler.init();
@@ -357,7 +348,15 @@ public final class RPUniverse extends JavaPlugin {
      * @return The FileConfiguration
      */
     public FileConfiguration getConfiguration() {
-        return config;
+        return configManager.getConfig();
+    }
+
+    /**
+     * Get the ConfigManager
+     * @return The ConfigManager
+     */
+    public ConfigManager getConfigManager() {
+        return configManager;
     }
 
     /**

@@ -3,8 +3,17 @@
 # If you don't know what you are doing, don't touch anything!
 # If you want to edit something, please stop the server first!
 # If you have any questions, please contact me on discord: https://discord.gg/SRzxwmBxk5
+#
+# CONFIGURATION SYSTEM INFORMATION:
+# - This configuration file is automatically validated when the plugin starts
+# - If there are any errors in the configuration, they will be reported in the console
+# - The plugin will attempt to fix invalid configurations by using default values
+# - When upgrading to a new version, your configuration will be automatically migrated
+# - A backup of your old configuration will be created before migration
+# - You can find backup files in the plugin directory with names like "config_backup_v3.yml"
 
 # Config version (PLEASE DO NOT TOUCH THIS)
+# This is used for automatic configuration migration between versions
 configVersion: 4
 
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
