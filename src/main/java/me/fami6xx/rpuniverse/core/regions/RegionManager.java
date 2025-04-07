@@ -299,7 +299,7 @@ public class RegionManager implements Listener {
         double minZ = Math.min(min.getBlockZ(), max.getBlockZ());
         double maxX = Math.max(min.getBlockX(), max.getBlockX()) + 1;
         double maxY = Math.max(min.getBlockY(), max.getBlockY()) + 1;
-        double maxZ = Math.max(max.getBlockZ(), max.getBlockZ()) + 1;
+        double maxZ = Math.max(min.getBlockZ(), max.getBlockZ()) + 1;
 
         double step = 0.25;
         for (double x = minX; x <= maxX; x += step) {
