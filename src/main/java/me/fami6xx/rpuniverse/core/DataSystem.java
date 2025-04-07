@@ -127,12 +127,13 @@ public class DataSystem implements Listener {
 
         // Next, check the saveQueue if the player hasn't been saved yet. (This acts as a cache)
         for (PlayerData queuedData : saveQueue) {
-            if(queuedData.getBindedPlayer() != null)
+            if(queuedData.getBindedPlayer() != null) {
                 if (queuedData.getBindedPlayer().getUniqueId().equals(uuid))
                     data = queuedData;
-            else if(queuedData.getBindedOfflinePlayer() != null)
+            } else if(queuedData.getBindedOfflinePlayer() != null) {
                 if (queuedData.getBindedOfflinePlayer().getUniqueId().equals(uuid))
                     data = queuedData;
+            }
         }
 
         if(data != null){
@@ -148,18 +149,18 @@ public class DataSystem implements Listener {
             data.loadAfterSave();
             playerDataMap.put(uuid, data);
             this.lastAccessTime.put(uuid, System.currentTimeMillis());
-        }else {
+        } else {
             if(RPUniverse.getInstance().getServer().getPlayer(uuid) == null){
                 OfflinePlayer player = RPUniverse.getInstance().getServer().getOfflinePlayer(uuid);
                 data = new PlayerData(player);
                 playerDataMap.put(uuid, data);
                 this.lastAccessTime.put(uuid, System.currentTimeMillis());
+            } else {
+                data = new PlayerData(RPUniverse.getInstance().getServer().getPlayer(uuid));
+                data.updatePlayer(RPUniverse.getInstance().getServer().getPlayer(uuid));
+                playerDataMap.put(uuid, data);
+                this.lastAccessTime.put(uuid, System.currentTimeMillis());
             }
-
-            data = new PlayerData(RPUniverse.getInstance().getServer().getPlayer(uuid));
-            data.updatePlayer(RPUniverse.getInstance().getServer().getPlayer(uuid));
-            playerDataMap.put(uuid, data);
-            this.lastAccessTime.put(uuid, System.currentTimeMillis());
         }
         return data;
     }
@@ -168,10 +169,18 @@ public class DataSystem implements Listener {
      * Retrieves the player data for the specified UUID.
      *
      * @param UUID The UUID of the player to get the data for.
-     * @return The player data for the specified UUID. Null if not found.
+     * @return The player data for the specified UUID. Null if not found or if the UUID is invalid.
      */
     public PlayerData getPlayerData(String UUID){
-        return getPlayerData(java.util.UUID.fromString(UUID));
+        try {
+            if (UUID == null) {
+                return null;
+            }
+            return getPlayerData(java.util.UUID.fromString(UUID));
+        } catch (IllegalArgumentException e) {
+            ErrorHandler.debug("Invalid UUID format: " + UUID);
+            return null;
+        }
     }
 
     /**
