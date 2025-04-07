@@ -162,8 +162,6 @@ public final class RPUniverse extends JavaPlugin {
         this.getCommand("settag").setExecutor(new SetTagCommand());
         this.getCommand("tag").setExecutor(new TagCommand());
         this.getCommand("switchjob").setExecutor(new SwitchJobCommand());
-        this.getCommand("poop").setExecutor(new PoopCommand());
-        this.getCommand("pee").setExecutor(new PeeCommand());
         this.getCommand("properties").setExecutor(new PropertiesCommand());
 
         DocCommand docCommand = new DocCommand();
