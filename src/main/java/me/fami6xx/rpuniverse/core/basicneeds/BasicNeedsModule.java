@@ -90,7 +90,7 @@ public class BasicNeedsModule extends AbstractModule {
     
     @Override
     public String getAuthor() {
-        return "fami6xx";
+        return "Fami6Xx";
     }
     
     /**
