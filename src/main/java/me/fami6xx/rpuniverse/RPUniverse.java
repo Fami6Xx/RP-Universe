@@ -23,6 +23,7 @@ import me.fami6xx.rpuniverse.core.misc.basichandlers.BossBarHandler;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.language.LanguageHandler;
 import me.fami6xx.rpuniverse.core.misc.papi.RPUExpansion;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.NickHider;
 import me.fami6xx.rpuniverse.core.properties.PropertyManager;
 import me.fami6xx.rpuniverse.core.properties.commands.PropertiesCommand;
@@ -74,7 +75,7 @@ public final class RPUniverse extends JavaPlugin {
     @Override
     public void onEnable() {
         if (isServerReload) {
-            getLogger().severe("We suspect you used /reload, RPUniverse does not support this and any issues reported after reloading will be ignored!");
+            ErrorHandler.severe("We suspect you used /reload, RPUniverse does not support this and any issues reported after reloading will be ignored!");
         }
 
         if (!getDataFolder().exists()) {
@@ -94,17 +95,20 @@ public final class RPUniverse extends JavaPlugin {
 
         int confVersion = config.getInt("configVersion", -1);
         if (confVersion != 4) {
-            getLogger().severe("Your config is outdated! Please delete it and restart the server to generate a new one.");
+            ErrorHandler.severe("Your config is outdated! Please delete it and restart the server to generate a new one.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
+        // Initialize the error handler
+        ErrorHandler.init();
+
         if (!setupEconomy()) {
-            getLogger().severe("Vault is not installed or doesn't have any Economy plugin! Disabling plugin...");
+            ErrorHandler.severe("Vault is not installed or doesn't have any Economy plugin! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }else{
-            getLogger().info("Economy plugin hooked!");
+            ErrorHandler.info("Economy plugin hooked!");
         }
 
         languageHandler = new LanguageHandler(this);
@@ -112,11 +116,11 @@ public final class RPUniverse extends JavaPlugin {
         holoAPI = new HoloAPI();
 
         if (!holoAPI.enable()) {
-            getLogger().severe("DecentHolograms is not installed! Disabling plugin...");
+            ErrorHandler.severe("DecentHolograms is not installed! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }else{
-            getLogger().info("Hologram system enabled!");
+            ErrorHandler.info("Hologram system enabled!");
         }
 
         jobsHandler = new JobsHandler();
@@ -124,18 +128,20 @@ public final class RPUniverse extends JavaPlugin {
         menuManager = new MenuManager();
 
         if (!menuManager.enable()) {
-            getLogger().severe("Failed to enable MenuManager! Disabling plugin...");
+            ErrorHandler.severe("Failed to enable MenuManager! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
         }else{
-            getLogger().info("MenuManager enabled!");
+            ErrorHandler.info("MenuManager enabled!");
         }
 
         try {
             if(!compareVersions()){
-                getLogger().warning("Your version of RPUniverse is outdated! Please update to the latest version.");
+                ErrorHandler.warning("Your version of RPUniverse is outdated! Please update to the latest version.");
+            } else {
+                ErrorHandler.debug("Running the latest version of RPUniverse");
             }
         } catch (Exception e) {
-            getLogger().severe("Failed to check for updates! Please check your internet connection.");
+            ErrorHandler.severe("Failed to check for updates! Please check your internet connection.", e);
         }
 
         this.lockHandler = new LockHandler();
@@ -186,12 +192,16 @@ public final class RPUniverse extends JavaPlugin {
 
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new RPUExpansion(this).register();
-            getLogger().info("PlaceholderAPI hooked!");
+            ErrorHandler.info("PlaceholderAPI hooked!");
+        } else {
+            ErrorHandler.debug("PlaceholderAPI not found, skipping hook");
         }
 
         if (this.config.getBoolean("chestLimit.enabled")) {
             getServer().getPluginManager().registerEvents(new ChestLimitListener(this), this);
-            getLogger().info("ChestLimit enabled!");
+            ErrorHandler.info("ChestLimit enabled!");
+        } else {
+            ErrorHandler.debug("ChestLimit disabled in config");
         }
 
         this.getCommand("rpuniverse").setExecutor(new RPUCoreCommand());
@@ -199,43 +209,80 @@ public final class RPUniverse extends JavaPlugin {
 
         if (this.getConfig().getBoolean("inventoryLimit.enabled")) {
             getServer().getPluginManager().registerEvents(new PlayerInventoryLimitListener(), this);
-            getLogger().info("InventoryLimit enabled!");
+            ErrorHandler.info("InventoryLimit enabled!");
+        } else {
+            ErrorHandler.debug("InventoryLimit disabled in config");
         }
 
         if (config.getBoolean("balance.enableTracker")) {
             balanceChangeNotifier = new BalanceChangeNotifier(this);
             getServer().getPluginManager().registerEvents(balanceChangeNotifier, this);
             balanceChangeNotifier.runTaskTimer(this, 0, config.getLong("balance.check-interval"));
+            ErrorHandler.info("Balance tracker enabled with interval: " + config.getLong("balance.check-interval") + " ticks");
+        } else {
+            ErrorHandler.debug("Balance tracker disabled in config");
         }
 
         getJobsHandler().addJobType(new BasicJobType());
+        ErrorHandler.debug("Added basic job type");
 
         int pluginId = 25314;
         metrics = new Metrics(this, pluginId);
-        getLogger().info("Metrics enabled!");
+        ErrorHandler.info("Metrics enabled!");
 
-        getLogger().info("RPUniverse enabled!");
+        ErrorHandler.info("RPUniverse enabled!");
     }
 
     @Override
     public void onDisable() {
+        ErrorHandler.info("Disabling RPUniverse...");
         try {
+            ErrorHandler.debug("Shutting down RegionManager");
             RegionManager.getInstance().shutdown();
+
+            ErrorHandler.debug("Disabling MenuManager");
             this.menuManager.disable();
+
+            ErrorHandler.debug("Shutting down JobsHandler");
             this.jobsHandler.shutdown();
+
+            ErrorHandler.debug("Disabling HoloAPI");
             this.holoAPI.disable();
+
+            ErrorHandler.debug("Stopping CreateJobStarter");
             this.createJobStarter.stop();
+
+            ErrorHandler.debug("Shutting down BasicNeedsHandler");
             this.basicNeedsHandler.shutdown();
-            if (nickHider != null)
+
+            if (nickHider != null) {
+                ErrorHandler.debug("Shutting down NickHider");
                 this.nickHider.shutdown();
+            }
+
+            ErrorHandler.debug("Shutting down LockHandler");
             this.lockHandler.shutdown();
+
+            ErrorHandler.debug("Disabling PropertyManager");
             this.propertyManager.disable();
-            if (balanceChangeNotifier != null)
+
+            if (balanceChangeNotifier != null) {
+                ErrorHandler.debug("Cancelling BalanceChangeNotifier");
                 balanceChangeNotifier.cancel();
+            }
+
+            ErrorHandler.debug("Shutting down DataSystem");
             this.dataSystem.shutdown();
+
+            ErrorHandler.debug("Unregistering event handlers");
             HandlerList.unregisterAll(this);
+
+            ErrorHandler.debug("Shutting down Metrics");
             metrics.shutdown();
-        } catch (Exception ignored) {
+
+            ErrorHandler.info("RPUniverse disabled successfully");
+        } catch (Exception e) {
+            ErrorHandler.severe("Error during plugin shutdown", e);
         }
         isServerReload = true;
     }
@@ -397,11 +444,14 @@ public final class RPUniverse extends JavaPlugin {
      */
     private String getVersionFromAPI() throws Exception {
         String urlString = "https://api.polymart.org/v1/getResourceInfoSimple/?resource_id=5845&key=version";
+        ErrorHandler.debug("Checking version from API: " + urlString);
+
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         conn.setRequestMethod("GET");
         int responseCode = conn.getResponseCode();
+        ErrorHandler.debug("API response code: " + responseCode);
 
         if (responseCode == HttpURLConnection.HTTP_OK) {
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -413,8 +463,9 @@ public final class RPUniverse extends JavaPlugin {
             }
             in.close();
 
-            // Return the version
-            return response.toString();
+            String version = response.toString();
+            ErrorHandler.debug("API returned version: " + version);
+            return version;
         } else {
             throw new RuntimeException("Failed version check: HTTP error code : " + responseCode);
         }

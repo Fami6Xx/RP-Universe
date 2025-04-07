@@ -12,13 +12,13 @@ import me.fami6xx.rpuniverse.core.locks.Lock;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,7 +27,6 @@ public class JSONDataHandler implements IDataHandler {
     private Gson gson;
     private final Path playerDataDirectory = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/playerdata/");
     private final Path jobDataDirectory = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/jobs/");
-    private final Logger logger =  RPUniverse.getInstance().getLogger();
 
     @Override
     public boolean startUp() {
@@ -48,15 +47,17 @@ public class JSONDataHandler implements IDataHandler {
                 return jobsDir.mkdirs();
             }
 
+            ErrorHandler.debug("JSONDataHandler initialized successfully");
             return true;
         } catch (Exception e) {
-            logger.severe(e.getMessage());
+            ErrorHandler.severe("Failed to initialize JSONDataHandler", e);
             return false;
         }
     }
 
     @Override
     public boolean shutDown() {
+        ErrorHandler.debug("JSONDataHandler shutting down");
         return true;
     }
 
@@ -71,16 +72,19 @@ public class JSONDataHandler implements IDataHandler {
 
         File playerFile = playerFilePath.toFile();
         if(!playerFile.exists()) {
+            ErrorHandler.debug("Creating new player data for: " + uuid);
             return new PlayerData(uuid);
         }
 
         try (Reader reader = new FileReader(playerFilePath.toFile())) {
-            return gson.fromJson(reader, PlayerData.class);
+            PlayerData data = gson.fromJson(reader, PlayerData.class);
+            ErrorHandler.debug("Loaded player data for: " + uuid);
+            return data;
         } catch (IOException e) {
-            logger.severe(e.getMessage());
+            ErrorHandler.severe("Failed to load player data file for: " + uuid, e);
             return null;
         } catch (JsonParseException e) {
-            logger.severe("Failed to load data for player: " + uuid);
+            ErrorHandler.severe("Failed to parse player data for: " + uuid, e);
             return null;
         }
     }
@@ -93,19 +97,21 @@ public class JSONDataHandler implements IDataHandler {
         if(!playerFilePathFile.exists()) {
             try {
                 if(!playerFilePathFile.createNewFile()) {
+                    ErrorHandler.warning("Failed to create new player data file for: " + data.getPlayerUUID());
                     return false;
                 }
             } catch (IOException e) {
-                logger.severe(e.getMessage());
+                ErrorHandler.severe("Error creating player data file for: " + data.getPlayerUUID(), e);
                 return false;
             }
         }
 
         try (Writer writer = new FileWriter(playerFilePath.toFile())) {
             gson.toJson(data, writer);
+            ErrorHandler.debug("Saved player data for: " + data.getPlayerUUID());
             return true;
         } catch (IOException e) {
-            logger.severe(e.getMessage());
+            ErrorHandler.severe("Failed to save player data for: " + data.getPlayerUUID(), e);
             return false;
         }
     }
@@ -115,12 +121,14 @@ public class JSONDataHandler implements IDataHandler {
         Path jobFilePath = jobDataDirectory.resolve(uuid + ".json");
 
         try (Reader reader = new FileReader(jobFilePath.toFile())) {
-            return gson.fromJson(reader, Job.class);
+            Job job = gson.fromJson(reader, Job.class);
+            ErrorHandler.debug("Loaded job data for: " + uuid);
+            return job;
         } catch (IOException e) {
-            logger.severe(e.getMessage());
+            ErrorHandler.severe("Failed to load job data file for: " + uuid, e);
             return null;
         } catch (JsonParseException e) {
-            logger.severe("Failed to load data for job: " + uuid);
+            ErrorHandler.severe("Failed to parse job data for: " + uuid, e);
             return null;
         }
     }
@@ -133,10 +141,11 @@ public class JSONDataHandler implements IDataHandler {
         if(!jobFile.exists()) {
             try {
                 if(!jobFile.createNewFile()) {
+                    ErrorHandler.warning("Failed to create new job data file for: " + uuid);
                     return false;
                 }
             } catch (IOException e) {
-                logger.severe(e.getMessage());
+                ErrorHandler.severe("Error creating job data file for: " + uuid, e);
                 return false;
             }
         }
@@ -145,9 +154,10 @@ public class JSONDataHandler implements IDataHandler {
 
         try (Writer writer = new FileWriter(jobFilePath.toFile())) {
             gson.toJson(data, writer);
+            ErrorHandler.debug("Saved job data for: " + uuid);
             return true;
         } catch (IOException e) {
-            logger.severe(e.getMessage());
+            ErrorHandler.severe("Failed to save job data for: " + uuid, e);
             return false;
         }
     }
@@ -164,10 +174,11 @@ public class JSONDataHandler implements IDataHandler {
         if(!consumablesFile.exists()) {
             try {
                 if(!consumablesFile.createNewFile()) {
+                    ErrorHandler.warning("Failed to create consumables file");
                     return false;
                 }
             } catch (IOException e) {
-                logger.severe(e.getMessage());
+                ErrorHandler.severe("Error creating consumables file", e);
                 return false;
             }
         }
@@ -178,9 +189,10 @@ public class JSONDataHandler implements IDataHandler {
                 consumables.add(gson.toJson(item, ItemStack.class), gson.toJsonTree(consumable));
             });
             gson.toJson(consumables, writer);
+            ErrorHandler.debug("Saved consumables data");
             return true;
         } catch (IOException e) {
-            logger.severe(e.getMessage());
+            ErrorHandler.severe("Failed to save consumables data", e);
             return false;
         }
     }
@@ -194,6 +206,7 @@ public class JSONDataHandler implements IDataHandler {
     public HashMap<ItemStack, ConsumableItem> loadConsumables() {
         File consumablesFile = new File(RPUniverse.getInstance().getDataFolder().getPath() + "/consumables.json");
         if(!consumablesFile.exists()) {
+            ErrorHandler.debug("Consumables file does not exist, returning empty map");
             return new HashMap<>();
         }
 
@@ -205,12 +218,13 @@ public class JSONDataHandler implements IDataHandler {
                 ConsumableItem consumable = gson.fromJson(entry.getValue(), ConsumableItem.class);
                 consumables.put(item, consumable);
             });
+            ErrorHandler.debug("Loaded consumables data: " + consumables.size() + " items");
             return consumables;
         } catch (IOException e) {
-            logger.severe(e.getMessage());
+            ErrorHandler.severe("Failed to load consumables file", e);
             return new HashMap<>();
         } catch (JsonParseException e) {
-            logger.severe("Failed to load consumables");
+            ErrorHandler.severe("Failed to parse consumables data", e);
             return new HashMap<>();
         }
     }
@@ -219,12 +233,14 @@ public class JSONDataHandler implements IDataHandler {
     public Job[] getAllJobData() {
         File[] files = jobDataDirectory.toFile().listFiles();
         if(files == null) {
+            ErrorHandler.warning("No job files found or job directory does not exist");
             return new Job[0];
         }
         Job[] jobs = new Job[files.length];
         for(int i = 0; i < files.length; i++) {
             jobs[i] = getJobData(files[i].getName().replace(".json", ""));
         }
+        ErrorHandler.debug("Loaded " + jobs.length + " jobs");
         return jobs;
     }
 
@@ -233,9 +249,16 @@ public class JSONDataHandler implements IDataHandler {
         Path jobFilePath = jobDataDirectory.resolve(uuid + ".json");
         File jobFile = jobFilePath.toFile();
         if(!jobFile.exists()) {
+            ErrorHandler.debug("Job file does not exist for: " + uuid);
             return false;
         }
-        return jobFile.delete();
+        boolean result = jobFile.delete();
+        if (result) {
+            ErrorHandler.debug("Removed job data for: " + uuid);
+        } else {
+            ErrorHandler.warning("Failed to remove job data for: " + uuid);
+        }
+        return result;
     }
 
     @Override
@@ -251,23 +274,26 @@ public class JSONDataHandler implements IDataHandler {
             try {
                 if(!lockFile.getParentFile().exists()) {
                     if(!lockFile.getParentFile().mkdirs()) {
+                        ErrorHandler.warning("Failed to create locks directory");
                         return false;
                     }
                 }
                 if (!lockFile.createNewFile()) {
+                    ErrorHandler.warning("Failed to create lock file for: " + lock.getUUID());
                     return false;
                 }
             } catch (IOException e) {
-                logger.severe(e.getMessage());
+                ErrorHandler.severe("Error creating lock file for: " + lock.getUUID(), e);
                 return false;
             }
         }
 
         try (Writer writer = new FileWriter(lockFile)) {
             gson.toJson(lock, writer);
+            ErrorHandler.debug("Saved lock data for: " + lock.getUUID());
             return true;
         } catch (IOException e) {
-            logger.severe(e.getMessage());
+            ErrorHandler.severe("Failed to save lock data for: " + lock.getUUID(), e);
             return false;
         }
     }
@@ -277,12 +303,14 @@ public class JSONDataHandler implements IDataHandler {
         File lockDir = new File(RPUniverse.getInstance().getDataFolder().getPath() + "/locks/");
         if(!lockDir.exists()) {
             if(!lockDir.mkdirs()) {
+                ErrorHandler.warning("Failed to create locks directory");
                 return new Lock[0];
             }
             return new Lock[0];
         }
         File[] files = lockDir.listFiles();
         if (files == null) {
+            ErrorHandler.warning("No lock files found or locks directory does not exist");
             return new Lock[0];
         }
 
@@ -294,9 +322,10 @@ public class JSONDataHandler implements IDataHandler {
                     locks.add(lock);
                 }
             } catch (IOException | JsonParseException e) {
-                logger.severe("Failed to load lock data from file: " + file.getName() + " with error: " + e.getMessage());
+                ErrorHandler.severe("Failed to load lock data from file: " + file.getName(), e);
             }
         }
+        ErrorHandler.debug("Loaded " + locks.size() + " locks");
         return locks.toArray(new Lock[0]);
     }
 
@@ -305,7 +334,14 @@ public class JSONDataHandler implements IDataHandler {
         Path lockFilePath = Paths.get(RPUniverse.getInstance().getDataFolder().getPath() + "/locks/" + lock.getUUID().toString() + ".json");
         File lockFile = lockFilePath.toFile();
         if(lockFile.exists()) {
-            lockFile.delete();
+            boolean result = lockFile.delete();
+            if (result) {
+                ErrorHandler.debug("Removed lock data for: " + lock.getUUID());
+            } else {
+                ErrorHandler.warning("Failed to remove lock data for: " + lock.getUUID());
+            }
+        } else {
+            ErrorHandler.debug("Lock file does not exist for: " + lock.getUUID());
         }
     }
 }

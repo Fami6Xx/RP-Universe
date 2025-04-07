@@ -9,6 +9,7 @@ import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.language.editor.LanguageEditorMainMenu;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import me.fami6xx.rpuniverse.core.properties.PropertyManager;
 import me.fami6xx.rpuniverse.core.regions.Region;
@@ -70,6 +71,9 @@ public class RPUCoreCommand implements CommandExecutor {
             case "languages":
                 FamiUtils.sendMessageWithPrefix(player, "&cAfter editing language fields, you must restart the server to apply changes.");
                 new LanguageEditorMainMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player)).open();
+                break;
+            case "debug":
+                handleDebugCommand(player, args);
                 break;
             default:
                 FamiUtils.sendMessageWithPrefix(player, "&cUnknown subcommand. Use &f/rpu &cfor help.");
@@ -313,6 +317,7 @@ public class RPUCoreCommand implements CommandExecutor {
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu removejob <Player> <Job name> &7- &fRemove a job from a player"));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu region <subcommand> &7- &fManage regions"));
         sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu languages &7- &fOpen the language editor"));
+        sender.sendMessage(FamiUtils.formatWithPrefix("&6/rpu debug [on|off] &7- &fToggle debug mode"));
     }
 
     private void showRegionHelp(Player player) {
@@ -456,5 +461,38 @@ public class RPUCoreCommand implements CommandExecutor {
         Location center = new Location(w, centerX, centerY, centerZ);
         player.teleport(center);
         FamiUtils.sendMessageWithPrefix(player, "&aTeleported to center of region &e" + region.getName() + "&a!");
+    }
+
+    /**
+     * Handles the debug command, which toggles debug mode on or off.
+     * 
+     * @param player The player who executed the command
+     * @param args The command arguments
+     */
+    private void handleDebugCommand(Player player, String[] args) {
+        if (!player.hasPermission("rpu.admin")) {
+            FamiUtils.sendMessageWithPrefix(player, "&cYou don't have permission to use this command!");
+            return;
+        }
+
+        if (args.length < 2) {
+            boolean currentState = ErrorHandler.isDebugMode();
+            FamiUtils.sendMessageWithPrefix(player, "&6Debug mode is currently: " + 
+                (currentState ? "&aON" : "&cOFF"));
+            FamiUtils.sendMessageWithPrefix(player, "&6Use &f/rpu debug on&6 or &f/rpu debug off&6 to change.");
+            return;
+        }
+
+        String option = args[1].toLowerCase();
+        if (option.equals("on") || option.equals("enable") || option.equals("true")) {
+            ErrorHandler.setDebugMode(true);
+            FamiUtils.sendMessageWithPrefix(player, "&aDebug mode has been enabled!");
+            FamiUtils.sendMessageWithPrefix(player, "&7Additional debug information will now be logged.");
+        } else if (option.equals("off") || option.equals("disable") || option.equals("false")) {
+            ErrorHandler.setDebugMode(false);
+            FamiUtils.sendMessageWithPrefix(player, "&cDebug mode has been disabled!");
+        } else {
+            FamiUtils.sendMessageWithPrefix(player, "&cInvalid option. Use &f/rpu debug on&c or &f/rpu debug off&c.");
+        }
     }
 }

@@ -118,3 +118,9 @@ balance:
     enableTracker: false
     check-interval: 20 # Time in ticks (20 ticks = 1 second)
     discordWebhookURL: ""
+
+# The settings for debug mode
+# enabled: If true, debug mode is enabled and additional debug messages will be logged
+# This is useful for troubleshooting issues with the plugin
+debug:
+    enabled: false
