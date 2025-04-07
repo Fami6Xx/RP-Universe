@@ -20,7 +20,7 @@ import java.util.Map;
 public class ConfigMigrator {
 
     // The current config version
-    private static final int CURRENT_CONFIG_VERSION = 6;
+    private static final int CURRENT_CONFIG_VERSION = 7;
 
     // Map of migration handlers for each version
     private static final Map<Integer, MigrationHandler> migrationHandlers = new HashMap<>();
@@ -29,6 +29,7 @@ public class ConfigMigrator {
         // Register migration handlers for each version
         migrationHandlers.put(4, ConfigMigrator::migrateFromV4ToV5);
         migrationHandlers.put(5, ConfigMigrator::migrateFromV5ToV6);
+        migrationHandlers.put(6, ConfigMigrator::migrateFromV6ToV7);
     }
 
     /**
@@ -183,6 +184,33 @@ public class ConfigMigrator {
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Error during migration from v5 to v6", e);
+            return false;
+        }
+    }
+
+    /**
+     * Migrates configuration from version 6 to version 7.
+     * 
+     * @param config The configuration to migrate
+     * @return true if migration was successful, false otherwise
+     */
+    private static boolean migrateFromV6ToV7(FileConfiguration config) {
+        try {
+            // Add new sections and fields introduced in version 7
+
+            // Add Payment module section if it doesn't exist
+            if (!config.contains("modules.Payment")) {
+                config.createSection("modules.Payment");
+                config.set("modules.Payment.enabled", true);
+                config.set("modules.Payment.commandEnabled", true);
+                config.set("modules.Payment.distanceCheckEnabled", true);
+                config.set("modules.Payment.maxDistance", 10.0);
+                config.set("modules.Payment.lineOfSightCheckEnabled", true);
+            }
+
+            return true;
+        } catch (Exception e) {
+            ErrorHandler.severe("Error during migration from v6 to v7", e);
             return false;
         }
     }

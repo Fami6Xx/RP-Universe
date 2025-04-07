@@ -349,6 +349,20 @@ public class LanguageHandler {
     // WorkingStep depleted
     public String workingStepDepletedMessage = "&7This location is depleted!~&7It will replenish soon...";
 
+    // PAYMENT MESSAGES
+    public String errorPayCommandDisabledMessage = "&cThe pay command is disabled.";
+    public String errorPayCommandUsageMessage = "&cUsage: /pay <player> <amount>";
+    public String errorPayCommandPlayerNotFoundMessage = "&cPlayer not found.";
+    public String errorPayCommandCannotPayYourselfMessage = "&cYou cannot pay yourself.";
+    public String errorPayCommandInvalidAmountMessage = "&cInvalid amount.";
+    public String errorPayCommandAmountMustBePositiveMessage = "&cAmount must be positive.";
+    public String errorPayCommandNotEnoughMoneyMessage = "&cYou don't have enough money.";
+    public String errorPayCommandMustBeInSameWorldMessage = "&cYou must be in the same world as the target player.";
+    public String errorPayCommandTooFarAwayMessage = "&cYou are too far away from the target player.";
+    public String errorPayCommandMustBeAbleToSeeTargetMessage = "&cYou must be able to see the target player.";
+    public String successPayCommandSenderMessage = "&aYou paid &e{targetName} &a{amount} money.";
+    public String successPayCommandTargetMessage = "&aYou received &e{amount} &amoney from &e{senderName}&a.";
+
     private final HashMap<String, String> addonTranslations = new HashMap<>();
 
     private final JavaPlugin plugin;

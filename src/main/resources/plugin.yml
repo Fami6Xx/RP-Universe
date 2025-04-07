@@ -74,6 +74,10 @@ commands:
     description: Opens the locks menu
     usage: /<command>
     aliases: [lock, lockmenu]
+  pay:
+    description: Pays another player
+    usage: /<command> <player> <amount>
+    permission: rpu.pay
   rpuniverse:
     description: Main command of the plugin
     usage: /<command> <subcommand>
@@ -84,7 +88,7 @@ commands:
     aliases: [property, propertymenu]
 permissions:
   rpu.user:
-    description: Gives access to all user commands (me, do, doc, try, status, globalooc)
+    description: Gives access to all user commands (me, do, doc, try, status, globalooc, pay)
     children:
         rpu.me: true
         rpu.do: true
@@ -93,6 +97,7 @@ permissions:
         rpu.globalooc: true
         rpu.doc: true
         rpu.try: true
+        rpu.pay: true
   rpu.admin:
     description: Gives access to all admin commands
     children:
@@ -137,3 +142,5 @@ permissions:
     description: Allows the player to use the /rpu command
   rpu.properties:
     description: Allows the player to use the /properties command
+  rpu.pay:
+    description: Allows the player to use the /pay command

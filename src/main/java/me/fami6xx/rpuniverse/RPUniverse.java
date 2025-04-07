@@ -5,6 +5,7 @@ import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
 import me.fami6xx.rpuniverse.core.basicneeds.commands.ConsumablesCommand;
 import me.fami6xx.rpuniverse.core.basicneeds.commands.PeeCommand;
 import me.fami6xx.rpuniverse.core.basicneeds.commands.PoopCommand;
+import me.fami6xx.rpuniverse.core.payment.PaymentModule;
 import me.fami6xx.rpuniverse.core.chestlimit.ChestLimitListener;
 import me.fami6xx.rpuniverse.core.commands.*;
 import me.fami6xx.rpuniverse.core.holoapi.HoloAPI;
@@ -111,6 +112,9 @@ public final class RPUniverse extends JavaPlugin {
         // Register modules
         moduleManager.registerModule(new me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsModule());
         ErrorHandler.debug("Registered BasicNeedsModule");
+
+        moduleManager.registerModule(new PaymentModule());
+        ErrorHandler.debug("Registered PaymentModule");
 
         languageHandler = new LanguageHandler(this);
         dataSystem = new DataSystem();

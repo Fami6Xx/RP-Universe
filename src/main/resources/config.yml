@@ -14,7 +14,7 @@
 
 # Config version (PLEASE DO NOT TOUCH THIS)
 # This is used for automatic configuration migration between versions
-configVersion: 6
+configVersion: 7
 
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 
@@ -154,3 +154,17 @@ modules:
     BasicNeeds:
         # enabled: If true, the module is enabled
         enabled: true
+
+    # Payment module settings
+    # This module provides a custom implementation of the /pay command with distance and line-of-sight requirements
+    Payment:
+        # enabled: If true, the module is enabled
+        enabled: true
+        # commandEnabled: If true, the /pay command is enabled
+        commandEnabled: true
+        # distanceCheckEnabled: If true, players must be within a certain distance to pay each other
+        distanceCheckEnabled: true
+        # maxDistance: The maximum distance between players for the payment to be allowed
+        maxDistance: 10.0
+        # lineOfSightCheckEnabled: If true, players must be able to see each other to pay each other
+        lineOfSightCheckEnabled: true
