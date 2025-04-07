@@ -14,7 +14,7 @@
 
 # Config version (PLEASE DO NOT TOUCH THIS)
 # This is used for automatic configuration migration between versions
-configVersion: 4
+configVersion: 5
 
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 

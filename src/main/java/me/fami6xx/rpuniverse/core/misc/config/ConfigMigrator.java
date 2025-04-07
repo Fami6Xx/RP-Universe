@@ -20,18 +20,16 @@ import java.util.Map;
 public class ConfigMigrator {
 
     // The current config version
-    private static final int CURRENT_CONFIG_VERSION = 4;
-    
+    private static final int CURRENT_CONFIG_VERSION = 5;
+
     // Map of migration handlers for each version
     private static final Map<Integer, MigrationHandler> migrationHandlers = new HashMap<>();
-    
+
     static {
         // Register migration handlers for each version
-        migrationHandlers.put(1, ConfigMigrator::migrateFromV1ToV2);
-        migrationHandlers.put(2, ConfigMigrator::migrateFromV2ToV3);
-        migrationHandlers.put(3, ConfigMigrator::migrateFromV3ToV4);
+        migrationHandlers.put(4, ConfigMigrator::migrateFromV4ToV5);
     }
-    
+
     /**
      * Checks if the configuration needs migration and performs it if necessary.
      * 
@@ -41,49 +39,49 @@ public class ConfigMigrator {
      */
     public static boolean migrateConfig(FileConfiguration config, File configFile) {
         int version = config.getInt("configVersion", -1);
-        
+
         // If version is not found or invalid, we can't migrate
         if (version == -1) {
             ErrorHandler.severe("Configuration version not found or invalid. Cannot migrate.");
             return false;
         }
-        
+
         // If version is current, no migration needed
         if (version == CURRENT_CONFIG_VERSION) {
             ErrorHandler.debug("Configuration is already at the latest version (" + CURRENT_CONFIG_VERSION + ")");
             return true;
         }
-        
+
         // If version is higher than current, something is wrong
         if (version > CURRENT_CONFIG_VERSION) {
             ErrorHandler.severe("Configuration version (" + version + ") is higher than the supported version (" + 
                                CURRENT_CONFIG_VERSION + "). This may cause issues.");
             return false;
         }
-        
+
         ErrorHandler.info("Migrating configuration from version " + version + " to " + CURRENT_CONFIG_VERSION);
-        
+
         // Create a backup of the current config
         if (!createBackup(configFile, version)) {
             ErrorHandler.severe("Failed to create backup of configuration. Migration aborted.");
             return false;
         }
-        
+
         // Perform migrations sequentially
         FileConfiguration currentConfig = config;
         boolean success = true;
-        
+
         while (version < CURRENT_CONFIG_VERSION && success) {
             MigrationHandler handler = migrationHandlers.get(version);
-            
+
             if (handler == null) {
                 ErrorHandler.severe("No migration handler found for version " + version + ". Migration aborted.");
                 return false;
             }
-            
+
             ErrorHandler.info("Migrating from version " + version + " to " + (version + 1));
             success = handler.migrate(currentConfig);
-            
+
             if (success) {
                 version++;
                 currentConfig.set("configVersion", version);
@@ -92,7 +90,7 @@ public class ConfigMigrator {
                 ErrorHandler.severe("Failed to migrate from version " + version + " to " + (version + 1));
             }
         }
-        
+
         // Save the migrated config
         if (success) {
             try {
@@ -103,10 +101,10 @@ public class ConfigMigrator {
                 success = false;
             }
         }
-        
+
         return success;
     }
-    
+
     /**
      * Creates a backup of the configuration file.
      * 
@@ -126,103 +124,42 @@ public class ConfigMigrator {
             return false;
         }
     }
-    
+
+
     /**
-     * Migrates configuration from version 1 to version 2.
+     * Migrates configuration from version 4 to version 5.
      * 
      * @param config The configuration to migrate
      * @return true if migration was successful, false otherwise
      */
-    private static boolean migrateFromV1ToV2(FileConfiguration config) {
+    private static boolean migrateFromV4ToV5(FileConfiguration config) {
         try {
-            // Add new sections and fields introduced in version 2
-            
+            // Add new sections and fields introduced in version 5
+
             // Add debug section if it doesn't exist
             if (!config.contains("debug")) {
                 config.createSection("debug");
                 config.set("debug.enabled", false);
             }
-            
+
             // Add modules section if it doesn't exist
             if (!config.contains("modules")) {
                 config.createSection("modules");
             }
-            
+
             // Add BasicNeeds module section if it doesn't exist
             if (!config.contains("modules.BasicNeeds")) {
                 config.createSection("modules.BasicNeeds");
                 config.set("modules.BasicNeeds.enabled", true);
             }
-            
+
             return true;
         } catch (Exception e) {
-            ErrorHandler.severe("Error during migration from v1 to v2", e);
+            ErrorHandler.severe("Error during migration from v4 to v5", e);
             return false;
         }
     }
-    
-    /**
-     * Migrates configuration from version 2 to version 3.
-     * 
-     * @param config The configuration to migrate
-     * @return true if migration was successful, false otherwise
-     */
-    private static boolean migrateFromV2ToV3(FileConfiguration config) {
-        try {
-            // Add new sections and fields introduced in version 3
-            
-            // Add balance section if it doesn't exist
-            if (!config.contains("balance")) {
-                config.createSection("balance");
-                config.set("balance.enableTracker", false);
-                config.set("balance.check-interval", 20);
-                config.set("balance.discordWebhookURL", "");
-            }
-            
-            // Update data section
-            if (config.contains("data")) {
-                // Ensure selectedSaveMethod is set to json
-                config.set("data.selectedSaveMethod", "json");
-            }
-            
-            return true;
-        } catch (Exception e) {
-            ErrorHandler.severe("Error during migration from v2 to v3", e);
-            return false;
-        }
-    }
-    
-    /**
-     * Migrates configuration from version 3 to version 4.
-     * 
-     * @param config The configuration to migrate
-     * @return true if migration was successful, false otherwise
-     */
-    private static boolean migrateFromV3ToV4(FileConfiguration config) {
-        try {
-            // Add new sections and fields introduced in version 4
-            
-            // Add inventoryLimit section if it doesn't exist
-            if (!config.contains("inventoryLimit")) {
-                config.createSection("inventoryLimit");
-                config.set("inventoryLimit.enabled", false);
-            }
-            
-            // Add chestLimit section if it doesn't exist
-            if (!config.contains("chestLimit")) {
-                config.createSection("chestLimit");
-                config.set("chestLimit.enabled", false);
-                config.set("chestLimit.single-chest-rows", 1);
-                config.set("chestLimit.double-chest-rows", 2);
-            }
-            
-            return true;
-        } catch (Exception e) {
-            ErrorHandler.severe("Error during migration from v3 to v4", e);
-            return false;
-        }
-    }
-    
+
     /**
      * Functional interface for migration handlers.
      */
