@@ -192,10 +192,9 @@ public class Job {
         ErrorHandler.debug("Removing all invoices");
         InvoiceModule module = (InvoiceModule) RPUniverse.getInstance().getModuleManager().getModule("Invoices");
         if (module != null) {
-            module.getManager().getInvoicesByJob(jobUUID.toString()).stream().forEach(invoice -> {
-                ErrorHandler.debug("Removing invoice: " + invoice.getId() + " for job: " + jobName);
-                module.getManager().deleteInvoice(invoice, invoice.getCreatorPlayer());
-            });
+            if (module.isEnabled()) {
+                module.getManager().forceDeleteInvoicesByJob(jobUUID.toString());
+            }
         }
 
         ErrorHandler.debug("Job removed: " + jobName);
