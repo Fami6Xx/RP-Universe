@@ -20,6 +20,7 @@ import me.fami6xx.rpuniverse.core.jobs.types.JobType;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.LocationAdapter;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -40,7 +41,7 @@ import java.util.logging.Logger;
  * Represents a job in the system.
  */
 public class Job {
-    private static final Logger LOGGER = RPUniverse.getInstance().getLogger();
+    private static final Logger LOGGER = RPUniverse.getInstance().getLogger(); // Kept for backward compatibility
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapter(Location.class, new LocationAdapter())
@@ -123,47 +124,71 @@ public class Job {
      * Initializes the object by creating the boss menu hologram.
      */
     protected void initialize(){
+        ErrorHandler.debug("Initializing job: " + jobName + " (UUID: " + jobUUID + ")");
         createBossMenuHologram();
 
-        if(playerPositionsSave == null) playerPositionsSave = new HashMap<>();
+        if(playerPositionsSave == null) {
+            ErrorHandler.debug("playerPositionsSave was null, creating new HashMap");
+            playerPositionsSave = new HashMap<>();
+        }
 
         if(!playerPositionsSave.isEmpty()){
+            ErrorHandler.debug("Loading " + playerPositionsSave.size() + " player positions from save data");
             for(UUID playerUUID : playerPositionsSave.keySet()){
                 Position position = getPositionByName(playerPositionsSave.get(playerUUID));
                 if(position != null){
                     playerPositions.put(playerUUID, position);
+                    ErrorHandler.debug("Loaded position " + position.getName() + " for player " + playerUUID);
+                } else {
+                    ErrorHandler.warning("Could not find position " + playerPositionsSave.get(playerUUID) + " for player " + playerUUID);
                 }
             }
         }
 
         if(jobType != null){
+            ErrorHandler.debug("Initializing job type: " + jobTypeName);
             jobType.fromJsonJobTypeData(JSONJobTypeData);
             jobType.initialize();
+        } else if (jobTypeName != null) {
+            ErrorHandler.warning("Job type name is set to " + jobTypeName + " but jobType is null");
         }
 
         JobLoadedEvent event = new JobLoadedEvent(this);
         Bukkit.getPluginManager().callEvent(event);
+        ErrorHandler.debug("Job initialized: " + jobName);
     }
 
     /**
      * Removes the job by deleting the boss menu hologram if it exists.
      */
     protected void remove(){
+        ErrorHandler.debug("Removing job: " + jobName + " (UUID: " + jobUUID + ")");
+
         if(bossMenuHologram != null){
+            ErrorHandler.debug("Deleting boss menu hologram for job: " + jobName);
             bossMenuHologram.delete();
+        } else {
+            ErrorHandler.debug("No boss menu hologram to delete for job: " + jobName);
         }
 
         if (jobType != null) {
+            ErrorHandler.debug("Stopping job type: " + jobTypeName);
             jobType.stop();
+        } else {
+            ErrorHandler.debug("No job type to stop for job: " + jobName);
         }
 
+        ErrorHandler.debug("Removing " + playerPositions.size() + " players from job: " + jobName);
         for(UUID playerUUID : playerPositions.keySet()){
             if(playerPositions.get(playerUUID).isBoss()){
+                ErrorHandler.debug("Closing boss menus for player: " + playerUUID);
                 RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
             }
 
             removePlayerFromJob(playerUUID);
         }
+
+        ErrorHandler.debug("Job removed: " + jobName);
     }
 
     /**
@@ -175,8 +200,11 @@ public class Job {
      * The admin page allows opening the JobAdminMenu as well.
      */
     protected void createBossMenuHologram(){
+        ErrorHandler.debug("Creating boss menu hologram for job: " + jobName);
+
         if(bossMenuLocation != null){
             if(bossMenuHologram != null){
+                ErrorHandler.debug("Deleting existing boss menu hologram for job: " + jobName);
                 bossMenuHologram.delete();
             }
 
@@ -187,14 +215,18 @@ public class Job {
             HashMap<String, String> replace = new HashMap<>();
             try {
                 range = RPUniverse.getInstance().getConfiguration().getInt("jobs.menuRange");
-            }catch (Exception exc){
+                ErrorHandler.debug("Using menu range: " + range + " for job: " + jobName);
+            } catch (Exception exc){
                 replace.put("{value}", "jobs.menuRange");
-                RPUniverse.getInstance().getLogger().severe(FamiUtils.formatWithPrefix(FamiUtils.replace(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace)));
+                String errorMessage = FamiUtils.formatWithPrefix(FamiUtils.replace(RPUniverse.getLanguageHandler().invalidValueInConfigMessage, replace));
+                ErrorHandler.severe("Failed to get menu range from config: " + errorMessage, exc);
                 return;
             }
 
             Location toCreate = bossMenuLocation.clone();
             toCreate.add(0, 1.5, 0);
+            ErrorHandler.debug("Creating hologram at location: " + toCreate.getWorld().getName() + 
+                " X:" + toCreate.getX() + " Y:" + toCreate.getY() + " Z:" + toCreate.getZ());
 
             StaticHologram staticHologram = new StaticHologram(toCreate, false, range, false) {
                 @Override
@@ -219,14 +251,17 @@ public class Job {
                 replace.put("{jobType}", "None");
 
             if(holo.size() == 0){
+                ErrorHandler.debug("Adding two pages to hologram for job: " + jobName);
                 holo.addPage();
                 holo.addPage();
             } else if(holo.size() == 1){
+                ErrorHandler.debug("Adding one page to hologram for job: " + jobName);
                 holo.addPage();
             }
 
             String[] hologramLines = RPUniverse.getLanguageHandler().jobBossMenuHologram.split("~");
             HologramPage bossPage = holo.getPage(0);
+            ErrorHandler.debug("Creating boss page with " + hologramLines.length + " lines for job: " + jobName);
             for(String line : hologramLines){
                 line = FamiUtils.replaceAndFormat(line, replace);
                 bossPage.addLine(new HologramLine(bossPage, bossPage.getNextLineLocation(), line));
@@ -235,6 +270,7 @@ public class Job {
             bossPage.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
                 @Override
                 public boolean execute(Player player, String... strings) {
+                    ErrorHandler.debug("Player " + player.getName() + " clicked on boss menu hologram for job: " + jobName);
                     new BukkitRunnable() {
                         @Override
                         public void run() {
@@ -247,6 +283,7 @@ public class Job {
 
             String[] adminHologramLines = RPUniverse.getLanguageHandler().jobBossMenuAdminHologram.split("~");
             HologramPage adminPage = holo.getPage(1);
+            ErrorHandler.debug("Creating admin page with " + adminHologramLines.length + " lines for job: " + jobName);
             for(String line : adminHologramLines){
                 line = FamiUtils.replaceAndFormat(line, replace);
                 adminPage.addLine(new HologramLine(adminPage, adminPage.getNextLineLocation(), line));
@@ -255,6 +292,7 @@ public class Job {
             adminPage.addAction(ClickType.RIGHT, new Action(new ActionType(UUID.randomUUID().toString()) {
                 @Override
                 public boolean execute(Player player, String... strings) {
+                    ErrorHandler.debug("Admin " + player.getName() + " clicked on boss menu hologram for job: " + jobName);
                     new BukkitRunnable() {
                         @Override
                         public void run() {
@@ -264,6 +302,10 @@ public class Job {
                     return true;
                 }
             }, ""));
+
+            ErrorHandler.debug("Boss menu hologram created successfully for job: " + jobName);
+        } else {
+            ErrorHandler.warning("Cannot create boss menu hologram for job: " + jobName + " - bossMenuLocation is null");
         }
     }
 
@@ -394,11 +436,20 @@ public class Job {
      * @param jobType The job type to be set. Must not be null.
      */
     public void setJobType(@NotNull JobType jobType) {
+        ErrorHandler.debug("Setting job type for job: " + jobName + " (UUID: " + jobUUID + ")");
+        ErrorHandler.debug("New job type: " + jobType.getName());
+
         this.jobType = jobType;
         this.jobTypeName = jobType.getName();
         this.JSONJobTypeData = null;
+
+        ErrorHandler.debug("Initializing job type: " + jobTypeName + " for job: " + jobName);
         this.jobType.initialize();
+
+        ErrorHandler.debug("Closing all job menus for job: " + jobName);
         RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == this);
+
+        ErrorHandler.debug("Job type set successfully for job: " + jobName);
     }
 
     /**
@@ -579,14 +630,33 @@ public class Job {
      * @param newPosition   The new position to assign to the player.
      */
     public void changePlayerPosition(UUID playerUUID, Position newPosition) {
-        if(playerPositions.containsKey(playerUUID) && playerPositions.get(playerUUID).isBoss() && !newPosition.isBoss()){
-            RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
+        ErrorHandler.debug("Changing position for player " + playerUUID + " in job " + jobName);
+
+        if(playerPositions.containsKey(playerUUID)) {
+            Position oldPosition = playerPositions.get(playerUUID);
+            ErrorHandler.debug("Player " + playerUUID + " current position: " + oldPosition.getName() + " in job " + jobName);
+            ErrorHandler.debug("Player " + playerUUID + " new position: " + newPosition.getName() + " in job " + jobName);
+
+            if(oldPosition.isBoss() && !newPosition.isBoss()){
+                ErrorHandler.debug("Player " + playerUUID + " is being demoted from boss position, closing boss menus");
+                RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
+            }
+        } else {
+            ErrorHandler.debug("Player " + playerUUID + " did not have a position in job " + jobName + ", assigning new position: " + newPosition.getName());
         }
+
         playerPositions.put(playerUUID, newPosition);
         RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
+
         Player player = Bukkit.getPlayer(playerUUID);
-        if(player != null)
+        if(player != null) {
+            ErrorHandler.debug("Updating boss bar for player " + player.getName() + " in job " + jobName);
             RPUniverse.getInstance().getBossBarHandler().updateBossBar(player);
+        } else {
+            ErrorHandler.debug("Player " + playerUUID + " is offline, boss bar will be updated when they log in");
+        }
+
+        ErrorHandler.debug("Position changed successfully for player " + playerUUID + " in job " + jobName);
     }
 
     /**
@@ -596,6 +666,7 @@ public class Job {
      * @param money The amount of money to add to the job bank. Must be a positive integer.
      */
     public void addMoneyToJobBank(double money) {
+        ErrorHandler.debug("Adding " + money + " to job bank for job " + jobName + " (current balance: " + jobBank + ")");
         BigDecimal bd = new BigDecimal(jobBank + money);
         bd = bd.setScale(2, RoundingMode.HALF_UP);
         jobBank = bd.doubleValue();
@@ -605,9 +676,11 @@ public class Job {
             public void run() {
                 MoneyAddedToJobBankEvent event = new MoneyAddedToJobBankEvent(money, jobBank, job);
                 Bukkit.getPluginManager().callEvent(event);
+                ErrorHandler.debug("MoneyAddedToJobBankEvent called for job " + jobName + " (amount: " + money + ", new balance: " + jobBank + ")");
             }
         }.runTask(RPUniverse.getInstance());
         RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
+        ErrorHandler.debug("Money added to job bank successfully. New balance: " + jobBank + " for job " + jobName);
     }
 
     /**
@@ -618,6 +691,7 @@ public class Job {
      * @return {@code true} if the money was successfully removed from the job bank, {@code false} otherwise.
      */
     public boolean removeMoneyFromJobBank(double money) {
+        ErrorHandler.debug("Attempting to remove " + money + " from job bank for job " + jobName + " (current balance: " + jobBank + ")");
         if(jobBank >= money) {
             BigDecimal bd = new BigDecimal(jobBank - money);
             bd = bd.setScale(2, RoundingMode.HALF_UP);
@@ -628,11 +702,14 @@ public class Job {
                 public void run() {
                     MoneyRemovedFromJobBankEvent event = new MoneyRemovedFromJobBankEvent(money, jobBank, job);
                     Bukkit.getPluginManager().callEvent(event);
+                    ErrorHandler.debug("MoneyRemovedFromJobBankEvent called for job " + jobName + " (amount: " + money + ", new balance: " + jobBank + ")");
                 }
             }.runTask(RPUniverse.getInstance());
             RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
+            ErrorHandler.debug("Money removed from job bank successfully. New balance: " + jobBank + " for job " + jobName);
             return true;
         }
+        ErrorHandler.warning("Failed to remove " + money + " from job bank for job " + jobName + " - insufficient funds (current balance: " + jobBank + ")");
         return false;
     }
 
@@ -665,9 +742,11 @@ public class Job {
      * @param position The position to associate the player with.
      */
     public void addPlayerToJob(UUID playerUUID, Position position) {
+        ErrorHandler.debug("Adding player " + playerUUID + " to job " + jobName + " with position " + position.getName());
         playerPositions.put(playerUUID, position);
         RPUniverse.getPlayerData(playerUUID.toString()).addJob(this);
         RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
+        ErrorHandler.debug("Player " + playerUUID + " added to job " + jobName + " successfully");
     }
 
     /**
@@ -675,16 +754,18 @@ public class Job {
      * @param playerUUID The UUID of the player to add.
      */
     public void addPlayerToJob(UUID playerUUID){
+        ErrorHandler.debug("Adding player " + playerUUID + " to job " + jobName + " with default position");
         for(Position position : jobPositions) {
             if(position.isDefault()) {
                 playerPositions.put(playerUUID, position);
                 RPUniverse.getPlayerData(playerUUID.toString()).addJob(this);
                 RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
+                ErrorHandler.debug("Player " + playerUUID + " added to job " + jobName + " with default position " + position.getName());
                 return;
             }
         }
 
-        LOGGER.log(Level.SEVERE, "No default position found for job " + jobName + " even though player " + playerUUID + " was added to the job!");
+        ErrorHandler.severe("No default position found for job " + jobName + " even though player " + playerUUID + " was added to the job!");
     }
 
     /**
@@ -693,12 +774,24 @@ public class Job {
      * @param playerUUID The UUID of the player to remove from the job.
      */
     public void removePlayerFromJob(UUID playerUUID) {
-        if(playerPositions.containsKey(playerUUID) && playerPositions.get(playerUUID).isBoss()){
-            RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
+        ErrorHandler.debug("Removing player " + playerUUID + " from job " + jobName);
+
+        if(playerPositions.containsKey(playerUUID)) {
+            Position position = playerPositions.get(playerUUID);
+            ErrorHandler.debug("Player " + playerUUID + " had position " + position.getName() + " in job " + jobName);
+
+            if(position.isBoss()){
+                ErrorHandler.debug("Closing boss menus for player " + playerUUID + " as they were a boss in job " + jobName);
+                RPUniverse.getInstance().getMenuManager().closeAllMenusUUIDPredicate(p -> p.equals(playerUUID), MenuTag.BOSS);
+            }
+
+            playerPositions.remove(playerUUID);
+            RPUniverse.getPlayerData(playerUUID.toString()).removeJob(this);
+            RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
+            ErrorHandler.debug("Player " + playerUUID + " removed from job " + jobName + " successfully");
+        } else {
+            ErrorHandler.warning("Attempted to remove player " + playerUUID + " from job " + jobName + " but they were not in the job");
         }
-        playerPositions.remove(playerUUID);
-        RPUniverse.getPlayerData(playerUUID.toString()).removeJob(this);
-        RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
     }
 
     /**
@@ -779,15 +872,28 @@ public class Job {
      * @see JobType#getJsonJobTypeData()
      */
     public void prepareForSave(){
-        if(jobType != null)
+        ErrorHandler.debug("Preparing job for save: " + jobName + " (UUID: " + jobUUID + ")");
+
+        if(jobType != null) {
+            ErrorHandler.debug("Serializing job type data for job: " + jobName);
             JSONJobTypeData = jobType.getJsonJobTypeData();
+        } else {
+            ErrorHandler.debug("No job type to serialize for job: " + jobName);
+        }
 
         if(!playerPositions.isEmpty()){
+            ErrorHandler.debug("Saving " + playerPositions.size() + " player positions for job: " + jobName);
             playerPositionsSave.clear();
             for(UUID playerUUID : playerPositions.keySet()){
-                playerPositionsSave.put(playerUUID, playerPositions.get(playerUUID).getName());
+                Position position = playerPositions.get(playerUUID);
+                playerPositionsSave.put(playerUUID, position.getName());
+                ErrorHandler.debug("Saved position " + position.getName() + " for player " + playerUUID + " in job " + jobName);
             }
+        } else {
+            ErrorHandler.debug("No player positions to save for job: " + jobName);
         }
+
+        ErrorHandler.debug("Job prepared for save successfully: " + jobName);
     }
 
     /**
@@ -825,20 +931,33 @@ public class Job {
     }
 
     public static Job fromString(String s) {
+        ErrorHandler.debug("Attempting to convert string to Job instance");
         try {
-            return GSON.fromJson(s, Job.class);
+            Job job = GSON.fromJson(s, Job.class);
+            if (job != null) {
+                ErrorHandler.debug("Successfully converted string to Job instance: " + job.getName() + " (UUID: " + job.getJobUUID() + ")");
+            } else {
+                ErrorHandler.warning("Converted string to null Job instance");
+            }
+            return job;
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error converting string to Job instance: " + e.getMessage());
+            ErrorHandler.severe("Error converting string to Job instance: " + e.getMessage(), e);
             return null;
         }
     }
 
     @Override
     public String toString() {
-        if(jobType != null)
-            JSONJobTypeData = jobType.getJsonJobTypeData();
+        ErrorHandler.debug("Converting job to string: " + jobName + " (UUID: " + jobUUID + ")");
 
-        return GSON.toJson(this);
+        if(jobType != null) {
+            ErrorHandler.debug("Serializing job type data for job: " + jobName);
+            JSONJobTypeData = jobType.getJsonJobTypeData();
+        }
+
+        String json = GSON.toJson(this);
+        ErrorHandler.debug("Job serialized successfully: " + jobName);
+        return json;
     }
 
     /**
