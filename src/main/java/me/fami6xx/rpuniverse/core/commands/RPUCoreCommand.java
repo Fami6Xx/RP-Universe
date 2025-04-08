@@ -5,6 +5,7 @@ import me.fami6xx.rpuniverse.core.api.BeforeCharacterKilledEvent;
 import me.fami6xx.rpuniverse.core.api.CharacterKilledEvent;
 import me.fami6xx.rpuniverse.core.api.RegionDeletedEvent;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.famiHologram;
+import me.fami6xx.rpuniverse.core.invoice.InvoiceModule;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
@@ -388,6 +389,13 @@ public class RPUCoreCommand implements CommandExecutor {
             }
         });
         RPUniverse.getInstance().getHoloAPI().getPlayerHolograms().remove(player.getUniqueId());
+
+        InvoiceModule module = (InvoiceModule) RPUniverse.getInstance().getModuleManager().getModule("Invoices");
+        if (module != null) {
+            if (module.isEnabled()) {
+                module.getManager().forceDeleteInvoicesByPlayer(player.getUniqueId());
+            }
+        }
     }
 
     private void showRegionParticles(Player player, String[] args) {
