@@ -86,8 +86,8 @@ public class InvoiceCommand implements CommandExecutor {
             }
 
             // Open the invoice menu
-            PlayerMenu playerMenu = new PlayerMenu(player);
-            new InvoiceMenu(playerMenu, module.getManager(), filterMode);
+            PlayerMenu playerMenu = RPUniverse.getInstance().getMenuManager().getPlayerMenu(player);
+            new InvoiceMenu(playerMenu, module.getManager(), filterMode).open();
             ErrorHandler.debug("Invoice menu opened for player " + player.getName() + " with filter " + filterMode);
 
             return true;
