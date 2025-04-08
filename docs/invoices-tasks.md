@@ -24,7 +24,7 @@ This document contains a comprehensive list of tasks required to implement the R
    - Add serialization/deserialization support for GSON
    - Implement status management (pending, paid, deleted)
 
-[ ] Develop the `InvoiceMenu` class
+[x] Develop the `InvoiceMenu` class
    - Extend `EasyPaginatedMenu`
    - Implement pagination for viewing multiple invoices
    - Add filtering options (received, created, job)
@@ -34,6 +34,7 @@ This document contains a comprehensive list of tasks required to implement the R
 [ ] Create command classes
    - Implement `InvoiceCommand` for opening the menu
    - Implement `CreateInvoiceCommand` for creating invoices
+   - Create an auto complete for the commands
    - Add permission checks
    - Implement command argument validation
 
