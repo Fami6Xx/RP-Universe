@@ -189,7 +189,7 @@ public class Job {
             removePlayerFromJob(playerUUID);
         }
 
-        ErrorHandler.debug("Removing all invoices");
+        ErrorHandler.debug("Removing all invoices made for this job");
         InvoiceModule module = (InvoiceModule) RPUniverse.getInstance().getModuleManager().getModule("Invoices");
         if (module != null) {
             if (module.isEnabled()) {
