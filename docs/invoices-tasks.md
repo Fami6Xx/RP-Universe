@@ -11,14 +11,14 @@ This document contains a comprehensive list of tasks required to implement the R
    - Set up configuration loading and saving
    - Integrate with other RPUniverse systems
 
-[ ] Implement the `InvoiceManager` class
+[x] Implement the `InvoiceManager` class
    - Create methods for invoice CRUD operations
    - Implement data persistence using GSON
    - Add filtering capabilities (by player, job, status)
    - Implement invoice payment logic
    - Add notification system for invoice events
 
-[ ] Create the `Invoice` class
+[x] Create the `Invoice` class
    - Define properties (ID, job, creator, target, amount, date, status)
    - Implement getters and setters
    - Add serialization/deserialization support for GSON
