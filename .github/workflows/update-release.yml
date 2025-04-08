@@ -144,6 +144,11 @@ jobs:
           name: ${{ github.event.release.name || github.event.inputs.title }}
           version: ${{ github.event.release.tag_name || github.event.inputs.version }}
           changelog: ${{ github.event.release.body || github.event.inputs.message }}
+          dependencies: |-
+              [{
+                "project_id": "w02MKsTg",
+                "dependency_type": "required"
+              }]
           loaders: |-
             paper
             purpur
