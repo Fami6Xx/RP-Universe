@@ -4,7 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
+import me.fami6xx.rpuniverse.core.jobs.Job;
+import me.fami6xx.rpuniverse.core.jobs.Position;
 import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -29,13 +33,13 @@ import java.util.stream.Collectors;
  * - Notifying players about invoice events
  */
 public class InvoiceManager {
-    
+
     private final InvoiceModule module;
     private RPUniverse plugin;
     private final Map<String, Invoice> invoices = new ConcurrentHashMap<>();
     private final File dataFile;
     private final Gson gson;
-    
+
     /**
      * Creates a new InvoiceManager.
      * 
@@ -49,7 +53,7 @@ public class InvoiceManager {
                 .setPrettyPrinting()
                 .create();
     }
-    
+
     /**
      * Initializes the InvoiceManager.
      * 
@@ -57,32 +61,32 @@ public class InvoiceManager {
      */
     public void initialize(RPUniverse plugin) {
         this.plugin = plugin;
-        
+
         // Create data directory if it doesn't exist
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdirs();
         }
-        
+
         // Load data from file
         loadData();
-        
+
         // Register player join listener for notifications
         // TODO: Implement InvoiceListener class for join notifications
         // plugin.getServer().getPluginManager().registerEvents(new InvoiceListener(this), plugin);
-        
+
         ErrorHandler.debug("InvoiceManager initialized");
     }
-    
+
     /**
      * Shuts down the InvoiceManager.
      */
     public void shutdown() {
         // Save data before shutting down
         saveData();
-        
+
         ErrorHandler.debug("InvoiceManager shut down");
     }
-    
+
     /**
      * Loads invoice data from file.
      */
@@ -92,11 +96,11 @@ public class InvoiceManager {
             saveData();
             return;
         }
-        
+
         try (FileReader reader = new FileReader(dataFile)) {
             Type type = new TypeToken<List<Invoice>>(){}.getType();
             List<Invoice> loadedInvoices = gson.fromJson(reader, type);
-            
+
             if (loadedInvoices != null) {
                 invoices.clear();
                 for (Invoice invoice : loadedInvoices) {
@@ -110,7 +114,7 @@ public class InvoiceManager {
             ErrorHandler.severe("Failed to load invoice data", e);
         }
     }
-    
+
     /**
      * Saves invoice data to file.
      */
@@ -123,7 +127,7 @@ public class InvoiceManager {
             ErrorHandler.severe("Failed to save invoice data", e);
         }
     }
-    
+
     /**
      * Creates a new invoice.
      *
@@ -136,7 +140,7 @@ public class InvoiceManager {
     public Invoice createInvoice(String job, UUID creator, UUID target, double amount) {
         Invoice invoice = new Invoice(job, creator, target, amount);
         invoices.put(invoice.getId(), invoice);
-        
+
         // Schedule async save
         new BukkitRunnable() {
             @Override
@@ -144,16 +148,16 @@ public class InvoiceManager {
                 saveData();
             }
         }.runTaskAsynchronously(plugin);
-        
+
         // Notify the target player if they're online
         Player targetPlayer = Bukkit.getPlayer(target);
         if (targetPlayer != null && targetPlayer.isOnline()) {
             notifyInvoiceReceived(targetPlayer, invoice);
         }
-        
+
         return invoice;
     }
-    
+
     /**
      * Gets an invoice by its ID.
      *
@@ -163,7 +167,7 @@ public class InvoiceManager {
     public Invoice getInvoice(String id) {
         return invoices.get(id);
     }
-    
+
     /**
      * Gets all invoices in the system.
      *
@@ -172,7 +176,7 @@ public class InvoiceManager {
     public Collection<Invoice> getAllInvoices() {
         return Collections.unmodifiableCollection(invoices.values());
     }
-    
+
     /**
      * Gets all invoices created by a specific player.
      *
@@ -184,7 +188,7 @@ public class InvoiceManager {
                 .filter(invoice -> invoice.getCreator().equals(creator))
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Gets all invoices assigned to a specific player.
      *
@@ -196,7 +200,7 @@ public class InvoiceManager {
                 .filter(invoice -> invoice.getTarget().equals(target))
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Gets all invoices for a specific job.
      *
@@ -208,7 +212,7 @@ public class InvoiceManager {
                 .filter(invoice -> invoice.getJob().equals(job))
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Gets all invoices with a specific status.
      *
@@ -220,7 +224,7 @@ public class InvoiceManager {
                 .filter(invoice -> invoice.getStatus() == status)
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Gets all pending invoices assigned to a specific player.
      *
@@ -232,7 +236,7 @@ public class InvoiceManager {
                 .filter(invoice -> invoice.getTarget().equals(target) && invoice.isPending())
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Processes payment for an invoice.
      *
@@ -244,16 +248,16 @@ public class InvoiceManager {
         if (invoice == null || !invoice.isPending()) {
             return false;
         }
-        
+
         // Check if the player is the target of the invoice
         if (!invoice.getTarget().equals(player.getUniqueId())) {
             return false;
         }
-        
+
         // TODO: Integrate with economy system to check balance and transfer money
         // For now, just mark as paid
         invoice.markAsPaid();
-        
+
         // Schedule async save
         new BukkitRunnable() {
             @Override
@@ -261,16 +265,16 @@ public class InvoiceManager {
                 saveData();
             }
         }.runTaskAsynchronously(plugin);
-        
+
         // Notify the creator if they're online
         Player creatorPlayer = Bukkit.getPlayer(invoice.getCreator());
         if (creatorPlayer != null && creatorPlayer.isOnline()) {
             notifyInvoicePaid(creatorPlayer, invoice);
         }
-        
+
         return true;
     }
-    
+
     /**
      * Deletes an invoice.
      *
@@ -282,18 +286,18 @@ public class InvoiceManager {
         if (invoice == null || invoice.isDeleted()) {
             return false;
         }
-        
+
         // Check if the player is the creator of the invoice or has permission to delete job invoices
         boolean isCreator = invoice.getCreator().equals(player.getUniqueId());
         boolean hasJobPermission = player.hasPermission("rpu.invoices.delete.job") && 
                                    isPlayerJobBoss(player, invoice.getJob());
-        
+
         if (!isCreator && !hasJobPermission) {
             return false;
         }
-        
+
         invoice.markAsDeleted();
-        
+
         // Schedule async save
         new BukkitRunnable() {
             @Override
@@ -301,29 +305,43 @@ public class InvoiceManager {
                 saveData();
             }
         }.runTaskAsynchronously(plugin);
-        
+
         // Notify the target if they're online
         Player targetPlayer = Bukkit.getPlayer(invoice.getTarget());
         if (targetPlayer != null && targetPlayer.isOnline()) {
             notifyInvoiceDeleted(targetPlayer, invoice);
         }
-        
+
         return true;
     }
-    
+
     /**
      * Checks if a player is a boss in a specific job.
      *
      * @param player The player to check
-     * @param job    The job name
+     * @param jobName The job name
      * @return true if the player is a boss in the job, false otherwise
      */
-    private boolean isPlayerJobBoss(Player player, String job) {
-        // TODO: Integrate with job system to check if player is a boss
-        // For now, just check the permission
-        return player.hasPermission("rpu.invoices.view.job");
+    private boolean isPlayerJobBoss(Player player, String jobName) {
+        // Check if the player has the permission first
+        if (player.hasPermission("rpu.invoices.view.job")) {
+            // Get the job by name
+            Job job = Job.getJob(jobName);
+            if (job != null) {
+                // Check if the player is in the job
+                if (job.isPlayerInJob(player.getUniqueId())) {
+                    // Get the player's position in the job
+                    Position position = job.getPlayerPosition(player.getUniqueId());
+                    if (position != null) {
+                        // Check if the position is a boss position
+                        return position.isBoss();
+                    }
+                }
+            }
+        }
+        return false;
     }
-    
+
     /**
      * Notifies a player that they have received an invoice.
      *
@@ -331,11 +349,17 @@ public class InvoiceManager {
      * @param invoice The invoice they received
      */
     private void notifyInvoiceReceived(Player player, Invoice invoice) {
-        // TODO: Implement language system integration for messages
-        player.sendMessage("§aYou have received an invoice from " + invoice.getJob() + 
-                " for " + invoice.getAmount() + module.getDefaultCurrency());
+        // Use the language system for the message
+        String message = InvoiceLanguage.getInstance().invoiceReceivedMessage;
+
+        // Replace placeholders
+        message = message.replace("{job}", invoice.getJob())
+                         .replace("{amount}", String.valueOf(invoice.getAmount()))
+                         .replace("{currency}", module.getDefaultCurrency());
+
+        player.sendMessage(FamiUtils.formatWithPrefix(message));
     }
-    
+
     /**
      * Notifies a player that their invoice has been paid.
      *
@@ -343,11 +367,18 @@ public class InvoiceManager {
      * @param invoice The invoice that was paid
      */
     private void notifyInvoicePaid(Player player, Invoice invoice) {
-        // TODO: Implement language system integration for messages
-        player.sendMessage("§aYour invoice for " + invoice.getAmount() + module.getDefaultCurrency() + 
-                " has been paid by " + Bukkit.getOfflinePlayer(invoice.getTarget()).getName());
+        // Use the language system for the message
+        String message = InvoiceLanguage.getInstance().invoicePaidMessage;
+
+        // Replace placeholders
+        String targetName = Bukkit.getOfflinePlayer(invoice.getTarget()).getName();
+        message = message.replace("{player}", targetName != null ? targetName : "Unknown")
+                         .replace("{amount}", String.valueOf(invoice.getAmount()))
+                         .replace("{currency}", module.getDefaultCurrency());
+
+        player.sendMessage(FamiUtils.formatWithPrefix(message));
     }
-    
+
     /**
      * Notifies a player that their invoice has been deleted.
      *
@@ -355,11 +386,17 @@ public class InvoiceManager {
      * @param invoice The invoice that was deleted
      */
     private void notifyInvoiceDeleted(Player player, Invoice invoice) {
-        // TODO: Implement language system integration for messages
-        player.sendMessage("§cAn invoice from " + invoice.getJob() + 
-                " for " + invoice.getAmount() + module.getDefaultCurrency() + " has been deleted");
+        // Use the language system for the message
+        String message = InvoiceLanguage.getInstance().invoiceDeletedMessage;
+
+        // Replace placeholders
+        message = message.replace("{job}", invoice.getJob())
+                         .replace("{amount}", String.valueOf(invoice.getAmount()))
+                         .replace("{currency}", module.getDefaultCurrency());
+
+        player.sendMessage(FamiUtils.formatWithPrefix(message));
     }
-    
+
     /**
      * Gets the InvoiceModule instance.
      * 
@@ -368,7 +405,7 @@ public class InvoiceManager {
     public InvoiceModule getModule() {
         return module;
     }
-    
+
     /**
      * Gets the plugin instance.
      * 

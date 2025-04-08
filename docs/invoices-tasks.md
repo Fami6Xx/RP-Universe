@@ -44,12 +44,12 @@ This document contains a comprehensive list of tasks required to implement the R
    - Check all the files in `me.fami6xx.rpuniverse.core.invoice`
    - Add permissions to the `plugin.yml` file
 
-[ ] Integrate with the Job System
+[x] Integrate with the Job System
    - Implement job membership verification
    - Add special privileges for job bosses
    - Create job-specific invoice filtering
 
-[ ] Integrate with the Menu API
+[x] Integrate with the Menu API
    - Ensure proper use of `EasyPaginatedMenu`
    - Implement menu navigation
    - Set up action handling
