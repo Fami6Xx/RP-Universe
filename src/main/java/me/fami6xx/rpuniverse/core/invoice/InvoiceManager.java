@@ -140,6 +140,9 @@ public class InvoiceManager {
         Invoice invoice = new Invoice(job, creator, target, amount);
         invoices.put(invoice.getId(), invoice);
 
+        ErrorHandler.debug("Invoice created: ID=" + invoice.getId() + ", Job=" + job + 
+                          ", Creator=" + creator + ", Target=" + target + ", Amount=" + amount);
+
         // Schedule async save
         new BukkitRunnable() {
             @Override
@@ -307,6 +310,7 @@ public class InvoiceManager {
      */
     public boolean deleteInvoice(Invoice invoice, Player player) {
         if (invoice == null || invoice.isDeleted()) {
+            ErrorHandler.debug("Delete invoice failed: invoice is null or already deleted");
             return false;
         }
 
@@ -316,10 +320,13 @@ public class InvoiceManager {
                                    isPlayerJobBoss(player, invoice.getJob());
 
         if (!isCreator && !hasJobPermission) {
+            ErrorHandler.debug("Delete invoice failed: player " + player.getName() + 
+                              " is not creator and doesn't have job permission for invoice " + invoice.getId());
             return false;
         }
 
         invoice.markAsDeleted();
+        ErrorHandler.debug("Invoice deleted: ID=" + invoice.getId() + ", by player=" + player.getName());
 
         // Schedule async save
         new BukkitRunnable() {
@@ -381,6 +388,8 @@ public class InvoiceManager {
                          .replace("{currency}", module.getDefaultCurrency());
 
         player.sendMessage(FamiUtils.formatWithPrefix(message));
+
+        ErrorHandler.debug("Player " + player.getName() + " notified about received invoice: ID=" + invoice.getId());
     }
 
     /**
@@ -400,6 +409,8 @@ public class InvoiceManager {
                          .replace("{currency}", module.getDefaultCurrency());
 
         player.sendMessage(FamiUtils.formatWithPrefix(message));
+
+        ErrorHandler.debug("Player " + player.getName() + " notified about paid invoice: ID=" + invoice.getId());
     }
 
     /**
@@ -418,6 +429,8 @@ public class InvoiceManager {
                          .replace("{currency}", module.getDefaultCurrency());
 
         player.sendMessage(FamiUtils.formatWithPrefix(message));
+
+        ErrorHandler.debug("Player " + player.getName() + " notified about deleted invoice: ID=" + invoice.getId());
     }
 
     /**

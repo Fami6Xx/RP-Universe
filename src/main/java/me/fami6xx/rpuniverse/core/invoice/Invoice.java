@@ -15,7 +15,7 @@ import java.util.UUID;
  * the player it was assigned to, the amount to be paid, the creation date, and the status.
  */
 public class Invoice {
-    
+
     /**
      * The status of an invoice.
      */
@@ -24,46 +24,46 @@ public class Invoice {
          * The invoice is pending payment.
          */
         PENDING,
-        
+
         /**
          * The invoice has been paid.
          */
         PAID,
-        
+
         /**
          * The invoice has been deleted.
          */
         DELETED
     }
-    
+
     @Expose
     @SerializedName("id")
     private final String id;
-    
+
     @Expose
     @SerializedName("job")
     private final String job;
-    
+
     @Expose
     @SerializedName("creator")
     private final UUID creator;
-    
+
     @Expose
     @SerializedName("target")
     private final UUID target;
-    
+
     @Expose
     @SerializedName("amount")
     private final double amount;
-    
+
     @Expose
     @SerializedName("creationDate")
     private final Date creationDate;
-    
+
     @Expose
     @SerializedName("status")
     private Status status;
-    
+
     /**
      * Creates a new invoice.
      *
@@ -81,7 +81,7 @@ public class Invoice {
         this.creationDate = new Date();
         this.status = Status.PENDING;
     }
-    
+
     /**
      * Gets the unique ID of the invoice.
      *
@@ -90,7 +90,7 @@ public class Invoice {
     public String getId() {
         return id;
     }
-    
+
     /**
      * Gets the job the invoice was created from.
      *
@@ -99,7 +99,7 @@ public class Invoice {
     public String getJob() {
         return job;
     }
-    
+
     /**
      * Gets the UUID of the player who created the invoice.
      *
@@ -108,7 +108,7 @@ public class Invoice {
     public UUID getCreator() {
         return creator;
     }
-    
+
     /**
      * Gets the player who created the invoice.
      *
@@ -117,7 +117,7 @@ public class Invoice {
     public Player getCreatorPlayer() {
         return Bukkit.getPlayer(creator);
     }
-    
+
     /**
      * Gets the UUID of the player the invoice is assigned to.
      *
@@ -126,7 +126,7 @@ public class Invoice {
     public UUID getTarget() {
         return target;
     }
-    
+
     /**
      * Gets the player the invoice is assigned to.
      *
@@ -135,7 +135,7 @@ public class Invoice {
     public Player getTargetPlayer() {
         return Bukkit.getPlayer(target);
     }
-    
+
     /**
      * Gets the amount to be paid.
      *
@@ -144,7 +144,7 @@ public class Invoice {
     public double getAmount() {
         return amount;
     }
-    
+
     /**
      * Gets the creation date of the invoice.
      *
@@ -153,7 +153,7 @@ public class Invoice {
     public Date getCreationDate() {
         return creationDate;
     }
-    
+
     /**
      * Gets the status of the invoice.
      *
@@ -162,7 +162,7 @@ public class Invoice {
     public Status getStatus() {
         return status;
     }
-    
+
     /**
      * Sets the status of the invoice.
      *
@@ -171,7 +171,7 @@ public class Invoice {
     public void setStatus(Status status) {
         this.status = status;
     }
-    
+
     /**
      * Checks if the invoice is pending payment.
      *
@@ -180,7 +180,7 @@ public class Invoice {
     public boolean isPending() {
         return status == Status.PENDING;
     }
-    
+
     /**
      * Checks if the invoice has been paid.
      *
@@ -189,7 +189,7 @@ public class Invoice {
     public boolean isPaid() {
         return status == Status.PAID;
     }
-    
+
     /**
      * Checks if the invoice has been deleted.
      *
@@ -198,18 +198,20 @@ public class Invoice {
     public boolean isDeleted() {
         return status == Status.DELETED;
     }
-    
+
     /**
      * Marks the invoice as paid.
      */
     public void markAsPaid() {
         this.status = Status.PAID;
+        me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Invoice marked as paid: ID=" + id);
     }
-    
+
     /**
      * Marks the invoice as deleted.
      */
     public void markAsDeleted() {
         this.status = Status.DELETED;
+        me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Invoice marked as deleted: ID=" + id);
     }
 }

@@ -48,9 +48,13 @@ public class InvoiceCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         InvoiceLanguage lang = InvoiceLanguage.getInstance();
 
+        ErrorHandler.debug("InvoiceCommand executed by " + sender.getName() + " with args: " + 
+                          (args.length > 0 ? String.join(", ", args) : "none"));
+
         // Check if the sender is a player
         if (!(sender instanceof Player)) {
             sender.sendMessage(FamiUtils.formatWithPrefix(lang.errorOnlyPlayersMessage));
+            ErrorHandler.debug("InvoiceCommand failed: sender is not a player");
             return true;
         }
 
@@ -58,6 +62,7 @@ public class InvoiceCommand implements CommandExecutor {
         Player player = (Player) sender;
         if (!player.hasPermission("rpu.invoices.view")) {
             sender.sendMessage(FamiUtils.formatWithPrefix(lang.errorNoPermissionMessage));
+            ErrorHandler.debug("InvoiceCommand failed: player " + player.getName() + " has no permission");
             return true;
         }
 
@@ -69,19 +74,27 @@ public class InvoiceCommand implements CommandExecutor {
                 String filterArg = args[0].toLowerCase();
                 if (filterArg.equals("created")) {
                     filterMode = InvoiceMenu.FilterMode.CREATED;
+                    ErrorHandler.debug("InvoiceCommand: player " + player.getName() + " using CREATED filter");
                 } else if (filterArg.equals("job") && player.hasPermission("rpu.invoices.view.job")) {
                     filterMode = InvoiceMenu.FilterMode.JOB;
+                    ErrorHandler.debug("InvoiceCommand: player " + player.getName() + " using JOB filter");
+                } else {
+                    ErrorHandler.debug("InvoiceCommand: player " + player.getName() + " using default RECEIVED filter (invalid arg: " + filterArg + ")");
                 }
+            } else {
+                ErrorHandler.debug("InvoiceCommand: player " + player.getName() + " using default RECEIVED filter");
             }
 
             // Open the invoice menu
             PlayerMenu playerMenu = new PlayerMenu(player);
             new InvoiceMenu(playerMenu, module.getManager(), filterMode);
+            ErrorHandler.debug("Invoice menu opened for player " + player.getName() + " with filter " + filterMode);
 
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Error opening invoice menu", e);
             player.sendMessage(FamiUtils.formatWithPrefix(lang.errorOpeningMenuMessage));
+            ErrorHandler.debug("InvoiceCommand failed: error opening menu for player " + player.getName());
             return true;
         }
     }

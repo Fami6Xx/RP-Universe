@@ -43,19 +43,23 @@ public class InvoiceListener implements Listener {
         }
 
         Player player = event.getPlayer();
-        
+
         // Get pending invoices for the player
         List<Invoice> pendingInvoices = manager.getPendingInvoicesByTarget(player.getUniqueId());
-        
+
         // If there are pending invoices, notify the player
         if (!pendingInvoices.isEmpty()) {
             // Use the language system for the message
             String message = InvoiceLanguage.getInstance().pendingInvoicesJoinMessage;
-            
+
             // Replace placeholders
             message = message.replace("{count}", String.valueOf(pendingInvoices.size()));
-            
+
             player.sendMessage(FamiUtils.formatWithPrefix(message));
+
+            me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + player.getName() + 
+                                                                    " notified about " + pendingInvoices.size() + 
+                                                                    " pending invoices on join");
         }
     }
 }

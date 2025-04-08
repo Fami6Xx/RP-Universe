@@ -52,9 +52,12 @@ public class CreateInvoiceCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         InvoiceLanguage lang = InvoiceLanguage.getInstance();
 
+        ErrorHandler.debug("CreateInvoiceCommand executed by " + sender.getName() + " with args: " + String.join(", ", args));
+
         // Check if the sender is a player
         if (!(sender instanceof Player)) {
             sender.sendMessage(FamiUtils.formatWithPrefix(lang.errorOnlyPlayersMessage));
+            ErrorHandler.debug("CreateInvoiceCommand failed: sender is not a player");
             return true;
         }
 
@@ -62,12 +65,14 @@ public class CreateInvoiceCommand implements CommandExecutor {
         Player player = (Player) sender;
         if (!player.hasPermission("rpu.invoices.create")) {
             player.sendMessage(FamiUtils.formatWithPrefix(lang.errorNoPermissionMessage));
+            ErrorHandler.debug("CreateInvoiceCommand failed: player " + player.getName() + " has no permission");
             return true;
         }
 
         // Check if the command has the correct number of arguments
         if (args.length != 2) {
             player.sendMessage(FamiUtils.formatWithPrefix(lang.errorCommandUsageMessage));
+            ErrorHandler.debug("CreateInvoiceCommand failed: incorrect number of arguments (" + args.length + ")");
             return true;
         }
 
@@ -76,12 +81,14 @@ public class CreateInvoiceCommand implements CommandExecutor {
             Player target = Bukkit.getPlayer(args[0]);
             if (target == null) {
                 player.sendMessage(FamiUtils.formatWithPrefix(lang.errorPlayerNotFoundMessage));
+                ErrorHandler.debug("CreateInvoiceCommand failed: target player not found - " + args[0]);
                 return true;
             }
 
             // Check if the player is trying to create an invoice for themselves
             if (player.equals(target)) {
                 player.sendMessage(FamiUtils.formatWithPrefix(lang.errorCannotInvoiceSelfMessage));
+                ErrorHandler.debug("CreateInvoiceCommand failed: player " + player.getName() + " tried to create invoice for self");
                 return true;
             }
 
@@ -91,24 +98,29 @@ public class CreateInvoiceCommand implements CommandExecutor {
                 amount = Double.parseDouble(args[1]);
             } catch (NumberFormatException e) {
                 player.sendMessage(FamiUtils.formatWithPrefix(lang.errorInvalidAmountMessage));
+                ErrorHandler.debug("CreateInvoiceCommand failed: invalid amount format - " + args[1]);
                 return true;
             }
 
             // Check if the amount is positive
             if (amount <= 0) {
                 player.sendMessage(FamiUtils.formatWithPrefix(lang.errorAmountMustBePositiveMessage));
+                ErrorHandler.debug("CreateInvoiceCommand failed: amount must be positive - " + amount);
                 return true;
             }
 
             // Check if decimal amounts are allowed
             if (!module.isDecimalAmountAllowed() && amount != Math.floor(amount)) {
                 player.sendMessage(FamiUtils.formatWithPrefix(lang.errorDecimalNotAllowedMessage));
+                ErrorHandler.debug("CreateInvoiceCommand failed: decimal amounts not allowed - " + amount);
                 return true;
             }
 
             // Check if the players are in the same world
             if (!player.getWorld().equals(target.getWorld())) {
                 player.sendMessage(FamiUtils.formatWithPrefix(lang.errorSameWorldMessage));
+                ErrorHandler.debug("CreateInvoiceCommand failed: players not in same world - " + 
+                                  player.getWorld().getName() + " vs " + target.getWorld().getName());
                 return true;
             }
 
@@ -117,6 +129,8 @@ public class CreateInvoiceCommand implements CommandExecutor {
                 double distance = player.getLocation().distance(target.getLocation());
                 if (distance > module.getMaxDistance()) {
                     player.sendMessage(FamiUtils.formatWithPrefix(lang.errorPlayerTooFarMessage));
+                    ErrorHandler.debug("CreateInvoiceCommand failed: target player too far - " + 
+                                      distance + " > " + module.getMaxDistance());
                     return true;
                 }
             }
@@ -124,6 +138,7 @@ public class CreateInvoiceCommand implements CommandExecutor {
             // Check if the player can see the target player
             if (module.isMustSeePlayerEnabled() && !player.hasLineOfSight(target)) {
                 player.sendMessage(FamiUtils.formatWithPrefix(lang.errorPlayerNotVisibleMessage));
+                ErrorHandler.debug("CreateInvoiceCommand failed: target player not visible");
                 return true;
             }
 
@@ -131,12 +146,15 @@ public class CreateInvoiceCommand implements CommandExecutor {
             PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
             if (playerData.getSelectedPlayerJob() == null) {
                 player.sendMessage(FamiUtils.formatWithPrefix(lang.errorNotInJobMessage));
+                ErrorHandler.debug("CreateInvoiceCommand failed: player " + player.getName() + " not in a job");
                 return true;
             }
             String jobName = playerData.getSelectedPlayerJob().getName();
 
             // Create the invoice
             Invoice invoice = module.getManager().createInvoice(jobName, player.getUniqueId(), target.getUniqueId(), amount);
+            ErrorHandler.debug("Invoice created successfully by " + player.getName() + " for " + target.getName() + 
+                              " in job " + jobName + " for amount " + amount);
 
             // Send success messages
             String successMessage = lang.invoiceCreatedMessage

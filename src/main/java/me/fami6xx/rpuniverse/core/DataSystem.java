@@ -285,7 +285,6 @@ public class DataSystem implements Listener {
 
         // Save consumables
         dataHandler.saveConsumables(RPUniverse.getInstance().getBasicNeedsHandler());
-        ErrorHandler.debug("Saved consumables data");
 
         // Save jobs
         int jobCount = RPUniverse.getInstance().getJobsHandler().getJobs().size();
