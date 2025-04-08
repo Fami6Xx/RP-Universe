@@ -29,6 +29,20 @@ public class InvoiceCommand implements CommandExecutor {
         this.module = module;
     }
 
+    /**
+     * Executes the /invoices command.
+     * <p>
+     * This method handles opening the invoice menu with different filter modes:
+     * - Default: Shows invoices received by the player
+     * - "created": Shows invoices created by the player
+     * - "job": Shows all invoices for a specific job (requires permission)
+     *
+     * @param sender The command sender
+     * @param command The command being executed
+     * @param label The command label
+     * @param args The command arguments
+     * @return true if the command was handled, false otherwise
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // Check if the sender is a player
@@ -47,7 +61,7 @@ public class InvoiceCommand implements CommandExecutor {
         try {
             // Determine the filter mode based on arguments
             InvoiceMenu.FilterMode filterMode = InvoiceMenu.FilterMode.RECEIVED;
-            
+
             if (args.length > 0) {
                 String filterArg = args[0].toLowerCase();
                 if (filterArg.equals("created")) {
@@ -60,7 +74,7 @@ public class InvoiceCommand implements CommandExecutor {
             // Open the invoice menu
             PlayerMenu playerMenu = new PlayerMenu(player);
             new InvoiceMenu(playerMenu, module.getManager(), filterMode);
-            
+
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Error opening invoice menu", e);

@@ -117,29 +117,9 @@ This document contains a comprehensive list of tasks required to implement the R
    - Create invoice status change notifications
    - Add action result notifications
 
-## Testing and Quality Assurance
-
-[x] Create unit tests
-   - Test invoice creation
-   - Test invoice payment
-   - Test invoice deletion
-   - Test filtering functionality
-   - Test permission checking
-
-[x] Perform integration testing
-   - Test job system integration
-   - Test economy system integration
-   - Test menu API integration
-   - Test language system integration
-
-[x] Conduct user acceptance testing
-   - Test the complete workflow
-   - Verify all features work as expected
-   - Check edge cases and error handling
-
 ## Documentation
 
-[ ] Update JavaDoc
+[x] Update JavaDoc
    - Document all classes and methods
    - Add examples where appropriate
    - Document public APIs thoroughly

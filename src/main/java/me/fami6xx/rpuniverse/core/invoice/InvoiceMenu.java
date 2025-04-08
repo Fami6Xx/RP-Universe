@@ -202,6 +202,15 @@ public class InvoiceMenu extends EasyPaginatedMenu {
         return FamiUtils.makeItem(material, name, lore.toArray(new String[0]));
     }
 
+    /**
+     * Gets the item stack for a specific index in the paginated menu.
+     * <p>
+     * This method retrieves the invoice at the specified index and returns
+     * its corresponding item stack representation.
+     *
+     * @param index The index of the item in the collection
+     * @return The item stack for the invoice at the specified index, or null if the index is out of bounds
+     */
     @Override
     public ItemStack getItemFromIndex(int index) {
         if (index >= invoices.size()) {
@@ -212,6 +221,13 @@ public class InvoiceMenu extends EasyPaginatedMenu {
         return getInvoiceItem(invoice);
     }
 
+    /**
+     * Gets the total number of invoices in the current filtered collection.
+     * <p>
+     * This method is used by the paginated menu to determine how many pages are needed.
+     *
+     * @return The number of invoices in the collection
+     */
     @Override
     public int getCollectionSize() {
         return invoices.size();

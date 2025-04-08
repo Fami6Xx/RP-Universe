@@ -23,6 +23,15 @@ public class InvoiceModule extends AbstractModule {
 
     private InvoiceManager manager;
 
+    /**
+     * Initializes the invoice module.
+     * <p>
+     * This method sets up the language system and creates the invoice manager.
+     * It is called during the plugin's initialization phase.
+     *
+     * @param plugin The main plugin instance
+     * @return true if initialization was successful, false otherwise
+     */
     @Override
     public boolean initialize(RPUniverse plugin) {
         boolean result = super.initialize(plugin);
@@ -43,6 +52,17 @@ public class InvoiceModule extends AbstractModule {
         }
     }
 
+    /**
+     * Enables the invoice module.
+     * <p>
+     * This method is called when the module is being enabled. It:
+     * - Checks if the module is enabled in the configuration
+     * - Initializes the invoice manager
+     * - Registers commands and tab completers
+     * - Sets up periodic data saving
+     *
+     * @return true if the module was successfully enabled, false otherwise
+     */
     @Override
     public boolean enable() {
         try {
@@ -80,6 +100,15 @@ public class InvoiceModule extends AbstractModule {
         }
     }
 
+    /**
+     * Disables the invoice module.
+     * <p>
+     * This method is called when the module is being disabled. It:
+     * - Saves all invoice data to disk
+     * - Shuts down the invoice manager
+     *
+     * @return true if the module was successfully disabled, false otherwise
+     */
     @Override
     public boolean disable() {
         try {
@@ -97,21 +126,41 @@ public class InvoiceModule extends AbstractModule {
         }
     }
 
+    /**
+     * Gets the name of the module.
+     *
+     * @return The module name
+     */
     @Override
     public String getName() {
         return "Invoices";
     }
 
+    /**
+     * Gets the description of the module.
+     *
+     * @return The module description
+     */
     @Override
     public String getDescription() {
         return "Provides a comprehensive framework for creating, managing, and tracking invoices between players";
     }
 
+    /**
+     * Gets the version of the module.
+     *
+     * @return The module version
+     */
     @Override
     public String getVersion() {
         return "1.0.0";
     }
 
+    /**
+     * Gets the author of the module.
+     *
+     * @return The module author
+     */
     @Override
     public String getAuthor() {
         return "Fami6Xx";
@@ -132,7 +181,7 @@ public class InvoiceModule extends AbstractModule {
      * @return true if the distance requirement is enabled, false otherwise
      */
     public boolean isDistanceCheckEnabled() {
-        return getConfigBoolean("mustSeePlayer", true);
+        return getConfigBoolean("enableDistanceCheck", true);
     }
 
     /**
