@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.invoice;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import me.fami6xx.rpuniverse.core.jobs.Job;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
@@ -43,7 +44,7 @@ public class Invoice {
 
     @Expose
     @SerializedName("job")
-    private final String job;
+    private final String job; // Stores job UUID as a string
 
     @Expose
     @SerializedName("creator")
@@ -93,12 +94,23 @@ public class Invoice {
     }
 
     /**
-     * Gets the job the invoice was created from.
+     * Gets the job UUID the invoice was created from.
      *
-     * @return The job name
+     * @return The job UUID as a string
      */
     public String getJob() {
         return job;
+    }
+
+    /**
+     * Gets the job name for display purposes.
+     *
+     * @return The job name
+     */
+    public String getJobName() {
+        // Get the job by UUID and return its name
+        Job job = Job.getJobByUUID(this.job);
+        return job != null ? job.getName() : "Unknown Job";
     }
 
     /**

@@ -131,7 +131,7 @@ public class InvoiceManager {
     /**
      * Creates a new invoice.
      *
-     * @param job     The job the invoice is created from
+     * @param job     The job UUID the invoice is created from
      * @param creator The UUID of the player who created the invoice
      * @param target  The UUID of the player the invoice is assigned to
      * @param amount  The amount to be paid
@@ -141,7 +141,7 @@ public class InvoiceManager {
         Invoice invoice = new Invoice(job, creator, target, amount);
         invoices.put(invoice.getId(), invoice);
 
-        ErrorHandler.debug("Invoice created: ID=" + invoice.getId() + ", Job=" + job +
+        ErrorHandler.debug("Invoice created: ID=" + invoice.getId() + ", Job UUID=" + job +
                 ", Creator=" + creator + ", Target=" + target + ", Amount=" + amount);
 
         // Schedule async save
@@ -207,12 +207,12 @@ public class InvoiceManager {
     /**
      * Gets all invoices for a specific job.
      *
-     * @param job The job name
+     * @param jobUUID The job UUID
      * @return A list of invoices for the job
      */
-    public List<Invoice> getInvoicesByJob(String job) {
+    public List<Invoice> getInvoicesByJob(String jobUUID) {
         return invoices.values().stream()
-                .filter(invoice -> invoice.getJob().equals(job))
+                .filter(invoice -> invoice.getJob().equals(jobUUID))
                 .collect(Collectors.toList());
     }
 
@@ -271,16 +271,20 @@ public class InvoiceManager {
             return false;
         }
 
-        // Get the creator player (can be offline)
-        org.bukkit.OfflinePlayer creatorOffline = Bukkit.getOfflinePlayer(invoice.getCreator());
+        // Get the job
+        Job job = Job.getJobByUUID(invoice.getJob());
+        if (job == null) {
+            ErrorHandler.debug("Pay invoice failed: job not found for UUID " + invoice.getJob());
+            return false;
+        }
 
         // Transfer the money
         economy.withdrawPlayer(player, amount);
-        economy.depositPlayer(creatorOffline, amount);
+        job.addMoneyToJobBank(amount);
 
         // Log the transaction
-        ErrorHandler.debug("Invoice payment: " + player.getName() + " paid " + amount + " to " +
-                creatorOffline.getName() + " for invoice " + invoice.getId());
+        ErrorHandler.debug("Invoice payment: " + player.getName() + " paid " + amount + " to job bank " +
+                job.getName() + " for invoice " + invoice.getId());
 
         // Mark the invoice as paid
         invoice.markAsPaid();
@@ -350,14 +354,14 @@ public class InvoiceManager {
      * Checks if a player is a boss in a specific job.
      *
      * @param player  The player to check
-     * @param jobName The job name
+     * @param jobUUID The job UUID
      * @return true if the player is a boss in the job, false otherwise
      */
-    private boolean isPlayerJobBoss(Player player, String jobName) {
+    private boolean isPlayerJobBoss(Player player, String jobUUID) {
         // Check if the player has the permission first
         if (player.hasPermission("rpu.invoices.view.job")) {
-            // Get the job by name
-            Job job = Job.getJob(jobName);
+            // Get the job by UUID
+            Job job = Job.getJobByUUID(jobUUID);
             if (job != null) {
                 // Check if the player is in the job
                 if (job.isPlayerInJob(player.getUniqueId())) {
@@ -384,7 +388,7 @@ public class InvoiceManager {
         String message = InvoiceLanguage.getInstance().invoiceReceivedMessage;
 
         // Replace placeholders
-        message = message.replace("{job}", invoice.getJob())
+        message = message.replace("{job}", invoice.getJobName())
                 .replace("{amount}", String.valueOf(invoice.getAmount()))
                 .replace("{currency}", module.getDefaultCurrency());
 
@@ -425,7 +429,7 @@ public class InvoiceManager {
         String message = InvoiceLanguage.getInstance().invoiceDeletedMessage;
 
         // Replace placeholders
-        message = message.replace("{job}", invoice.getJob())
+        message = message.replace("{job}", invoice.getJobName())
                 .replace("{amount}", String.valueOf(invoice.getAmount()))
                 .replace("{currency}", module.getDefaultCurrency());
 

@@ -2,6 +2,7 @@ package me.fami6xx.rpuniverse.core.invoice;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
+import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
@@ -150,7 +151,7 @@ public class InvoiceMenu extends EasyPaginatedMenu {
 
         // Set lore with invoice details
         List<String> lore = new ArrayList<>();
-        lore.add(FamiUtils.format(lang.invoiceItemJobLine.replace("{job}", invoice.getJob())));
+        lore.add(FamiUtils.format(lang.invoiceItemJobLine.replace("{job}", invoice.getJobName())));
 
         String creatorName = Bukkit.getOfflinePlayer(invoice.getCreator()).getName();
         lore.add(FamiUtils.format(lang.invoiceItemFromLine.replace("{from}", (creatorName != null ? creatorName : lang.unknownPlayerName))));
@@ -318,24 +319,21 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                 if (e.isShiftClick()) {
                     // Delete invoice
                     if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) ||
-                            playerMenu.getPlayer().hasPermission("rpu.invoices.delete.job")) {
+                            RPUniverse.getPlayerData(playerMenu.getPlayer().getUniqueId().toString()).getPlayerJobs().contains(Job.getJobByUUID(invoice.getJob()))) {
 
                         ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
                                 " attempting to delete invoice: ID=" + invoice.getId());
                         boolean success = manager.deleteInvoice(invoice, playerMenu.getPlayer());
                         if (success) {
-                            playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().invoiceDeletedMessage));
                             invoices = getFilteredInvoices();
                             super.open();
                             ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
                                     " successfully deleted invoice: ID=" + invoice.getId());
                         } else {
-                            playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorDeletingInvoiceMessage));
                             ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
                                     " failed to delete invoice: ID=" + invoice.getId());
                         }
                     } else {
-                        playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorNoPermissionToDeleteMessage));
                         ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
                                 " has no permission to delete invoice: ID=" + invoice.getId());
                     }
@@ -347,18 +345,15 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                                 ", Amount=" + invoice.getAmount());
                         boolean success = manager.payInvoice(invoice, playerMenu.getPlayer());
                         if (success) {
-                            playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().invoicePaidMessage));
                             invoices = getFilteredInvoices();
                             super.open();
                             ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
                                     " successfully paid invoice: ID=" + invoice.getId());
                         } else {
-                            playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorPayingInvoiceMessage));
                             ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
                                     " failed to pay invoice: ID=" + invoice.getId());
                         }
                     } else {
-                        playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorCanOnlyPayOwnInvoicesMessage));
                         ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
                                 " attempted to pay someone else's invoice: ID=" + invoice.getId());
                     }

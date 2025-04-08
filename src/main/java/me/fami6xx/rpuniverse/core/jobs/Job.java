@@ -757,9 +757,12 @@ public class Job {
         ErrorHandler.debug("Adding player " + playerUUID + " to job " + jobName + " with default position");
         for(Position position : jobPositions) {
             if(position.isDefault()) {
-                playerPositions.put(playerUUID, position);
                 RPUniverse.getPlayerData(playerUUID.toString()).addJob(this);
+                playerPositions.put(playerUUID, position);
                 RPUniverse.getInstance().getMenuManager().reopenJobMenus(j -> j == this);
+                if (!RPUniverse.getPlayerData(playerUUID.toString()).getPlayerJobs().contains(this)) {
+                    ErrorHandler.debug("Player " + playerUUID + " wasn't added to job " + jobName + " successfully");
+                }
                 ErrorHandler.debug("Player " + playerUUID + " added to job " + jobName + " with default position " + position.getName());
                 return;
             }
