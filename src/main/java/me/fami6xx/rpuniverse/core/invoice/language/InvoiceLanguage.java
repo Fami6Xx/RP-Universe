@@ -88,7 +88,7 @@ public class InvoiceLanguage extends AbstractAddonLanguage {
      */
     public static InvoiceLanguage getInstance() {
         if (instance == null) {
-            instance = AbstractAddonLanguage.create(InvoiceLanguage.class);
+            instance = (InvoiceLanguage) AbstractAddonLanguage.getAddonLanguage(InvoiceLanguage.class.getSimpleName());
         }
         return instance;
     }
