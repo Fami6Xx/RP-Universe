@@ -53,7 +53,7 @@ import java.net.URL;
  * Contains API access and plugin setup. <p>
  * To get the instance of this class, use <code>RPUniverse.getInstance()</code>
  */
-public final class RPUniverse extends JavaPlugin {
+public class RPUniverse extends JavaPlugin {
     private DataSystem dataSystem;
     private HoloAPI holoAPI;
     private LanguageHandler languageHandler;

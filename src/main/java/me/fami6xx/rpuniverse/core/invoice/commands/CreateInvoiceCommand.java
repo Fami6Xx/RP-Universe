@@ -31,6 +31,22 @@ public class CreateInvoiceCommand implements CommandExecutor {
         this.module = module;
     }
 
+    /**
+     * Executes the /createinvoice command.
+     * <p>
+     * This method handles the creation of invoices, including validation of:
+     * - Player permissions
+     * - Target player existence
+     * - Amount validity
+     * - Distance and visibility requirements
+     * - Job membership
+     *
+     * @param sender The command sender
+     * @param command The command being executed
+     * @param label The command label
+     * @param args The command arguments
+     * @return true if the command was handled, false otherwise
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // Check if the sender is a player

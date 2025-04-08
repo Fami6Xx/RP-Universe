@@ -217,6 +217,13 @@ public class InvoiceMenu extends EasyPaginatedMenu {
         return invoices.size();
     }
 
+    /**
+     * Handles clicks in the paginated menu.
+     * <p>
+     * This method processes filter button clicks and invoice actions like payment and deletion.
+     *
+     * @param e The inventory click event
+     */
     @Override
     public void handlePaginatedMenu(InventoryClickEvent e) {
         int slot = e.getSlot();
@@ -292,6 +299,13 @@ public class InvoiceMenu extends EasyPaginatedMenu {
         }
     }
 
+    /**
+     * Gets the name of the menu.
+     * <p>
+     * This method returns the title of the menu, which includes the current filter mode.
+     *
+     * @return The menu name
+     */
     @Override
     public String getMenuName() {
         String filterName;
@@ -313,6 +327,11 @@ public class InvoiceMenu extends EasyPaginatedMenu {
         return ChatColor.GOLD + "Invoices - " + filterName;
     }
 
+    /**
+     * Adds additional items to the menu.
+     * <p>
+     * This method adds filter buttons and an information button to the menu.
+     */
     @Override
     public void addAdditionalItems() {
         // Add filter buttons
@@ -336,6 +355,14 @@ public class InvoiceMenu extends EasyPaginatedMenu {
         inventory.setItem(52, FamiUtils.makeItem(Material.BOOK, ChatColor.AQUA + "Invoice Information", infoLore.toArray(new String[0])));
     }
 
+    /**
+     * Gets the menu tags for this menu.
+     * <p>
+     * This method returns a list of tags that indicate what data this menu requires.
+     * The PLAYER tag is always included, and the JOB tag is included when the filter mode is JOB.
+     *
+     * @return A list of menu tags
+     */
     @Override
     public List<MenuTag> getMenuTags() {
         List<MenuTag> tags = new ArrayList<>();
