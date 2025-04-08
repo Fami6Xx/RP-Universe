@@ -70,7 +70,7 @@ jobs:
           # Pick the first non-shaded JAR from the staging directory
           FILE=$(ls staging/*.jar | head -n 1)
           echo "Uploading ${FILE} to Polymart as version ${CLEAN_VERSION}..."
-          
+
           # Execute the POST request and capture the response
           response=$(curl -s -X POST https://api.polymart.org/v1/postUpdate \
             -F "api_key=${POLYMART_API_KEY}" \
@@ -81,13 +81,13 @@ jobs:
             -F "beta=0" \
             -F "snapshot=0" \
             -F "file=@${FILE}")
-          
+
           echo "Response from Polymart: $response"
-          
+
           # Check if the response indicates success using jq
           if ! echo "$response" | jq -e '.response.success == true' > /dev/null; then
             echo "Error: Upload to Polymart failed."
-            echo "Errors:" 
+            echo "Errors:"
             echo "$response" | jq '.response.errors'
             exit 1
           fi
@@ -134,16 +134,21 @@ jobs:
           fi
           echo "Found artifact: $ARTIFACT"
           echo "file=$ARTIFACT" >> $GITHUB_OUTPUT
-  
+
 
       - name: Publish to Modrinth
-        uses: cloudnode-pro/modrinth-publish@2.0.0
+        uses: cloudnode-pro/modrinth-publish@v2
         with:
           token: ${{ secrets.MODRINTH_TOKEN }}
           project: "MtNjQXtV"
           name: ${{ github.event.release.name || github.event.inputs.title }}
           version: ${{ github.event.release.tag_name || github.event.inputs.version }}
           changelog: ${{ github.event.release.body || github.event.inputs.message }}
+          dependencies: |-
+              [{
+                "project_id": "w02MKsTg",
+                "dependency_type": "required"
+              }]
           loaders: |-
             paper
             purpur
