@@ -14,6 +14,7 @@ import me.fami6xx.rpuniverse.core.api.JobLoadedEvent;
 import me.fami6xx.rpuniverse.core.api.MoneyAddedToJobBankEvent;
 import me.fami6xx.rpuniverse.core.api.MoneyRemovedFromJobBankEvent;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
+import me.fami6xx.rpuniverse.core.invoice.InvoiceModule;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.user.JobBossMenu;
 import me.fami6xx.rpuniverse.core.jobs.types.JobType;
@@ -186,6 +187,15 @@ public class Job {
             }
 
             removePlayerFromJob(playerUUID);
+        }
+
+        ErrorHandler.debug("Removing all invoices");
+        InvoiceModule module = (InvoiceModule) RPUniverse.getInstance().getModuleManager().getModule("Invoices");
+        if (module != null) {
+            module.getManager().getInvoicesByJob(jobUUID.toString()).stream().forEach(invoice -> {
+                ErrorHandler.debug("Removing invoice: " + invoice.getId() + " for job: " + jobName);
+                module.getManager().deleteInvoice(invoice, invoice.getCreatorPlayer());
+            });
         }
 
         ErrorHandler.debug("Job removed: " + jobName);

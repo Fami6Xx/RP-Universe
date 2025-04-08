@@ -175,7 +175,22 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                 lore.add(FamiUtils.format(lang.invoiceItemClickToPay));
             }
 
-            if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) || (Job.getJobByUUID(invoice.getJob()).isPlayerInJob(playerMenu.getPlayer().getUniqueId()) && Job.getJobByUUID(invoice.getJob()).getPlayerPosition(playerMenu.getPlayer().getUniqueId()).isBoss())) {
+            // Check if player is creator or job boss
+            boolean canDelete = invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId());
+
+            if (!canDelete) {
+                // Check if player is a boss in the job
+                Job job = Job.getJobByUUID(invoice.getJob());
+                if (job != null && job.isPlayerInJob(playerMenu.getPlayer().getUniqueId())) {
+                    try {
+                        canDelete = job.getPlayerPosition(playerMenu.getPlayer().getUniqueId()).isBoss();
+                    } catch (Exception e) {
+                        ErrorHandler.debug("Failed to get player position in job: " + e.getMessage());
+                    }
+                }
+            }
+
+            if (canDelete) {
                 lore.add("");
                 lore.add(FamiUtils.format(lang.invoiceItemShiftClickToDelete));
             }
@@ -335,7 +350,13 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                 if (playerData.getSelectedPlayerJob() != null) {
                     isJobBoss = playerData.getSelectedPlayerJob().getPlayerPosition(playerId).isBoss();
                     if (isJobBoss) {
-                        isJobBoss = Job.getJobByUUID(invoice.getJob()).getJobUUID().toString().equals(playerData.getSelectedPlayerJob().getJobUUID().toString());
+                        Job job = Job.getJobByUUID(invoice.getJob());
+                        if (job != null) {
+                            isJobBoss = job.getJobUUID().toString().equals(playerData.getSelectedPlayerJob().getJobUUID().toString());
+                        } else {
+                            isJobBoss = false;
+                            ErrorHandler.debug("Job not found for invoice: " + invoice.getId());
+                        }
                     }
                 }
             } catch (Exception ex) {

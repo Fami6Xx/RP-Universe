@@ -112,6 +112,18 @@ public class InvoiceManager {
             }
         } catch (IOException e) {
             ErrorHandler.severe("Failed to load invoice data", e);
+        } catch (com.google.gson.JsonSyntaxException e) {
+            ErrorHandler.severe("Failed to parse invoice data file (invalid JSON format)", e);
+            // Create a backup of the corrupted file
+            try {
+                File backupFile = new File(dataFile.getParentFile(), "invoices_backup_" + System.currentTimeMillis() + ".json");
+                java.nio.file.Files.copy(dataFile.toPath(), backupFile.toPath());
+                ErrorHandler.info("Created backup of corrupted invoice data file: " + backupFile.getName());
+                // Create a new empty file
+                saveData();
+            } catch (IOException backupException) {
+                ErrorHandler.severe("Failed to create backup of corrupted invoice data file", backupException);
+            }
         }
     }
 
@@ -275,6 +287,8 @@ public class InvoiceManager {
         Job job = Job.getJobByUUID(invoice.getJob());
         if (job == null) {
             ErrorHandler.debug("Pay invoice failed: job not found for UUID " + invoice.getJob());
+            // Notify the player that the job doesn't exist
+            player.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().errorPayingInvoiceMessage));
             return false;
         }
 
@@ -450,5 +464,87 @@ public class InvoiceManager {
      */
     public RPUniverse getPlugin() {
         return plugin;
+    }
+
+    /**
+     * Force deletes all invoices created for a specific job.
+     * This completely removes them from memory and data storage.
+     *
+     * @param jobUUID The UUID of the job
+     * @return The number of invoices deleted
+     */
+    public int forceDeleteInvoicesByJob(String jobUUID) {
+        if (jobUUID == null || jobUUID.isEmpty()) {
+            ErrorHandler.debug("Force delete invoices by job failed: job UUID is null or empty");
+            return 0;
+        }
+
+        // Get all invoices for the job
+        List<String> invoiceIdsToRemove = invoices.values().stream()
+                .filter(invoice -> invoice.getJob().equals(jobUUID))
+                .map(Invoice::getId)
+                .collect(Collectors.toList());
+
+        // Remove the invoices from the map
+        int count = 0;
+        for (String id : invoiceIdsToRemove) {
+            invoices.remove(id);
+            count++;
+        }
+
+        if (count > 0) {
+            ErrorHandler.debug("Force deleted " + count + " invoices for job UUID: " + jobUUID);
+
+            // Schedule async save
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    saveData();
+                }
+            }.runTaskAsynchronously(plugin);
+        }
+
+        return count;
+    }
+
+    /**
+     * Force deletes all invoices created by or assigned to a specific player.
+     * This completely removes them from memory and data storage.
+     *
+     * @param playerUUID The UUID of the player
+     * @return The number of invoices deleted
+     */
+    public int forceDeleteInvoicesByPlayer(UUID playerUUID) {
+        if (playerUUID == null) {
+            ErrorHandler.debug("Force delete invoices by player failed: player UUID is null");
+            return 0;
+        }
+
+        // Get all invoices created by or assigned to the player
+        List<String> invoiceIdsToRemove = invoices.values().stream()
+                .filter(invoice -> invoice.getCreator().equals(playerUUID) || invoice.getTarget().equals(playerUUID))
+                .map(Invoice::getId)
+                .collect(Collectors.toList());
+
+        // Remove the invoices from the map
+        int count = 0;
+        for (String id : invoiceIdsToRemove) {
+            invoices.remove(id);
+            count++;
+        }
+
+        if (count > 0) {
+            ErrorHandler.debug("Force deleted " + count + " invoices for player UUID: " + playerUUID);
+
+            // Schedule async save
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    saveData();
+                }
+            }.runTaskAsynchronously(plugin);
+        }
+
+        return count;
     }
 }

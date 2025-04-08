@@ -144,6 +144,12 @@ public class CreateInvoiceCommand implements CommandExecutor {
 
             // Get the player's job
             PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
+            if (playerData == null) {
+                player.sendMessage(FamiUtils.formatWithPrefix(lang.errorCreatingInvoiceMessage));
+                ErrorHandler.debug("CreateInvoiceCommand failed: player data not found for " + player.getName());
+                return true;
+            }
+
             if (playerData.getSelectedPlayerJob() == null) {
                 player.sendMessage(FamiUtils.formatWithPrefix(lang.errorNotInJobMessage));
                 ErrorHandler.debug("CreateInvoiceCommand failed: player " + player.getName() + " not in a job");
