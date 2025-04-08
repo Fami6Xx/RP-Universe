@@ -30,16 +30,16 @@ public class InvoiceCommandTabCompleter implements TabCompleter {
             List<String> options = new ArrayList<>();
             options.add("received");
             options.add("created");
-            
+
             if (player.hasPermission("rpu.invoices.view.job")) {
                 options.add("job");
             }
-            
+
             return options.stream()
                     .filter(option -> option.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
-        
+
         return new ArrayList<>();
     }
 }

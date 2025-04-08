@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,8 +57,8 @@ public class InvoiceMenu extends EasyPaginatedMenu {
     /**
      * Creates a new invoice menu.
      *
-     * @param menu The player menu
-     * @param manager The invoice manager
+     * @param menu       The player menu
+     * @param manager    The invoice manager
      * @param filterMode The initial filter mode
      */
     public InvoiceMenu(PlayerMenu menu, InvoiceManager manager, FilterMode filterMode) {
@@ -153,7 +154,7 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                 lore.add(FamiUtils.format(lang.invoiceItemClickToPay));
             }
 
-            if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) || 
+            if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) ||
                     playerMenu.getPlayer().hasPermission("rpu.invoices.delete.job")) {
                 lore.add("");
                 lore.add(FamiUtils.format(lang.invoiceItemShiftClickToDelete));
@@ -169,7 +170,7 @@ public class InvoiceMenu extends EasyPaginatedMenu {
     /**
      * Gets the item stack for the filter button.
      *
-     * @param mode The filter mode
+     * @param mode     The filter mode
      * @param isActive Whether this mode is currently active
      * @return The item stack for the filter button
      */
@@ -260,8 +261,8 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                 invoices = getFilteredInvoices();
                 page = 0;
                 super.open();
-                me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                        " changed invoice filter to RECEIVED");
+                ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                        " changed invoice filter to RECEIVED");
             }
             return;
         } else if (slot == 47) {
@@ -271,8 +272,8 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                 invoices = getFilteredInvoices();
                 page = 0;
                 super.open();
-                me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                        " changed invoice filter to CREATED");
+                ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                        " changed invoice filter to CREATED");
             }
             return;
         } else if (slot == 51 && playerMenu.getPlayer().hasPermission("rpu.invoices.view.job")) {
@@ -282,8 +283,8 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                 invoices = getFilteredInvoices();
                 page = 0;
                 super.open();
-                me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                        " changed invoice filter to JOB");
+                ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                        " changed invoice filter to JOB");
             }
             return;
         }
@@ -296,50 +297,50 @@ public class InvoiceMenu extends EasyPaginatedMenu {
             if (invoice.isPending()) {
                 if (e.isShiftClick()) {
                     // Delete invoice
-                    if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) || 
+                    if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) ||
                             playerMenu.getPlayer().hasPermission("rpu.invoices.delete.job")) {
 
-                        me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                                " attempting to delete invoice: ID=" + invoice.getId());
+                        ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                                " attempting to delete invoice: ID=" + invoice.getId());
                         boolean success = manager.deleteInvoice(invoice, playerMenu.getPlayer());
                         if (success) {
                             playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().invoiceDeletedMessage));
                             invoices = getFilteredInvoices();
                             super.open();
-                            me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                                    " successfully deleted invoice: ID=" + invoice.getId());
+                            ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                                    " successfully deleted invoice: ID=" + invoice.getId());
                         } else {
                             playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorDeletingInvoiceMessage));
-                            me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                                    " failed to delete invoice: ID=" + invoice.getId());
+                            ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                                    " failed to delete invoice: ID=" + invoice.getId());
                         }
                     } else {
                         playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorNoPermissionToDeleteMessage));
-                        me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                                " has no permission to delete invoice: ID=" + invoice.getId());
+                        ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                                " has no permission to delete invoice: ID=" + invoice.getId());
                     }
                 } else {
                     // Pay invoice
                     if (invoice.getTarget().equals(playerMenu.getPlayer().getUniqueId())) {
-                        me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                                " attempting to pay invoice: ID=" + invoice.getId() + 
-                                                                                ", Amount=" + invoice.getAmount());
+                        ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                                " attempting to pay invoice: ID=" + invoice.getId() +
+                                ", Amount=" + invoice.getAmount());
                         boolean success = manager.payInvoice(invoice, playerMenu.getPlayer());
                         if (success) {
                             playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().invoicePaidMessage));
                             invoices = getFilteredInvoices();
                             super.open();
-                            me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                                    " successfully paid invoice: ID=" + invoice.getId());
+                            ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                                    " successfully paid invoice: ID=" + invoice.getId());
                         } else {
                             playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorPayingInvoiceMessage));
-                            me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                                    " failed to pay invoice: ID=" + invoice.getId());
+                            ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                                    " failed to pay invoice: ID=" + invoice.getId());
                         }
                     } else {
                         playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorCanOnlyPayOwnInvoicesMessage));
-                        me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() + 
-                                                                                " attempted to pay someone else's invoice: ID=" + invoice.getId());
+                        ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                                " attempted to pay someone else's invoice: ID=" + invoice.getId());
                     }
                 }
             }

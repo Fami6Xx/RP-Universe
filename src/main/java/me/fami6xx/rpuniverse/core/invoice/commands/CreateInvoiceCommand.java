@@ -25,7 +25,7 @@ public class CreateInvoiceCommand implements CommandExecutor {
 
     /**
      * Creates a new CreateInvoiceCommand instance.
-     * 
+     *
      * @param module The InvoiceModule instance
      */
     public CreateInvoiceCommand(InvoiceModule module) {
@@ -42,10 +42,10 @@ public class CreateInvoiceCommand implements CommandExecutor {
      * - Distance and visibility requirements
      * - Job membership
      *
-     * @param sender The command sender
+     * @param sender  The command sender
      * @param command The command being executed
-     * @param label The command label
-     * @param args The command arguments
+     * @param label   The command label
+     * @param args    The command arguments
      * @return true if the command was handled, false otherwise
      */
     @Override
@@ -119,8 +119,8 @@ public class CreateInvoiceCommand implements CommandExecutor {
             // Check if the players are in the same world
             if (!player.getWorld().equals(target.getWorld())) {
                 player.sendMessage(FamiUtils.formatWithPrefix(lang.errorSameWorldMessage));
-                ErrorHandler.debug("CreateInvoiceCommand failed: players not in same world - " + 
-                                  player.getWorld().getName() + " vs " + target.getWorld().getName());
+                ErrorHandler.debug("CreateInvoiceCommand failed: players not in same world - " +
+                        player.getWorld().getName() + " vs " + target.getWorld().getName());
                 return true;
             }
 
@@ -129,8 +129,8 @@ public class CreateInvoiceCommand implements CommandExecutor {
                 double distance = player.getLocation().distance(target.getLocation());
                 if (distance > module.getMaxDistance()) {
                     player.sendMessage(FamiUtils.formatWithPrefix(lang.errorPlayerTooFarMessage));
-                    ErrorHandler.debug("CreateInvoiceCommand failed: target player too far - " + 
-                                      distance + " > " + module.getMaxDistance());
+                    ErrorHandler.debug("CreateInvoiceCommand failed: target player too far - " +
+                            distance + " > " + module.getMaxDistance());
                     return true;
                 }
             }
@@ -153,8 +153,8 @@ public class CreateInvoiceCommand implements CommandExecutor {
 
             // Create the invoice
             Invoice invoice = module.getManager().createInvoice(jobName, player.getUniqueId(), target.getUniqueId(), amount);
-            ErrorHandler.debug("Invoice created successfully by " + player.getName() + " for " + target.getName() + 
-                              " in job " + jobName + " for amount " + amount);
+            ErrorHandler.debug("Invoice created successfully by " + player.getName() + " for " + target.getName() +
+                    " in job " + jobName + " for amount " + amount);
 
             // Send success messages
             String successMessage = lang.invoiceCreatedMessage

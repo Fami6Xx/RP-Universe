@@ -23,7 +23,7 @@ public class InvoiceCommand implements CommandExecutor {
 
     /**
      * Creates a new InvoiceCommand instance.
-     * 
+     *
      * @param module The InvoiceModule instance
      */
     public InvoiceCommand(InvoiceModule module) {
@@ -38,18 +38,18 @@ public class InvoiceCommand implements CommandExecutor {
      * - "created": Shows invoices created by the player
      * - "job": Shows all invoices for a specific job (requires permission)
      *
-     * @param sender The command sender
+     * @param sender  The command sender
      * @param command The command being executed
-     * @param label The command label
-     * @param args The command arguments
+     * @param label   The command label
+     * @param args    The command arguments
      * @return true if the command was handled, false otherwise
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         InvoiceLanguage lang = InvoiceLanguage.getInstance();
 
-        ErrorHandler.debug("InvoiceCommand executed by " + sender.getName() + " with args: " + 
-                          (args.length > 0 ? String.join(", ", args) : "none"));
+        ErrorHandler.debug("InvoiceCommand executed by " + sender.getName() + " with args: " +
+                (args.length > 0 ? String.join(", ", args) : "none"));
 
         // Check if the sender is a player
         if (!(sender instanceof Player)) {

@@ -83,7 +83,7 @@ public class InvoiceLanguage extends AbstractAddonLanguage {
 
     /**
      * Gets the singleton instance of the InvoiceLanguage class.
-     * 
+     *
      * @return The InvoiceLanguage instance
      */
     public static InvoiceLanguage getInstance() {

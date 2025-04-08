@@ -27,7 +27,7 @@ public class CreateInvoiceCommandTabCompleter implements TabCompleter {
         }
 
         Player player = (Player) sender;
-        
+
         if (!player.hasPermission("rpu.invoices.create")) {
             return new ArrayList<>();
         }
@@ -46,7 +46,7 @@ public class CreateInvoiceCommandTabCompleter implements TabCompleter {
                     .filter(amount -> amount.startsWith(args[1]))
                     .collect(Collectors.toList());
         }
-        
+
         return new ArrayList<>();
     }
 }

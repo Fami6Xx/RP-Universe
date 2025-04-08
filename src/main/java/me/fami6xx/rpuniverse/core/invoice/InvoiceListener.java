@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.invoice;
 
 import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,7 +22,7 @@ public class InvoiceListener implements Listener {
 
     /**
      * Creates a new InvoiceListener.
-     * 
+     *
      * @param manager The InvoiceManager instance
      */
     public InvoiceListener(InvoiceManager manager) {
@@ -32,7 +33,7 @@ public class InvoiceListener implements Listener {
      * Handles player join events.
      * <p>
      * Notifies players about pending invoices when they join the server.
-     * 
+     *
      * @param event The PlayerJoinEvent
      */
     @EventHandler
@@ -57,9 +58,9 @@ public class InvoiceListener implements Listener {
 
             player.sendMessage(FamiUtils.formatWithPrefix(message));
 
-            me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Player " + player.getName() + 
-                                                                    " notified about " + pendingInvoices.size() + 
-                                                                    " pending invoices on join");
+            ErrorHandler.debug("Player " + player.getName() +
+                    " notified about " + pendingInvoices.size() +
+                    " pending invoices on join");
         }
     }
 }

@@ -86,10 +86,10 @@ public class InvoiceModule extends AbstractModule {
             int saveInterval = getConfigInt("saveInterval", 5);
             if (saveInterval > 0) {
                 getPlugin().getServer().getScheduler().runTaskTimerAsynchronously(
-                    getPlugin(),
-                    () -> manager.saveData(),
-                    saveInterval * 1200L, // Convert minutes to ticks (20 ticks/second * 60 seconds/minute)
-                    saveInterval * 1200L
+                        getPlugin(),
+                        () -> manager.saveData(),
+                        saveInterval * 1200L, // Convert minutes to ticks (20 ticks/second * 60 seconds/minute)
+                        saveInterval * 1200L
                 );
             }
 
@@ -169,7 +169,7 @@ public class InvoiceModule extends AbstractModule {
 
     /**
      * Gets the InvoiceManager instance.
-     * 
+     *
      * @return The InvoiceManager instance
      */
     public InvoiceManager getManager() {
@@ -178,7 +178,7 @@ public class InvoiceModule extends AbstractModule {
 
     /**
      * Checks if the distance requirement is enabled in the configuration.
-     * 
+     *
      * @return true if the distance requirement is enabled, false otherwise
      */
     public boolean isDistanceCheckEnabled() {
@@ -187,7 +187,7 @@ public class InvoiceModule extends AbstractModule {
 
     /**
      * Gets the maximum distance between players for the invoice creation to be allowed.
-     * 
+     *
      * @return the maximum distance
      */
     public double getMaxDistance() {
@@ -196,7 +196,7 @@ public class InvoiceModule extends AbstractModule {
 
     /**
      * Checks if the line-of-sight requirement is enabled in the configuration.
-     * 
+     *
      * @return true if the line-of-sight requirement is enabled, false otherwise
      */
     public boolean isMustSeePlayerEnabled() {
@@ -205,7 +205,7 @@ public class InvoiceModule extends AbstractModule {
 
     /**
      * Gets the default currency symbol to use.
-     * 
+     *
      * @return the default currency symbol
      */
     public String getDefaultCurrency() {
@@ -214,7 +214,7 @@ public class InvoiceModule extends AbstractModule {
 
     /**
      * Checks if decimal amounts are allowed in invoices.
-     * 
+     *
      * @return true if decimal amounts are allowed, false otherwise
      */
     public boolean isDecimalAmountAllowed() {
@@ -223,7 +223,7 @@ public class InvoiceModule extends AbstractModule {
 
     /**
      * Checks if players should be notified about pending invoices when they join.
-     * 
+     *
      * @return true if join notification is enabled, false otherwise
      */
     public boolean isJoinNotificationEnabled() {

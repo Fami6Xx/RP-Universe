@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 
 import java.util.Date;
 import java.util.UUID;
@@ -204,7 +205,7 @@ public class Invoice {
      */
     public void markAsPaid() {
         this.status = Status.PAID;
-        me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Invoice marked as paid: ID=" + id);
+        ErrorHandler.debug("Invoice marked as paid: ID=" + id);
     }
 
     /**
@@ -212,6 +213,6 @@ public class Invoice {
      */
     public void markAsDeleted() {
         this.status = Status.DELETED;
-        me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler.debug("Invoice marked as deleted: ID=" + id);
+        ErrorHandler.debug("Invoice marked as deleted: ID=" + id);
     }
 }

@@ -42,7 +42,7 @@ public class InvoiceManager {
 
     /**
      * Creates a new InvoiceManager.
-     * 
+     *
      * @param module The InvoiceModule instance
      */
     public InvoiceManager(InvoiceModule module) {
@@ -56,7 +56,7 @@ public class InvoiceManager {
 
     /**
      * Initializes the InvoiceManager.
-     * 
+     *
      * @param plugin The plugin instance
      */
     public void initialize(RPUniverse plugin) {
@@ -97,7 +97,8 @@ public class InvoiceManager {
         }
 
         try (FileReader reader = new FileReader(dataFile)) {
-            Type type = new TypeToken<List<Invoice>>(){}.getType();
+            Type type = new TypeToken<List<Invoice>>() {
+            }.getType();
             List<Invoice> loadedInvoices = gson.fromJson(reader, type);
 
             if (loadedInvoices != null) {
@@ -140,8 +141,8 @@ public class InvoiceManager {
         Invoice invoice = new Invoice(job, creator, target, amount);
         invoices.put(invoice.getId(), invoice);
 
-        ErrorHandler.debug("Invoice created: ID=" + invoice.getId() + ", Job=" + job + 
-                          ", Creator=" + creator + ", Target=" + target + ", Amount=" + amount);
+        ErrorHandler.debug("Invoice created: ID=" + invoice.getId() + ", Job=" + job +
+                ", Creator=" + creator + ", Target=" + target + ", Amount=" + amount);
 
         // Schedule async save
         new BukkitRunnable() {
@@ -265,7 +266,7 @@ public class InvoiceManager {
             // Notify the player that they don't have enough money
             String message = InvoiceLanguage.getInstance().errorNotEnoughMoneyMessage;
             message = message.replace("{amount}", String.valueOf(amount))
-                             .replace("{currency}", module.getDefaultCurrency());
+                    .replace("{currency}", module.getDefaultCurrency());
             player.sendMessage(FamiUtils.formatWithPrefix(message));
             return false;
         }
@@ -278,8 +279,8 @@ public class InvoiceManager {
         economy.depositPlayer(creatorOffline, amount);
 
         // Log the transaction
-        ErrorHandler.debug("Invoice payment: " + player.getName() + " paid " + amount + " to " + 
-                          creatorOffline.getName() + " for invoice " + invoice.getId());
+        ErrorHandler.debug("Invoice payment: " + player.getName() + " paid " + amount + " to " +
+                creatorOffline.getName() + " for invoice " + invoice.getId());
 
         // Mark the invoice as paid
         invoice.markAsPaid();
@@ -316,12 +317,12 @@ public class InvoiceManager {
 
         // Check if the player is the creator of the invoice or has permission to delete job invoices
         boolean isCreator = invoice.getCreator().equals(player.getUniqueId());
-        boolean hasJobPermission = player.hasPermission("rpu.invoices.delete.job") && 
-                                   isPlayerJobBoss(player, invoice.getJob());
+        boolean hasJobPermission = player.hasPermission("rpu.invoices.delete.job") &&
+                isPlayerJobBoss(player, invoice.getJob());
 
         if (!isCreator && !hasJobPermission) {
-            ErrorHandler.debug("Delete invoice failed: player " + player.getName() + 
-                              " is not creator and doesn't have job permission for invoice " + invoice.getId());
+            ErrorHandler.debug("Delete invoice failed: player " + player.getName() +
+                    " is not creator and doesn't have job permission for invoice " + invoice.getId());
             return false;
         }
 
@@ -348,7 +349,7 @@ public class InvoiceManager {
     /**
      * Checks if a player is a boss in a specific job.
      *
-     * @param player The player to check
+     * @param player  The player to check
      * @param jobName The job name
      * @return true if the player is a boss in the job, false otherwise
      */
@@ -384,8 +385,8 @@ public class InvoiceManager {
 
         // Replace placeholders
         message = message.replace("{job}", invoice.getJob())
-                         .replace("{amount}", String.valueOf(invoice.getAmount()))
-                         .replace("{currency}", module.getDefaultCurrency());
+                .replace("{amount}", String.valueOf(invoice.getAmount()))
+                .replace("{currency}", module.getDefaultCurrency());
 
         player.sendMessage(FamiUtils.formatWithPrefix(message));
 
@@ -405,8 +406,8 @@ public class InvoiceManager {
         // Replace placeholders
         String targetName = Bukkit.getOfflinePlayer(invoice.getTarget()).getName();
         message = message.replace("{player}", targetName != null ? targetName : "Unknown")
-                         .replace("{amount}", String.valueOf(invoice.getAmount()))
-                         .replace("{currency}", module.getDefaultCurrency());
+                .replace("{amount}", String.valueOf(invoice.getAmount()))
+                .replace("{currency}", module.getDefaultCurrency());
 
         player.sendMessage(FamiUtils.formatWithPrefix(message));
 
@@ -425,8 +426,8 @@ public class InvoiceManager {
 
         // Replace placeholders
         message = message.replace("{job}", invoice.getJob())
-                         .replace("{amount}", String.valueOf(invoice.getAmount()))
-                         .replace("{currency}", module.getDefaultCurrency());
+                .replace("{amount}", String.valueOf(invoice.getAmount()))
+                .replace("{currency}", module.getDefaultCurrency());
 
         player.sendMessage(FamiUtils.formatWithPrefix(message));
 
@@ -435,7 +436,7 @@ public class InvoiceManager {
 
     /**
      * Gets the InvoiceModule instance.
-     * 
+     *
      * @return The InvoiceModule instance
      */
     public InvoiceModule getModule() {
@@ -444,7 +445,7 @@ public class InvoiceManager {
 
     /**
      * Gets the plugin instance.
-     * 
+     *
      * @return The plugin instance
      */
     public RPUniverse getPlugin() {
