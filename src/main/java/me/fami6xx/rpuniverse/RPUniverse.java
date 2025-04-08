@@ -2,9 +2,11 @@ package me.fami6xx.rpuniverse;
 
 import me.fami6xx.rpuniverse.core.DataSystem;
 import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
+import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsModule;
 import me.fami6xx.rpuniverse.core.basicneeds.commands.ConsumablesCommand;
 import me.fami6xx.rpuniverse.core.basicneeds.commands.PeeCommand;
 import me.fami6xx.rpuniverse.core.basicneeds.commands.PoopCommand;
+import me.fami6xx.rpuniverse.core.invoice.InvoiceModule;
 import me.fami6xx.rpuniverse.core.payment.PaymentModule;
 import me.fami6xx.rpuniverse.core.chestlimit.ChestLimitListener;
 import me.fami6xx.rpuniverse.core.commands.*;
@@ -110,7 +112,10 @@ public class RPUniverse extends JavaPlugin {
         ErrorHandler.info("Module manager initialized");
 
         // Register modules
-        moduleManager.registerModule(new me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsModule());
+        moduleManager.registerModule(new InvoiceModule());
+        ErrorHandler.debug("Registered InvoiceModule");
+
+        moduleManager.registerModule(new BasicNeedsModule());
         ErrorHandler.debug("Registered BasicNeedsModule");
 
         moduleManager.registerModule(new PaymentModule());
