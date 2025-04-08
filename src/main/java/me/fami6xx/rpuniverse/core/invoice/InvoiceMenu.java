@@ -106,10 +106,10 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                 return manager.getInvoicesByCreator(playerId);
             case JOB:
                 // Check if player is a job boss
-                if (player.hasPermission("rpu.invoices.view.job") && isJobBoss) {
+                if (isJobBoss) {
                     return manager.getInvoicesByJob(playerMenu.getEditingJob().getName());
                 } else {
-                    // Fallback to RECEIVED if player doesn't have permission
+                    // Fallback to RECEIVED if player is not a job boss
                     filterMode = FilterMode.RECEIVED;
                     return manager.getInvoicesByTarget(playerId);
                 }
@@ -175,8 +175,7 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                 lore.add(FamiUtils.format(lang.invoiceItemClickToPay));
             }
 
-            if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) ||
-                    playerMenu.getPlayer().hasPermission("rpu.invoices.delete.job")) {
+            if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) || (Job.getJobByUUID(invoice.getJob()).isPlayerInJob(playerMenu.getPlayer().getUniqueId()) && Job.getJobByUUID(invoice.getJob()).getPlayerPosition(playerMenu.getPlayer().getUniqueId()).isBoss())) {
                 lore.add("");
                 lore.add(FamiUtils.format(lang.invoiceItemShiftClickToDelete));
             }
@@ -297,14 +296,27 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                         " changed invoice filter to CREATED");
             }
             return;
-        } else if (slot == 51 && playerMenu.getPlayer().hasPermission("rpu.invoices.view.job")) {
-            // Job filter (only if player has permission)
-            if (filterMode != FilterMode.JOB) {
+        } else if (slot == 51) {
+            // Job filter (only if player is job boss)
+            Player player = playerMenu.getPlayer();
+            UUID playerId = player.getUniqueId();
+            PlayerData playerData = RPUniverse.getPlayerData(playerId.toString());
+            boolean isJobBoss = false;
+
+            try {
+                if (playerData.getSelectedPlayerJob() != null) {
+                    isJobBoss = playerData.getSelectedPlayerJob().getPlayerPosition(playerId).isBoss();
+                }
+            } catch (Exception ex) {
+                ErrorHandler.severe("Failed to get job position for player: " + player.getName(), ex);
+            }
+
+            if (isJobBoss && filterMode != FilterMode.JOB) {
                 filterMode = FilterMode.JOB;
                 invoices = getFilteredInvoices();
                 page = 0;
                 super.open();
-                ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
+                ErrorHandler.debug("Player " + player.getName() +
                         " changed invoice filter to JOB");
             }
             return;
@@ -314,12 +326,26 @@ public class InvoiceMenu extends EasyPaginatedMenu {
         int index = getSlotIndex(slot);
         if (index != -1 && index < invoices.size()) {
             Invoice invoice = invoices.get(index);
+            Player player = playerMenu.getPlayer();
+            UUID playerId = player.getUniqueId();
+            PlayerData playerData = RPUniverse.getPlayerData(playerId.toString());
+            boolean isJobBoss = false;
+
+            try {
+                if (playerData.getSelectedPlayerJob() != null) {
+                    isJobBoss = playerData.getSelectedPlayerJob().getPlayerPosition(playerId).isBoss();
+                    if (isJobBoss) {
+                        isJobBoss = Job.getJobByUUID(invoice.getJob()).getJobUUID().toString().equals(playerData.getSelectedPlayerJob().getJobUUID().toString());
+                    }
+                }
+            } catch (Exception ex) {
+                ErrorHandler.severe("Failed to get job position for player: " + player.getName(), ex);
+            }
 
             if (invoice.isPending()) {
                 if (e.isShiftClick()) {
                     // Delete invoice
-                    if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) ||
-                            RPUniverse.getPlayerData(playerMenu.getPlayer().getUniqueId().toString()).getPlayerJobs().contains(Job.getJobByUUID(invoice.getJob()))) {
+                    if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) || isJobBoss) {
 
                         ErrorHandler.debug("Player " + playerMenu.getPlayer().getName() +
                                 " attempting to delete invoice: ID=" + invoice.getId());
@@ -421,8 +447,8 @@ public class InvoiceMenu extends EasyPaginatedMenu {
         inventory.setItem(46, getFilterButton(FilterMode.RECEIVED, filterMode == FilterMode.RECEIVED));
         inventory.setItem(47, getFilterButton(FilterMode.CREATED, filterMode == FilterMode.CREATED));
 
-        // Only show job filter if player has permission
-        if (playerMenu.getPlayer().hasPermission("rpu.invoices.view.job") && isJobBoss) {
+        // Only show job filter if player is job boss
+        if (isJobBoss) {
             inventory.setItem(51, getFilterButton(FilterMode.JOB, filterMode == FilterMode.JOB));
         }
 

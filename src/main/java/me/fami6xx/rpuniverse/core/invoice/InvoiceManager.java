@@ -321,8 +321,7 @@ public class InvoiceManager {
 
         // Check if the player is the creator of the invoice or has permission to delete job invoices
         boolean isCreator = invoice.getCreator().equals(player.getUniqueId());
-        boolean hasJobPermission = player.hasPermission("rpu.invoices.delete.job") &&
-                isPlayerJobBoss(player, invoice.getJob());
+        boolean hasJobPermission = isPlayerJobBoss(player, invoice.getJob());
 
         if (!isCreator && !hasJobPermission) {
             ErrorHandler.debug("Delete invoice failed: player " + player.getName() +
@@ -358,19 +357,16 @@ public class InvoiceManager {
      * @return true if the player is a boss in the job, false otherwise
      */
     private boolean isPlayerJobBoss(Player player, String jobUUID) {
-        // Check if the player has the permission first
-        if (player.hasPermission("rpu.invoices.view.job")) {
-            // Get the job by UUID
-            Job job = Job.getJobByUUID(jobUUID);
-            if (job != null) {
-                // Check if the player is in the job
-                if (job.isPlayerInJob(player.getUniqueId())) {
-                    // Get the player's position in the job
-                    Position position = job.getPlayerPosition(player.getUniqueId());
-                    if (position != null) {
-                        // Check if the position is a boss position
-                        return position.isBoss();
-                    }
+        // Get the job by UUID
+        Job job = Job.getJobByUUID(jobUUID);
+        if (job != null) {
+            // Check if the player is in the job
+            if (job.isPlayerInJob(player.getUniqueId())) {
+                // Get the player's position in the job
+                Position position = job.getPlayerPosition(player.getUniqueId());
+                if (position != null) {
+                    // Check if the position is a boss position
+                    return position.isBoss();
                 }
             }
         }
