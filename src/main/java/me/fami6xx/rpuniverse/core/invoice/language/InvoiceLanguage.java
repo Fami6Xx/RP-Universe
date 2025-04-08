@@ -116,6 +116,13 @@ public class InvoiceLanguage extends AbstractAddonLanguage {
     public String adminInvoiceForcePayButtonName = "&aForce Payment";
     public String adminInvoiceForcePayButtonDescription = "&7Force payment for this invoice";
 
+    // Admin invoice edit menu
+    public String adminInvoiceEditTitle = "&6Edit Invoice #{id}";
+    public String adminInvoiceEditAmountButtonName = "&aEdit Amount";
+    public String adminInvoiceEditAmountButtonDescription = "&7Change the amount of this invoice";
+    public String adminInvoiceEditAmountPrompt = "&aPlease enter the new amount for the invoice:";
+    public String adminBackButtonName = "&aBack";
+
     // Admin system settings messages
     public String adminJobIntegrationSettingsButtonName = "&aJob Integration Settings";
     public String adminJobIntegrationSettingsButtonDescription = "&7Configure which jobs can create invoices";
@@ -142,12 +149,14 @@ public class InvoiceLanguage extends AbstractAddonLanguage {
     // Admin error messages
     public String adminErrorInvalidInvoiceIdMessage = "&cInvalid invoice ID";
     public String adminErrorCannotEditPaidInvoiceMessage = "&cCannot edit a paid invoice";
+    public String adminErrorCannotEditDeletedInvoiceMessage = "&cCannot edit a deleted invoice";
     public String adminErrorCannotRestoreNonDeletedInvoiceMessage = "&cCannot restore a non-deleted invoice";
     public String adminErrorCannotForcePayPaidInvoiceMessage = "&cCannot force payment for an already paid invoice";
     public String adminErrorNoBackupsFoundMessage = "&cNo backups found";
     public String adminErrorBackupFailedMessage = "&cBackup creation failed";
     public String adminErrorRestoreFailedMessage = "&cRestore operation failed";
     public String adminErrorClearFailedMessage = "&cFailed to clear old invoices";
+    public String adminErrorEditingInvoiceMessage = "&cFailed to edit invoice";
 
     // Admin notification messages
     public String adminActionLoggedMessage = "&aAdmin action logged: {action} by {admin}";

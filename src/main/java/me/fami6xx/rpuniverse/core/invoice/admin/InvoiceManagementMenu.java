@@ -184,6 +184,7 @@ public class InvoiceManagementMenu extends EasyPaginatedMenu {
         // Add action hints based on the invoice status
         if (invoice.isPending()) {
             lore.add(FamiUtils.format("&aClick to force pay"));
+            lore.add(FamiUtils.format("&eRight-click to edit"));
             lore.add(FamiUtils.format("&cShift-click to delete"));
         } else if (invoice.isPaid()) {
             lore.add(FamiUtils.format("&7This invoice has been paid"));
@@ -318,6 +319,21 @@ public class InvoiceManagementMenu extends EasyPaginatedMenu {
                     } else {
                         player.sendMessage(FamiUtils.formatWithPrefix(lang.errorDeletingInvoiceMessage));
                     }
+                }
+            } else if (e.isRightClick()) {
+                // Edit invoice
+                if (invoice.isPending() && player.hasPermission("rpu.invoices.admin.edit")) {
+                    try {
+                        new EditInvoiceMenu(playerMenu, manager, invoice).open();
+                        ErrorHandler.debug("Admin opened edit invoice menu for invoice " + invoice.getId());
+                    } catch (Exception ex) {
+                        ErrorHandler.severe("Error opening edit invoice menu", ex);
+                        player.sendMessage(FamiUtils.formatWithPrefix(lang.errorOpeningMenuMessage));
+                    }
+                } else if (invoice.isPaid()) {
+                    player.sendMessage(FamiUtils.formatWithPrefix(lang.adminErrorCannotEditPaidInvoiceMessage));
+                } else if (invoice.isDeleted()) {
+                    player.sendMessage(FamiUtils.formatWithPrefix(lang.adminErrorCannotEditDeletedInvoiceMessage));
                 }
             } else {
                 // Force pay or restore invoice

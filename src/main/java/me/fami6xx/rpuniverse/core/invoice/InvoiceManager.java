@@ -37,6 +37,7 @@ public class InvoiceManager {
     private final InvoiceModule module;
     private RPUniverse plugin;
     private final Map<String, Invoice> invoices = new ConcurrentHashMap<>();
+    private final Map<UUID, String> playerEditingInvoice = new HashMap<>(); // Maps player UUID to invoice ID being edited
     private final File dataFile;
     private final Gson gson;
 
@@ -729,6 +730,143 @@ public class InvoiceManager {
         }
 
         return count;
+    }
+
+    /**
+     * Starts the process of editing an invoice's amount.
+     * <p>
+     * This method registers the player as editing the specified invoice and
+     * sets up a chat listener to capture the new amount.
+     *
+     * @param admin   The administrator editing the invoice
+     * @param invoice The invoice to edit
+     * @return true if the edit process was started successfully, false otherwise
+     */
+    public boolean startInvoiceAmountEdit(Player admin, Invoice invoice) {
+        if (invoice == null) {
+            ErrorHandler.debug("Start invoice amount edit failed: invoice is null");
+            return false;
+        }
+
+        if (invoice.isPaid()) {
+            ErrorHandler.debug("Start invoice amount edit failed: invoice is already paid");
+            return false;
+        }
+
+        if (invoice.isDeleted()) {
+            ErrorHandler.debug("Start invoice amount edit failed: invoice is deleted");
+            return false;
+        }
+
+        // Register the player as editing this invoice
+        playerEditingInvoice.put(admin.getUniqueId(), invoice.getId());
+
+        // Set up a chat listener for the next message from this player
+        Bukkit.getPluginManager().registerEvents(new org.bukkit.event.Listener() {
+            @org.bukkit.event.EventHandler
+            public void onPlayerChat(org.bukkit.event.player.AsyncPlayerChatEvent event) {
+                if (event.getPlayer().getUniqueId().equals(admin.getUniqueId())) {
+                    event.setCancelled(true);
+
+                    // Unregister this listener
+                    org.bukkit.event.HandlerList.unregisterAll(this);
+
+                    // Process the amount input
+                    String input = event.getMessage();
+                    try {
+                        double newAmount = Double.parseDouble(input);
+                        if (newAmount <= 0) {
+                            admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().errorAmountMustBePositiveMessage));
+                            playerEditingInvoice.remove(admin.getUniqueId());
+                            return;
+                        }
+
+                        // Edit the invoice with the new amount
+                        if (editInvoiceAmount(invoice, newAmount, admin)) {
+                            admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().adminInvoiceEditedMessage.replace("{id}", invoice.getId())));
+                        } else {
+                            admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().adminErrorEditingInvoiceMessage));
+                        }
+                    } catch (NumberFormatException e) {
+                        admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().errorInvalidAmountMessage));
+                    } finally {
+                        playerEditingInvoice.remove(admin.getUniqueId());
+                    }
+                }
+            }
+        }, plugin);
+
+        return true;
+    }
+
+    /**
+     * Edits an invoice's amount.
+     * <p>
+     * Since the amount field is final, this method creates a new invoice with the updated amount
+     * and replaces the old invoice in the invoices map.
+     *
+     * @param invoice   The invoice to edit
+     * @param newAmount The new amount for the invoice
+     * @param admin     The administrator editing the invoice
+     * @return true if the edit was successful, false otherwise
+     */
+    public boolean editInvoiceAmount(Invoice invoice, double newAmount, Player admin) {
+        if (invoice == null) {
+            ErrorHandler.debug("Edit invoice amount failed: invoice is null");
+            return false;
+        }
+
+        if (invoice.isPaid()) {
+            ErrorHandler.debug("Edit invoice amount failed: invoice is already paid");
+            return false;
+        }
+
+        if (invoice.isDeleted()) {
+            ErrorHandler.debug("Edit invoice amount failed: invoice is deleted");
+            return false;
+        }
+
+        try {
+            // Create a new invoice with the updated amount
+            Invoice newInvoice = new Invoice(invoice.getJob(), invoice.getCreator(), invoice.getTarget(), newAmount);
+
+            // Copy the ID and status from the old invoice
+            // Note: This is a hack since we can't modify the ID directly
+            java.lang.reflect.Field idField = Invoice.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(newInvoice, invoice.getId());
+
+            // Set the status to match the original invoice
+            newInvoice.setStatus(invoice.getStatus());
+
+            // Replace the old invoice in the map
+            invoices.put(invoice.getId(), newInvoice);
+
+            // Log the admin action
+            logAdminAction(admin, "edit_amount", invoice.getId());
+
+            // Schedule async save
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    saveData();
+                }
+            }.runTaskAsynchronously(plugin);
+
+            // Notify the target if they're online
+            Player targetPlayer = Bukkit.getPlayer(invoice.getTarget());
+            if (targetPlayer != null && targetPlayer.isOnline()) {
+                String message = InvoiceLanguage.getInstance().adminInvoiceEditedNotificationMessage;
+                message = message.replace("{id}", invoice.getId());
+                targetPlayer.sendMessage(FamiUtils.formatWithPrefix(message));
+            }
+
+            ErrorHandler.debug("Invoice amount edited: ID=" + invoice.getId() + ", new amount=" + newAmount + ", by admin=" + admin.getName());
+            return true;
+        } catch (Exception e) {
+            ErrorHandler.severe("Error editing invoice amount", e);
+            return false;
+        }
     }
 
     /**
