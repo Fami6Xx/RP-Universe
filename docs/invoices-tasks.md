@@ -40,6 +40,10 @@ This document contains a comprehensive list of tasks required to implement the R
 
 ## Integration Tasks
 
+[ ] Get all the permissions
+   - Check all the files in `me.fami6xx.rpuniverse.core.invoice`
+   - Add permissions to the `plugin.yml` file
+
 [ ] Integrate with the Job System
    - Implement job membership verification
    - Add special privileges for job bosses
