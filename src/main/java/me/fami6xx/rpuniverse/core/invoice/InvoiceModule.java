@@ -31,6 +31,9 @@ public class InvoiceModule extends AbstractModule {
         }
 
         try {
+            // Initialize the language system
+            me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage.getInstance();
+
             // Initialize the invoice manager
             this.manager = new InvoiceManager(this);
             return true;

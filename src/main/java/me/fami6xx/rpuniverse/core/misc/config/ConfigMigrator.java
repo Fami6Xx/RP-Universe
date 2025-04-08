@@ -20,7 +20,7 @@ import java.util.Map;
 public class ConfigMigrator {
 
     // The current config version
-    private static final int CURRENT_CONFIG_VERSION = 7;
+    private static final int CURRENT_CONFIG_VERSION = 8;
 
     // Map of migration handlers for each version
     private static final Map<Integer, MigrationHandler> migrationHandlers = new HashMap<>();
@@ -30,6 +30,7 @@ public class ConfigMigrator {
         migrationHandlers.put(4, ConfigMigrator::migrateFromV4ToV5);
         migrationHandlers.put(5, ConfigMigrator::migrateFromV5ToV6);
         migrationHandlers.put(6, ConfigMigrator::migrateFromV6ToV7);
+        migrationHandlers.put(7, ConfigMigrator::migrateFromV7ToV8);
     }
 
     /**
@@ -211,6 +212,35 @@ public class ConfigMigrator {
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Error during migration from v6 to v7", e);
+            return false;
+        }
+    }
+
+    /**
+     * Migrates configuration from version 7 to version 8.
+     * 
+     * @param config The configuration to migrate
+     * @return true if migration was successful, false otherwise
+     */
+    private static boolean migrateFromV7ToV8(FileConfiguration config) {
+        try {
+            // Add new sections and fields introduced in version 8
+
+            // Add Invoices module section if it doesn't exist
+            if (!config.contains("modules.Invoices")) {
+                config.createSection("modules.Invoices");
+                config.set("modules.Invoices.enabled", true);
+                config.set("modules.Invoices.mustSeePlayer", true);
+                config.set("modules.Invoices.maxDistance", 5.0);
+                config.set("modules.Invoices.defaultCurrency", "$");
+                config.set("modules.Invoices.saveInterval", 5);
+                config.set("modules.Invoices.notifyOnJoin", true);
+                config.set("modules.Invoices.allowDecimal", true);
+            }
+
+            return true;
+        } catch (Exception e) {
+            ErrorHandler.severe("Error during migration from v7 to v8", e);
             return false;
         }
     }

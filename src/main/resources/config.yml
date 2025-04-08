@@ -168,3 +168,21 @@ modules:
         maxDistance: 10.0
         # lineOfSightCheckEnabled: If true, players must be able to see each other to pay each other
         lineOfSightCheckEnabled: true
+
+    # Invoices module settings
+    # This module provides a comprehensive framework for creating, managing, and tracking invoices between players
+    Invoices:
+        # enabled: If true, the module is enabled
+        enabled: true
+        # mustSeePlayer: If true, players must be able to see each other to create an invoice
+        mustSeePlayer: true
+        # maxDistance: The maximum distance between players for the invoice creation to be allowed
+        maxDistance: 5.0
+        # defaultCurrency: The default currency symbol to use for invoices
+        defaultCurrency: "$"
+        # saveInterval: The interval in minutes for saving invoice data
+        saveInterval: 5
+        # notifyOnJoin: If true, players will be notified about pending invoices when they join
+        notifyOnJoin: true
+        # allowDecimal: If true, decimal amounts are allowed in invoices
+        allowDecimal: true

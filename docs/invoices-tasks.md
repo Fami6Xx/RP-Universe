@@ -54,20 +54,20 @@ This document contains a comprehensive list of tasks required to implement the R
    - Implement menu navigation
    - Set up action handling
 
-[ ] Integrate with the Language System
+[x] Integrate with the Language System
    - Create `InvoiceLanguage` class extending `AbstractAddonLanguage`
    - Define all necessary message strings
    - Implement placeholder support
    - Set up language initialization
 
-[ ] Integrate with the Economy System
+[x] Integrate with the Economy System
    - Implement balance checking
    - Set up money transfer functionality
    - Add transaction logging
 
 ## Configuration Implementation
 
-[ ] Create default configuration
+[x] Create default configuration
    - Add module enabled/disabled toggle
    - Implement distance configuration
    - Add visibility checking option
@@ -76,7 +76,7 @@ This document contains a comprehensive list of tasks required to implement the R
    - Add join notification option
    - Implement decimal amount toggle
 
-[ ] Add configuration validation
+[x] Add configuration validation
    - Validate numeric values
    - Check for required settings
    - Provide sensible defaults
@@ -84,7 +84,7 @@ This document contains a comprehensive list of tasks required to implement the R
 
 ## Data Persistence
 
-[ ] Implement data storage
+[x] Implement data storage
    - Create JSON file structure
    - Implement GSON serialization/deserialization
    - Add data loading on startup
@@ -93,7 +93,7 @@ This document contains a comprehensive list of tasks required to implement the R
 
 ## Feature Implementation
 
-[ ] Implement invoice creation workflow
+[x] Implement invoice creation workflow
    - Add job verification
    - Implement distance checking
    - Add visibility verification
@@ -101,18 +101,18 @@ This document contains a comprehensive list of tasks required to implement the R
    - Set up invoice object creation
    - Implement notification system
 
-[ ] Develop invoice payment system
+[x] Develop invoice payment system
    - Add balance verification
    - Implement money transfer
    - Create status updating
    - Set up notification for payment
 
-[ ] Implement invoice deletion
+[x] Implement invoice deletion
    - Add permission checking
    - Implement status updating
    - Create notification for deletion
 
-[ ] Add notification system
+[x] Add notification system
    - Implement join notifications
    - Create invoice status change notifications
    - Add action result notifications

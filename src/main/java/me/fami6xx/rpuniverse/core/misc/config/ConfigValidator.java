@@ -284,13 +284,33 @@ public class ConfigValidator {
 
         ConfigurationSection section = config.getConfigurationSection("modules");
         Set<String> moduleKeys = section.getKeys(false);
-        
+
         for (String moduleKey : moduleKeys) {
             ConfigurationSection moduleSection = section.getConfigurationSection(moduleKey);
             if (moduleSection != null) {
                 validateBoolean(moduleSection, "enabled", errors);
+
+                // Validate specific module sections
+                if (moduleKey.equals("Invoices")) {
+                    validateInvoicesModuleSection(moduleSection, errors);
+                }
             }
         }
+    }
+
+    /**
+     * Validates the Invoices module section of the configuration.
+     *
+     * @param section The Invoices module section
+     * @param errors List to add validation errors to
+     */
+    private static void validateInvoicesModuleSection(ConfigurationSection section, List<String> errors) {
+        validateBoolean(section, "mustSeePlayer", errors);
+        validateDouble(section, "maxDistance", errors);
+        validateString(section, "defaultCurrency", errors);
+        validateInt(section, "saveInterval", errors);
+        validateBoolean(section, "notifyOnJoin", errors);
+        validateBoolean(section, "allowDecimal", errors);
     }
 
     /**
@@ -305,7 +325,7 @@ public class ConfigValidator {
             errors.add("Section is null when validating " + key);
             return;
         }
-        
+
         if (!section.contains(key)) {
             errors.add("Missing required field: " + section.getCurrentPath() + "." + key);
         } else if (!section.isBoolean(key)) {
@@ -325,7 +345,7 @@ public class ConfigValidator {
             errors.add("Section is null when validating " + key);
             return;
         }
-        
+
         if (!section.contains(key)) {
             errors.add("Missing required field: " + section.getCurrentPath() + "." + key);
         } else if (!section.isInt(key)) {
@@ -345,7 +365,7 @@ public class ConfigValidator {
             errors.add("Section is null when validating " + key);
             return;
         }
-        
+
         if (!section.contains(key)) {
             errors.add("Missing required field: " + section.getCurrentPath() + "." + key);
         } else if (!section.isString(key)) {
@@ -366,7 +386,7 @@ public class ConfigValidator {
             errors.add("Section is null when validating " + key);
             return;
         }
-        
+
         if (!section.contains(key)) {
             errors.add("Missing required field: " + section.getCurrentPath() + "." + key);
         } else if (!section.isString(key)) {
@@ -377,6 +397,26 @@ public class ConfigValidator {
                 errors.add("Invalid value for " + section.getCurrentPath() + "." + key + ": " + value + 
                            ". Valid values are: " + String.join(", ", validValues));
             }
+        }
+    }
+
+    /**
+     * Validates a double configuration value.
+     *
+     * @param section The configuration section
+     * @param key The key to validate
+     * @param errors List to add validation errors to
+     */
+    private static void validateDouble(ConfigurationSection section, String key, List<String> errors) {
+        if (section == null) {
+            errors.add("Section is null when validating " + key);
+            return;
+        }
+
+        if (!section.contains(key)) {
+            errors.add("Missing required field: " + section.getCurrentPath() + "." + key);
+        } else if (!section.isDouble(key) && !section.isInt(key)) {
+            errors.add("Invalid type for " + section.getCurrentPath() + "." + key + ": expected double");
         }
     }
 }

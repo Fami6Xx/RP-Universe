@@ -71,8 +71,7 @@ public class InvoiceManager {
         loadData();
 
         // Register player join listener for notifications
-        // TODO: Implement InvoiceListener class for join notifications
-        // plugin.getServer().getPluginManager().registerEvents(new InvoiceListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new InvoiceListener(this), plugin);
 
         ErrorHandler.debug("InvoiceManager initialized");
     }
@@ -254,8 +253,32 @@ public class InvoiceManager {
             return false;
         }
 
-        // TODO: Integrate with economy system to check balance and transfer money
-        // For now, just mark as paid
+        // Get the economy instance
+        net.milkbowl.vault.economy.Economy economy = plugin.getEconomy();
+
+        // Check if the player has enough money
+        double amount = invoice.getAmount();
+        if (!economy.has(player, amount)) {
+            // Notify the player that they don't have enough money
+            String message = InvoiceLanguage.getInstance().errorNotEnoughMoneyMessage;
+            message = message.replace("{amount}", String.valueOf(amount))
+                             .replace("{currency}", module.getDefaultCurrency());
+            player.sendMessage(FamiUtils.formatWithPrefix(message));
+            return false;
+        }
+
+        // Get the creator player (can be offline)
+        org.bukkit.OfflinePlayer creatorOffline = Bukkit.getOfflinePlayer(invoice.getCreator());
+
+        // Transfer the money
+        economy.withdrawPlayer(player, amount);
+        economy.depositPlayer(creatorOffline, amount);
+
+        // Log the transaction
+        ErrorHandler.debug("Invoice payment: " + player.getName() + " paid " + amount + " to " + 
+                          creatorOffline.getName() + " for invoice " + invoice.getId());
+
+        // Mark the invoice as paid
         invoice.markAsPaid();
 
         // Schedule async save
