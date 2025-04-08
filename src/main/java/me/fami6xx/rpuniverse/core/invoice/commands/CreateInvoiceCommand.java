@@ -149,12 +149,12 @@ public class CreateInvoiceCommand implements CommandExecutor {
                 ErrorHandler.debug("CreateInvoiceCommand failed: player " + player.getName() + " not in a job");
                 return true;
             }
-            String jobName = playerData.getSelectedPlayerJob().getName();
+            String jobUUID = playerData.getSelectedPlayerJob().getJobUUID().toString();
 
             // Create the invoice
-            Invoice invoice = module.getManager().createInvoice(jobName, player.getUniqueId(), target.getUniqueId(), amount);
+            Invoice invoice = module.getManager().createInvoice(jobUUID, player.getUniqueId(), target.getUniqueId(), amount);
             ErrorHandler.debug("Invoice created successfully by " + player.getName() + " for " + target.getName() +
-                    " in job " + jobName + " for amount " + amount);
+                    " in job " + playerData.getSelectedPlayerJob().getName() + " for amount " + amount);
 
             // Send success messages
             String successMessage = lang.invoiceCreatedMessage

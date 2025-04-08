@@ -107,7 +107,7 @@ public class InvoiceMenu extends EasyPaginatedMenu {
             case JOB:
                 // Check if player is a job boss
                 if (isJobBoss) {
-                    return manager.getInvoicesByJob(playerMenu.getEditingJob().getName());
+                    return manager.getInvoicesByJob(playerData.getSelectedPlayerJob().getJobUUID().toString());
                 } else {
                     // Fallback to RECEIVED if player is not a job boss
                     filterMode = FilterMode.RECEIVED;
