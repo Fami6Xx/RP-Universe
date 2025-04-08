@@ -35,9 +35,63 @@ public class InvoiceCommandTabCompleter implements TabCompleter {
                 options.add("job");
             }
 
+            if (player.hasPermission("rpu.invoices.admin")) {
+                options.add("admin");
+            }
+
             return options.stream()
                     .filter(option -> option.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
+        }
+
+        // Handle admin subcommands
+        if (args.length >= 2 && args[0].equalsIgnoreCase("admin")) {
+            if (args.length == 2) {
+                List<String> adminOptions = new ArrayList<>();
+
+                if (player.hasPermission("rpu.invoices.admin.view")) {
+                    adminOptions.add("view");
+                }
+
+                if (player.hasPermission("rpu.invoices.admin.edit")) {
+                    adminOptions.add("edit");
+                }
+
+                if (player.hasPermission("rpu.invoices.admin.delete")) {
+                    adminOptions.add("delete");
+                }
+
+                if (player.hasPermission("rpu.invoices.admin.restore")) {
+                    adminOptions.add("restore");
+                }
+
+                if (player.hasPermission("rpu.invoices.admin.pay")) {
+                    adminOptions.add("pay");
+                }
+
+                if (player.hasPermission("rpu.invoices.admin.maintenance")) {
+                    adminOptions.add("maintenance");
+                    adminOptions.add("settings");
+                }
+
+                if (player.hasPermission("rpu.invoices.admin.logs")) {
+                    adminOptions.add("logs");
+                }
+
+                return adminOptions.stream()
+                        .filter(option -> option.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList());
+            }
+
+            // Handle maintenance subcommands
+            if (args.length == 3 && args[1].equalsIgnoreCase("maintenance") && 
+                player.hasPermission("rpu.invoices.admin.maintenance")) {
+                List<String> maintenanceOptions = Arrays.asList("backup", "restore", "clear");
+
+                return maintenanceOptions.stream()
+                        .filter(option -> option.toLowerCase().startsWith(args[2].toLowerCase()))
+                        .collect(Collectors.toList());
+            }
         }
 
         return new ArrayList<>();
