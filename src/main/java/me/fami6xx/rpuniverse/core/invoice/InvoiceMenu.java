@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.invoice;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
@@ -104,6 +105,7 @@ public class InvoiceMenu extends EasyPaginatedMenu {
     private ItemStack getInvoiceItem(Invoice invoice) {
         Material material;
         String statusColor;
+        InvoiceLanguage lang = InvoiceLanguage.getInstance();
 
         // Set material and color based on status
         if (invoice.isPending()) {
@@ -122,34 +124,39 @@ public class InvoiceMenu extends EasyPaginatedMenu {
         ItemMeta meta = item.getItemMeta();
 
         // Set display name
-        String displayName = ChatColor.GOLD + "Invoice #" + invoice.getId().substring(0, 8);
+        String displayName = FamiUtils.format(lang.invoiceItemTitle.replace("{id}", invoice.getId().substring(0, 8)));
         meta.setDisplayName(displayName);
 
         // Set lore with invoice details
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Job: " + ChatColor.WHITE + invoice.getJob());
+        lore.add(FamiUtils.format(lang.invoiceItemJobLine.replace("{job}", invoice.getJob())));
 
         String creatorName = Bukkit.getOfflinePlayer(invoice.getCreator()).getName();
-        lore.add(ChatColor.GRAY + "From: " + ChatColor.WHITE + (creatorName != null ? creatorName : "Unknown"));
+        lore.add(FamiUtils.format(lang.invoiceItemFromLine.replace("{from}", (creatorName != null ? creatorName : lang.unknownPlayerName))));
 
         String targetName = Bukkit.getOfflinePlayer(invoice.getTarget()).getName();
-        lore.add(ChatColor.GRAY + "To: " + ChatColor.WHITE + (targetName != null ? targetName : "Unknown"));
+        lore.add(FamiUtils.format(lang.invoiceItemToLine.replace("{to}", (targetName != null ? targetName : lang.unknownPlayerName))));
 
-        lore.add(ChatColor.GRAY + "Amount: " + ChatColor.GOLD + invoice.getAmount() + manager.getModule().getDefaultCurrency());
-        lore.add(ChatColor.GRAY + "Date: " + ChatColor.WHITE + dateFormat.format(invoice.getCreationDate()));
-        lore.add(ChatColor.GRAY + "Status: " + statusColor + invoice.getStatus());
+        lore.add(FamiUtils.format(lang.invoiceItemAmountLine
+                .replace("{amount}", String.valueOf(invoice.getAmount()))
+                .replace("{currency}", manager.getModule().getDefaultCurrency())));
+
+        lore.add(FamiUtils.format(lang.invoiceItemDateLine.replace("{date}", dateFormat.format(invoice.getCreationDate()))));
+        lore.add(FamiUtils.format(lang.invoiceItemStatusLine
+                .replace("{statusColor}", statusColor)
+                .replace("{status}", invoice.getStatus().toString())));
 
         // Add action hints
         if (invoice.isPending()) {
             if (invoice.getTarget().equals(playerMenu.getPlayer().getUniqueId())) {
                 lore.add("");
-                lore.add(ChatColor.GREEN + "Click to pay");
+                lore.add(FamiUtils.format(lang.invoiceItemClickToPay));
             }
 
             if (invoice.getCreator().equals(playerMenu.getPlayer().getUniqueId()) || 
                     playerMenu.getPlayer().hasPermission("rpu.invoices.delete.job")) {
                 lore.add("");
-                lore.add(ChatColor.RED + "Shift-click to delete");
+                lore.add(FamiUtils.format(lang.invoiceItemShiftClickToDelete));
             }
         }
 
@@ -170,36 +177,37 @@ public class InvoiceMenu extends EasyPaginatedMenu {
         Material material;
         String name;
         List<String> lore = new ArrayList<>();
+        InvoiceLanguage lang = InvoiceLanguage.getInstance();
 
         switch (mode) {
             case RECEIVED:
                 material = Material.CHEST;
-                name = (isActive ? ChatColor.GREEN : ChatColor.GRAY) + "Received Invoices";
-                lore.add(ChatColor.GRAY + "View invoices sent to you");
+                name = isActive ? lang.receivedFilterButtonName : lang.receivedFilterButtonName.replace("&a", "&7");
+                lore.add(FamiUtils.format(lang.receivedFilterDescription));
                 break;
             case CREATED:
                 material = Material.WRITABLE_BOOK;
-                name = (isActive ? ChatColor.GREEN : ChatColor.GRAY) + "Created Invoices";
-                lore.add(ChatColor.GRAY + "View invoices you've created");
+                name = isActive ? lang.createdFilterButtonName : lang.createdFilterButtonName.replace("&a", "&7");
+                lore.add(FamiUtils.format(lang.createdFilterDescription));
                 break;
             case JOB:
                 material = Material.GOLD_INGOT;
-                name = (isActive ? ChatColor.GREEN : ChatColor.GRAY) + "Job Invoices";
-                lore.add(ChatColor.GRAY + "View all invoices for your job");
+                name = isActive ? lang.jobFilterButtonName : lang.jobFilterButtonName.replace("&a", "&7");
+                lore.add(FamiUtils.format(lang.jobFilterDescription));
                 break;
             default:
                 material = Material.BARRIER;
-                name = ChatColor.RED + "Unknown Filter";
+                name = lang.unknownFilterButtonName;
                 break;
         }
 
         if (isActive) {
-            lore.add(ChatColor.GREEN + "Currently selected");
+            lore.add(FamiUtils.format(lang.currentlySelectedText));
         } else {
-            lore.add(ChatColor.YELLOW + "Click to select");
+            lore.add(FamiUtils.format(lang.clickToSelectText));
         }
 
-        return FamiUtils.makeItem(material, name, lore.toArray(new String[0]));
+        return FamiUtils.makeItem(material, FamiUtils.format(name), lore.toArray(new String[0]));
     }
 
     /**
@@ -287,28 +295,28 @@ public class InvoiceMenu extends EasyPaginatedMenu {
 
                         boolean success = manager.deleteInvoice(invoice, playerMenu.getPlayer());
                         if (success) {
-                            playerMenu.getPlayer().sendMessage(ChatColor.GREEN + "Invoice deleted successfully.");
+                            playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().invoiceDeletedMessage));
                             invoices = getFilteredInvoices();
                             super.open();
                         } else {
-                            playerMenu.getPlayer().sendMessage(ChatColor.RED + "Failed to delete invoice.");
+                            playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorDeletingInvoiceMessage));
                         }
                     } else {
-                        playerMenu.getPlayer().sendMessage(ChatColor.RED + "You don't have permission to delete this invoice.");
+                        playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorNoPermissionToDeleteMessage));
                     }
                 } else {
                     // Pay invoice
                     if (invoice.getTarget().equals(playerMenu.getPlayer().getUniqueId())) {
                         boolean success = manager.payInvoice(invoice, playerMenu.getPlayer());
                         if (success) {
-                            playerMenu.getPlayer().sendMessage(ChatColor.GREEN + "Invoice paid successfully.");
+                            playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().invoicePaidMessage));
                             invoices = getFilteredInvoices();
                             super.open();
                         } else {
-                            playerMenu.getPlayer().sendMessage(ChatColor.RED + "Failed to pay invoice. Do you have enough money?");
+                            playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorPayingInvoiceMessage));
                         }
                     } else {
-                        playerMenu.getPlayer().sendMessage(ChatColor.RED + "You can only pay invoices assigned to you.");
+                        playerMenu.getPlayer().sendMessage(FamiUtils.format(InvoiceLanguage.getInstance().errorCanOnlyPayOwnInvoicesMessage));
                     }
                 }
             }
@@ -324,23 +332,25 @@ public class InvoiceMenu extends EasyPaginatedMenu {
      */
     @Override
     public String getMenuName() {
+        InvoiceLanguage lang = InvoiceLanguage.getInstance();
         String filterName;
+
         switch (filterMode) {
             case RECEIVED:
-                filterName = "Received";
+                filterName = lang.receivedFilterName;
                 break;
             case CREATED:
-                filterName = "Created";
+                filterName = lang.createdFilterName;
                 break;
             case JOB:
-                filterName = "Job";
+                filterName = lang.jobFilterName;
                 break;
             default:
-                filterName = "All";
+                filterName = lang.allFilterName;
                 break;
         }
 
-        return ChatColor.GOLD + "Invoices - " + filterName;
+        return FamiUtils.format(lang.invoicesMenuTitle.replace("{filterName}", filterName));
     }
 
     /**
@@ -350,6 +360,8 @@ public class InvoiceMenu extends EasyPaginatedMenu {
      */
     @Override
     public void addAdditionalItems() {
+        InvoiceLanguage lang = InvoiceLanguage.getInstance();
+
         // Add filter buttons
         inventory.setItem(46, getFilterButton(FilterMode.RECEIVED, filterMode == FilterMode.RECEIVED));
         inventory.setItem(47, getFilterButton(FilterMode.CREATED, filterMode == FilterMode.CREATED));
@@ -361,14 +373,14 @@ public class InvoiceMenu extends EasyPaginatedMenu {
 
         // Add info button
         List<String> infoLore = new ArrayList<>();
-        infoLore.add(ChatColor.GRAY + "View and manage your invoices");
+        infoLore.add(FamiUtils.format(lang.invoiceInfoButtonDescription));
         infoLore.add("");
-        infoLore.add(ChatColor.YELLOW + "Click on a pending invoice to pay it");
-        infoLore.add(ChatColor.YELLOW + "Shift-click on your invoice to delete it");
+        infoLore.add(FamiUtils.format(lang.invoiceInfoButtonPayHint));
+        infoLore.add(FamiUtils.format(lang.invoiceInfoButtonDeleteHint));
         infoLore.add("");
-        infoLore.add(ChatColor.GRAY + "Use the filter buttons to change view");
+        infoLore.add(FamiUtils.format(lang.invoiceInfoButtonFilterHint));
 
-        inventory.setItem(52, FamiUtils.makeItem(Material.BOOK, ChatColor.AQUA + "Invoice Information", infoLore.toArray(new String[0])));
+        inventory.setItem(52, FamiUtils.makeItem(Material.BOOK, FamiUtils.format(lang.invoiceInfoButtonTitle), infoLore.toArray(new String[0])));
     }
 
     /**

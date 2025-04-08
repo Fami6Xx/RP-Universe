@@ -1,6 +1,7 @@
 package me.fami6xx.rpuniverse.core.invoice;
 
 import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
 import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.modules.AbstractModule;
 
@@ -41,7 +42,7 @@ public class InvoiceModule extends AbstractModule {
 
         try {
             // Initialize the language system
-            me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage.getInstance();
+            InvoiceLanguage.getInstance();
 
             // Initialize the invoice manager
             this.manager = new InvoiceManager(this);

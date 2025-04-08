@@ -3,6 +3,7 @@ package me.fami6xx.rpuniverse.core.invoice.commands;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.invoice.InvoiceMenu;
 import me.fami6xx.rpuniverse.core.invoice.InvoiceModule;
+import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
@@ -45,16 +46,18 @@ public class InvoiceCommand implements CommandExecutor {
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        InvoiceLanguage lang = InvoiceLanguage.getInstance();
+
         // Check if the sender is a player
         if (!(sender instanceof Player)) {
-            sender.sendMessage(FamiUtils.formatWithPrefix("§cOnly players can use this command."));
+            sender.sendMessage(FamiUtils.formatWithPrefix(lang.errorOnlyPlayersMessage));
             return true;
         }
 
         // Check if the player has permission
         Player player = (Player) sender;
         if (!player.hasPermission("rpu.invoices.view")) {
-            player.sendMessage(FamiUtils.formatWithPrefix("§cYou don't have permission to use this command."));
+            sender.sendMessage(FamiUtils.formatWithPrefix(lang.errorNoPermissionMessage));
             return true;
         }
 
@@ -78,7 +81,7 @@ public class InvoiceCommand implements CommandExecutor {
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Error opening invoice menu", e);
-            player.sendMessage(FamiUtils.formatWithPrefix("§cAn error occurred while opening the invoice menu."));
+            player.sendMessage(FamiUtils.formatWithPrefix(lang.errorOpeningMenuMessage));
             return true;
         }
     }
