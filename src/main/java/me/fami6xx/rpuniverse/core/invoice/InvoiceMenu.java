@@ -5,6 +5,7 @@ import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -77,6 +78,25 @@ public class InvoiceMenu extends EasyPaginatedMenu {
     private List<Invoice> getFilteredInvoices() {
         Player player = playerMenu.getPlayer();
         UUID playerId = player.getUniqueId();
+        PlayerData playerData = RPUniverse.getPlayerData(playerId.toString());
+        if (playerData == null) {
+            return new ArrayList<>();
+        }
+        boolean isJobBoss = false;
+        if (filterMode == FilterMode.JOB) {
+            if (playerData.getSelectedPlayerJob() == null) {
+                filterMode = FilterMode.RECEIVED;
+                return manager.getInvoicesByTarget(playerId);
+            }
+
+            try {
+                isJobBoss = playerData.getSelectedPlayerJob().getPlayerPosition(playerId).isBoss();
+            }catch (Exception e) {
+                ErrorHandler.severe("Failed to get job position for player: " + player.getName(), e);
+                filterMode = FilterMode.RECEIVED;
+                return manager.getInvoicesByTarget(playerId);
+            }
+        }
 
         switch (filterMode) {
             case RECEIVED:
@@ -85,7 +105,7 @@ public class InvoiceMenu extends EasyPaginatedMenu {
                 return manager.getInvoicesByCreator(playerId);
             case JOB:
                 // Check if player is a job boss
-                if (player.hasPermission("rpu.invoices.view.job") && playerMenu.getEditingJob() != null) {
+                if (player.hasPermission("rpu.invoices.view.job") && isJobBoss) {
                     return manager.getInvoicesByJob(playerMenu.getEditingJob().getName());
                 } else {
                     // Fallback to RECEIVED if player doesn't have permission
@@ -385,13 +405,29 @@ public class InvoiceMenu extends EasyPaginatedMenu {
     @Override
     public void addAdditionalItems() {
         InvoiceLanguage lang = InvoiceLanguage.getInstance();
+        Player player = playerMenu.getPlayer();
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = RPUniverse.getPlayerData(playerId.toString());
+        boolean isJobBoss = false;
+        try {
+            if (playerData.getSelectedPlayerJob() == null) {
+                throw new Exception("Player has no selected job");
+            }
+
+            try {
+                isJobBoss = playerData.getSelectedPlayerJob().getPlayerPosition(playerId).isBoss();
+            }catch (Exception e) {
+                ErrorHandler.severe("Failed to get job position for player: " + player.getName(), e);
+                throw new Exception("Failed to get job position");
+            }
+        } catch (Exception ignored) {}
 
         // Add filter buttons
         inventory.setItem(46, getFilterButton(FilterMode.RECEIVED, filterMode == FilterMode.RECEIVED));
         inventory.setItem(47, getFilterButton(FilterMode.CREATED, filterMode == FilterMode.CREATED));
 
         // Only show job filter if player has permission
-        if (playerMenu.getPlayer().hasPermission("rpu.invoices.view.job")) {
+        if (playerMenu.getPlayer().hasPermission("rpu.invoices.view.job") && isJobBoss) {
             inventory.setItem(51, getFilterButton(FilterMode.JOB, filterMode == FilterMode.JOB));
         }
 
@@ -419,10 +455,6 @@ public class InvoiceMenu extends EasyPaginatedMenu {
     public List<MenuTag> getMenuTags() {
         List<MenuTag> tags = new ArrayList<>();
         tags.add(MenuTag.PLAYER);
-
-        if (filterMode == FilterMode.JOB) {
-            tags.add(MenuTag.JOB);
-        }
 
         return tags;
     }
