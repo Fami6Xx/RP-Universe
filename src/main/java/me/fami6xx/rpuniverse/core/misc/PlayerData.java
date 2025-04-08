@@ -10,6 +10,7 @@ import me.fami6xx.rpuniverse.core.jobs.Position;
 import me.fami6xx.rpuniverse.core.locks.Lock;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -51,18 +52,21 @@ public class PlayerData {
         this.bindedPlayer = bindedPlayer;
         this.bindedOfflinePlayer = null;
         this.dataUUID = UUID.randomUUID();
+        ErrorHandler.debug("Created PlayerData for player: " + bindedPlayer.getName() + " with UUID: " + bindedPlayer.getUniqueId());
     }
 
     public PlayerData(OfflinePlayer bindedOfflinePlayer) {
         this.bindedOfflinePlayer = bindedOfflinePlayer;
         this.bindedPlayer = null;
         this.dataUUID = UUID.randomUUID();
+        ErrorHandler.debug("Created PlayerData for offline player: " + bindedOfflinePlayer.getName() + " with UUID: " + bindedOfflinePlayer.getUniqueId());
     }
 
     public PlayerData(String playerUUID){
         if(playerUUID == null) throw new IllegalArgumentException("Player UUID cannot be null!");
         this.playerUUID = playerUUID;
         this.dataUUID = UUID.randomUUID();
+        ErrorHandler.debug("Created PlayerData for player UUID: " + playerUUID);
     }
 
     /**
@@ -73,22 +77,37 @@ public class PlayerData {
      * @param job The job to be added.
      */
     public void addJob(Job job){
-        if (job.isPlayerInJob(UUID.fromString(playerUUID))) return;
-        if (playerJobs.contains(job)) return;
+        ErrorHandler.debug("Attempting to add job: " + job.getName() + " to player: " + playerUUID);
+
+        if (job.isPlayerInJob(UUID.fromString(playerUUID))) {
+            ErrorHandler.debug("Player is already in job: " + job.getName());
+            return;
+        }
+        if (playerJobs.contains(job)) {
+            ErrorHandler.debug("Player already has job: " + job.getName() + " in their job list");
+            return;
+        }
         if (!job.isJobReady().isEmpty()) {
-            RPUniverse.getInstance().getLogger().severe("The job " + job.getName() + " is not ready to be added to the player " + playerUUID + " because it is missing the default requirements!");
+            List<String> reasons = job.isJobReady();
+            ErrorHandler.severe("The job " + job.getName() + " is not ready to be added to the player " + playerUUID + " because it is missing the default requirements: " + String.join(", ", reasons));
             return;
         }
 
         PlayerAddedToJobEvent event = new PlayerAddedToJobEvent(job, this.bindedPlayer);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) {
+            ErrorHandler.debug("PlayerAddedToJobEvent was cancelled for job: " + job.getName());
+            return;
+        }
 
         playerJobs.add(job);
         job.addPlayerToJob(UUID.fromString(playerUUID));
+        ErrorHandler.debug("Successfully added job: " + job.getName() + " to player: " + playerUUID);
+
         if(selectedPlayerJob == null) {
             selectedPlayerJob = job;
             RPUniverse.getInstance().getBossBarHandler().updateBossBar(bindedPlayer);
+            ErrorHandler.debug("Set job: " + job.getName() + " as selected job for player: " + playerUUID);
         }
     }
 
@@ -98,14 +117,26 @@ public class PlayerData {
      * @param job The job to be removed.
      */
     public void removeJob(Job job){
+        ErrorHandler.debug("Attempting to remove job: " + job.getName() + " from player: " + playerUUID);
+
         PlayerRemovedFromJobEvent event = new PlayerRemovedFromJobEvent(job, this.bindedPlayer);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) {
+            ErrorHandler.debug("PlayerRemovedFromJobEvent was cancelled for job: " + job.getName());
+            return;
+        }
 
         playerJobs.remove(job);
+        ErrorHandler.debug("Successfully removed job: " + job.getName() + " from player: " + playerUUID);
+
         if(selectedPlayerJob == job){
-            if(!playerJobs.isEmpty()) selectedPlayerJob = playerJobs.get(0);
-            else selectedPlayerJob = null;
+            if(!playerJobs.isEmpty()) {
+                selectedPlayerJob = playerJobs.get(0);
+                ErrorHandler.debug("Set new selected job: " + selectedPlayerJob.getName() + " for player: " + playerUUID);
+            } else {
+                selectedPlayerJob = null;
+                ErrorHandler.debug("Player: " + playerUUID + " has no more jobs, selected job set to null");
+            }
 
             RPUniverse.getInstance().getBossBarHandler().updateBossBar(bindedPlayer);
         }
@@ -118,16 +149,22 @@ public class PlayerData {
      */
     public void setSelectedPlayerJob(Job job){
         if (job == null) {
+            ErrorHandler.debug("Setting selected job to null for player: " + playerUUID);
             this.selectedPlayerJob = null;
             RPUniverse.getInstance().getBossBarHandler().updateBossBar(bindedPlayer);
             return;
         }
 
+        ErrorHandler.debug("Attempting to set selected job to: " + job.getName() + " for player: " + playerUUID);
+
         if(playerJobs.contains(job)) {
             this.selectedPlayerJob = job;
-
+            ErrorHandler.debug("Successfully set selected job to: " + job.getName() + " for player: " + playerUUID);
             RPUniverse.getInstance().getBossBarHandler().updateBossBar(bindedPlayer);
-        }else throw new IllegalArgumentException("The player does not have the job " + job.getName());
+        } else {
+            ErrorHandler.severe("Failed to set selected job: player does not have the job " + job.getName());
+            throw new IllegalArgumentException("The player does not have the job " + job.getName());
+        }
     }
 
     /**
@@ -258,13 +295,18 @@ public class PlayerData {
      * For each job in playerJobs, it retrieves the name of the job and adds it to playerJobNames.
      */
     public void prepareForSave(){
+        ErrorHandler.debug("Preparing PlayerData for save for player: " + playerUUID);
+
         playerUUID = getPlayerUUID().toString();
 
         selectedJobUUID = selectedPlayerJob == null ? null : selectedPlayerJob.getJobUUID().toString();
+        ErrorHandler.debug("Selected job UUID for save: " + selectedJobUUID);
 
         playerJobUUIDs = new ArrayList<>();
-        for(Job job : playerJobs)
+        for(Job job : playerJobs) {
             playerJobUUIDs.add(job.getJobUUID().toString());
+        }
+        ErrorHandler.debug("Saved " + playerJobUUIDs.size() + " job UUIDs for player: " + playerUUID);
     }
 
     /**
@@ -281,20 +323,41 @@ public class PlayerData {
      * For each jobName in playerJobNames, it retrieves the job object using the jobName and adds it to playerJobs.
      */
     public void loadAfterSave(){
-        if(Bukkit.getPlayer(playerUUID) != null) this.bindedPlayer = Bukkit.getPlayer(playerUUID);
-        else this.bindedOfflinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID));
+        ErrorHandler.debug("Loading PlayerData after save for player UUID: " + playerUUID);
 
-        if(selectedJobUUID != null)
-            selectedPlayerJob = Job.getJobByUUID(selectedJobUUID);
+        if(Bukkit.getPlayer(playerUUID) != null) {
+            this.bindedPlayer = Bukkit.getPlayer(playerUUID);
+            ErrorHandler.debug("Bound to online player: " + bindedPlayer.getName());
+        } else {
+            this.bindedOfflinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID));
+            ErrorHandler.debug("Bound to offline player: " + bindedOfflinePlayer.getName());
+        }
+
+        if(selectedJobUUID != null) {
+            try {
+                selectedPlayerJob = Job.getJobByUUID(selectedJobUUID);
+                ErrorHandler.debug("Loaded selected job: " + selectedPlayerJob.getName());
+            } catch (Exception e) {
+                ErrorHandler.severe("Failed to load selected job with UUID: " + selectedJobUUID, e);
+            }
+        }
 
         playerJobs = new ArrayList<>();
         if(playerJobUUIDs != null) {
             for (String jobUUID : playerJobUUIDs) {
-                playerJobs.add(Job.getJobByUUID(jobUUID));
+                try {
+                    Job job = Job.getJobByUUID(jobUUID);
+                    playerJobs.add(job);
+                    ErrorHandler.debug("Loaded job: " + job.getName() + " for player: " + playerUUID);
+                } catch (Exception e) {
+                    ErrorHandler.severe("Failed to load job with UUID: " + jobUUID, e);
+                }
             }
         }
+        ErrorHandler.debug("Loaded " + playerJobs.size() + " jobs for player: " + playerUUID);
 
         this.playerMode = PlayerMode.USER;
+        ErrorHandler.debug("Set player mode to USER for player: " + playerUUID);
     }
 
     /**
@@ -576,37 +639,66 @@ public class PlayerData {
      * @return true if the player can open the lock, false otherwise.
      */
     public boolean canOpenLock(Lock lock) {
+        ErrorHandler.debug("Checking if player can open lock for job: " + (lock.getJobName() != null ? lock.getJobName() : "none"));
+
         UUID playerUUID = getPlayerUUID();
         if (playerUUID == null) {
+            ErrorHandler.debug("Player UUID is null, cannot open lock");
             return false;
         }
 
         if (playerMode == PlayerMode.ADMIN) {
+            ErrorHandler.debug("Player is in ADMIN mode, can open lock");
             return true;
         }
 
         boolean accessibleProperty = false;
         try {
             accessibleProperty = RPUniverse.getInstance().getConfiguration().getBoolean("properties.unlockedByDefault");
+            ErrorHandler.debug("Properties unlocked by default: " + accessibleProperty);
         } catch (Exception e) {
-            RPUniverse.getInstance().getLogger().severe("Error when checking config for: properties.unlockedByDefault");
+            ErrorHandler.severe("Error when checking config for: properties.unlockedByDefault", e);
         }
+
         if (RPUniverse.getInstance().getPropertyManager().isExplorableByLock(lock)) {
+            ErrorHandler.debug("Lock is for an explorable property, access: " + accessibleProperty);
             return accessibleProperty;
         }
 
         if (lock.getOwners() != null && lock.getOwners().contains(playerUUID.toString())) {
+            ErrorHandler.debug("Player is an owner of the lock, access granted");
             return true;
         }
 
         if (lock.getJobName() != null && selectedPlayerJob != null && selectedPlayerJob.getName().equals(lock.getJobName())) {
+            ErrorHandler.debug("Lock is for job: " + lock.getJobName() + ", player's selected job matches");
+
             Position playerPos = selectedPlayerJob.getPlayerPosition(playerUUID);
-            
-            if(playerPos == null) return false;
-            if(playerPos.isBoss()) return true;
-            return playerPos.getWorkingStepPermissionLevel() >= lock.getMinWorkingLevel();
+
+            if(playerPos == null) {
+                ErrorHandler.debug("Player position in job is null, access denied");
+                return false;
+            }
+
+            if(playerPos.isBoss()) {
+                ErrorHandler.debug("Player is a boss in the job, access granted");
+                return true;
+            }
+
+            boolean hasAccess = playerPos.getWorkingStepPermissionLevel() >= lock.getMinWorkingLevel();
+            ErrorHandler.debug("Player working level: " + playerPos.getWorkingStepPermissionLevel() + 
+                              ", required level: " + lock.getMinWorkingLevel() + 
+                              ", access: " + hasAccess);
+            return hasAccess;
+        } else {
+            if (lock.getJobName() != null) {
+                ErrorHandler.debug("Lock is for job: " + lock.getJobName() + 
+                                  ", but player's selected job is " + 
+                                  (selectedPlayerJob == null ? "null" : selectedPlayerJob.getName()));
+            }
         }
 
+        ErrorHandler.debug("No access conditions met, access denied");
         return false;
     }
 }
