@@ -122,6 +122,7 @@ permissions:
         rpu.properties: true
         rpu.invoices.view.job: true
         rpu.invoices.delete.job: true
+        rpu.invoices.admin: true
   rpu.multiplejobs:
     description: Allows the player to have multiple jobs (if enabled in the config)
   rpu.me:
@@ -164,3 +165,27 @@ permissions:
     description: Allows the player to delete invoices for their job
   rpu.invoices.create:
     description: Allows the player to create invoices
+  rpu.invoices.admin:
+    description: Allows access to the invoice admin menu
+    children:
+      rpu.invoices.admin.view: true
+      rpu.invoices.admin.edit: true
+      rpu.invoices.admin.delete: true
+      rpu.invoices.admin.restore: true
+      rpu.invoices.admin.pay: true
+      rpu.invoices.admin.maintenance: true
+      rpu.invoices.admin.logs: true
+  rpu.invoices.admin.view:
+    description: Allows viewing all invoices in the system
+  rpu.invoices.admin.edit:
+    description: Allows editing invoices
+  rpu.invoices.admin.delete:
+    description: Allows deleting any invoice
+  rpu.invoices.admin.restore:
+    description: Allows restoring deleted invoices
+  rpu.invoices.admin.pay:
+    description: Allows force payment for invoices
+  rpu.invoices.admin.maintenance:
+    description: Allows access to invoice maintenance tools
+  rpu.invoices.admin.logs:
+    description: Allows viewing invoice system logs

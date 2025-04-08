@@ -547,4 +547,329 @@ public class InvoiceManager {
 
         return count;
     }
+
+    /**
+     * Force pays an invoice as an administrator.
+     * This marks the invoice as paid without requiring the target player to have the funds.
+     *
+     * @param invoice The invoice to force pay
+     * @param admin   The administrator forcing the payment
+     * @return true if the payment was successful, false otherwise
+     */
+    public boolean forcePayInvoice(Invoice invoice, Player admin) {
+        if (invoice == null || !invoice.isPending()) {
+            ErrorHandler.debug("Force pay invoice failed: invoice is null or not pending");
+            return false;
+        }
+
+        // Mark the invoice as paid
+        invoice.markAsPaid();
+        ErrorHandler.debug("Invoice force paid: ID=" + invoice.getId() + ", by admin=" + admin.getName());
+
+        // Log the admin action
+        logAdminAction(admin, "force_pay", invoice.getId());
+
+        // Schedule async save
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                saveData();
+            }
+        }.runTaskAsynchronously(plugin);
+
+        // Notify the creator if they're online
+        Player creatorPlayer = Bukkit.getPlayer(invoice.getCreator());
+        if (creatorPlayer != null && creatorPlayer.isOnline()) {
+            notifyInvoicePaid(creatorPlayer, invoice);
+        }
+
+        // Notify the target if they're online
+        Player targetPlayer = Bukkit.getPlayer(invoice.getTarget());
+        if (targetPlayer != null && targetPlayer.isOnline()) {
+            String message = InvoiceLanguage.getInstance().adminInvoiceForcePaidNotificationMessage;
+            message = message.replace("{id}", invoice.getId());
+            targetPlayer.sendMessage(FamiUtils.formatWithPrefix(message));
+        }
+
+        return true;
+    }
+
+    /**
+     * Restores a deleted invoice.
+     *
+     * @param invoice The invoice to restore
+     * @param admin   The administrator restoring the invoice
+     * @return true if the restoration was successful, false otherwise
+     */
+    public boolean restoreInvoice(Invoice invoice, Player admin) {
+        if (invoice == null || !invoice.isDeleted()) {
+            ErrorHandler.debug("Restore invoice failed: invoice is null or not deleted");
+            return false;
+        }
+
+        // Set the status back to pending
+        invoice.setStatus(Invoice.Status.PENDING);
+        ErrorHandler.debug("Invoice restored: ID=" + invoice.getId() + ", by admin=" + admin.getName());
+
+        // Log the admin action
+        logAdminAction(admin, "restore", invoice.getId());
+
+        // Schedule async save
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                saveData();
+            }
+        }.runTaskAsynchronously(plugin);
+
+        // Notify the target if they're online
+        Player targetPlayer = Bukkit.getPlayer(invoice.getTarget());
+        if (targetPlayer != null && targetPlayer.isOnline()) {
+            String message = InvoiceLanguage.getInstance().adminInvoiceRestoredNotificationMessage;
+            message = message.replace("{id}", invoice.getId());
+            targetPlayer.sendMessage(FamiUtils.formatWithPrefix(message));
+        }
+
+        return true;
+    }
+
+    /**
+     * Deletes multiple invoices at once.
+     *
+     * @param invoiceIds The IDs of the invoices to delete
+     * @param admin      The administrator deleting the invoices
+     * @return The number of invoices successfully deleted
+     */
+    public int bulkDeleteInvoices(List<String> invoiceIds, Player admin) {
+        if (invoiceIds == null || invoiceIds.isEmpty()) {
+            ErrorHandler.debug("Bulk delete invoices failed: invoice IDs list is null or empty");
+            return 0;
+        }
+
+        int count = 0;
+        for (String id : invoiceIds) {
+            Invoice invoice = getInvoice(id);
+            if (invoice != null && !invoice.isDeleted()) {
+                invoice.markAsDeleted();
+                logAdminAction(admin, "delete", id);
+                count++;
+
+                // Notify the target if they're online
+                Player targetPlayer = Bukkit.getPlayer(invoice.getTarget());
+                if (targetPlayer != null && targetPlayer.isOnline()) {
+                    String message = InvoiceLanguage.getInstance().adminInvoiceDeletedNotificationMessage;
+                    message = message.replace("{id}", invoice.getId());
+                    targetPlayer.sendMessage(FamiUtils.formatWithPrefix(message));
+                }
+            }
+        }
+
+        if (count > 0) {
+            ErrorHandler.debug("Bulk deleted " + count + " invoices by admin=" + admin.getName());
+
+            // Schedule async save
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    saveData();
+                }
+            }.runTaskAsynchronously(plugin);
+        }
+
+        return count;
+    }
+
+    /**
+     * Force pays multiple invoices at once.
+     *
+     * @param invoiceIds The IDs of the invoices to force pay
+     * @param admin      The administrator forcing the payments
+     * @return The number of invoices successfully paid
+     */
+    public int bulkForcePayInvoices(List<String> invoiceIds, Player admin) {
+        if (invoiceIds == null || invoiceIds.isEmpty()) {
+            ErrorHandler.debug("Bulk force pay invoices failed: invoice IDs list is null or empty");
+            return 0;
+        }
+
+        int count = 0;
+        for (String id : invoiceIds) {
+            Invoice invoice = getInvoice(id);
+            if (invoice != null && invoice.isPending()) {
+                invoice.markAsPaid();
+                logAdminAction(admin, "force_pay", id);
+                count++;
+
+                // Notify the creator if they're online
+                Player creatorPlayer = Bukkit.getPlayer(invoice.getCreator());
+                if (creatorPlayer != null && creatorPlayer.isOnline()) {
+                    notifyInvoicePaid(creatorPlayer, invoice);
+                }
+
+                // Notify the target if they're online
+                Player targetPlayer = Bukkit.getPlayer(invoice.getTarget());
+                if (targetPlayer != null && targetPlayer.isOnline()) {
+                    String message = InvoiceLanguage.getInstance().adminInvoiceForcePaidNotificationMessage;
+                    message = message.replace("{id}", invoice.getId());
+                    targetPlayer.sendMessage(FamiUtils.formatWithPrefix(message));
+                }
+            }
+        }
+
+        if (count > 0) {
+            ErrorHandler.debug("Bulk force paid " + count + " invoices by admin=" + admin.getName());
+
+            // Schedule async save
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    saveData();
+                }
+            }.runTaskAsynchronously(plugin);
+        }
+
+        return count;
+    }
+
+    /**
+     * Logs an administrative action.
+     *
+     * @param admin     The administrator who performed the action
+     * @param action    The action performed (e.g., "edit", "delete", "restore", "force_pay")
+     * @param invoiceId The ID of the invoice the action was performed on
+     */
+    public void logAdminAction(Player admin, String action, String invoiceId) {
+        ErrorHandler.info("Admin action: " + admin.getName() + " performed " + action + " on invoice " + invoiceId);
+
+        // Notify online admins with the appropriate permission
+        String message = InvoiceLanguage.getInstance().adminActionLoggedMessage;
+        message = message.replace("{action}", action)
+                .replace("{admin}", admin.getName())
+                .replace("{id}", invoiceId);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasPermission("rpu.invoices.admin.logs")) {
+                player.sendMessage(FamiUtils.formatWithPrefix(message));
+            }
+        }
+    }
+
+    /**
+     * Creates a manual backup of the invoice data.
+     *
+     * @param admin The administrator creating the backup
+     * @return The name of the backup file, or null if the backup failed
+     */
+    public String createDataBackup(Player admin) {
+        try {
+            String backupFileName = "invoices_backup_" + System.currentTimeMillis() + ".json";
+            File backupFile = new File(plugin.getDataFolder(), backupFileName);
+
+            // Save current data to the backup file
+            try (FileWriter writer = new FileWriter(backupFile)) {
+                List<Invoice> invoiceList = new ArrayList<>(invoices.values());
+                gson.toJson(invoiceList, writer);
+            }
+
+            ErrorHandler.info("Manual backup created by " + admin.getName() + ": " + backupFileName);
+            logAdminAction(admin, "create_backup", "N/A");
+
+            return backupFileName;
+        } catch (IOException e) {
+            ErrorHandler.severe("Failed to create manual backup", e);
+            return null;
+        }
+    }
+
+    /**
+     * Restores invoice data from a backup file.
+     *
+     * @param backupFileName The name of the backup file to restore from
+     * @param admin          The administrator performing the restoration
+     * @return true if the restoration was successful, false otherwise
+     */
+    public boolean restoreFromBackup(String backupFileName, Player admin) {
+        File backupFile = new File(plugin.getDataFolder(), backupFileName);
+        if (!backupFile.exists()) {
+            ErrorHandler.debug("Restore from backup failed: backup file does not exist: " + backupFileName);
+            return false;
+        }
+
+        try (FileReader reader = new FileReader(backupFile)) {
+            Type type = new TypeToken<List<Invoice>>() {
+            }.getType();
+            List<Invoice> loadedInvoices = gson.fromJson(reader, type);
+
+            if (loadedInvoices != null) {
+                // Create a backup of the current data before restoring
+                createDataBackup(admin);
+
+                // Clear current invoices and load from backup
+                invoices.clear();
+                for (Invoice invoice : loadedInvoices) {
+                    invoices.put(invoice.getId(), invoice);
+                }
+
+                // Save the restored data
+                saveData();
+
+                ErrorHandler.info("Data restored from backup by " + admin.getName() + ": " + backupFileName);
+                logAdminAction(admin, "restore_from_backup", backupFileName);
+
+                return true;
+            } else {
+                ErrorHandler.debug("Restore from backup failed: no invoices found in backup file: " + backupFileName);
+                return false;
+            }
+        } catch (IOException | com.google.gson.JsonSyntaxException e) {
+            ErrorHandler.severe("Failed to restore from backup: " + backupFileName, e);
+            return false;
+        }
+    }
+
+    /**
+     * Clears old or invalid invoices from the system.
+     *
+     * @param daysOld The minimum age in days for invoices to be considered old
+     * @param admin   The administrator performing the cleanup
+     * @return The number of invoices cleared
+     */
+    public int clearOldInvoices(int daysOld, Player admin) {
+        if (daysOld <= 0) {
+            ErrorHandler.debug("Clear old invoices failed: daysOld must be positive");
+            return 0;
+        }
+
+        // Calculate the cutoff date
+        long cutoffTime = System.currentTimeMillis() - (daysOld * 24 * 60 * 60 * 1000L);
+        Date cutoffDate = new Date(cutoffTime);
+
+        // Get all old invoices
+        List<String> invoiceIdsToRemove = invoices.values().stream()
+                .filter(invoice -> invoice.getCreationDate().before(cutoffDate))
+                .map(Invoice::getId)
+                .collect(Collectors.toList());
+
+        // Remove the invoices from the map
+        int count = 0;
+        for (String id : invoiceIdsToRemove) {
+            invoices.remove(id);
+            count++;
+        }
+
+        if (count > 0) {
+            ErrorHandler.info("Cleared " + count + " old invoices (older than " + daysOld + " days) by admin=" + admin.getName());
+            logAdminAction(admin, "clear_old_invoices", "count=" + count);
+
+            // Schedule async save
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    saveData();
+                }
+            }.runTaskAsynchronously(plugin);
+        }
+
+        return count;
+    }
 }

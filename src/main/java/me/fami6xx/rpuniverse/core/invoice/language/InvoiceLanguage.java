@@ -6,7 +6,7 @@ import me.fami6xx.rpuniverse.core.misc.language.AbstractAddonLanguage;
  * Language class for the invoice system.
  * <p>
  * This class provides localized messages for the invoice system, including
- * invoice creation, menu, action, and notification messages.
+ * invoice creation, menu, action, notification, and admin messages.
  */
 public class InvoiceLanguage extends AbstractAddonLanguage {
 
@@ -77,6 +77,84 @@ public class InvoiceLanguage extends AbstractAddonLanguage {
     public String errorPlayerNotFoundMessage = "&cPlayer not found";
     public String errorOpeningMenuMessage = "&cAn error occurred while opening the invoice menu";
     public String errorCreatingInvoiceMessage = "&cAn error occurred while creating the invoice";
+
+    // Admin menu messages
+    public String adminMenuTitle = "&6Invoice Admin Menu";
+    public String adminInvoiceManagementTitle = "&6Invoice Management";
+    public String adminSystemSettingsTitle = "&6System Settings";
+    public String adminMaintenanceToolsTitle = "&6Maintenance Tools";
+
+    // Admin menu buttons
+    public String adminInvoiceManagementButtonName = "&aInvoice Management";
+    public String adminInvoiceManagementButtonDescription = "&7View and manage all invoices";
+    public String adminSystemSettingsButtonName = "&aSystem Settings";
+    public String adminSystemSettingsButtonDescription = "&7Configure invoice system settings";
+    public String adminMaintenanceToolsButtonName = "&aMaintenanceTools";
+    public String adminMaintenanceToolsButtonDescription = "&7Access maintenance and troubleshooting tools";
+
+    // Admin invoice management messages
+    public String adminViewAllInvoicesButtonName = "&aView All Invoices";
+    public String adminViewAllInvoicesButtonDescription = "&7View all invoices in the system";
+    public String adminSortByDateButtonName = "&aSort by Date";
+    public String adminSortByAmountButtonName = "&aSort by Amount";
+    public String adminSortByStatusButtonName = "&aSort by Status";
+    public String adminSortByCreatorButtonName = "&aSort by Creator";
+    public String adminSortByRecipientButtonName = "&aSort by Recipient";
+    public String adminFilterByStatusButtonName = "&aFilter by Status";
+    public String adminFilterByJobButtonName = "&aFilter by Job";
+    public String adminFilterByPlayerButtonName = "&aFilter by Player";
+    public String adminFilterByDateRangeButtonName = "&aFilter by Date Range";
+    public String adminFilterByAmountRangeButtonName = "&aFilter by Amount Range";
+
+    // Admin invoice action messages
+    public String adminInvoiceEditButtonName = "&aEdit Invoice";
+    public String adminInvoiceEditButtonDescription = "&7Edit this invoice's details";
+    public String adminInvoiceDeleteButtonName = "&cDelete Invoice";
+    public String adminInvoiceDeleteButtonDescription = "&7Delete this invoice";
+    public String adminInvoiceRestoreButtonName = "&aRestore Invoice";
+    public String adminInvoiceRestoreButtonDescription = "&7Restore this deleted invoice";
+    public String adminInvoiceForcePayButtonName = "&aForce Payment";
+    public String adminInvoiceForcePayButtonDescription = "&7Force payment for this invoice";
+
+    // Admin system settings messages
+    public String adminJobIntegrationSettingsButtonName = "&aJob Integration Settings";
+    public String adminJobIntegrationSettingsButtonDescription = "&7Configure which jobs can create invoices";
+
+    // Admin maintenance tools messages
+    public String adminDataBackupButtonName = "&aManual Data Backup";
+    public String adminDataBackupButtonDescription = "&7Create a manual backup of invoice data";
+    public String adminDataRestoreButtonName = "&aRestore from Backup";
+    public String adminDataRestoreButtonDescription = "&7Restore invoice data from a backup";
+    public String adminClearOldInvoicesButtonName = "&cClear Old Invoices";
+    public String adminClearOldInvoicesButtonDescription = "&7Delete old or invalid invoices";
+    public String adminNotificationSystemButtonName = "&aNotification System";
+    public String adminNotificationSystemButtonDescription = "&7Configure notification settings";
+
+    // Admin action result messages
+    public String adminInvoiceEditedMessage = "&aInvoice #{id} has been edited successfully";
+    public String adminInvoiceDeletedMessage = "&aInvoice #{id} has been deleted successfully";
+    public String adminInvoiceRestoredMessage = "&aInvoice #{id} has been restored successfully";
+    public String adminInvoiceForcePaidMessage = "&aInvoice #{id} has been force paid successfully";
+    public String adminDataBackupCreatedMessage = "&aData backup created successfully";
+    public String adminDataRestoredMessage = "&aData restored successfully from backup";
+    public String adminOldInvoicesClearedMessage = "&a{count} old invoices have been cleared";
+
+    // Admin error messages
+    public String adminErrorInvalidInvoiceIdMessage = "&cInvalid invoice ID";
+    public String adminErrorCannotEditPaidInvoiceMessage = "&cCannot edit a paid invoice";
+    public String adminErrorCannotRestoreNonDeletedInvoiceMessage = "&cCannot restore a non-deleted invoice";
+    public String adminErrorCannotForcePayPaidInvoiceMessage = "&cCannot force payment for an already paid invoice";
+    public String adminErrorNoBackupsFoundMessage = "&cNo backups found";
+    public String adminErrorBackupFailedMessage = "&cBackup creation failed";
+    public String adminErrorRestoreFailedMessage = "&cRestore operation failed";
+    public String adminErrorClearFailedMessage = "&cFailed to clear old invoices";
+
+    // Admin notification messages
+    public String adminActionLoggedMessage = "&aAdmin action logged: {action} by {admin}";
+    public String adminInvoiceEditedNotificationMessage = "&aYour invoice #{id} has been edited by an administrator";
+    public String adminInvoiceDeletedNotificationMessage = "&cYour invoice #{id} has been deleted by an administrator";
+    public String adminInvoiceRestoredNotificationMessage = "&aYour invoice #{id} has been restored by an administrator";
+    public String adminInvoiceForcePaidNotificationMessage = "&aYour invoice #{id} has been force paid by an administrator";
 
     // Create a singleton instance
     private static InvoiceLanguage instance;
