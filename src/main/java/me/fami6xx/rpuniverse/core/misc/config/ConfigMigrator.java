@@ -20,7 +20,7 @@ import java.util.Map;
 public class ConfigMigrator {
 
     // The current config version
-    private static final int CURRENT_CONFIG_VERSION = 8;
+    private static final int CURRENT_CONFIG_VERSION = 9;
 
     // Map of migration handlers for each version
     private static final Map<Integer, MigrationHandler> migrationHandlers = new HashMap<>();
@@ -31,6 +31,7 @@ public class ConfigMigrator {
         migrationHandlers.put(5, ConfigMigrator::migrateFromV5ToV6);
         migrationHandlers.put(6, ConfigMigrator::migrateFromV6ToV7);
         migrationHandlers.put(7, ConfigMigrator::migrateFromV7ToV8);
+        migrationHandlers.put(8, ConfigMigrator::migrateFromV8ToV9);
     }
 
     /**
@@ -241,6 +242,28 @@ public class ConfigMigrator {
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Error during migration from v7 to v8", e);
+            return false;
+        }
+    }
+
+    /**
+     * Migrates configuration from version 8 to version 9.
+     * 
+     * @param config The configuration to migrate
+     * @return true if migration was successful, false otherwise
+     */
+    private static boolean migrateFromV8ToV9(FileConfiguration config) {
+        try {
+            // Add new fields introduced in version 9
+
+            // Add enableDistanceCheck field to Invoices module if it doesn't exist
+            if (!config.contains("modules.Invoices.enableDistanceCheck")) {
+                config.set("modules.Invoices.enableDistanceCheck", true);
+            }
+
+            return true;
+        } catch (Exception e) {
+            ErrorHandler.severe("Error during migration from v8 to v9", e);
             return false;
         }
     }
