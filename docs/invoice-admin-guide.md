@@ -186,15 +186,6 @@ For servers with high invoice volume:
 
 ### Diagnostic Tools
 
-#### Console Commands
-
-Use these commands to diagnose issues:
-
-```
-/invoices debug
-```
-Enables debug mode for the invoice system, providing detailed logs.
-
 #### Log Analysis
 
 Look for these patterns in logs:

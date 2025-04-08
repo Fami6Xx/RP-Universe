@@ -80,15 +80,19 @@ Key features of the invoice system include:
 
 The typical workflow in the invoice system follows these steps:
 
-1. **Invoice Creation**: A player in a job uses `/createinvoice <JOB> <PLAYER> <AMOUNT>` to create an invoice
-2. **Distance Check**: The system verifies that the target player is within the configured distance
-3. **Visibility Check**: The system verifies that the creator can see the target player
-4. **Job Verification**: The system verifies that the creator is in the specified job
-5. **Invoice Storage**: The invoice is created and stored in the system
-6. **Notification**: The target player is notified about the new invoice
-7. **Invoice Viewing**: Players can view their invoices using the `/invoices` command
-8. **Invoice Management**: Players can pay or delete invoices through the menu
-9. **Data Persistence**: All changes are saved to the data file
+1. **Invoice Creation**: A player in a job uses `/createinvoice <PLAYER> <AMOUNT>` to create an invoice using their currently selected job
+2. **Argument Validation**: The system verifies that the correct number of arguments is provided
+3. **Target Verification**: The system verifies that the target player exists and is not the creator themselves
+4. **Amount Validation**: The system validates that the amount is positive and checks for decimals (if configured)
+5. **World Check**: The system verifies that the players are in the same world
+6. **Distance Check**: The system verifies that the target player is within the configured distance
+7. **Visibility Check**: The system verifies that the creator can see the target player (if configured)
+8. **Job Verification**: The system verifies that the creator is in a job (using their currently selected job)
+9. **Invoice Storage**: The invoice is created and stored in the system
+10. **Notification**: The target player is notified about the new invoice
+11. **Invoice Viewing**: Players can view their invoices using the `/invoices` command
+12. **Invoice Management**: Players can pay or delete invoices through the menu
+13. **Data Persistence**: All changes are saved to the data file
 
 ## Configuration Options
 
@@ -128,15 +132,16 @@ Configuration options include:
 ### Commands
 
 - `/invoices [received|created|job]` - Open the invoice menu with optional filter
-- `/createinvoice <JOB> <PLAYER> <AMOUNT>` - Create a new invoice
+- `/createinvoice <PLAYER> <AMOUNT>` - Create a new invoice using your currently selected job
 
 ### Permissions
 
-- `rpu.invoices.use` - Allows using the invoice system
-- `rpu.invoices.create` - Allows creating invoices
-- `rpu.invoices.delete.own` - Allows deleting own invoices
-- `rpu.invoices.delete.job` - Allows job bosses to delete job invoices
-- `rpu.invoices.view.job` - Allows job bosses to view all job invoices
+- `rpu.invoices.view` - Allows using the invoice menu via the `/invoices` command
+- `rpu.invoices.create` - Allows creating invoices via the `/createinvoice` command
+- `rpu.invoices.delete.job` - Allows job bosses to delete any invoice from their job
+- `rpu.invoices.view.job` - Allows job bosses to view all invoices for their job
+
+Note: Players can always delete invoices they created themselves without needing a special permission.
 
 ## Integration with Other Systems
 
@@ -175,14 +180,17 @@ The invoice system uses GSON for data persistence. Invoices are stored in a JSON
 
 When a player creates an invoice:
 
-1. The system verifies that the player is in the specified job
-2. The system checks that the target player is within the configured distance
-3. The system verifies that the creator can see the target player (if configured)
-4. The system validates the amount (checking for decimals if configured)
-5. A new `Invoice` object is created with a unique ID
-6. The invoice is added to the `InvoiceManager`
-7. The target player is notified about the new invoice
-8. The invoice data is saved to the data file
+1. The system verifies that the player is in a job (using their currently selected job)
+2. The system verifies that the correct number of arguments is provided
+3. The system verifies that the target player exists and is not the creator themselves
+4. The system validates that the amount is positive and checks for decimals (if configured)
+5. The system verifies that the players are in the same world
+6. The system checks that the target player is within the configured distance
+7. The system verifies that the creator can see the target player (if configured)
+8. A new `Invoice` object is created with a unique ID
+9. The invoice is added to the `InvoiceManager`
+10. The target player is notified about the new invoice
+11. The invoice data is saved to the data file
 
 ### Invoice Menu
 
@@ -235,35 +243,35 @@ public class InvoiceLanguage extends AbstractAddonLanguage {
     public String invoiceReceivedMessage = "&aYou have received an invoice from {job} for {amount}{currency}";
     public String errorPlayerTooFarMessage = "&cPlayer is too far away to create an invoice";
     public String errorPlayerNotVisibleMessage = "&cYou must be able to see the player to create an invoice";
-    public String errorNotInJobMessage = "&cYou are not in the specified job";
+    public String errorNotInJobMessage = "&cYou must be in a job to create an invoice";
     public String errorInvalidAmountMessage = "&cInvalid amount. Please enter a valid number";
-    
+
     // Invoice menu messages
     public String invoiceMenuTitle = "Invoices";
     public String noInvoicesMessage = "&cYou have no invoices";
     public String receivedFilterButtonName = "&aReceived Invoices";
     public String createdFilterButtonName = "&aCreated Invoices";
     public String jobFilterButtonName = "&aJob Invoices";
-    
+
     // Invoice action messages
     public String invoicePaidMessage = "&aInvoice paid successfully";
     public String invoiceDeletedMessage = "&aInvoice deleted successfully";
     public String errorNotEnoughMoneyMessage = "&cYou don't have enough money to pay this invoice";
     public String errorNoPermissionToDeleteMessage = "&cYou don't have permission to delete this invoice";
-    
+
     // Notification messages
     public String pendingInvoicesJoinMessage = "&aYou have {count} pending invoices. Use /invoices to view them";
-    
+
     // Create a singleton instance
     private static InvoiceLanguage instance;
-    
+
     public static InvoiceLanguage getInstance() {
         if (instance == null) {
             instance = AbstractAddonLanguage.create(InvoiceLanguage.class);
         }
         return instance;
     }
-    
+
     // Constructor
     public InvoiceLanguage() {
         // Call initLanguage() to register translations
