@@ -86,9 +86,17 @@ commands:
     description: Opens the properties menu
     usage: /<command>
     aliases: [property, propertymenu]
+  invoices:
+    description: Opens the invoice menu
+    usage: /<command> [received|created|job]
+    permission: rpu.invoices.view
+  createinvoice:
+    description: Creates an invoice for another player
+    usage: /<command> <player> <amount>
+    permission: rpu.invoices.create
 permissions:
   rpu.user:
-    description: Gives access to all user commands (me, do, doc, try, status, globalooc, pay)
+    description: Gives access to all user commands (me, do, doc, try, status, globalooc, pay, invoices)
     children:
         rpu.me: true
         rpu.do: true
@@ -98,6 +106,8 @@ permissions:
         rpu.doc: true
         rpu.try: true
         rpu.pay: true
+        rpu.invoices.view: true
+        rpu.invoices.create: true
   rpu.admin:
     description: Gives access to all admin commands
     children:
@@ -110,6 +120,8 @@ permissions:
         rpu.user: true
         rpu.core.command: true
         rpu.properties: true
+        rpu.invoices.view.job: true
+        rpu.invoices.delete.job: true
   rpu.multiplejobs:
     description: Allows the player to have multiple jobs (if enabled in the config)
   rpu.me:
@@ -144,3 +156,11 @@ permissions:
     description: Allows the player to use the /properties command
   rpu.pay:
     description: Allows the player to use the /pay command
+  rpu.invoices.view:
+    description: Allows the player to view their invoices
+  rpu.invoices.view.job:
+    description: Allows the player to view all invoices for their job
+  rpu.invoices.delete.job:
+    description: Allows the player to delete invoices for their job
+  rpu.invoices.create:
+    description: Allows the player to create invoices

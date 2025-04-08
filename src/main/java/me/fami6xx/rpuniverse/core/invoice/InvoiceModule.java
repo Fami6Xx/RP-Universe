@@ -20,16 +20,16 @@ import me.fami6xx.rpuniverse.core.modules.AbstractModule;
  * - Data persistence using GSON
  */
 public class InvoiceModule extends AbstractModule {
-    
+
     private InvoiceManager manager;
-    
+
     @Override
     public boolean initialize(RPUniverse plugin) {
         boolean result = super.initialize(plugin);
         if (!result) {
             return false;
         }
-        
+
         try {
             // Initialize the invoice manager
             this.manager = new InvoiceManager(this);
@@ -39,7 +39,7 @@ public class InvoiceModule extends AbstractModule {
             return false;
         }
     }
-    
+
     @Override
     public boolean enable() {
         try {
@@ -48,15 +48,16 @@ public class InvoiceModule extends AbstractModule {
                 ErrorHandler.debug("InvoiceModule is disabled in configuration");
                 return false;
             }
-            
+
             // Initialize the manager
             this.manager.initialize(getPlugin());
-            
+
             // Register commands
-            // Note: These command classes will need to be implemented
-            // getPlugin().getCommand("invoices").setExecutor(new InvoiceCommand(this));
-            // getPlugin().getCommand("createinvoice").setExecutor(new CreateInvoiceCommand(this));
-            
+            getPlugin().getCommand("invoices").setExecutor(new me.fami6xx.rpuniverse.core.invoice.commands.InvoiceCommand(this));
+            getPlugin().getCommand("invoices").setTabCompleter(new me.fami6xx.rpuniverse.core.invoice.commands.InvoiceCommandTabCompleter());
+            getPlugin().getCommand("createinvoice").setExecutor(new me.fami6xx.rpuniverse.core.invoice.commands.CreateInvoiceCommand(this));
+            getPlugin().getCommand("createinvoice").setTabCompleter(new me.fami6xx.rpuniverse.core.invoice.commands.CreateInvoiceCommandTabCompleter());
+
             // Set up periodic data saving
             int saveInterval = getConfigInt("saveInterval", 5);
             if (saveInterval > 0) {
@@ -67,7 +68,7 @@ public class InvoiceModule extends AbstractModule {
                     saveInterval * 1200L
                 );
             }
-            
+
             ErrorHandler.debug("InvoiceModule enabled");
             return true;
         } catch (Exception e) {
@@ -75,7 +76,7 @@ public class InvoiceModule extends AbstractModule {
             return false;
         }
     }
-    
+
     @Override
     public boolean disable() {
         try {
@@ -84,7 +85,7 @@ public class InvoiceModule extends AbstractModule {
                 manager.saveData();
                 manager.shutdown();
             }
-            
+
             ErrorHandler.debug("InvoiceModule disabled");
             return true;
         } catch (Exception e) {
@@ -92,27 +93,27 @@ public class InvoiceModule extends AbstractModule {
             return false;
         }
     }
-    
+
     @Override
     public String getName() {
         return "Invoices";
     }
-    
+
     @Override
     public String getDescription() {
         return "Provides a comprehensive framework for creating, managing, and tracking invoices between players";
     }
-    
+
     @Override
     public String getVersion() {
         return "1.0.0";
     }
-    
+
     @Override
     public String getAuthor() {
         return "Fami6Xx";
     }
-    
+
     /**
      * Gets the InvoiceManager instance.
      * 
@@ -121,7 +122,7 @@ public class InvoiceModule extends AbstractModule {
     public InvoiceManager getManager() {
         return manager;
     }
-    
+
     /**
      * Checks if the distance requirement is enabled in the configuration.
      * 
@@ -130,7 +131,7 @@ public class InvoiceModule extends AbstractModule {
     public boolean isDistanceCheckEnabled() {
         return getConfigBoolean("mustSeePlayer", true);
     }
-    
+
     /**
      * Gets the maximum distance between players for the invoice creation to be allowed.
      * 
@@ -139,7 +140,7 @@ public class InvoiceModule extends AbstractModule {
     public double getMaxDistance() {
         return getConfigDouble("maxDistance", 5.0);
     }
-    
+
     /**
      * Checks if the line-of-sight requirement is enabled in the configuration.
      * 
@@ -148,7 +149,7 @@ public class InvoiceModule extends AbstractModule {
     public boolean isMustSeePlayerEnabled() {
         return getConfigBoolean("mustSeePlayer", true);
     }
-    
+
     /**
      * Gets the default currency symbol to use.
      * 
@@ -157,7 +158,7 @@ public class InvoiceModule extends AbstractModule {
     public String getDefaultCurrency() {
         return getConfigString("defaultCurrency", "$");
     }
-    
+
     /**
      * Checks if decimal amounts are allowed in invoices.
      * 
@@ -166,7 +167,7 @@ public class InvoiceModule extends AbstractModule {
     public boolean isDecimalAmountAllowed() {
         return getConfigBoolean("allowDecimal", true);
     }
-    
+
     /**
      * Checks if players should be notified about pending invoices when they join.
      * 

@@ -31,7 +31,7 @@ This document contains a comprehensive list of tasks required to implement the R
    - Create action buttons (pay, delete)
    - Implement status indicators
 
-[ ] Create command classes
+[x] Create command classes
    - Implement `InvoiceCommand` for opening the menu
    - Implement `CreateInvoiceCommand` for creating invoices
    - Create an auto complete for the commands
@@ -40,7 +40,7 @@ This document contains a comprehensive list of tasks required to implement the R
 
 ## Integration Tasks
 
-[ ] Get all the permissions
+[x] Get all the permissions
    - Check all the files in `me.fami6xx.rpuniverse.core.invoice`
    - Add permissions to the `plugin.yml` file
 
