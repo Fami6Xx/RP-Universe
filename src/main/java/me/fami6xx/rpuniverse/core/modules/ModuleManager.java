@@ -278,4 +278,23 @@ public class ModuleManager {
         Module module = getModule(name);
         return module != null && module.isEnabled();
     }
+
+    /**
+     * Saves the data of all enabled modules.
+     * <p>
+     * This should be called during plugin shutdown or when saving module data is required.
+     * <p>
+     * It is also called by the DataSystem periodically to save data.
+     */
+    public void saveModulesData() {
+        for (Module module : modules.values()) {
+            if (!module.isEnabled()) continue;
+
+            try {
+                module.saveData();
+            } catch (Exception e) {
+                ErrorHandler.severe("Error saving data for module: " + module.getName(), e);
+            }
+        }
+    }
 }

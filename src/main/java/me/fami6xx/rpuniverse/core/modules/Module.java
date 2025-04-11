@@ -123,4 +123,11 @@ public interface Module {
      * @param config The configuration section for this module
      */
     void setConfig(ConfigurationSection config);
+
+    /**
+     * Saves the module's data.
+     * <p>
+     * This function is triggered by the DataSystem class every set period.
+     */
+    void saveData();
 }

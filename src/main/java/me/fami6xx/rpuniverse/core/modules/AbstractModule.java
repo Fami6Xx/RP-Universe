@@ -14,17 +14,17 @@ import org.bukkit.configuration.ConfigurationSection;
  * Extend this class to create a new module with minimal boilerplate code.
  */
 public abstract class AbstractModule implements Module {
-    
+
     private RPUniverse plugin;
     private ConfigurationSection config;
     private boolean enabled = false;
-    
+
     @Override
     public boolean initialize(RPUniverse plugin) {
         this.plugin = plugin;
         return true;
     }
-    
+
     @Override
     public boolean shutdown() {
         if (isEnabled()) {
@@ -32,37 +32,37 @@ public abstract class AbstractModule implements Module {
         }
         return true;
     }
-    
+
     @Override
     public ConfigurationSection getConfig() {
         return config;
     }
-    
+
     @Override
     public boolean isEnabled() {
         return enabled;
     }
-    
+
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public RPUniverse getPlugin() {
         return plugin;
     }
-    
+
     @Override
     public void setPlugin(RPUniverse plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public void setConfig(ConfigurationSection config) {
         this.config = config;
     }
-    
+
     /**
      * Gets a configuration value with a default fallback.
      * 
@@ -76,12 +76,12 @@ public abstract class AbstractModule implements Module {
             ErrorHandler.warning("Module " + getName() + " tried to access config before it was set");
             return defaultValue;
         }
-        
+
         Object value = config.get(path);
         if (value == null) {
             return defaultValue;
         }
-        
+
         try {
             @SuppressWarnings("unchecked")
             T typedValue = (T) value;
@@ -91,7 +91,7 @@ public abstract class AbstractModule implements Module {
             return defaultValue;
         }
     }
-    
+
     /**
      * Gets a boolean configuration value with a default fallback.
      * 
@@ -104,10 +104,10 @@ public abstract class AbstractModule implements Module {
             ErrorHandler.warning("Module " + getName() + " tried to access config before it was set");
             return defaultValue;
         }
-        
+
         return config.getBoolean(path, defaultValue);
     }
-    
+
     /**
      * Gets a string configuration value with a default fallback.
      * 
@@ -120,10 +120,10 @@ public abstract class AbstractModule implements Module {
             ErrorHandler.warning("Module " + getName() + " tried to access config before it was set");
             return defaultValue;
         }
-        
+
         return config.getString(path, defaultValue);
     }
-    
+
     /**
      * Gets an integer configuration value with a default fallback.
      * 
@@ -136,10 +136,10 @@ public abstract class AbstractModule implements Module {
             ErrorHandler.warning("Module " + getName() + " tried to access config before it was set");
             return defaultValue;
         }
-        
+
         return config.getInt(path, defaultValue);
     }
-    
+
     /**
      * Gets a double configuration value with a default fallback.
      * 
@@ -152,10 +152,10 @@ public abstract class AbstractModule implements Module {
             ErrorHandler.warning("Module " + getName() + " tried to access config before it was set");
             return defaultValue;
         }
-        
+
         return config.getDouble(path, defaultValue);
     }
-    
+
     /**
      * Gets a long configuration value with a default fallback.
      * 
@@ -168,10 +168,10 @@ public abstract class AbstractModule implements Module {
             ErrorHandler.warning("Module " + getName() + " tried to access config before it was set");
             return defaultValue;
         }
-        
+
         return config.getLong(path, defaultValue);
     }
-    
+
     /**
      * Gets a configuration section with a default fallback.
      * 
@@ -183,7 +183,20 @@ public abstract class AbstractModule implements Module {
             ErrorHandler.warning("Module " + getName() + " tried to access config before it was set");
             return null;
         }
-        
+
         return config.getConfigurationSection(path);
+    }
+
+    @Override
+    public void saveData() {
+        // Default implementation - can be overridden by specific modules
+        if (config != null && plugin != null) {
+            try {
+                // Save the module's configuration if it exists
+                plugin.saveConfig();
+            } catch (Exception e) {
+                ErrorHandler.warning("Failed to save data for module " + getName() + ": " + e.getMessage());
+            }
+        }
     }
 }

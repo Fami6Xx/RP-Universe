@@ -14,16 +14,16 @@ import me.fami6xx.rpuniverse.core.modules.AbstractModule;
  * It wraps the existing BasicNeedsHandler and provides a module interface for it.
  */
 public class BasicNeedsModule extends AbstractModule {
-    
+
     private BasicNeedsHandler handler;
-    
+
     @Override
     public boolean initialize(RPUniverse plugin) {
         boolean result = super.initialize(plugin);
         if (!result) {
             return false;
         }
-        
+
         try {
             this.handler = new BasicNeedsHandler();
             return true;
@@ -32,7 +32,7 @@ public class BasicNeedsModule extends AbstractModule {
             return false;
         }
     }
-    
+
     @Override
     public boolean enable() {
         try {
@@ -41,15 +41,15 @@ public class BasicNeedsModule extends AbstractModule {
                 ErrorHandler.debug("BasicNeedsModule is disabled in configuration");
                 return false;
             }
-            
+
             // Initialize the handler
             this.handler.initialize(getPlugin());
-            
+
             // Register commands
             getPlugin().getCommand("consumables").setExecutor(new ConsumablesCommand());
             getPlugin().getCommand("poop").setExecutor(new PoopCommand());
             getPlugin().getCommand("pee").setExecutor(new PeeCommand());
-            
+
             ErrorHandler.debug("BasicNeedsModule enabled");
             return true;
         } catch (Exception e) {
@@ -57,14 +57,14 @@ public class BasicNeedsModule extends AbstractModule {
             return false;
         }
     }
-    
+
     @Override
     public boolean disable() {
         try {
             if (handler != null) {
                 handler.shutdown();
             }
-            
+
             ErrorHandler.debug("BasicNeedsModule disabled");
             return true;
         } catch (Exception e) {
@@ -72,27 +72,27 @@ public class BasicNeedsModule extends AbstractModule {
             return false;
         }
     }
-    
+
     @Override
     public String getName() {
         return "BasicNeeds";
     }
-    
+
     @Override
     public String getDescription() {
         return "Provides basic needs functionality like hunger, thirst, poop, and pee";
     }
-    
+
     @Override
     public String getVersion() {
         return "1.0.0";
     }
-    
+
     @Override
     public String getAuthor() {
         return "Fami6Xx";
     }
-    
+
     /**
      * Gets the BasicNeedsHandler instance.
      * 
@@ -100,5 +100,22 @@ public class BasicNeedsModule extends AbstractModule {
      */
     public BasicNeedsHandler getHandler() {
         return handler;
+    }
+
+    @Override
+    public void saveData() {
+        try {
+            // Call the parent implementation to save the config
+            super.saveData();
+
+            // Save any additional data from the handler if needed
+            if (handler != null && handler.getConfig() != null) {
+                RPUniverse.getInstance().getDataSystem().getDataHandler().saveConsumables(handler);
+                // The config might need to be saved separately if it's not part of the main plugin config
+                ErrorHandler.debug("Saving data for BasicNeedsModule");
+            }
+        } catch (Exception e) {
+            ErrorHandler.warning("Failed to save data for BasicNeedsModule: " + e.getMessage());
+        }
     }
 }

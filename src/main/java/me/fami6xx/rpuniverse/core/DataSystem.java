@@ -88,7 +88,7 @@ public class DataSystem implements Listener {
             job.prepareForSave();
             dataHandler.saveJobData(job.getJobUUID().toString(), job);
         });
-        dataHandler.saveConsumables(RPUniverse.getInstance().getBasicNeedsHandler());
+        RPUniverse.getInstance().getModuleManager().saveModulesData();
         RPUniverse.getInstance().getLockHandler().getAllLocks().forEach(dataHandler::saveLockData);
         ErrorHandler.info("Saved all data");
         dataHandler.shutDown();
@@ -283,8 +283,9 @@ public class DataSystem implements Listener {
 
         processSaveQueue();
 
-        // Save consumables
-        dataHandler.saveConsumables(RPUniverse.getInstance().getBasicNeedsHandler());
+        // Save modules
+        ErrorHandler.debug("Trying to save data from modules");
+        RPUniverse.getInstance().getModuleManager().saveModulesData();
 
         // Save jobs
         int jobCount = RPUniverse.getInstance().getJobsHandler().getJobs().size();

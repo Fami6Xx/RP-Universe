@@ -229,4 +229,26 @@ public class InvoiceModule extends AbstractModule {
     public boolean isJoinNotificationEnabled() {
         return getConfigBoolean("notifyOnJoin", true);
     }
+
+    /**
+     * Saves the module's data.
+     * <p>
+     * This method delegates to the InvoiceManager to save all invoice data.
+     * It is called periodically by the DataSystem and when the plugin is disabled.
+     */
+    @Override
+    public void saveData() {
+        try {
+            // Call the parent implementation to save the config
+            super.saveData();
+
+            // Save invoice data through the manager
+            if (manager != null) {
+                manager.saveData();
+                ErrorHandler.debug("Saved data for InvoiceModule");
+            }
+        } catch (Exception e) {
+            ErrorHandler.warning("Failed to save data for InvoiceModule: " + e.getMessage());
+        }
+    }
 }
