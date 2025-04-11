@@ -107,6 +107,7 @@ permissions:
         rpu.try: true
         rpu.pay: true
         rpu.invoices.view: true
+        rpu.invoices.view.job: true
         rpu.invoices.create: true
   rpu.admin:
     description: Gives access to all admin commands
@@ -120,8 +121,6 @@ permissions:
         rpu.user: true
         rpu.core.command: true
         rpu.properties: true
-        rpu.invoices.view.job: true
-        rpu.invoices.delete.job: true
         rpu.invoices.admin: true
   rpu.multiplejobs:
     description: Allows the player to have multiple jobs (if enabled in the config)
@@ -161,8 +160,6 @@ permissions:
     description: Allows the player to view their invoices
   rpu.invoices.view.job:
     description: Allows the player to view all invoices for their job
-  rpu.invoices.delete.job:
-    description: Allows the player to delete invoices for their job
   rpu.invoices.create:
     description: Allows the player to create invoices
   rpu.invoices.admin:
