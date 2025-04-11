@@ -31,6 +31,7 @@ public class InvoiceManagementMenu extends EasyPaginatedMenu {
     private SortType sortType = SortType.DATE_DESC;
     private FilterType filterType = FilterType.ALL;
     private String filterValue = null;
+    private String searchTerm = null;
 
     /**
      * Sort types for invoices.
@@ -107,6 +108,53 @@ public class InvoiceManagementMenu extends EasyPaginatedMenu {
                 // Date range and amount range filters would require more complex logic
                 // and are not implemented in this basic version
             }
+        }
+
+        // Apply search term if present
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            String searchLower = searchTerm.toLowerCase();
+            List<Invoice> searchResult = new ArrayList<>();
+
+            for (Invoice invoice : result) {
+                // Search in invoice ID
+                if (invoice.getId().toLowerCase().contains(searchLower)) {
+                    searchResult.add(invoice);
+                    continue;
+                }
+
+                // Search in job name
+                if (invoice.getJobName().toLowerCase().contains(searchLower)) {
+                    searchResult.add(invoice);
+                    continue;
+                }
+
+                // Search in creator name
+                if (invoice.getCreatorPlayer() != null && 
+                    invoice.getCreatorPlayer().getName().toLowerCase().contains(searchLower)) {
+                    searchResult.add(invoice);
+                    continue;
+                }
+
+                // Search in target name
+                if (invoice.getTargetPlayer() != null && 
+                    invoice.getTargetPlayer().getName().toLowerCase().contains(searchLower)) {
+                    searchResult.add(invoice);
+                    continue;
+                }
+
+                // Search in amount (convert to string)
+                if (String.valueOf(invoice.getAmount()).contains(searchLower)) {
+                    searchResult.add(invoice);
+                    continue;
+                }
+
+                // Search in status
+                if (invoice.getStatus().name().toLowerCase().contains(searchLower)) {
+                    searchResult.add(invoice);
+                }
+            }
+
+            result = searchResult;
         }
 
         // Apply sorting
@@ -236,7 +284,20 @@ public class InvoiceManagementMenu extends EasyPaginatedMenu {
         int index = getSlotIndex(slot);
 
         // Handle sort and filter buttons
-        if (slot == 46) {
+        if (slot == 45) {
+            // Search button
+            if (e.isRightClick() && searchTerm != null && !searchTerm.isEmpty()) {
+                // Clear search on right-click if there's an active search
+                searchTerm = null;
+                player.sendMessage(FamiUtils.formatWithPrefix("&aSearch cleared."));
+                invoices = getFilteredInvoices();
+                super.open();
+            } else {
+                // Prompt for search on left-click
+                promptSearch(player);
+            }
+            return;
+        } else if (slot == 46) {
             // Sort by date
             if (sortType == SortType.DATE_DESC) {
                 sortType = SortType.DATE_ASC;
@@ -375,6 +436,23 @@ public class InvoiceManagementMenu extends EasyPaginatedMenu {
      */
     @Override
     public void addAdditionalItems() {
+        // Add search button
+        ItemStack searchButton = new ItemStack(Material.COMPASS);
+        ItemMeta searchMeta = searchButton.getItemMeta();
+        searchMeta.setDisplayName(FamiUtils.format("&aSearch Invoices"));
+        List<String> searchLore = new ArrayList<>();
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            searchLore.add(FamiUtils.format("&7Current search: &f" + searchTerm));
+            searchLore.add(FamiUtils.format("&eClick to search"));
+            searchLore.add(FamiUtils.format("&cRight-click to clear search"));
+        } else {
+            searchLore.add(FamiUtils.format("&7No active search"));
+            searchLore.add(FamiUtils.format("&eClick to search"));
+        }
+        searchMeta.setLore(searchLore);
+        searchButton.setItemMeta(searchMeta);
+        inventory.setItem(45, searchButton);
+
         // Add sort buttons
         ItemStack sortByDateButton = new ItemStack(Material.CLOCK);
         ItemMeta sortByDateMeta = sortByDateButton.getItemMeta();
@@ -455,5 +533,72 @@ public class InvoiceManagementMenu extends EasyPaginatedMenu {
     @Override
     public List<MenuTag> getMenuTags() {
         return Arrays.asList(MenuTag.ADMIN);
+    }
+
+    /**
+     * Prompts the player to enter a search term in chat.
+     * Closes the current menu, sends a message to the player,
+     * and sets up a listener for their next chat message.
+     *
+     * @param player The player to prompt
+     */
+    private void promptSearch(Player player) {
+        // Close the current menu
+        player.closeInventory();
+
+        // Send instructions to the player
+        player.sendMessage(FamiUtils.formatWithPrefix("&aEnter a search term in chat, or type 'cancel' to cancel:"));
+        player.sendMessage(FamiUtils.formatWithPrefix("&7Search will look in invoice ID, job name, player names, amount, and status"));
+
+        // Set up a listener for the player's next chat message
+        manager.getModule().getPlugin().getServer().getPluginManager().registerEvents(new org.bukkit.event.Listener() {
+            @org.bukkit.event.EventHandler
+            public void onChat(org.bukkit.event.player.AsyncPlayerChatEvent event) {
+                if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+                    // Cancel the event to prevent the message from being broadcast
+                    event.setCancelled(true);
+
+                    // Get the search term
+                    String input = event.getMessage();
+
+                    // Unregister the listener
+                    org.bukkit.event.HandlerList.unregisterAll(this);
+
+                    // Handle the input
+                    manager.getModule().getPlugin().getServer().getScheduler().runTask(
+                        manager.getModule().getPlugin(), 
+                        () -> handleSearchInput(player, input)
+                    );
+                }
+            }
+        }, manager.getModule().getPlugin());
+    }
+
+    /**
+     * Handles the search input from the player.
+     * Updates the search term and reopens the menu with the search results.
+     *
+     * @param player The player who entered the search term
+     * @param input The search term entered by the player
+     */
+    private void handleSearchInput(Player player, String input) {
+        if (input.equalsIgnoreCase("cancel")) {
+            player.sendMessage(FamiUtils.formatWithPrefix("&cSearch cancelled."));
+        } else {
+            // Update the search term
+            searchTerm = input.trim();
+            player.sendMessage(FamiUtils.formatWithPrefix("&aSearching for: &f" + searchTerm));
+
+            // Update the invoices list with the search results
+            invoices = getFilteredInvoices();
+        }
+
+        // Reopen the menu
+        try {
+            super.open();
+        } catch (Exception ex) {
+            ErrorHandler.severe("Error reopening invoice management menu after search", ex);
+            player.sendMessage(FamiUtils.formatWithPrefix(lang.errorOpeningMenuMessage));
+        }
     }
 }
