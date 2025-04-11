@@ -7,7 +7,7 @@ import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobAllPositionsMenu;
 import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.JobBankActionsMenu;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
-import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

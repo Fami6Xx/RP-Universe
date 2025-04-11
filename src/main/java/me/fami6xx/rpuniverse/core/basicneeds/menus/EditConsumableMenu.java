@@ -4,7 +4,7 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.basicneeds.ConsumableItem;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
-import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;

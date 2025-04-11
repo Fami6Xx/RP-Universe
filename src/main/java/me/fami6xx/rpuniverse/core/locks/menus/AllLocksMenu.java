@@ -26,7 +26,7 @@ import org.bukkit.persistence.PersistentDataType;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
-import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 
 public class AllLocksMenu extends EasyPaginatedMenu {

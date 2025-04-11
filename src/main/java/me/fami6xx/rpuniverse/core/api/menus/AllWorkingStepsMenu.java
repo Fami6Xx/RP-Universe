@@ -6,7 +6,7 @@ import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.jobs.WorkingStep;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
-import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

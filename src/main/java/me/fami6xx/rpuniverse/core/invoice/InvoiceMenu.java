@@ -5,7 +5,7 @@ import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
-import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
@@ -19,7 +19,6 @@ import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 

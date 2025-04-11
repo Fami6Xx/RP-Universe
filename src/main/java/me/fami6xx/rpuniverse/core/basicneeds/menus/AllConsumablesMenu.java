@@ -7,7 +7,7 @@ import me.fami6xx.rpuniverse.core.basicneeds.BasicNeedsHandler;
 import me.fami6xx.rpuniverse.core.basicneeds.ConsumableItem;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
-import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.chatapi.UniversalChatHandler;
 import me.fami6xx.rpuniverse.core.misc.gsonadapters.ItemStackAdapter;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;

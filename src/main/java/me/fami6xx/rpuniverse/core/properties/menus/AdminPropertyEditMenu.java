@@ -3,7 +3,7 @@ package me.fami6xx.rpuniverse.core.properties.menus;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
-import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import me.fami6xx.rpuniverse.core.properties.Property;
 import me.fami6xx.rpuniverse.core.properties.helpers.ChangeOwnerInputListener;
@@ -244,7 +244,7 @@ public class AdminPropertyEditMenu extends Menu {
     }
 
     private void openTrustedPlayersMenu(Player player) {
-        TrustedPlayersMenu trustedPlayersMenu = new TrustedPlayersMenu(new PlayerMenu(player), property);
+        TrustedPlayersMenu trustedPlayersMenu = new TrustedPlayersMenu(playerMenu, property);
         trustedPlayersMenu.open();
     }
 

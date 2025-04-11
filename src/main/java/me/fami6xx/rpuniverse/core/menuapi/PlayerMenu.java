@@ -1,4 +1,4 @@
-package me.fami6xx.rpuniverse.core.menuapi.utils;
+package me.fami6xx.rpuniverse.core.menuapi;
 
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
@@ -42,7 +42,7 @@ public class PlayerMenu {
      *
      * @param p the player to create a menu for
      */
-    public PlayerMenu(Player p) {
+    protected PlayerMenu(Player p) {
         this.player = p;
     }
 

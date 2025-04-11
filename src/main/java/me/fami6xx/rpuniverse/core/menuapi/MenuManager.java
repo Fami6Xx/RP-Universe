@@ -4,7 +4,6 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.menuapi.handlers.MenuInvClickHandler;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
-import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scheduler.BukkitRunnable;

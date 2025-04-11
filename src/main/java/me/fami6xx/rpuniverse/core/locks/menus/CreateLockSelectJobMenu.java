@@ -13,11 +13,10 @@ import org.bukkit.inventory.ItemStack;
 
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.jobs.Job;
-import me.fami6xx.rpuniverse.core.jobs.commands.jobs.menus.admin.JobAdminMenu;
 import me.fami6xx.rpuniverse.core.locks.LockHandler;
 import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
-import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
+import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.chatapi.IChatExecuteQueue;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 
