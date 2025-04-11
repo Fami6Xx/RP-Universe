@@ -2,7 +2,7 @@ package me.fami6xx.rpuniverse.core.invoice.admin;
 
 import me.fami6xx.rpuniverse.core.invoice.InvoiceManager;
 import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
-import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
+import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
@@ -23,7 +23,7 @@ import java.util.List;
  * This menu allows administrators to configure which jobs can create invoices
  * and other system-wide settings.
  */
-public class SystemSettingsMenu extends EasyPaginatedMenu {
+public class SystemSettingsMenu extends Menu {
 
     private final InvoiceManager manager;
     private final InvoiceLanguage lang;
@@ -41,35 +41,22 @@ public class SystemSettingsMenu extends EasyPaginatedMenu {
     }
 
     /**
-     * Gets the item stack for a specific index in the paginated menu.
-     * This menu doesn't use pagination for items.
+     * Gets the number of slots in the inventory.
      *
-     * @param index The index of the item in the collection
-     * @return Always returns null as this menu doesn't use pagination
+     * @return the number of slots in the inventory.
      */
     @Override
-    public ItemStack getItemFromIndex(int index) {
-        return null;
+    public int getSlots() {
+        return 54; // Standard inventory size
     }
 
     /**
-     * Gets the total number of items in the collection.
-     * This menu doesn't use pagination for items.
-     *
-     * @return Always returns 0 as this menu doesn't use pagination
-     */
-    @Override
-    public int getCollectionSize() {
-        return 0;
-    }
-
-    /**
-     * Handles clicks in the paginated menu.
+     * Handles clicks in the menu.
      *
      * @param e The inventory click event
      */
     @Override
-    public void handlePaginatedMenu(InventoryClickEvent e) {
+    public void handleMenu(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
         int slot = e.getSlot();
 
@@ -104,10 +91,11 @@ public class SystemSettingsMenu extends EasyPaginatedMenu {
     }
 
     /**
-     * Adds additional items to the menu.
+     * Sets up the items in the menu.
      */
     @Override
-    public void addAdditionalItems() {
+    public void setMenuItems() {
+        setFillerGlass(); // Fill the menu with glass panes
         // Add job integration settings button
         ItemStack jobIntegrationButton = new ItemStack(Material.NAME_TAG);
         ItemMeta jobIntegrationMeta = jobIntegrationButton.getItemMeta();
