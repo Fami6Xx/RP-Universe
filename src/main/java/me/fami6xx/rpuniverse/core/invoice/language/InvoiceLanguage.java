@@ -16,6 +16,7 @@ public class InvoiceLanguage extends AbstractAddonLanguage {
     public String errorPlayerTooFarMessage = "&cPlayer is too far away to create an invoice";
     public String errorPlayerNotVisibleMessage = "&cYou must be able to see the player to create an invoice";
     public String errorNotInJobMessage = "&cYou must be in a job to create an invoice";
+    public String errorJobNotAllowedToCreateInvoicesMessage = "&cYour job is not allowed to create invoices";
     public String errorInvalidAmountMessage = "&cInvalid amount. Please enter a valid number";
     public String errorAmountMustBePositiveMessage = "&cThe amount must be positive";
     public String errorDecimalNotAllowedMessage = "&cDecimal amounts are not allowed";

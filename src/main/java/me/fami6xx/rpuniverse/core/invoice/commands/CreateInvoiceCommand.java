@@ -157,6 +157,14 @@ public class CreateInvoiceCommand implements CommandExecutor {
             }
             String jobUUID = playerData.getSelectedPlayerJob().getJobUUID().toString();
 
+            // Check if the job is allowed to create invoices
+            if (!module.getManager().isJobAllowedToCreateInvoices(jobUUID)) {
+                player.sendMessage(FamiUtils.formatWithPrefix(lang.errorJobNotAllowedToCreateInvoicesMessage));
+                ErrorHandler.debug("CreateInvoiceCommand failed: job " + playerData.getSelectedPlayerJob().getName() + 
+                        " (" + jobUUID + ") is not allowed to create invoices");
+                return true;
+            }
+
             // Create the invoice
             Invoice invoice = module.getManager().createInvoice(jobUUID, player.getUniqueId(), target.getUniqueId(), amount);
             ErrorHandler.debug("Invoice created successfully by " + player.getName() + " for " + target.getName() +

@@ -75,8 +75,13 @@ public class SystemSettingsMenu extends Menu {
 
         // Handle job integration settings button
         if (slot == 22) {
-            player.sendMessage(FamiUtils.formatWithPrefix("&aJob integration settings are not yet implemented."));
-            player.sendMessage(FamiUtils.formatWithPrefix("&7This would allow configuring which jobs can create invoices."));
+            try {
+                new JobConfigurationMenu(playerMenu, manager).open();
+                ErrorHandler.debug("Admin opened job configuration menu");
+            } catch (Exception ex) {
+                ErrorHandler.severe("Error opening job configuration menu", ex);
+                player.sendMessage(FamiUtils.formatWithPrefix(lang.errorOpeningMenuMessage));
+            }
         }
     }
 
@@ -104,7 +109,6 @@ public class SystemSettingsMenu extends Menu {
         jobIntegrationLore.add(FamiUtils.format(lang.adminJobIntegrationSettingsButtonDescription));
         jobIntegrationLore.add("");
         jobIntegrationLore.add(FamiUtils.format("&7Click to configure which jobs can create invoices"));
-        jobIntegrationLore.add(FamiUtils.format("&7(Not yet implemented)"));
         jobIntegrationMeta.setLore(jobIntegrationLore);
         jobIntegrationButton.setItemMeta(jobIntegrationMeta);
         inventory.setItem(22, jobIntegrationButton);

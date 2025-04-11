@@ -40,7 +40,9 @@ public class InvoiceManager {
     private RPUniverse plugin;
     private final Map<String, Invoice> invoices = new ConcurrentHashMap<>();
     private final Map<UUID, String> playerEditingInvoice = new HashMap<>(); // Maps player UUID to invoice ID being edited
+    private final Set<String> jobsAllowedToCreateInvoices = new HashSet<>(); // Set of job UUIDs allowed to create invoices
     private final File dataFile;
+    private final File jobConfigFile; // File to store job configuration
     private final Gson gson;
 
     /**
@@ -50,7 +52,16 @@ public class InvoiceManager {
      */
     public InvoiceManager(InvoiceModule module) {
         this.module = module;
-        this.dataFile = new File(module.getPlugin().getDataFolder(), "invoices.json");
+        File invoiceDataFolder = new File(module.getPlugin().getDataFolder(), "invoices");
+        if (!invoiceDataFolder.exists()) {
+            try{
+                invoiceDataFolder.mkdirs();
+            } catch (SecurityException e) {
+                ErrorHandler.severe("Failed to create invoice data folder", e);
+            }
+        }
+        this.dataFile = new File(invoiceDataFolder, "invoices.json");
+        this.jobConfigFile = new File(invoiceDataFolder, "job_config.json");
         this.gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .setPrettyPrinting()
@@ -128,6 +139,48 @@ public class InvoiceManager {
                 ErrorHandler.severe("Failed to create backup of corrupted invoice data file", backupException);
             }
         }
+
+        // Load job configuration
+        loadJobConfiguration();
+    }
+
+    /**
+     * Loads job configuration from file.
+     */
+    private void loadJobConfiguration() {
+        if (!jobConfigFile.exists()) {
+            ErrorHandler.debug("Job configuration file does not exist, creating empty one");
+            saveJobConfiguration();
+            return;
+        }
+
+        try (FileReader reader = new FileReader(jobConfigFile)) {
+            Type type = new TypeToken<Set<String>>() {
+            }.getType();
+            Set<String> loadedJobUUIDs = gson.fromJson(reader, type);
+
+            if (loadedJobUUIDs != null) {
+                jobsAllowedToCreateInvoices.clear();
+                jobsAllowedToCreateInvoices.addAll(loadedJobUUIDs);
+                ErrorHandler.debug("Loaded " + jobsAllowedToCreateInvoices.size() + " jobs allowed to create invoices");
+            } else {
+                ErrorHandler.debug("No job configuration found in data file");
+            }
+        } catch (IOException e) {
+            ErrorHandler.severe("Failed to load job configuration data", e);
+        } catch (com.google.gson.JsonSyntaxException e) {
+            ErrorHandler.severe("Failed to parse job configuration file (invalid JSON format)", e);
+            // Create a backup of the corrupted file
+            try {
+                File backupFile = new File(jobConfigFile.getParentFile(), "invoice_job_config_backup_" + System.currentTimeMillis() + ".json");
+                java.nio.file.Files.copy(jobConfigFile.toPath(), backupFile.toPath());
+                ErrorHandler.info("Created backup of corrupted job configuration file: " + backupFile.getName());
+                // Create a new empty file
+                saveJobConfiguration();
+            } catch (IOException backupException) {
+                ErrorHandler.severe("Failed to create backup of corrupted job configuration file", backupException);
+            }
+        }
     }
 
     /**
@@ -141,6 +194,74 @@ public class InvoiceManager {
         } catch (IOException e) {
             ErrorHandler.severe("Failed to save invoice data", e);
         }
+
+        // Save job configuration
+        saveJobConfiguration();
+    }
+
+    /**
+     * Saves job configuration to file.
+     */
+    private void saveJobConfiguration() {
+        try (FileWriter writer = new FileWriter(jobConfigFile)) {
+            gson.toJson(jobsAllowedToCreateInvoices, writer);
+            ErrorHandler.debug("Saved " + jobsAllowedToCreateInvoices.size() + " jobs allowed to create invoices");
+        } catch (IOException e) {
+            ErrorHandler.severe("Failed to save job configuration data", e);
+        }
+    }
+
+    /**
+     * Checks if a job is allowed to create invoices.
+     *
+     * @param jobUUID The UUID of the job to check
+     * @return true if the job is allowed to create invoices, false otherwise
+     */
+    public boolean isJobAllowedToCreateInvoices(String jobUUID) {
+        // If no jobs are configured, allow all jobs to create invoices
+        if (jobsAllowedToCreateInvoices.isEmpty()) {
+            return true;
+        }
+        return jobsAllowedToCreateInvoices.contains(jobUUID);
+    }
+
+    /**
+     * Adds a job to the list of jobs allowed to create invoices.
+     *
+     * @param jobUUID The UUID of the job to add
+     * @return true if the job was added, false if it was already in the list
+     */
+    public boolean addJobAllowedToCreateInvoices(String jobUUID) {
+        boolean added = jobsAllowedToCreateInvoices.add(jobUUID);
+        if (added) {
+            saveJobConfiguration();
+            ErrorHandler.debug("Added job " + jobUUID + " to list of jobs allowed to create invoices");
+        }
+        return added;
+    }
+
+    /**
+     * Removes a job from the list of jobs allowed to create invoices.
+     *
+     * @param jobUUID The UUID of the job to remove
+     * @return true if the job was removed, false if it wasn't in the list
+     */
+    public boolean removeJobAllowedToCreateInvoices(String jobUUID) {
+        boolean removed = jobsAllowedToCreateInvoices.remove(jobUUID);
+        if (removed) {
+            saveJobConfiguration();
+            ErrorHandler.debug("Removed job " + jobUUID + " from list of jobs allowed to create invoices");
+        }
+        return removed;
+    }
+
+    /**
+     * Gets all jobs allowed to create invoices.
+     *
+     * @return A set of job UUIDs allowed to create invoices
+     */
+    public Set<String> getJobsAllowedToCreateInvoices() {
+        return Collections.unmodifiableSet(jobsAllowedToCreateInvoices);
     }
 
     /**
