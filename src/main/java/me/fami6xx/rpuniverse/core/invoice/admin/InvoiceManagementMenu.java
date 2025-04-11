@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Consumer;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -538,7 +539,7 @@ public class InvoiceManagementMenu extends EasyPaginatedMenu {
     /**
      * Prompts the player to enter a search term in chat.
      * Closes the current menu, sends a message to the player,
-     * and sets up a listener for their next chat message.
+     * and sets up a pending action for their next chat message.
      *
      * @param player The player to prompt
      */
@@ -550,28 +551,17 @@ public class InvoiceManagementMenu extends EasyPaginatedMenu {
         player.sendMessage(FamiUtils.formatWithPrefix("&aEnter a search term in chat, or type 'cancel' to cancel:"));
         player.sendMessage(FamiUtils.formatWithPrefix("&7Search will look in invoice ID, job name, player names, amount, and status"));
 
-        // Set up a listener for the player's next chat message
-        manager.getModule().getPlugin().getServer().getPluginManager().registerEvents(new org.bukkit.event.Listener() {
-            @org.bukkit.event.EventHandler
-            public void onChat(org.bukkit.event.player.AsyncPlayerChatEvent event) {
-                if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                    // Cancel the event to prevent the message from being broadcast
-                    event.setCancelled(true);
-
-                    // Get the search term
-                    String input = event.getMessage();
-
-                    // Unregister the listener
-                    org.bukkit.event.HandlerList.unregisterAll(this);
-
-                    // Handle the input
-                    manager.getModule().getPlugin().getServer().getScheduler().runTask(
-                        manager.getModule().getPlugin(), 
-                        () -> handleSearchInput(player, input)
-                    );
-                }
+        // Set up a pending action for the player's next chat message
+        this.playerMenu.setPendingAction(new Consumer<String>() {
+            @Override
+            public void accept(String input) {
+                // Handle the input
+                manager.getModule().getPlugin().getServer().getScheduler().runTask(
+                    manager.getModule().getPlugin(), 
+                    () -> handleSearchInput(player, input)
+                );
             }
-        }, manager.getModule().getPlugin());
+        });
     }
 
     /**

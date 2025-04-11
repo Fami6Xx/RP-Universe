@@ -7,11 +7,13 @@ import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
 import me.fami6xx.rpuniverse.core.jobs.Job;
 import me.fami6xx.rpuniverse.core.jobs.Position;
+import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Consumer;
 
 import java.io.File;
 import java.io.FileReader;
@@ -736,7 +738,7 @@ public class InvoiceManager {
      * Starts the process of editing an invoice's amount.
      * <p>
      * This method registers the player as editing the specified invoice and
-     * sets up a chat listener to capture the new amount.
+     * sets up a pending action to capture the new amount.
      *
      * @param admin   The administrator editing the invoice
      * @param invoice The invoice to edit
@@ -761,40 +763,32 @@ public class InvoiceManager {
         // Register the player as editing this invoice
         playerEditingInvoice.put(admin.getUniqueId(), invoice.getId());
 
-        // Set up a chat listener for the next message from this player
-        Bukkit.getPluginManager().registerEvents(new org.bukkit.event.Listener() {
-            @org.bukkit.event.EventHandler
-            public void onPlayerChat(org.bukkit.event.player.AsyncPlayerChatEvent event) {
-                if (event.getPlayer().getUniqueId().equals(admin.getUniqueId())) {
-                    event.setCancelled(true);
-
-                    // Unregister this listener
-                    org.bukkit.event.HandlerList.unregisterAll(this);
-
-                    // Process the amount input
-                    String input = event.getMessage();
-                    try {
-                        double newAmount = Double.parseDouble(input);
-                        if (newAmount <= 0) {
-                            admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().errorAmountMustBePositiveMessage));
-                            playerEditingInvoice.remove(admin.getUniqueId());
-                            return;
-                        }
-
-                        // Edit the invoice with the new amount
-                        if (editInvoiceAmount(invoice, newAmount, admin)) {
-                            admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().adminInvoiceEditedMessage.replace("{id}", invoice.getId())));
-                        } else {
-                            admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().adminErrorEditingInvoiceMessage));
-                        }
-                    } catch (NumberFormatException e) {
-                        admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().errorInvalidAmountMessage));
-                    } finally {
+        // Set up a pending action for the next message from this player
+        PlayerMenu playerMenu = RPUniverse.getInstance().getMenuManager().getPlayerMenu(admin);
+        playerMenu.setPendingAction(new Consumer<String>() {
+            @Override
+            public void accept(String input) {
+                try {
+                    double newAmount = Double.parseDouble(input);
+                    if (newAmount <= 0) {
+                        admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().errorAmountMustBePositiveMessage));
                         playerEditingInvoice.remove(admin.getUniqueId());
+                        return;
                     }
+
+                    // Edit the invoice with the new amount
+                    if (editInvoiceAmount(invoice, newAmount, admin)) {
+                        admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().adminInvoiceEditedMessage.replace("{id}", invoice.getId())));
+                    } else {
+                        admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().adminErrorEditingInvoiceMessage));
+                    }
+                } catch (NumberFormatException e) {
+                    admin.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().errorInvalidAmountMessage));
+                } finally {
+                    playerEditingInvoice.remove(admin.getUniqueId());
                 }
             }
-        }, plugin);
+        });
 
         return true;
     }
