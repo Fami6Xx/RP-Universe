@@ -3,7 +3,7 @@ package me.fami6xx.rpuniverse.core.invoice.admin;
 import me.fami6xx.rpuniverse.core.invoice.Invoice;
 import me.fami6xx.rpuniverse.core.invoice.InvoiceManager;
 import me.fami6xx.rpuniverse.core.invoice.language.InvoiceLanguage;
-import me.fami6xx.rpuniverse.core.menuapi.types.EasyPaginatedMenu;
+import me.fami6xx.rpuniverse.core.menuapi.types.Menu;
 import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.utils.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
@@ -25,7 +25,7 @@ import java.util.List;
  * This menu allows administrators to edit the details of an invoice,
  * such as the amount.
  */
-public class EditInvoiceMenu extends EasyPaginatedMenu {
+public class EditInvoiceMenu extends Menu {
 
     private final InvoiceManager manager;
     private final InvoiceLanguage lang;
@@ -46,24 +46,17 @@ public class EditInvoiceMenu extends EasyPaginatedMenu {
     }
 
     @Override
-    public ItemStack getItemFromIndex(int index) {
-        // This menu doesn't use pagination for items
-        return null;
-    }
-
-    @Override
-    public int getCollectionSize() {
-        // This menu doesn't use pagination for items
-        return 0;
-    }
-
-    @Override
     public String getMenuName() {
         return FamiUtils.format(lang.adminInvoiceEditTitle.replace("{id}", invoice.getId()));
     }
 
     @Override
-    public void handlePaginatedMenu(InventoryClickEvent e) {
+    public int getSlots() {
+        return 54; // Same size as the original menu
+    }
+
+    @Override
+    public void handleMenu(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
         ItemStack clickedItem = e.getCurrentItem();
 
@@ -94,7 +87,8 @@ public class EditInvoiceMenu extends EasyPaginatedMenu {
     }
 
     @Override
-    public void addAdditionalItems() {
+    public void setMenuItems() {
+        setFillerGlass(); // Fill the menu with glass panes
         // Format the creation date
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String formattedDate = dateFormat.format(invoice.getCreationDate());
