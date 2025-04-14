@@ -77,7 +77,7 @@ public class DecentHologramsProvider implements HologramProvider {
 }
 ```
 
-#### HolographicDisplays Provider (Example)
+#### HolographicDisplays Provider (Example, do not implement)
 ```java
 package me.fami6xx.rpuniverse.core.holoapi.providers.impl;
 
@@ -284,8 +284,7 @@ public class HologramFactory {
 ### 8. Update Configuration
 Add configuration options to specify preferred providers and fallbacks.
 
-### 9. Testing
-Test the implementation with different hologram plugins to ensure compatibility.
+### 9. Finalizing
 
 ## Benefits
 - **Flexibility**: The system can work with any supported hologram plugin.
