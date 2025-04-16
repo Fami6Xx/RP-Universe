@@ -20,7 +20,7 @@ import java.util.Map;
 public class ConfigMigrator {
 
     // The current config version
-    private static final int CURRENT_CONFIG_VERSION = 9;
+    private static final int CURRENT_CONFIG_VERSION = 10;
 
     // Map of migration handlers for each version
     private static final Map<Integer, MigrationHandler> migrationHandlers = new HashMap<>();
@@ -32,6 +32,7 @@ public class ConfigMigrator {
         migrationHandlers.put(6, ConfigMigrator::migrateFromV6ToV7);
         migrationHandlers.put(7, ConfigMigrator::migrateFromV7ToV8);
         migrationHandlers.put(8, ConfigMigrator::migrateFromV8ToV9);
+        migrationHandlers.put(9, ConfigMigrator::migrateFromV9ToV10);
     }
 
     /**
@@ -264,6 +265,31 @@ public class ConfigMigrator {
             return true;
         } catch (Exception e) {
             ErrorHandler.severe("Error during migration from v8 to v9", e);
+            return false;
+        }
+    }
+
+    /**
+     * Migrates configuration from version 9 to version 10.
+     * 
+     * @param config The configuration to migrate
+     * @return true if migration was successful, false otherwise
+     */
+    private static boolean migrateFromV9ToV10(FileConfiguration config) {
+        try {
+            // Add new sections and fields introduced in version 10
+
+            // Add updateNotification section if it doesn't exist
+            if (!config.contains("updateNotification")) {
+                config.createSection("updateNotification");
+                config.set("updateNotification.enabled", true);
+                config.set("updateNotification.notifyPermissionedPlayersOnJoin", true);
+                config.set("updateNotification.permission", "rpu.update.notify");
+            }
+
+            return true;
+        } catch (Exception e) {
+            ErrorHandler.severe("Error during migration from v9 to v10", e);
             return false;
         }
     }

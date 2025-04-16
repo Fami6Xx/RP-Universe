@@ -14,7 +14,7 @@
 
 # Config version (PLEASE DO NOT TOUCH THIS)
 # This is used for automatic configuration migration between versions
-configVersion: 9
+configVersion: 10
 
 # For any text, color codes are supported (use & instead of §) and RichText is not currently supported
 
@@ -133,6 +133,14 @@ balance:
 # This is useful for troubleshooting issues with the plugin
 debug:
     enabled: false
+
+# The settings for update notifications
+# enabled: If true, update notifications are enabled
+# notifyPermissionedPlayersOnJoin: If true, players with the permission will be notified about updates when they join
+# permission: The permission required to receive update notifications
+updateNotification:
+    enabled: true
+    notifyPermissionedPlayersOnJoin: true
 
 # The settings for region visualization
 # step: The step size for particles (smaller = more particles, higher quality but more resource intensive)
