@@ -122,6 +122,7 @@ permissions:
         rpu.core.command: true
         rpu.properties: true
         rpu.invoices.admin: true
+        rpu.update.notify: true
   rpu.multiplejobs:
     description: Allows the player to have multiple jobs (if enabled in the config)
   rpu.me:
@@ -186,3 +187,5 @@ permissions:
     description: Allows access to invoice maintenance tools
   rpu.invoices.admin.logs:
     description: Allows viewing invoice system logs
+  rpu.update.notify:
+    description: Allows the player to be notified about updates
