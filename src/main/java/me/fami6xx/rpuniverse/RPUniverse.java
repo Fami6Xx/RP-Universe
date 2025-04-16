@@ -19,6 +19,7 @@ import me.fami6xx.rpuniverse.core.jobs.types.basic.BasicJobType;
 import me.fami6xx.rpuniverse.core.locks.LockHandler;
 import me.fami6xx.rpuniverse.core.menuapi.MenuManager;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.UpdateNotificationListener;
 import me.fami6xx.rpuniverse.core.misc.VersionInfo;
 import me.fami6xx.rpuniverse.core.misc.balance.BalanceChangeNotifier;
 import me.fami6xx.rpuniverse.core.misc.basichandlers.ActionBarHandler;
@@ -78,6 +79,8 @@ public class RPUniverse extends JavaPlugin {
     private Metrics metrics;
 
     private boolean isServerReload = false;
+    private boolean isUpdateAvailable = false;
+    private String latestVersion = "";
 
     @Override
     public void onEnable() {
@@ -146,7 +149,14 @@ public class RPUniverse extends JavaPlugin {
 
         try {
             if(!compareVersions()){
-                ErrorHandler.warning("Your version of RPUniverse is outdated! Please update to the latest version.");
+                ErrorHandler.warning("Your version of RPUniverse is outdated! Please update to the latest version " + latestVersion + ".");
+
+                // Register player join listener for update notifications if enabled in config
+                if (config.getBoolean("updateNotification.enabled", true) && 
+                    config.getBoolean("updateNotification.notifyPermissionedPlayersOnJoin", true)) {
+                    getServer().getPluginManager().registerEvents(new UpdateNotificationListener(), this);
+                    ErrorHandler.debug("Registered update notification listener");
+                }
             } else {
                 ErrorHandler.debug("Running the latest version of RPUniverse");
             }
@@ -510,7 +520,26 @@ public class RPUniverse extends JavaPlugin {
         String apiVersion = getVersionFromAPI();
         String configVersion = VersionInfo.getVersion();
 
-        return apiVersion.equals(configVersion);
+        this.latestVersion = apiVersion;
+        this.isUpdateAvailable = !apiVersion.equals(configVersion);
+
+        return !isUpdateAvailable;
+    }
+
+    /**
+     * Checks if an update is available
+     * @return true if an update is available, false otherwise
+     */
+    public boolean isUpdateAvailable() {
+        return isUpdateAvailable;
+    }
+
+    /**
+     * Gets the latest version from the API
+     * @return The latest version
+     */
+    public String getLatestVersion() {
+        return latestVersion;
     }
 
     /**
