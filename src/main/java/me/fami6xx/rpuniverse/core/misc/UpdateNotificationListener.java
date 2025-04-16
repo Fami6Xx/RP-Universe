@@ -43,7 +43,7 @@ public class UpdateNotificationListener implements Listener {
                 "&7Current version: &f" + currentVersion + " &7Latest version: &f" + latestVersion));
             
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', 
-                RPUniverse.getPrefix() + " &7Please update to the latest version from: &fhttps://polymart.org/resource/rpuniverse.5845"));
+                RPUniverse.getPrefix() + " &7Please update to the latest version from: &fhttps://modrinth.com/plugin/rpuniverse"));
         }
     }
 }
