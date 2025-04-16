@@ -441,6 +441,12 @@ public class InvoiceManager {
             notifyInvoicePaid(creatorPlayer, invoice);
         }
 
+        // Notify the player who paid the invoice
+        player.sendMessage(FamiUtils.formatWithPrefix(InvoiceLanguage.getInstance().invoicePaidMessage
+                .replace("{player}", player.getName())
+                .replace("{amount}", String.valueOf(amount))
+                .replace("{currency}", module.getDefaultCurrency())));
+
         return true;
     }
 
