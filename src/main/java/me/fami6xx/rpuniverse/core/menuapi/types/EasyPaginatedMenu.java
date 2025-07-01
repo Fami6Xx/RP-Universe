@@ -118,27 +118,37 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
     public abstract void addAdditionalItems();
 
     /**
-     * Maps the clicked slot to the index in the list.
+     * Maps the clicked inventory slot to the index in the collection.
      *
-     * @param slot The inventory slot that was clicked.
-     * @return The corresponding index in the list, or -1 if the slot doesn't correspond to an item.
+     * @param slot The inventory slot that was clicked (0-53)
+     * @return The corresponding index in the collection, or -1 if the slot doesn't map to an item
+     * @throws IllegalArgumentException if the slot is negative or exceeds inventory size
      */
     public int getSlotIndex(int slot) {
-        int relativeSlot = slot - START_SLOT;
+        if (slot < 0 || slot >= getSlots()) {
+            throw new IllegalArgumentException("Invalid slot number: " + slot);
+        }
 
+        // Adjust for inventory border/header
+        int relativeSlot = slot - START_SLOT;
         if (relativeSlot < 0) {
             return -1;
         }
 
         int row = relativeSlot / SLOTS_PER_ROW;
         int col = relativeSlot % SLOTS_PER_ROW;
-
-        int index = row * SLOTS_PER_ROW + col;
-
-        if (index >= getCollectionSize()) {
+        
+        // Check for integer overflow
+        if (page > Integer.MAX_VALUE / maxItemsPerPage) {
             return -1;
         }
-
-        return index;
+        
+        long indexLong = (long)page * maxItemsPerPage + row * SLOTS_PER_ROW + col;
+        if (indexLong > Integer.MAX_VALUE) {
+            return -1;
+        }
+        
+        int index = (int)indexLong;
+        return index >= getCollectionSize() ? -1 : index;
     }
 }

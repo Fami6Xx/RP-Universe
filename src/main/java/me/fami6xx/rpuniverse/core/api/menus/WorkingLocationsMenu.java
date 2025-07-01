@@ -75,7 +75,7 @@ public class WorkingLocationsMenu extends EasyPaginatedMenu {
 
     @Override
     public void handlePaginatedMenu(InventoryClickEvent e) {
-        int index = getMaxItemsPerPage() * page + getSlotIndex(e.getSlot());
+        int index = getSlotIndex(e.getSlot());
         if (index < 0) return;
         if (index >= getCollectionSize()) return;
 

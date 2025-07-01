@@ -104,7 +104,7 @@ public class JobConfigurationMenu extends EasyPaginatedMenu {
         int slot = e.getSlot();
 
         // Convert slot to index in the collection
-        int index = getMaxItemsPerPage() * page + getSlotIndex(slot);
+        int index = getSlotIndex(slot);
 
         if (index >= 0 && index < allJobs.size()) {
             Job job = allJobs.get(index);
