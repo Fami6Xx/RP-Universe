@@ -184,7 +184,7 @@ public class Property {
             @Override
             public boolean execute(Player player, String... strings) {
                 if (player == null) return true;
-                PlayerData playerData = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
+                PlayerData playerData = RPUniverse.getPlayerData(player.getUniqueId().toString());
                 if (playerData.getPlayerMode() == PlayerMode.ADMIN) {
                     new AdminPropertyEditMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player), property).open();
                 } else if (owner != null && player.getUniqueId().toString().equals(owner.toString())) {
