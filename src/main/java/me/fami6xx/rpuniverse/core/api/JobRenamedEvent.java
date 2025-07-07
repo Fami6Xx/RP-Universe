@@ -8,13 +8,25 @@ public class JobRenamedEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final Job job;
+    private final String oldName;
+    private final String newName;
 
-    public JobRenamedEvent(Job job) {
+    public JobRenamedEvent(Job job, String oldName, String newName) {
         this.job = job;
+        this.oldName = oldName;
+        this.newName = newName;
     }
 
     public Job getJob() {
         return job;
+    }
+
+    public String getOldName() {
+        return oldName;
+    }
+
+    public String getNewName() {
+        return newName;
     }
 
     @Override
