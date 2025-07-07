@@ -11,6 +11,7 @@ import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.JobLoadedEvent;
+import me.fami6xx.rpuniverse.core.api.JobRenamedEvent;
 import me.fami6xx.rpuniverse.core.api.MoneyAddedToJobBankEvent;
 import me.fami6xx.rpuniverse.core.api.MoneyRemovedFromJobBankEvent;
 import me.fami6xx.rpuniverse.core.holoapi.types.holograms.StaticHologram;
@@ -395,6 +396,33 @@ public class Job {
      * @param newName The new name for the job. Must not be null.
      */
     public void renameJob(String newName) {
+        if(newName == null || newName.isEmpty()) {
+            ErrorHandler.warning("Cannot rename job to an empty name.");
+            return;
+        }
+        ErrorHandler.debug("Renaming job from " + jobName + " to " + newName + " (UUID: " + jobUUID + ")");
+        if(newName.equals(jobName)) {
+            ErrorHandler.debug("Job name is already " + newName + ", no changes made.");
+            return;
+        }
+
+        // Check if the new name already exists
+        if(RPUniverse.getInstance().getJobsHandler().getJobByName(newName) != null) {
+            ErrorHandler.warning("A job with the name " + newName + " already exists.");
+            return;
+        }
+
+        // Call the JobRenamedEvent to notify listeners about the job name change
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                JobRenamedEvent event = new JobRenamedEvent(Job.this, getName(), newName);
+                Bukkit.getPluginManager().callEvent(event);
+                ErrorHandler.debug("Called the JobRenamedEvent for job: " + jobName);
+            }
+        }.runTask(RPUniverse.getInstance());
+        ErrorHandler.debug("Job name changed successfully from " + jobName + " to " + newName);
+
         this.jobName = newName;
         createBossMenuHologram();
         RPUniverse.getInstance().getMenuManager().closeAllJobMenus(j -> j == this);
