@@ -392,7 +392,6 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                         dropLocation.getWorld().dropItem(dropLocation, dropItem);
                     }
                 }
-                dropLocation.getWorld().dropItem(dropLocation, drop.getItem());
                 break;
             }
         }
