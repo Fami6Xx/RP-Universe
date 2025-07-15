@@ -18,6 +18,7 @@ import me.fami6xx.rpuniverse.core.jobs.WorkingStep;
 import me.fami6xx.rpuniverse.core.jobs.WorkingStep.NeededItem;
 import me.fami6xx.rpuniverse.core.misc.PlayerData;
 import me.fami6xx.rpuniverse.core.misc.PlayerMode;
+import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import me.fami6xx.rpuniverse.core.misc.utils.ProgressBarString;
 import org.bukkit.Bukkit;
@@ -135,6 +136,8 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                     PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
                     if (data.getPlayerMode() == PlayerMode.ADMIN) {
                         // Admins can skip item checks
+                        player.sendMessage(FamiUtils.formatWithPrefix("&aSkipping item checks due to admin mode."));
+                        ErrorHandler.info(player.getName() + " is in admin mode, skipping item checks for working step: " + step.getName());
                         setSecondStage();
                         return true;
                     }
@@ -166,6 +169,8 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                     if (data.getPlayerMode() == PlayerMode.ADMIN) {
                         // Admins can skip item checks
                         // Open the interactable menu
+                        player.sendMessage(FamiUtils.formatWithPrefix("&aSkipping item checks due to admin mode."));
+                        ErrorHandler.info(player.getName() + " is in admin mode, skipping item checks for working step: " + step.getName());
                         new WorkingStepInteractableMenu(
                                 RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
                                 () -> setSecondStage()
