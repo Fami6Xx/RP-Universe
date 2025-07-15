@@ -131,6 +131,14 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                 public boolean execute(Player player, String... strings) {
                     if (!shouldShow(player)) return true;
 
+                    // Check if player is in AMODE, if so, don't check items
+                    PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
+                    if (data.getPlayerMode() == PlayerMode.ADMIN) {
+                        // Admins can skip item checks
+                        setSecondStage();
+                        return true;
+                    }
+
                     List<NeededItem> missingItems = findMissingItems(player);
                     if (!missingItems.isEmpty()) {
                         sendMissingItemsMessage(player, missingItems);
@@ -152,6 +160,18 @@ public class WorkingStepHologram extends famiHologram implements Listener {
                 @Override
                 public boolean execute(Player player, String... strings) {
                     if (!shouldShow(player)) return true;
+
+                    // Check if player is in AMODE, if so, don't check items
+                    PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
+                    if (data.getPlayerMode() == PlayerMode.ADMIN) {
+                        // Admins can skip item checks
+                        // Open the interactable menu
+                        new WorkingStepInteractableMenu(
+                                RPUniverse.getInstance().getMenuManager().getPlayerMenu(player),
+                                () -> setSecondStage()
+                        ).open();
+                        return true;
+                    }
 
                     List<NeededItem> missingItems = findMissingItems(player);
                     if (!missingItems.isEmpty()) {
