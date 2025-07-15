@@ -125,30 +125,33 @@ public abstract class EasyPaginatedMenu extends PaginatedMenu {
      * @throws IllegalArgumentException if the slot is negative or exceeds inventory size
      */
     public int getSlotIndex(int slot) {
+        // sanity check
         if (slot < 0 || slot >= getSlots()) {
             throw new IllegalArgumentException("Invalid slot number: " + slot);
         }
 
-        // Adjust for inventory border/header
-        int relativeSlot = slot - START_SLOT;
-        if (relativeSlot < 0) {
+        // compute inventory row/col in a 9-wide grid
+        int invRow = slot / 9;    // 0..5
+        int invCol = slot % 9;    // 0..8
+
+        // we only use rows 1..4 (i.e. the 2nd through 5th rows)
+        // and cols 1..7 (i.e. we skip the first and last column as borders)
+        if (invRow < 1 || invRow > 4 || invCol < 1 || invCol > 7) {
             return -1;
         }
 
-        int row = relativeSlot / SLOTS_PER_ROW;
-        int col = relativeSlot % SLOTS_PER_ROW;
-        
-        // Check for integer overflow
-        if (page > Integer.MAX_VALUE / maxItemsPerPage) {
+        // map to a 7×4 matrix of item‐slots:
+        int itemRow = invRow - 1;  // 0..3
+        int itemCol = invCol - 1;  // 0..6
+
+        // compute index within this page
+        int indexInPage = itemRow * SLOTS_PER_ROW + itemCol;  // 0..(maxItemsPerPage-1)
+        long indexLong = (long) page * getMaxItemsPerPage() + indexInPage;
+
+        // overflow / bounds check
+        if (indexLong < 0 || indexLong >= getCollectionSize()) {
             return -1;
         }
-        
-        long indexLong = (long)page * maxItemsPerPage + row * SLOTS_PER_ROW + col;
-        if (indexLong > Integer.MAX_VALUE) {
-            return -1;
-        }
-        
-        int index = (int)indexLong;
-        return index >= getCollectionSize() ? -1 : index;
+        return (int) indexLong;
     }
 }
