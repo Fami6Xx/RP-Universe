@@ -77,6 +77,19 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
             return;
         }
 
+        // If user clicked on the "Clone All Drops" in slot 46:
+        if (slot == 46) {
+            e.setCancelled(true);
+            player.closeInventory();
+            player.sendMessage(FamiUtils.formatWithPrefix("&7Giving you all drops..."));
+            workingStep.getPossibleDrops().forEach(drop -> {
+                ItemStack item = drop.getItem().clone();
+                player.getInventory().addItem(item);
+            });
+            player.sendMessage(FamiUtils.formatWithPrefix("&aAll drops have been added to your inventory."));
+            return;
+        }
+
         // If the user clicked on an actual drop slot (not border).
         int clickedSlot = e.getSlot();
         int clickedIndex = getSlotIndex(clickedSlot);
@@ -135,6 +148,9 @@ public class PossibleDropsEditorMenu extends EasyPaginatedMenu {
         });
         ItemStack infoItem = FamiUtils.makeItem(Material.BOOKSHELF, "&7&lInfo", "&7Total chance: &f" + chance.get() + "%");
         super.inventory.setItem(4, infoItem);
+
+        ItemStack cloneAllItems = FamiUtils.makeItem(Material.COMMAND_BLOCK, "&c&lClone All Drops", "&7Give yourself all drops.");
+        super.inventory.setItem(46, cloneAllItems);
     }
 
     private void addNewDropFlow(Player player) {

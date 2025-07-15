@@ -47,7 +47,13 @@ public class WorkingStepNeededItemsMenu extends EasyPaginatedMenu {
         NeededItem neededItem = workingStep.getNeededItems().get(index);
         ItemStack display = neededItem.getItem().clone();
         ItemMeta meta = display.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN + neededItem.getItem().getType().name());
+        String itemName; // Get the name of the item, if it has one
+        if (meta.hasDisplayName()) {
+            itemName = meta.getDisplayName();
+        } else {
+            itemName = display.getType().name().replace("_", " ").toLowerCase();
+        }
+        meta.setDisplayName(ChatColor.GREEN + itemName);
         meta.setLore(List.of(
                 ChatColor.GRAY + "Amount needed: " + neededItem.getAmount(),
                 ChatColor.YELLOW + "Shift+Click to increase amount by 1.",
@@ -67,6 +73,15 @@ public class WorkingStepNeededItemsMenu extends EasyPaginatedMenu {
         if (e.getCurrentItem().getType() == Material.STONE_BUTTON) return;
 
         int slot = e.getSlot();
+
+        if (slot == 46) {
+            e.getWhoClicked().closeInventory();
+            e.getWhoClicked().getInventory().addItem(workingStep.getNeededItems().stream()
+                .map(NeededItem::getItem)
+                .toArray(ItemStack[]::new));
+            e.getWhoClicked().sendMessage(FamiUtils.formatWithPrefix("&aYou have been given all needed items for this step."));
+            return;
+        }
 
         if (slot == 45) {
             ItemStack handItem = e.getWhoClicked().getInventory().getItemInMainHand();
@@ -105,6 +120,7 @@ public class WorkingStepNeededItemsMenu extends EasyPaginatedMenu {
     @Override
     public void addAdditionalItems() {
         inventory.setItem(45, makeAddItemButton());
+        inventory.setItem(46, FamiUtils.makeItem(Material.COMMAND_BLOCK, "&c&lClone All Items", "&7Give yourself all items.") );
     }
 
     /**
