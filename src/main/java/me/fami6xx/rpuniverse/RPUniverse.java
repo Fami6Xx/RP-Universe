@@ -520,8 +520,37 @@ public class RPUniverse extends JavaPlugin {
         this.latestVersion = apiVersion;
         this.isUpdateAvailable = !apiVersion.equals(configVersion);
 
+        // Check if the API version is lower than the config version
+        // This means the plugin is being developed with a newer version than the API
+        if (compareVersions(apiVersion, configVersion) < 0) {
+            ErrorHandler.warning("API version is lower than the config version! This may indicate a development build.");
+            return true; // Consider it up-to-date for development purposes
+        }
+
         return !isUpdateAvailable;
     }
+
+    /**
+     * Compares two version strings in the format "major.minor.patch"
+     * @param v1 First version string
+     * @param v2 Second version string
+     * @return -1 if v1 < v2, 1 if v1 > v2, 0 if they are equal
+     */
+    public static int compareVersions(String v1, String v2) {
+        String[] parts1 = v1.split("\\.");
+        String[] parts2 = v2.split("\\.");
+
+        int length = Math.max(parts1.length, parts2.length);
+        for (int i = 0; i < length; i++) {
+            int num1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
+            int num2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0;
+
+            if (num1 < num2) return -1;
+            if (num1 > num2) return 1;
+        }
+        return 0; // versions are equal
+    }
+
 
     /**
      * Checks if an update is available
