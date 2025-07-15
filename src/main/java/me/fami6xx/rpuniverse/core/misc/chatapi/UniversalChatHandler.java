@@ -19,7 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashMap;
 
 public class UniversalChatHandler implements Listener, CommandExecutor {
-    private HashMap<Player, IChatExecuteQueue> chatExecuteQueueHashMap = new HashMap<>();
+    private final HashMap<Player, IChatExecuteQueue> chatExecuteQueueHashMap = new HashMap<>();
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onChat(AsyncPlayerChatEvent e){
@@ -40,10 +40,15 @@ public class UniversalChatHandler implements Listener, CommandExecutor {
 
         if(chatExecuteQueueHashMap.containsKey(e.getPlayer())){
             e.setCancelled(true);
-            IChatExecuteQueue queue = chatExecuteQueueHashMap.get(e.getPlayer());
-            if(queue.execute(e.getPlayer(), e.getMessage())){
-                chatExecuteQueueHashMap.remove(e.getPlayer());
-            }
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    IChatExecuteQueue queue = chatExecuteQueueHashMap.get(e.getPlayer());
+                    if(queue.execute(e.getPlayer(), e.getMessage())){
+                        chatExecuteQueueHashMap.remove(e.getPlayer());
+                    }
+                }
+            }.runTaskLater(RPUniverse.getInstance(), 1L);
         }else{
             if (e.getMessage().startsWith("/")) return;
             if (!RPUniverse.getInstance().getConfig().getBoolean("general.localOOC")) return;

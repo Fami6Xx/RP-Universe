@@ -19,6 +19,7 @@ import me.fami6xx.rpuniverse.core.menuapi.utils.MenuTag;
 import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.chatapi.IChatExecuteQueue;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class CreateLockSelectJobMenu extends EasyPaginatedMenu{
     private Block block;
@@ -71,9 +72,14 @@ public class CreateLockSelectJobMenu extends EasyPaginatedMenu{
 
                 if(FamiUtils.isInteger(message)) {
                     int level = Integer.parseInt(message);
-                    LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
-                    lockHandler.createLock(block.getLocation().toCenterLocation(), block.getType(), null, job.getName(), level);
-                    FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().lockCreationSuccess);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            LockHandler lockHandler = RPUniverse.getInstance().getLockHandler();
+                            lockHandler.createLock(block.getLocation().toCenterLocation(), block.getType(), null, job.getName(), level);
+                            FamiUtils.sendMessageWithPrefix(player, RPUniverse.getLanguageHandler().lockCreationSuccess);
+                        }
+                    }.runTaskLater(RPUniverse.getInstance(), 1L);
                     return true;
                 }
 
