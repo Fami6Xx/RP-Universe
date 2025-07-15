@@ -377,6 +377,21 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         for (PossibleDrop drop : dropsSorted) {
             cumulativeChance += drop.getChance();
             if (randomVal <= cumulativeChance) {
+                // We found a drop to perform
+                if (drop.getItem().getAmount() <= 0) {
+                    ErrorHandler.warning("PossibleDrop with non-positive amount: " + drop.getItem().getAmount() + " for step: " + step.getName());
+                    return; // Skip invalid drops
+                }
+
+                // Drop the item at the specified location
+                if (drop.getItem().getAmount() > 1) {
+                    int amountToDrop = drop.getItem().getAmount();
+                    ItemStack dropItem = drop.getItem().clone();
+                    dropItem.setAmount(1);
+                    for (int i = 0; i < amountToDrop; i++) {
+                        dropLocation.getWorld().dropItem(dropLocation, dropItem);
+                    }
+                }
                 dropLocation.getWorld().dropItem(dropLocation, drop.getItem());
                 break;
             }
