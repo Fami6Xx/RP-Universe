@@ -120,8 +120,30 @@ public class JobAdminMenu extends Menu {
             job.getJobType().openAdminMenu(playerMenu.getPlayer());
         }
         if(e.getSlot() == 44){
-            RPUniverse.getInstance().getJobsHandler().removeJob(job);
-            new AllJobsMenu(playerMenu).open();
+            if(!RPUniverse.getInstance().getUniversalChatHandler().canAddToQueue(playerMenu.getPlayer())){
+                FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), RPUniverse.getLanguageHandler().errorYouAlreadyHaveSomethingToType);
+                return;
+            }
+
+            playerMenu.getPlayer().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+
+            FamiUtils.sendMessage(playerMenu.getPlayer(), "&c&lWARNING: &cThis action is irreversible!");
+            FamiUtils.sendMessageWithPrefix(playerMenu.getPlayer(), "&cAre you sure you want to remove this job? Type &6&lREMOVE &cto confirm. &7(&ccancel &7to cancel&7)");
+            RPUniverse.getInstance().getUniversalChatHandler().addToQueue(playerMenu.getPlayer(), (player, message) -> {
+                if(message.equalsIgnoreCase("remove")){
+                    RPUniverse.getInstance().getJobsHandler().removeJob(job);
+                    new AllJobsMenu(playerMenu).open();
+                    FamiUtils.sendMessageWithPrefix(player, "&cJob &6" + job.getName() + " &cremoved successfully.");
+                    return true;
+                }
+                if(message.equalsIgnoreCase("cancel")){
+                    FamiUtils.sendMessageWithPrefix(player, "&cJob removal canceled.");
+                    this.open();
+                    return true;
+                }
+                FamiUtils.sendMessageWithPrefix(player, "&cInvalid command. Type &6&lREMOVE &cto confirm removal or &ccancel &7to cancel.");
+                return false;
+            });
         }
     }
 
@@ -162,7 +184,7 @@ public class JobAdminMenu extends Menu {
         this.inventory.setItem(25, FamiUtils.makeItem(Material.IRON_SWORD, FamiUtils.format("&cJob Settings"), FamiUtils.format("&7Edit job settings")));
         if(job.getJobType() != null && job.getJobType().hasAdminMenu())
             this.inventory.setItem(31, FamiUtils.makeItem(Material.WRITABLE_BOOK, FamiUtils.format("&cJob Type Admin Menu"), FamiUtils.format("&7Open the admin menu for the job type")));
-        this.inventory.setItem(44, FamiUtils.makeItem(Material.BARRIER, FamiUtils.format("&4REMOVE"), FamiUtils.format("&7Remove this job"), "&c&lWARNING: &cThis action is irreversible!"));
+        this.inventory.setItem(44, FamiUtils.makeItem(Material.REDSTONE_BLOCK, FamiUtils.format("&4REMOVE"), FamiUtils.format("&7Remove this job"), "&c&lWARNING: &cThis action is irreversible!"));
         setFillerGlass();
     }
 
