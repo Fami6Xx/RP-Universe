@@ -285,4 +285,20 @@ public class FamiUtils {
         return skullItem;
     }
 
+    /**
+     * Get the name of the item
+     *
+     * @param item The item to get the name from
+     * @return The name of the item (display name if available, otherwise the material name)
+     */
+    public static String getItemName(ItemStack item) {
+        if (item == null || item.getType() == Material.AIR) {
+            return "";
+        }
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null && meta.hasDisplayName()) {
+            return meta.getDisplayName();
+        }
+        return item.getType().name().replace("_", " ").toLowerCase();
+    }
 }
