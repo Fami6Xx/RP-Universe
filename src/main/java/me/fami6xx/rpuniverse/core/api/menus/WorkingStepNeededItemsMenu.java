@@ -8,6 +8,7 @@ import me.fami6xx.rpuniverse.core.menuapi.PlayerMenu;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -84,14 +85,43 @@ public class WorkingStepNeededItemsMenu extends EasyPaginatedMenu {
         }
 
         if (slot == 45) {
-            ItemStack handItem = e.getWhoClicked().getInventory().getItemInMainHand();
-            if (handItem == null || handItem.getType() == Material.AIR) {
-                e.getWhoClicked().sendMessage(FamiUtils.formatWithPrefix("&cYou must hold an item in your hand to add it."));
-                return;
-            }
-            NeededItem newNeededItem = new NeededItem(handItem.clone().asOne(), 1);
-            workingStep.addNeededItem(newNeededItem);
-            super.open();
+            Player player = playerMenu.getPlayer();
+            player.closeInventory();
+
+            player.sendMessage(FamiUtils.formatWithPrefix("&7Hold the item you want to add in your hand"));
+            player.sendMessage(FamiUtils.formatWithPrefix("&7and type how many should the player need in chat."));
+            playerMenu.setPendingAction(input -> {
+                if (!FamiUtils.isInteger(input)) {
+                    player.sendMessage(FamiUtils.formatWithPrefix("&cPlease enter a valid number."));
+                    super.open();
+                    return;
+                }
+
+                int amount = Integer.parseInt(input);
+                if (amount <= 0) {
+                    player.sendMessage(FamiUtils.formatWithPrefix("&cAmount must be greater than 0."));
+                    super.open();
+                    return;
+                }
+
+                ItemStack itemInHand = player.getInventory().getItemInMainHand().clone().asOne();
+                if (itemInHand.getType() == Material.AIR) {
+                    player.sendMessage(FamiUtils.formatWithPrefix("&cYou must hold an item in your hand."));
+                    super.open();
+                    return;
+                }
+
+                workingStep.addNeededItem(new NeededItem(itemInHand, amount));
+                String itemName;
+                if (itemInHand.getItemMeta() != null && itemInHand.getItemMeta().hasDisplayName()) {
+                    itemName = itemInHand.getItemMeta().getDisplayName();
+                } else {
+                    itemName = itemInHand.getType().name().replace("_", " ").toLowerCase();
+                }
+
+                player.sendMessage(FamiUtils.formatWithPrefix("&aAdded " + amount + "x " + itemName + " to needed items."));
+                super.open();
+            });
             return;
         }
 
