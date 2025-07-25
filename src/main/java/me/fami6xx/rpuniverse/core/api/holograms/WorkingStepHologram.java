@@ -375,27 +375,45 @@ public class WorkingStepHologram extends famiHologram implements Listener {
         double randomVal = Math.random() * 100; // 0 - 100
         double cumulativeChance = 0;
         for (PossibleDrop drop : dropsSorted) {
+            if (drop.getItem().getAmount() <= 0) {
+                ErrorHandler.warning("PossibleDrop with non-positive amount: " + drop.getItem().getAmount() + " for step: " + step.getName());
+                continue; // Skip invalid drops
+            }
+
+            if (drop.getChance() == 100) {
+                // Drop the item at the specified location
+                dropItemAtLocation(dropLocation, drop.getItem());
+                continue;
+            }
             cumulativeChance += drop.getChance();
             if (randomVal <= cumulativeChance) {
-                // We found a drop to perform
-                if (drop.getItem().getAmount() <= 0) {
-                    ErrorHandler.warning("PossibleDrop with non-positive amount: " + drop.getItem().getAmount() + " for step: " + step.getName());
-                    return; // Skip invalid drops
-                }
-
-                // Drop the item at the specified location
-                if (drop.getItem().getAmount() > 1) {
-                    int amountToDrop = drop.getItem().getAmount();
-                    ItemStack dropItem = drop.getItem().clone();
-                    dropItem.setAmount(1);
-                    for (int i = 0; i < amountToDrop; i++) {
-                        dropLocation.getWorld().dropItem(dropLocation, dropItem);
-                    }
-                }else {
-                    dropLocation.getWorld().dropItem(dropLocation, drop.getItem());
-                }
+                dropItemAtLocation(dropLocation, drop.getItem());
                 break;
             }
+        }
+    }
+
+    /**
+     * Drops the item at the specified location.
+     * If the item amount is greater than 1, it drops multiple items one by one.
+     *
+     * @param location The location where the item should be dropped.
+     * @param item The item to drop.
+     */
+    private void dropItemAtLocation(Location location, ItemStack item) {
+        if (item.getAmount() <= 0) {
+            ErrorHandler.warning("Attempted to drop an item with non-positive amount: " + item.getAmount());
+            return; // Skip invalid items
+        }
+        if (item.getAmount() > 1) {
+            int amountToDrop = item.getAmount();
+            ItemStack dropItem = item.clone();
+            dropItem.setAmount(1);
+            for (int i = 0; i < amountToDrop; i++) {
+                location.getWorld().dropItem(location, dropItem);
+            }
+        } else {
+            location.getWorld().dropItem(location, item);
         }
     }
 
