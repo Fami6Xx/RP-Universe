@@ -1,17 +1,13 @@
 package me.fami6xx.rpuniverse.core.chestlimit;
 
-import me.fami6xx.rpuniverse.RPUniverse;
-import me.fami6xx.rpuniverse.core.api.LockOpenedEvent;
-import me.fami6xx.rpuniverse.core.locks.LockHandler;
-import me.fami6xx.rpuniverse.core.misc.PlayerData;
-import me.fami6xx.rpuniverse.core.misc.PlayerMode;
-import me.fami6xx.rpuniverse.core.misc.persistentdatatypes.ItemStackArrayDataType;
-import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,8 +20,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 
-import java.util.HashMap;
-import java.util.Map;
+import me.fami6xx.rpuniverse.RPUniverse;
+import me.fami6xx.rpuniverse.core.api.LockOpenedEvent;
+import me.fami6xx.rpuniverse.core.locks.LockHandler;
+import me.fami6xx.rpuniverse.core.misc.PlayerData;
+import me.fami6xx.rpuniverse.core.misc.PlayerMode;
+import me.fami6xx.rpuniverse.core.misc.persistentdatatypes.ItemStackArrayDataType;
+import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 
 public class ChestLimitListener implements Listener {
     private final Plugin plugin;
@@ -58,9 +59,8 @@ public class ChestLimitListener implements Listener {
             }
 
             Chest chestState = (Chest) clickedBlock.getState();
-            if (chestState.getInventory().getHolder() instanceof DoubleChest) {
+            if (chestState.getInventory().getHolder() instanceof DoubleChest doubleChest) {
                 // Move everything over to the “main” chest block
-                DoubleChest doubleChest = (DoubleChest) chestState.getInventory().getHolder();
                 Chest left = (Chest) doubleChest.getLeftSide();
 
                 // Use that left side as the official Chest/Block

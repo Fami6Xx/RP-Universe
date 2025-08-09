@@ -258,7 +258,7 @@ public class SellStepHologram extends famiHologram implements Listener {
     public boolean shouldShow(Player player) {
         boolean shouldShow = false;
 
-        PlayerData data = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
+        PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
         if (data != null) {
             if (data.getSelectedPlayerJob() != null && data.getSelectedPlayerJob().equals(job)) {
                 if (data.getSelectedPlayerJob().getPlayerPosition(player.getUniqueId()) == null) {

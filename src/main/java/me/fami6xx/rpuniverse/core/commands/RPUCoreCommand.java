@@ -1,5 +1,18 @@
 package me.fami6xx.rpuniverse.core.commands;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.BeforeCharacterKilledEvent;
 import me.fami6xx.rpuniverse.core.api.CharacterKilledEvent;
@@ -16,17 +29,6 @@ import me.fami6xx.rpuniverse.core.properties.PropertyManager;
 import me.fami6xx.rpuniverse.core.regions.Region;
 import me.fami6xx.rpuniverse.core.regions.RegionManager;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.UUID;
 
 public class RPUCoreCommand implements CommandExecutor {
 
@@ -57,28 +59,16 @@ public class RPUCoreCommand implements CommandExecutor {
         String mainArg = args[0].toLowerCase();
 
         switch (mainArg) {
-            case "ck":
-                handleCharacterKill(player, args);
-                break;
-            case "addjob":
-                handleAddJob(player, args);
-                break;
-            case "removejob":
-                handleRemoveJob(player, args);
-                break;
-            case "region":
-                handleRegionCommand(player, args);
-                break;
-            case "languages":
+            case "ck" -> handleCharacterKill(player, args);
+            case "addjob" -> handleAddJob(player, args);
+            case "removejob" -> handleRemoveJob(player, args);
+            case "region" -> handleRegionCommand(player, args);
+            case "languages" -> {
                 FamiUtils.sendMessageWithPrefix(player, "&cAfter editing language fields, you must restart the server to apply changes.");
                 new LanguageEditorMainMenu(RPUniverse.getInstance().getMenuManager().getPlayerMenu(player)).open();
-                break;
-            case "debug":
-                handleDebugCommand(player, args);
-                break;
-            default:
-                FamiUtils.sendMessageWithPrefix(player, "&cUnknown subcommand. Use &f/rpu &cfor help.");
-                break;
+            }
+            case "debug" -> handleDebugCommand(player, args);
+            default -> FamiUtils.sendMessageWithPrefix(player, "&cUnknown subcommand. Use &f/rpu &cfor help.");
         }
 
         return true;
@@ -93,18 +83,10 @@ public class RPUCoreCommand implements CommandExecutor {
         String mainArg = args[0].toLowerCase();
 
         switch (mainArg) {
-            case "ck":
-                handleCharacterKill(sender, args);
-                break;
-            case "addjob":
-                handleAddJob(sender, args);
-                break;
-            case "removejob":
-                handleRemoveJob(sender, args);
-                break;
-            default:
-                sender.sendMessage(FamiUtils.formatWithPrefix("&cUnknown or unsupported subcommand for console."));
-                break;
+            case "ck" -> handleCharacterKill(sender, args);
+            case "addjob" -> handleAddJob(sender, args);
+            case "removejob" -> handleRemoveJob(sender, args);
+            default -> sender.sendMessage(FamiUtils.formatWithPrefix("&cUnknown or unsupported subcommand for console."));
         }
     }
 
@@ -155,8 +137,7 @@ public class RPUCoreCommand implements CommandExecutor {
             sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer is already in this job!"));
             return;
         }
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             job.addPlayerToJob(target.getUniqueId());
             FamiUtils.sendMessageWithPrefix(player, "&aJob added! &8(&cCheck console if not&8)");
         } else {
@@ -185,8 +166,7 @@ public class RPUCoreCommand implements CommandExecutor {
             sender.sendMessage(FamiUtils.formatWithPrefix("&cPlayer is not in this job!"));
             return;
         }
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             job.removePlayerFromJob(target.getUniqueId());
             FamiUtils.sendMessageWithPrefix(player, "&aJob removed!");
         } else {
@@ -205,33 +185,15 @@ public class RPUCoreCommand implements CommandExecutor {
         String subCommand = args[1].toLowerCase();
 
         switch (subCommand) {
-            case "pos1":
-                setRegionPos1(player);
-                break;
-            case "pos2":
-                setRegionPos2(player);
-                break;
-            case "create":
-                createRegion(player, args);
-                break;
-            case "list":
-                listRegions(player);
-                break;
-            case "delete":
-                deleteRegion(player, args);
-                break;
-            case "show":
-                showRegionParticles(player, args);
-                break;
-            case "hide":
-                hideRegionParticles(player, args);
-                break;
-            case "tp":
-                teleportToRegion(player, args);
-                break;
-            default:
-                FamiUtils.sendMessageWithPrefix(player, "&cUnknown region subcommand. Use &f/rpu region &cfor help.");
-                break;
+            case "pos1" -> setRegionPos1(player);
+            case "pos2" -> setRegionPos2(player);
+            case "create" -> createRegion(player, args);
+            case "list" -> listRegions(player);
+            case "delete" -> deleteRegion(player, args);
+            case "show" -> showRegionParticles(player, args);
+            case "hide" -> hideRegionParticles(player, args);
+            case "tp" -> teleportToRegion(player, args);
+            default -> FamiUtils.sendMessageWithPrefix(player, "&cUnknown region subcommand. Use &f/rpu region &cfor help.");
         }
     }
 
@@ -339,7 +301,7 @@ public class RPUCoreCommand implements CommandExecutor {
 
         PlayerData data = RPUniverse.getInstance().getDataSystem().getPlayerData(player.getUniqueId());
 
-        Job[] array = data.getPlayerJobs().toArray(new Job[0]);
+        Job[] array = data.getPlayerJobs().toArray(Job[]::new);
         for (Job job : array) {
             job.removePlayerFromJob(player.getUniqueId());
         }

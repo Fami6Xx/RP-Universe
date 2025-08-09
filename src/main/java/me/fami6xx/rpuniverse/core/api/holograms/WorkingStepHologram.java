@@ -1,11 +1,27 @@
 package me.fami6xx.rpuniverse.core.api.holograms;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.actions.Action;
 import eu.decentsoftware.holograms.api.actions.ActionType;
 import eu.decentsoftware.holograms.api.actions.ClickType;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
-import eu.decentsoftware.holograms.api.utils.items.HologramItem;
 import me.fami6xx.rpuniverse.RPUniverse;
 import me.fami6xx.rpuniverse.core.api.WorkingStepLocationRemovedEvent;
 import me.fami6xx.rpuniverse.core.api.menus.WorkingStepEditorMenu;
@@ -21,18 +37,6 @@ import me.fami6xx.rpuniverse.core.misc.PlayerMode;
 import me.fami6xx.rpuniverse.core.misc.utils.ErrorHandler;
 import me.fami6xx.rpuniverse.core.misc.utils.FamiUtils;
 import me.fami6xx.rpuniverse.core.misc.utils.ProgressBarString;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class WorkingStepHologram extends famiHologram implements Listener {
 
@@ -494,7 +498,7 @@ public class WorkingStepHologram extends famiHologram implements Listener {
     @Override
     public boolean shouldShow(Player player) {
         boolean shouldShow = false;
-        PlayerData data = RPUniverse.getInstance().getPlayerData(player.getUniqueId().toString());
+        PlayerData data = RPUniverse.getPlayerData(player.getUniqueId().toString());
 
         if (data != null) {
             if (data.getSelectedPlayerJob() != null && data.getSelectedPlayerJob().equals(job)) {
